@@ -2,6 +2,8 @@
 /Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/bin/Debug/net7.0/RuiSantos.ZocDoc.Core.dll
 /Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/bin/Debug/net7.0/RuiSantos.ZocDoc.Core.pdb
 /Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/RuiSantos.ZocDoc.Core.csproj.AssemblyReference.cache
+/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/RuiSantos.ZocDoc.Core.Resources.MessageResources.resources
+/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/RuiSantos.ZocDoc.Core.csproj.GenerateResource.cache
 /Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/RuiSantos.ZocDoc.Core.GeneratedMSBuildEditorConfig.editorconfig
 /Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/RuiSantos.ZocDoc.Core.AssemblyInfoInputs.cache
 /Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/RuiSantos.ZocDoc.Core.AssemblyInfo.cs
@@ -10,5 +12,3 @@
 /Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/refint/RuiSantos.ZocDoc.Core.dll
 /Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/RuiSantos.ZocDoc.Core.pdb
 /Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/ref/RuiSantos.ZocDoc.Core.dll
-/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/RuiSantos.ZocDoc.Core.Resources.MessageResources.resources
-/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/Debug/net7.0/RuiSantos.ZocDoc.Core.csproj.GenerateResource.cache
