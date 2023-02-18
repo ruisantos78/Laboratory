@@ -1,12 +1,12 @@
 ﻿namespace RuiSantos.ZocDoc.Data.Mongodb.Core;
 
-internal class Mediator
+internal static class Mediator
 {
     public static IEntity<TModel>? GetEntity<TModel>()
     {
         var entityType = typeof(IEntity<>).MakeGenericType(typeof(TModel));
         var entityImplType = entityType.Assembly.GetTypes()
-            .FirstOrDefault(t => entityType.IsAssignableFrom(t));
+            .FirstOrDefault(entityType.IsAssignableFrom);
 
         if (entityImplType is null)
             return default;
@@ -15,6 +15,18 @@ internal class Mediator
             return entity;
 
         return default;
-    }    
+    }
+
+    public static void RegisterClassMaps()
+    {
+        var mappings = typeof(IRegisterClassMap).Assembly.GetTypes()
+            .Where(t => !t.IsInterface && t.IsAssignableFrom(typeof(IRegisterClassMap)));
+
+        foreach (var mapping in mappings)
+        {
+            if (Activator.CreateInstance(mapping) is IRegisterClassMap instance)
+                instance.Register();
+        }
+    }
 }
 

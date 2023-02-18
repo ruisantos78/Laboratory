@@ -1,14 +1,22 @@
 ﻿using MongoDB.Driver;
-using RuiSantos.ZocDoc.Core.Models;
-using RuiSantos.ZocDoc.Data.Mongodb.Entities;
+using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Core;
 
 internal interface IEntity<TModel>
 {
-    Task RemoveAsync(IMongoDatabase context, string id);
     Task StoreAsync(IMongoDatabase context, TModel model);
-    IQueryable<TModel> Query(IMongoDatabase context);
-    TModel Find(IMongoDatabase context, string id);
+
+    Task RemoveAsync(IMongoDatabase context, Guid id);
+
+    Task<List<TModel>> QueryAsync(IMongoDatabase context, Expression<Func<TModel, bool>> expression);
+
+    Task<List<TModel>> ListAsync(IMongoDatabase context);
+
+    Task<TModel> FindAsync(IMongoDatabase context, Guid id);
+
+    Task<TModel> FindAsync(IMongoDatabase context, Expression<Func<TModel, bool>> expression);
+
+    Task<bool> AnyAsync(IMongoDatabase context, Expression<Func<TModel, bool>> expression);
 }
 

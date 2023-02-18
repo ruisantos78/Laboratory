@@ -1,5 +1,6 @@
 ﻿using MongoDB.Bson.Serialization;
 using MongoDB.Bson.Serialization.IdGenerators;
+using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Data.Mongodb.Core;
 using RuiSantos.ZocDoc.Data.Mongodb.Entities;
 
@@ -9,21 +10,15 @@ internal class ScheduleClassMap : IRegisterClassMap
 {
     public void Register()
     {
-        BsonClassMap.RegisterClassMap<ScheduleEntity>(map =>
+        BsonClassMap.RegisterClassMap<Schedule>(map =>
         {
             map.AutoMap();
             map.SetDiscriminator(ScheduleEntity.Discriminator);
 
-            map.MapIdMember(e => e.Id).SetIdGenerator(StringObjectIdGenerator.Instance);
-
-            map.MapProperty(e => e.DoctorReference);
-            map.MapProperty(e => e.AppointmentsReferences);
-
-            map.MapMember(e => e.Availability);
-
-            map.UnmapMember(e => e.Doctor);
-            map.UnmapMember(e => e.Appointments);
+            map.MapIdMember(e => e.Id).SetIdGenerator(CombGuidGenerator.Instance);
+            map.MapMember(e => e.DoctorId);
+            map.MapMember(e => e.OfficeHours);
+            map.MapMember(e => e.Appointments);
         });
     }
 }
-

@@ -6,7 +6,7 @@ public class Person
 	public string Email { get; set; }
 	public string FirstName { get; set; }
 	public string LastName { get; set; }
-	public IList<string> ContactNumbers { get; set; }
+	public List<string> ContactNumbers { get; set; }
 
 	public Person()
 	{
@@ -15,5 +15,13 @@ public class Person
 		this.Email = string.Empty;
 		this.ContactNumbers = new List<string>();
 	}
+
+    public Person(string email, string firstName, string lastName, List<string> contactNumbers)
+    {
+        Email = email;
+        FirstName = firstName;
+        LastName = lastName;
+        ContactNumbers = contactNumbers;
+    }
 }
 

@@ -9,7 +9,7 @@ internal class PersonClassMap : IRegisterClassMap
 {
     public void Register()
     {
-        BsonClassMap.RegisterClassMap<Patient>(map =>
+        BsonClassMap.RegisterClassMap<Person>(map =>
         {
             map.AutoMap();
             map.MapMember(e => e.Email);

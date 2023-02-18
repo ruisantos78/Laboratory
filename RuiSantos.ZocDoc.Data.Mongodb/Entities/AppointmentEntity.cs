@@ -1,48 +1,60 @@
-﻿using MongoDB.Bson;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Data.Mongodb.Core;
+using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Entities;
 
-internal class AppointmentEntity: Appointment, IEntity<Appointment>
+internal class AppointmentEntity : IEntity<Appointment>
 {
     public const string Discriminator = "Appointments";
 
-    public string? PatientReference => this.Patient.Id;
-
-    public AppointmentEntity() : base() { }
-
-    public Task StoreAsync(IMongoDatabase context, Appointment model) => this.StoreAsync(Discriminator, model, context, GetFilter(model.Id));
-
-    public Task RemoveAsync(IMongoDatabase context, string id)
+    public async Task StoreAsync(IMongoDatabase context, Appointment model)
     {
-        return context.GetCollection<AppointmentEntity>(Discriminator)
-            .FindOneAndDeleteAsync(GetFilter(id));
+        var collection = context.GetCollection<Appointment>(Discriminator);
+
+        await collection.FindOneAndDeleteAsync(entity => entity.Id == model.Id);
+        await collection.InsertOneAsync(model);
     }
 
-    public IQueryable<Appointment> Query(IMongoDatabase context)
+    public Task RemoveAsync(IMongoDatabase context, Guid id)
     {
-        var appointments = context.GetCollection<AppointmentEntity>(AppointmentEntity.Discriminator).AsQueryable();
-        var patients = context.GetCollection<PatientEntity>(PatientEntity.Discriminator).AsQueryable();
-
-        return from appointment in appointments
-               join patient in patients on appointment.PatientReference equals patient.Id
-               select new Appointment
-               {
-                   Id = appointment.Id,
-                   Date = appointment.Date,
-                   Patient = patient
-               };
+        return context.GetCollection<Appointment>(Discriminator)
+            .FindOneAndDeleteAsync(entity => entity.Id == id);
     }
 
-    public Appointment Find(IMongoDatabase context, string id)
+    public Task<bool> AnyAsync(IMongoDatabase context, Expression<Func<Appointment, bool>> expression)
     {
-        return context.GetCollection<AppointmentEntity>(Discriminator)
-            .Find(GetFilter(id))
-            .FirstOrDefault();
+        return context.GetCollection<Appointment>(Discriminator)
+            .Find(expression)
+            .AnyAsync();
     }
 
-    private static FilterDefinition<AppointmentEntity> GetFilter(string? id) => Builders<AppointmentEntity>.Filter.Eq(e => e.Id, id);
+    public Task<List<Appointment>> ListAsync(IMongoDatabase context)
+    {
+        return context.GetCollection<Appointment>(Discriminator)
+            .AsQueryable()
+            .ToListAsync();
+    }
+
+    public Task<List<Appointment>> QueryAsync(IMongoDatabase context, Expression<Func<Appointment, bool>> expression)
+    {
+        return context.GetCollection<Appointment>(Discriminator)
+            .Find(expression)
+            .ToListAsync();
+    }
+
+    public Task<Appointment> FindAsync(IMongoDatabase context, Guid id)
+    {
+        return context.GetCollection<Appointment>(Discriminator)
+            .Find(entity => entity.Id == id)
+            .FirstOrDefaultAsync();
+    }
+
+    public Task<Appointment> FindAsync(IMongoDatabase context, Expression<Func<Appointment, bool>> expression)
+    {
+        return context.GetCollection<Appointment>(Discriminator)
+            .Find(expression)
+            .FirstOrDefaultAsync();
+    }
 }
-
