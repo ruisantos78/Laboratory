@@ -1,0 +1,210 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj": {}
+  },
+  "projects": {
+    "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj",
+        "projectName": "RuiSantos.ZocDoc.Api",
+        "projectPath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj",
+        "packagesPath": "/Users/ruisantos/.nuget/packages/",
+        "outputPath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Api/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ruisantos/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj": {
+                "projectPath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj"
+              },
+              "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Data.Mongodb/RuiSantos.ZocDoc.Data.Mongodb.csproj": {
+                "projectPath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Data.Mongodb/RuiSantos.ZocDoc.Data.Mongodb.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Swashbuckle.AspNetCore": {
+              "target": "Package",
+              "version": "[6.5.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.AspNetCore.App": {
+              "privateAssets": "none"
+            },
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.102/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj",
+        "projectName": "RuiSantos.ZocDoc.Core",
+        "projectPath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj",
+        "packagesPath": "/Users/ruisantos/.nuget/packages/",
+        "outputPath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ruisantos/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[11.5.0, )"
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.102/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Data.Mongodb/RuiSantos.ZocDoc.Data.Mongodb.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Data.Mongodb/RuiSantos.ZocDoc.Data.Mongodb.csproj",
+        "projectName": "RuiSantos.ZocDoc.Data.Mongodb",
+        "projectPath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Data.Mongodb/RuiSantos.ZocDoc.Data.Mongodb.csproj",
+        "packagesPath": "/Users/ruisantos/.nuget/packages/",
+        "outputPath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Data.Mongodb/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ruisantos/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj": {
+                "projectPath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Microsoft.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "MongoDB.Driver": {
+              "target": "Package",
+              "version": "[2.19.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.102/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,28 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Mappings\" />
+    <None Remove="MongoDB.Driver" />
+    <None Remove="Microsoft.Extensions.DependencyInjection" />
+    <None Remove="Entities\" />
+    <None Remove="Core\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Mappings\" />
+    <Folder Include="Entities\" />
+    <Folder Include="Core\" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\RuiSantos.ZocDoc.Core\RuiSantos.ZocDoc.Core.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="MongoDB.Driver" Version="2.19.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="7.0.0" />
+  </ItemGroup>
+</Project>

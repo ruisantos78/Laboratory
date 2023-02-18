@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "dgSpecHash": "sx0otm2OcM/hfCk07loGdAeIKdjVVo3mtGMbbivi2lqAxXY3N5brcFLSlCo/XpuAAm4UQhB4KlN+rRG/+pJQOg==",
+  "success": true,
+  "projectFilePath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj",
+  "expectedPackageFiles": [
+    "/Users/ruisantos/.nuget/packages/fluentvalidation/11.5.0/fluentvalidation.11.5.0.nupkg.sha512",
+    "/Users/ruisantos/.nuget/packages/microsoft.extensions.logging.abstractions/7.0.0/microsoft.extensions.logging.abstractions.7.0.0.nupkg.sha512"
+  ],
+  "logs": []
+}

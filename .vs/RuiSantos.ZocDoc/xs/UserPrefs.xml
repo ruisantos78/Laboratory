@@ -1,0 +1,49 @@
+﻿<Properties StartupConfiguration="{2BE490C6-624E-4300-97FA-76790D6E6867}|http" GitUserInfo="UsingMD">
+  <MultiItemStartupConfigurations />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.ItemProperties.RuiSantos.ZocDoc.Api PreferredExecutionTarget="/Applications/Google Chrome.app" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints />
+  <MonoDevelop.Ide.Workbench ActiveDocument="RuiSantos.ZocDoc.Api/Program.cs">
+    <Files>
+      <File FileName="RuiSantos.ZocDoc.Data.Mongodb/Entities/ScheduleEntity.cs" Line="41" Column="56" />
+      <File FileName="RuiSantos.ZocDoc.Data.Mongodb/Entities/AppointmentEntity.cs" Line="33" Column="40" />
+      <File FileName="RuiSantos.ZocDoc.Data.Mongodb/Entities/DoctorEntity.cs" Line="34" Column="68" />
+      <File FileName="RuiSantos.ZocDoc.Data.Mongodb/Entities/MedicalSpecialityEntity.cs" Line="35" Column="79" />
+      <File FileName="RuiSantos.ZocDoc.Data.Mongodb/Entities/PatientEntity.cs" Line="34" Column="69" />
+      <File FileName="RuiSantos.ZocDoc.Core/Models/Appointment.cs" Line="6" Column="27" />
+      <File FileName="RuiSantos.ZocDoc.Core/Models/Availability.cs" Line="1" Column="1" />
+      <File FileName="RuiSantos.ZocDoc.Core/Models/Doctor.cs" Line="6" Column="30" />
+      <File FileName="RuiSantos.ZocDoc.Core/Models/MedicalSpeciality.cs" Line="5" Column="30" />
+      <File FileName="RuiSantos.ZocDoc.Core/Models/Patient.cs" Line="6" Column="30" />
+      <File FileName="RuiSantos.ZocDoc.Core/Models/Person.cs" Line="1" Column="1" />
+      <File FileName="RuiSantos.ZocDoc.Core/Models/Schedule.cs" Line="6" Column="30" />
+      <File FileName="RuiSantos.ZocDoc.Api/Program.cs" Line="39" Column="1" />
+    </Files>
+    <Pads>
+      <Pad Id="ProjectPad">
+        <State name="__root__">
+          <Node name="RuiSantos.ZocDoc" expanded="True">
+            <Node name="RuiSantos.ZocDoc.Api" expanded="True">
+              <Node name="Dependencies" expanded="True" />
+              <Node name="Contracts" expanded="True" />
+              <Node name="Controllers" expanded="True" />
+              <Node name="Core" expanded="True" />
+              <Node name="Properties" expanded="True" />
+              <Node name="Program.cs" selected="True" />
+            </Node>
+            <Node name="RuiSantos.ZocDoc.Core" expanded="True">
+              <Node name="Data" expanded="True" />
+              <Node name="Managers" expanded="True" />
+              <Node name="Models" expanded="True" />
+            </Node>
+            <Node name="RuiSantos.ZocDoc.Data.Mongodb" expanded="True">
+              <Node name="Entities" expanded="True" />
+              <Node name="Mappings" expanded="True" />
+            </Node>
+          </Node>
+        </State>
+      </Pad>
+    </Pads>
+  </MonoDevelop.Ide.Workbench>
+</Properties>

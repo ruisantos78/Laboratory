@@ -1,0 +1,38 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Models\" />
+    <None Remove="Data\" />
+    <None Remove="Services\" />
+    <None Remove="FluentValidation" />
+    <None Remove="Microsoft.Extensions.Logging.Abstractions" />
+    <None Remove="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Models\" />
+    <Folder Include="Data\" />
+    <Folder Include="Managers\" />
+    <Folder Include="Resources\" />
+  </ItemGroup>
+  <ItemGroup>
+    <PackageReference Include="FluentValidation" Version="11.5.0" />
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="7.0.0" />
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Update="Resources\MessageResources.resx">
+      <Generator>ResXFileCodeGenerator</Generator>
+      <LastGenOutput>MessageResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Update="Resources\MessageResources.Designer.cs">
+      <DependentUpon>MessageResources.resx</DependentUpon>
+    </Compile>
+  </ItemGroup>
+</Project>

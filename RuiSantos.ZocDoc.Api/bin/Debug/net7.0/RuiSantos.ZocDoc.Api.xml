@@ -1,0 +1,30 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>RuiSantos.ZocDoc.Api</name>
+    </assembly>
+    <members>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.SpecialtiesController.Get">
+            <summary>
+            List all medical specialties avaliable
+            </summary>
+            <response code="200">Array of medical specialties descriptions</response>
+            <response code="400">No medical specialties founded</response>
+        </member>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.SpecialtiesController.PostAsync(System.String)">
+            <summary>
+            Create a new medical specialty
+            </summary>
+            <param name="description">Description for medical specialty</param>
+            <response code="200">Medical specialt sucessufly create</response>
+            <response code="400">Invalid arguments</response>
+        </member>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.SpecialtiesController.DeleteAsync(System.String)">
+            <summary>
+            Remove an existing new medical specialty
+            </summary>
+            <param name="description">Medical specialty description</param>
+            <response code="200">Medical specialt sucessufly removed</response>
+        </member>
+    </members>
+</doc>
