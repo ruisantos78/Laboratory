@@ -3,13 +3,23 @@ namespace RuiSantos.ZocDoc.Core.Models;
 
 public class Doctor: Person
 {
-    public string? Id { get; set; }
+    public Guid Id { get; set; }
     public string License { get; set; }
-	public HashSet<MedicalSpeciality> Specialities { get; set; }
+	public List<String> Specialties { get; set; }
 
-	public Doctor()
+	public Doctor(): base()
 	{
+		this.Id = Guid.NewGuid();
 		this.License = string.Empty;
-        this.Specialities = new HashSet<MedicalSpeciality>();
+        this.Specialties = new List<String>();
 	}
+
+    public Doctor(Guid id, string license, List<string> specialities,
+        string email, string firstName, string lastName, List<string> contactNumbers)
+        : base(email, firstName, lastName, contactNumbers)
+    {
+        Id = id;
+        License = license;
+        Specialties = specialities;
+    }
 }

@@ -1,35 +1,62 @@
 ﻿using MongoDB.Driver;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Data.Mongodb.Core;
+using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Entities;
 
-public class PatientEntity: Patient, IEntity<Patient>
+public class PatientEntity: IEntity<Patient>
 {
     public const string Discriminator = "Patients";
 
     public PatientEntity(): base() { }
 
-    public Task StoreAsync(IMongoDatabase context, Patient model) => this.StoreAsync(Discriminator, model, context, GetFilter(model.Id));
-
-    public Task RemoveAsync(IMongoDatabase context, string id)
+    public async Task StoreAsync(IMongoDatabase context, Patient model)
     {
-        return context.GetCollection<PatientEntity>(Discriminator)
-            .FindOneAndDeleteAsync(GetFilter(id));
+        var collection = context.GetCollection<Patient>(Discriminator);
+        
+        await collection.FindOneAndDeleteAsync(entity => entity.Id == model.Id);        
+        await collection.InsertOneAsync(model);
     }
 
-    public IQueryable<Patient> Query(IMongoDatabase context)
+    public Task RemoveAsync(IMongoDatabase context, Guid id)
     {
-        return context.GetCollection<PatientEntity>(Discriminator)
-            .AsQueryable();
+        return context.GetCollection<Patient>(Discriminator)
+            .FindOneAndDeleteAsync(entity => entity.Id == id);
     }
 
-    public Patient Find(IMongoDatabase context, string id)
+    public Task<bool> AnyAsync(IMongoDatabase context, Expression<Func<Patient, bool>> expression)
     {
-        return context.GetCollection<PatientEntity>(Discriminator)
-            .Find(GetFilter(id))
-            .FirstOrDefault();
+        return context.GetCollection<Patient>(Discriminator)
+            .Find(expression)
+            .AnyAsync();
     }
 
-    private static FilterDefinition<PatientEntity> GetFilter(string? id) => Builders<PatientEntity>.Filter.Eq(e => e.SocialSecurityNumber, id);
+    public Task<List<Patient>> ListAsync(IMongoDatabase context)
+    {
+        return context.GetCollection<Patient>(Discriminator)
+            .AsQueryable()
+            .ToListAsync();
+    }
+
+    public Task<List<Patient>> QueryAsync(IMongoDatabase context, Expression<Func<Patient, bool>> expression)
+    {
+        return context.GetCollection<Patient>(Discriminator)
+            .Find(expression)
+            .ToListAsync();
+    }
+
+    public Task<Patient> FindAsync(IMongoDatabase context, Guid id)
+    {
+        return context.GetCollection<Patient>(Discriminator)
+            .Find(entity => entity.Id == id)
+            .FirstOrDefaultAsync();
+    }
+
+    public Task<Patient> FindAsync(IMongoDatabase context, Expression<Func<Patient, bool>> expression)
+    {
+        return context.GetCollection<Patient>(Discriminator)
+            .Find(expression)
+            .FirstOrDefaultAsync();
+    }
 }

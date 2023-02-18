@@ -1,11 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "sx0otm2OcM/hfCk07loGdAeIKdjVVo3mtGMbbivi2lqAxXY3N5brcFLSlCo/XpuAAm4UQhB4KlN+rRG/+pJQOg==",
+  "dgSpecHash": "XyJGtxHGL18OzfYcv9eX5Kp9/skfltKWyyxSCzD09CzKB7QTzufYrMAag5Yg6tuR1AbtpB2XYhAF5X9WZD5gGg==",
   "success": true,
-  "projectFilePath": "/Users/ruisantos/Projects/RuiSantos.ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj",
+  "projectFilePath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
   "expectedPackageFiles": [
-    "/Users/ruisantos/.nuget/packages/fluentvalidation/11.5.0/fluentvalidation.11.5.0.nupkg.sha512",
-    "/Users/ruisantos/.nuget/packages/microsoft.extensions.logging.abstractions/7.0.0/microsoft.extensions.logging.abstractions.7.0.0.nupkg.sha512"
+    "C:\\Users\\Rui Santos\\.nuget\\packages\\fluentvalidation\\11.5.0\\fluentvalidation.11.5.0.nupkg.sha512",
+    "C:\\Users\\Rui Santos\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\7.0.0\\microsoft.extensions.caching.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Rui Santos\\.nuget\\packages\\microsoft.extensions.logging.abstractions\\7.0.0\\microsoft.extensions.logging.abstractions.7.0.0.nupkg.sha512",
+    "C:\\Users\\Rui Santos\\.nuget\\packages\\microsoft.extensions.primitives\\7.0.0\\microsoft.extensions.primitives.7.0.0.nupkg.sha512"
   ],
   "logs": []
 }

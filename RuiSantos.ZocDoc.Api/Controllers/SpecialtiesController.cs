@@ -2,18 +2,20 @@
 using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers;
+using RuiSantos.ZocDoc.Core.Models;
 
 namespace RuiSantos.ZocDoc.Api.Controllers
 {
     [Route("[controller]")]
     [Produces("application/json")]
+    [ApiController]
     public class SpecialtiesController : Controller
     {
-        private readonly MedicalSpceialtiesManagement management;
+        private readonly MedicalSpecialtiesManagement management;
 
-        public SpecialtiesController(IDataContext context, ILogger<SpecialtiesController> logger)
+        public SpecialtiesController(MedicalSpecialtiesManagement management)
         {
-            this.management = new MedicalSpceialtiesManagement(context, logger);
+            this.management = management;
         }
 
         /// <summary>
@@ -23,30 +25,30 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         /// <response code="400">No medical specialties founded</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public ActionResult<string[]> Get()
+        [ProducesResponseType(StatusCodes.Status404NotFound)]        
+        public async Task<ActionResult<string[]>> GetAsync()
         {
-            var result = management.GetMedicalSpecialities().Select(s => s.Description);
-            if (result?.Any() == true)
-                return Ok(result);
+            var result = await management.GetMedicalSpecialitiesAsync();
+            if (result.Any())
+                return Ok(result.Select(s => s.Description).ToArray());
 
             return NotFound();
         }
 
         /// <summary>
-        /// Create a new medical specialty
+        /// Create one or more medical specialties
         /// </summary>
-        /// <param name="description">Description for medical specialty</param>
-        /// <response code="200">Medical specialt sucessufly create</response>
+        /// <param name="descriptions">Array of medical specialties</param>
+        /// <response code="200">Medical specialty sucessufly create</response>
         /// <response code="400">Invalid arguments</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PostAsync([FromBody] string description)
+        public async Task<IActionResult> PostAsync(string[] descriptions)
         {
             try
             {
-                await management.CreateMedicalSpecialtiesAsync(description);
+                await management.CreateMedicalSpecialtiesAsync(descriptions);
                 return Ok();
             }
             catch (Exception ex)

@@ -2,11 +2,12 @@
 
 public class MedicalSpeciality
 {
-    public string? Id { get; set; }
+    public Guid Id { get; set; }
     public string Description { get; set; }
 
 	public MedicalSpeciality()
 	{
+		this.Id = Guid.NewGuid();
 		this.Description = String.Empty;
 	}
 }

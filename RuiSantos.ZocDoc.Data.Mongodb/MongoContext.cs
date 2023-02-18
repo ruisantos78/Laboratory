@@ -1,39 +1,20 @@
 ﻿using MongoDB.Driver;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Data.Mongodb.Core;
-using RuiSantos.ZocDoc.Data.Mongodb.Mappings;
+using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb;
 
 public class MongoContext: IDataContext
 {
-    private readonly MongoClient client;
     private readonly IMongoDatabase database;
 
     public MongoContext(MongoSettings settings)
     {
-        this.client = new MongoClient(settings.ToMongoClientSettings());
+        var client = new MongoClient(settings.ToMongoClientSettings());
         this.database = client.GetDatabase(settings.Schema);
 
-        this.RegisterClassMaps();
-    }
-
-    private void RegisterClassMaps()
-    {
-        var mappings = this.GetType().Assembly.GetTypes()
-            .Where(t => !t.IsInterface && t.IsAssignableFrom(typeof(IRegisterClassMap)));
-
-        foreach (var mapping in mappings)
-        {
-            if (Activator.CreateInstance(mapping) is IRegisterClassMap instance)
-                instance.Register();
-        }
-    }
-
-    public async Task RemoveAsync<TModel>(string id)
-    {
-        if (Mediator.GetEntity<TModel>() is IEntity<TModel> entity)
-            await entity.RemoveAsync(database, id);
+        Mediator.RegisterClassMaps();
     }
 
     public async Task StoreAsync<TModel>(TModel model)
@@ -42,18 +23,48 @@ public class MongoContext: IDataContext
             await entity.StoreAsync(database, model);
     }
 
-    public IQueryable<TModel> Query<TModel>()
+    public async Task RemoveAsync<TModel>(Guid id)
     {
         if (Mediator.GetEntity<TModel>() is IEntity<TModel> entity)
-            return entity.Query(database);
-
-        return Array.Empty<TModel>().AsQueryable();
+            await entity.RemoveAsync(database, id);
     }
 
-    public TModel? Find<TModel>(string id)
+    public async Task<bool> ExistsAsync<TModel>(Expression<Func<TModel, bool>> expression)
     {
         if (Mediator.GetEntity<TModel>() is IEntity<TModel> entity)
-            return entity.Find(database, id);
+            return await entity.AnyAsync(database, expression);
+
+        return false;
+    }
+
+    public async Task<List<TModel>> ListAsync<TModel>()
+    {
+        if (Mediator.GetEntity<TModel>() is IEntity<TModel> entity)
+            return await entity.ListAsync(database);
+
+        return new List<TModel>();
+    }
+
+    public async Task<List<TModel>> QueryAsync<TModel>(Expression<Func<TModel, bool>> expression)
+    {
+        if (Mediator.GetEntity<TModel>() is IEntity<TModel> entity)
+            return await entity.QueryAsync(database, expression);
+
+        return new List<TModel>();
+    }
+
+    public async Task<TModel?> FindAsync<TModel>(Guid id)
+    {
+        if (Mediator.GetEntity<TModel>() is IEntity<TModel> entity)
+            return await entity.FindAsync(database, id);
+
+        return default;
+    }
+
+    public async Task<TModel?> FindAsync<TModel>(Expression<Func<TModel, bool>> expression)
+    {
+        if (Mediator.GetEntity<TModel>() is IEntity<TModel> entity)
+            return await entity.FindAsync(database, expression);
 
         return default;
     }

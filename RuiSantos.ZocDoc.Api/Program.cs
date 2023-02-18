@@ -1,13 +1,18 @@
 ﻿using Microsoft.OpenApi.Models;
-using System.Reflection;
+using RuiSantos.ZocDoc.Core.Managers;
 using RuiSantos.ZocDoc.Data.Mongodb;
+using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddLogging(config => config.AddConsole());
 builder.Services.AddDataContext(builder.Configuration.GetSection("Database").Get<MongoSettings>());
+builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
+
+builder.Services.AddTransient<MedicalSpecialtiesManagement>();
+builder.Services.AddTransient<DoctorManagement>();
 
 builder.Services.AddSwaggerGen(options =>
 {

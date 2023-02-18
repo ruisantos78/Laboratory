@@ -4,19 +4,43 @@
         <name>RuiSantos.ZocDoc.Api</name>
     </assembly>
     <members>
-        <member name="M:RuiSantos.ZocDoc.Api.Controllers.SpecialtiesController.Get">
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.GetAsync">
+            <summary>
+            List all medicals avaliable
+            </summary>
+            <response code="200">Array of medicals</response>
+            <response code="400">No medicals founded</response>
+        </member>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.PostAsync(RuiSantos.ZocDoc.Api.Contracts.DoctorsPostRequest)">
+            <summary>
+            Create a new Doctor
+            </summary>
+            <param name="request"></param>
+            <response code="200">Doctor sucessufly create</response>
+            <response code="400">Invalid arguments</response>
+        </member>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.PutAvailabilityAsync(System.Guid,System.DayOfWeek,System.String[])">
+            <summary>
+            Set the avaliability of the doctor for the week days
+            </summary>
+            <param name="uid">Doctor Identifier</param>
+            <param name="dayOfWeek">Day of the week: 0 - Sunday, 7 - Saturday</param>
+            <param name="hours">Doctor's office hours</param>
+            <returns></returns>
+        </member>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.SpecialtiesController.GetAsync">
             <summary>
             List all medical specialties avaliable
             </summary>
             <response code="200">Array of medical specialties descriptions</response>
             <response code="400">No medical specialties founded</response>
         </member>
-        <member name="M:RuiSantos.ZocDoc.Api.Controllers.SpecialtiesController.PostAsync(System.String)">
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.SpecialtiesController.PostAsync(System.String[])">
             <summary>
-            Create a new medical specialty
+            Create one or more medical specialties
             </summary>
-            <param name="description">Description for medical specialty</param>
-            <response code="200">Medical specialt sucessufly create</response>
+            <param name="descriptions">Array of medical specialties</param>
+            <response code="200">Medical specialty sucessufly create</response>
             <response code="400">Invalid arguments</response>
         </member>
         <member name="M:RuiSantos.ZocDoc.Api.Controllers.SpecialtiesController.DeleteAsync(System.String)">

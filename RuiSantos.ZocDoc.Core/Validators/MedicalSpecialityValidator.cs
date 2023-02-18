@@ -5,7 +5,7 @@ namespace RuiSantos.ZocDoc.Core.Validators;
 
 public class MedicalSpecialityValidator : AbstractValidator<MedicalSpeciality>
 {
-    public readonly static MedicalSpecialityValidator Instance = new MedicalSpecialityValidator();
+    public readonly static MedicalSpecialityValidator Instance = new();
 
     public MedicalSpecialityValidator()
     {
