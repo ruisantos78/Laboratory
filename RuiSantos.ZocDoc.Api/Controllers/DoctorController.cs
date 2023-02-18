@@ -1,9 +1,7 @@
-﻿using Amazon.Runtime.Internal;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RuiSantos.ZocDoc.Api.Contracts;
 using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core.Managers;
-using RuiSantos.ZocDoc.Core.Models;
 
 namespace RuiSantos.ZocDoc.Api.Controllers
 {
@@ -20,20 +18,33 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         }
 
         /// <summary>
-        /// List all medicals avaliable
+        /// Get the doctor by the license number
         /// </summary>
-        /// <response code="200">Array of medicals</response>
-        /// <response code="400">No medicals founded</response>
-        [HttpGet]
+        /// <param name="license">Medical license number</param>
+        /// <response code="200">Doctor information</response>
+        /// <response code="400">No records found</response>
+        [HttpGet("{license}")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]        
+        public async Task<ActionResult<DoctorContract>> GetAsync(string license)
+        {
+            var result = await management.GetDoctorByLicenseAsync(license);
+            if (result is null)
+                return NotFound();
+                
+            return Ok(new DoctorContract(result));
+        }
+
+        [HttpGet()]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<Doctor>>> GetAsync()
+        public async Task<ActionResult<DoctorAvailabilityContract[]>> GetAsync([FromQuery] DateTime date, [FromQuery] string specialty)
         {
-            var result = await management.GetDoctorsAsync();
-            if (result.Any())
-                return Ok(result);
+            var result = await management.GetDoctorBySpecialityAsync(specialty, date);
+            if (!result.Any())
+                return NotFound();
 
-            return NotFound();
+            return Ok(result.Select(s => new DoctorAvailabilityContract(s, date)).ToArray());
         }
 
         /// <summary>
@@ -45,11 +56,11 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PostAsync(DoctorsPostRequest request)
+        public async Task<IActionResult> PostAsync(DoctorContract request)
         {
             try
             {
-                await management.CreateDoctorAsync(request.License, request.Specialities, request.Email, 
+                await management.CreateDoctorAsync(request.License, request.Specialties, request.Email, 
                     request.FirstName, request.LastName, request.ContactNumbers);
 
                 return Ok();
@@ -61,20 +72,20 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         }
 
         /// <summary>
-        /// Set the avaliability of the doctor for the week days
+        /// Set the doctor's office hours
         /// </summary>
-        /// <param name="uid">Doctor Identifier</param>
+        /// <param name="license">Doctor license</param>
         /// <param name="dayOfWeek">Day of the week: 0 - Sunday, 7 - Saturday</param>
-        /// <param name="hours">Doctor's office hours</param>
+        /// <param name="hours">Array with office hours in HH:mm format</param>
         /// <returns></returns>
-        [HttpPut("availability/{uid}")]
+        [HttpPut("hours/{license}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PutAvailabilityAsync([FromRoute] Guid uid, [FromQuery] DayOfWeek dayOfWeek, string[] hours)
+        public async Task<IActionResult> PutAvailabilityAsync([FromRoute] string license, [FromQuery] DayOfWeek dayOfWeek, string[] hours)
         {
             try
             {
-                await management.SetOfficeHoursAsync(uid, dayOfWeek, hours);
+                await management.SetOfficeHoursAsync(license, dayOfWeek, hours);
 
                 return Ok();
             }

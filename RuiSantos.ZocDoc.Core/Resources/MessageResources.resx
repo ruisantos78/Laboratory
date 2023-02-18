@@ -132,7 +132,10 @@
   <data name="OfficeHoursStoreFailed" xml:space="preserve">
     <value>Failed to store the office hours.</value>
   </data>
-  <data name="DoctorIdNotFound" xml:space="preserve">
-    <value>Cannot found a doctor with current id.</value>
+  <data name="DoctorLicenseNotFound" xml:space="preserve">
+    <value>Cannot found a doctor with the given license.</value>
+  </data>
+  <data name="PatientStoreFail" xml:space="preserve">
+    <value>Failed to store a patient.</value>
   </data>
 </root>

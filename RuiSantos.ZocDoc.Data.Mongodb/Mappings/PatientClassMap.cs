@@ -18,6 +18,7 @@ internal class PatientClassMap: IRegisterClassMap
 
             map.MapIdMember(e => e.Id).SetIdGenerator(CombGuidGenerator.Instance);
             map.MapMember(e => e.SocialSecurityNumber);
+            map.MapMember(e => e.Appointments);
         });
     }
 }

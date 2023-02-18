@@ -61,11 +61,11 @@ namespace RuiSantos.ZocDoc.Core.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot found a doctor with current id..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot found a doctor with the given license..
         /// </summary>
-        internal static string DoctorIdNotFound {
+        internal static string DoctorLicenseNotFound {
             get {
-                return ResourceManager.GetString("DoctorIdNotFound", resourceCulture);
+                return ResourceManager.GetString("DoctorLicenseNotFound", resourceCulture);
             }
         }
         
@@ -111,6 +111,15 @@ namespace RuiSantos.ZocDoc.Core.Resources {
         internal static string OfficeHoursStoreFailed {
             get {
                 return ResourceManager.GetString("OfficeHoursStoreFailed", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to store a patient..
+        /// </summary>
+        internal static string PatientStoreFail {
+            get {
+                return ResourceManager.GetString("PatientStoreFail", resourceCulture);
             }
         }
     }

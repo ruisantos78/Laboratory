@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "zYOTfmxpJe9aJncjfVCRW2IbjpjftK3UH2DFhTZY4wpgUI1NHof5xvSsRmz3mNQBL4Ajhd56OOMU7BUcHTZdww==",
+  "dgSpecHash": "qVujkcYW6OQHQaZ6ZzT7+8rCbTUX/1muYLUK8AZMZXiVdGT2ePXLdna8MMGbDdZxrUv1pj04seMRC8+u33QyyQ==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj",
+  "projectFilePath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Rui Santos\\.nuget\\packages\\awssdk.core\\3.7.100.14\\awssdk.core.3.7.100.14.nupkg.sha512",
     "C:\\Users\\Rui Santos\\.nuget\\packages\\awssdk.securitytoken\\3.7.100.14\\awssdk.securitytoken.3.7.100.14.nupkg.sha512",

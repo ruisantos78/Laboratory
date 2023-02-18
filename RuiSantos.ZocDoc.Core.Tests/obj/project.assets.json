@@ -5656,11 +5656,11 @@
   "project": {
     "version": "1.0.0",
     "restore": {
-      "projectUniqueName": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Core.Tests\\RuiSantos.ZocDoc.Core.Tests.csproj",
+      "projectUniqueName": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core.Tests\\RuiSantos.ZocDoc.Core.Tests.csproj",
       "projectName": "RuiSantos.ZocDoc.Core.Tests",
-      "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Core.Tests\\RuiSantos.ZocDoc.Core.Tests.csproj",
+      "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core.Tests\\RuiSantos.ZocDoc.Core.Tests.csproj",
       "packagesPath": "C:\\Users\\Rui Santos\\.nuget\\packages\\",
-      "outputPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Core.Tests\\obj\\",
+      "outputPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core.Tests\\obj\\",
       "projectStyle": "PackageReference",
       "fallbackFolders": [
         "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

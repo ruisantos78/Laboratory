@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {}
+    "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {
+    "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
+        "projectUniqueName": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
         "projectName": "RuiSantos.ZocDoc.Core",
-        "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
+        "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
         "packagesPath": "C:\\Users\\Rui Santos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc\\RuiSantos.ZocDoc.Core\\obj\\",
+        "outputPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"

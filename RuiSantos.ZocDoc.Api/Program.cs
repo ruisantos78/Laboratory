@@ -13,6 +13,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddTransient<MedicalSpecialtiesManagement>();
 builder.Services.AddTransient<DoctorManagement>();
+builder.Services.AddTransient<PatientManagement>();
 
 builder.Services.AddSwaggerGen(options =>
 {

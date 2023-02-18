@@ -1,4 +1,6 @@
-﻿namespace RuiSantos.ZocDoc.Data.Mongodb.Core;
+﻿using MongoDB.Bson.Serialization;
+
+namespace RuiSantos.ZocDoc.Data.Mongodb.Core;
 
 internal static class Mediator
 {
@@ -19,6 +21,9 @@ internal static class Mediator
 
     public static void RegisterClassMaps()
     {
+        BsonSerializer.RegisterSerializer(typeof(DateOnly), DateOnlySerializer.Instance);
+        BsonSerializer.RegisterSerializer(typeof(TimeOnly), TimeOnlySerializer.Instance);
+
         var mappings = typeof(IRegisterClassMap).Assembly.GetTypes()
             .Where(t => !t.IsInterface && t.IsAssignableFrom(typeof(IRegisterClassMap)));
 

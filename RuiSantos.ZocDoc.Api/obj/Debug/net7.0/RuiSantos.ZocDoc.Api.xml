@@ -4,14 +4,105 @@
         <name>RuiSantos.ZocDoc.Api</name>
     </assembly>
     <members>
-        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.GetAsync">
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorAvailabilityContract.License">
             <summary>
-            List all medicals avaliable
+            Doctor license number
             </summary>
-            <response code="200">Array of medicals</response>
-            <response code="400">No medicals founded</response>
         </member>
-        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.PostAsync(RuiSantos.ZocDoc.Api.Contracts.DoctorsPostRequest)">
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorAvailabilityContract.Specialties">
+            <summary>
+            Array of medical spcialties
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorAvailabilityContract.Email">
+            <summary>
+            E-mail
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorAvailabilityContract.FirstName">
+            <summary>
+            First name
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorAvailabilityContract.LastName">
+            <summary>
+            Last name
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorAvailabilityContract.ContactNumbers">
+            <summary>
+            Array of contact numbers
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorAvailabilityContract.Availability">
+            <summary>
+            Availability
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorContract.License">
+            <summary>
+            Doctor license number
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorContract.Specialties">
+            <summary>
+            Array of medical spcialties
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorContract.Email">
+            <summary>
+            E-mail
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorContract.FirstName">
+            <summary>
+            First name
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorContract.LastName">
+            <summary>
+            Last name
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.DoctorContract.ContactNumbers">
+            <summary>
+            Array of contact numbers
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.PatientContract.SocialSecurityNumber">
+            <summary>
+            Social Securiy Number
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.PatientContract.Email">
+            <summary>
+            E-mail
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.PatientContract.FirstName">
+            <summary>
+            First name
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.PatientContract.LastName">
+            <summary>
+            Last name
+            </summary>
+        </member>
+        <member name="P:RuiSantos.ZocDoc.Api.Contracts.PatientContract.ContactNumbers">
+            <summary>
+            Array of contact numbers
+            </summary>
+        </member>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.GetAsync(System.String)">
+            <summary>
+            Get the doctor by the license number
+            </summary>
+            <param name="license">Medical license number</param>
+            <response code="200">Doctor information</response>
+            <response code="400">No records found</response>
+        </member>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.PostAsync(RuiSantos.ZocDoc.Api.Contracts.DoctorContract)">
             <summary>
             Create a new Doctor
             </summary>
@@ -19,14 +110,30 @@
             <response code="200">Doctor sucessufly create</response>
             <response code="400">Invalid arguments</response>
         </member>
-        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.PutAvailabilityAsync(System.Guid,System.DayOfWeek,System.String[])">
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.PutAvailabilityAsync(System.String,System.DayOfWeek,System.String[])">
             <summary>
-            Set the avaliability of the doctor for the week days
+            Set the doctor's office hours
             </summary>
-            <param name="uid">Doctor Identifier</param>
+            <param name="license">Doctor license</param>
             <param name="dayOfWeek">Day of the week: 0 - Sunday, 7 - Saturday</param>
-            <param name="hours">Doctor's office hours</param>
+            <param name="hours">Array with office hours in HH:mm format</param>
             <returns></returns>
+        </member>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.PatientController.GetAsync(System.String)">
+            <summary>
+            Get the doctor by the license number
+            </summary>
+            <param name="socialNumber">Security Social Number</param>
+            <response code="200">Doctor information</response>
+            <response code="400">No records found</response>
+        </member>
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.PatientController.PostAsync(RuiSantos.ZocDoc.Api.Contracts.PatientContract)">
+            <summary>
+            Create a new Doctor
+            </summary>
+            <param name="request"></param>
+            <response code="200">Doctor sucessufly create</response>
+            <response code="400">Invalid arguments</response>
         </member>
         <member name="M:RuiSantos.ZocDoc.Api.Controllers.SpecialtiesController.GetAsync">
             <summary>

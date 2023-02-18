@@ -1,8 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RuiSantos.ZocDoc.Api.Core;
-using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers;
-using RuiSantos.ZocDoc.Core.Models;
 
 namespace RuiSantos.ZocDoc.Api.Controllers
 {

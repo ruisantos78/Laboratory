@@ -37,44 +37,65 @@ public class DoctorManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(MedicalSpecialtiesManagement), nameof(CreateDoctorAsync), ex);
+            logger?.LogException(nameof(DoctorManagement), nameof(CreateDoctorAsync), ex);
             throw new ManagementFailException(MessageResources.DoctorStoreFail);
         }
     }
 
-    public async Task<List<Doctor>> GetDoctorsAsync()
+    public async Task<Doctor?> GetDoctorByLicenseAsync(string license)
     {
         try
         {
-            return await context.ListAsync<Doctor>();
+            return await context.FindAsync<Doctor>(i => i.License == license);
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(MedicalSpecialtiesManagement), nameof(GetDoctorsAsync), ex);
+            logger?.LogException(nameof(DoctorManagement), nameof(GetDoctorByLicenseAsync), ex);
             throw new ManagementFailException(MessageResources.DoctorsListFail);
         }
     }
 
-    public async Task SetOfficeHoursAsync(Guid doctorId, DayOfWeek dayOfWeek, string[] hours)
+    public async Task<List<Doctor>> GetDoctorBySpecialityAsync(string speciality, DateTime dateTime)
     {
         try
         {
-            var week = Enum.GetName(typeof(DayOfWeek), dayOfWeek) ?? nameof(DayOfWeek.Sunday);
-            var timeHours = hours.Select(TimeSpan.Parse).ToArray();
+            var date = DateOnly.FromDateTime(dateTime);
 
-            if (!await context.ExistsAsync<Doctor>(i => i.Id == doctorId))
-                throw new ValidationFailException(MessageResources.DoctorIdNotFound);
+            return await context.QueryAsync<Doctor>(dr => 
+                dr.Specialties.Any(s => s.Equals(speciality, StringComparison.OrdinalIgnoreCase))
+                && dr.Appointments.Count(ap => ap.Date == date) < dr.OfficeHours.Count(oh => oh.Week == date.DayOfWeek)
+            );
+        }
+        catch (Exception ex)
+        {
+            logger?.LogException(nameof(DoctorManagement), nameof(GetDoctorByLicenseAsync), ex);
+            throw new ManagementFailException(MessageResources.DoctorsListFail);
+        }
+    }
 
-            var schedule = await context.FindAsync<Schedule>(i => i.DoctorId == doctorId)
-                ?? new Schedule() { DoctorId = doctorId };
+    public async Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, string[] hours)
+    {
+        try
+        {
+            var timeHours = hours.Select(TimeSpan.Parse).ToList();
 
-            schedule.Appointments.RemoveAll(i => i.Date >= DateTime.Now && i.Date.DayOfWeek == dayOfWeek && !timeHours.Contains(i.Date.TimeOfDay));
-            schedule.OfficeHours[week] = timeHours;
+            var doctor = await context.FindAsync<Doctor>(i => i.License == license);
+            if (doctor is null)
+                throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
-            if (!IsValid(schedule, ScheduleValidator.Instance, out var validationFailException))
+            doctor.Appointments.RemoveAll(app => app.Week == dayOfWeek && !timeHours.Contains(app.Time));
+            doctor.OfficeHours.RemoveAll(hou => hou.Week == dayOfWeek);
+
+            doctor.OfficeHours.Add(new OfficeHour
+            {
+                Week = dayOfWeek,
+                Hours = timeHours
+            });
+
+            if (!IsValid(doctor, new DoctorValidator(GetMedicalSpecialties()), out var validationFailException))
                 throw validationFailException;
 
-            await context.StoreAsync(schedule);
+            await context.StoreAsync(doctor);
         }
         catch (ValidationFailException)
         {
@@ -82,7 +103,7 @@ public class DoctorManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(MedicalSpecialtiesManagement), nameof(SetOfficeHoursAsync), ex);
+            logger?.LogException(nameof(DoctorManagement), nameof(SetOfficeHoursAsync), ex);
             throw new ManagementFailException(MessageResources.OfficeHoursStoreFailed);
         }
     }
