@@ -1,73 +1,34 @@
-﻿# Visual Studio .NET 7 #
-#######################
-# User-specific files #
-#######################
-*.rsuser
+﻿# From .NET Core 3.0 you can use the command: `dotnet new gitignore` to generate a customizable .gitignore file
+
+*.swp
+*.*~
+project.lock.json
+.DS_Store
+*.pyc
+
+# Visual Studio Code
+.vscode
+
+# User-specific files
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
 
-# User-specific files (MonoDevelop/Xamarin Studio) #
-*.userprefs
-
-###############
-# Build results#
-###############
+# Build results
 [Dd]ebug/
+[Dd]ebugPublic/
 [Rr]elease/
+[Rr]eleases/
 x64/
+x86/
 build/
+bld/
 [Bb]in/
 [Oo]bj/
-[Nn]ode_modules/
-[Ll]og/
+msbuild.log
+msbuild.err
+msbuild.wrn
 
-###########
-# NuGet ###
-###########
-packages/
-
-# Microsoft Azure Service Fabric
-*.sfpkg
-*.sfproj
-
-# StyleCop
-StyleCopReport.xml
-
-# Files built by Visual Studio
-*_i.c
-*_p.c
-*_h.h
-*.ilk
-*.meta
-*.obj
-*.iobj
-*.pch
-*.pdb
-*.ipdb
-*.pgc
-*.pgd
-*.rsp
-*.sbr
-*.tlb
-*.tli
-*.tlh
-*.tmp
-*.tmp_proj
-*_wpftmp.csproj
-*.log
-*.vspscc
-*.vssscc
-.builds
-
-# Miscellaneous
-[Tt]est[Rr]esult*
-[Bb]enchmark[Rr]esult*
-*.psess
-*.vsp
-*.vspx
-*.trx
-*.md
-*.zone.identifier
-*.pfx
+# Visual Studio 2015
+.vs/
