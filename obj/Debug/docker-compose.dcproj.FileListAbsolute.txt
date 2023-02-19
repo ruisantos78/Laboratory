@@ -6,10 +6,10 @@ C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\RuiSantos.ZocDoc.Api.exe
 C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\RuiSantos.ZocDoc.Api.dll
 C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\Swashbuckle.AspNetCore.SwaggerGen.dll
 C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\RuiSantos.ZocDoc.Core.dll
+C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\Microsoft.OpenApi.dll
 C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\RuiSantos.ZocDoc.Data.Mongodb.dll
 C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\Swashbuckle.AspNetCore.Swagger.dll
 C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\Swashbuckle.AspNetCore.SwaggerUI.dll
-C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\Microsoft.OpenApi.dll
 C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\FluentValidation.dll
 C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\MongoDB.Driver.dll
 C:\Users\Rui Santos\source\repos\ZocDoc2\bin\Debug\MongoDB.Bson.dll

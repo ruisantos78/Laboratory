@@ -3,7 +3,7 @@ version: '3.4'
 services:
   ruisantos.zocdoc.api:
     image: ruisantoszocdocapi:dev
-    container_name: RuiSantos.ZocDoc.Api_1
+    container_name: RuiSantos.ZocDoc.Api
     build:
       target: base
       labels:

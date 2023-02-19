@@ -4,8 +4,12 @@ services:
     build:
       context: C:\Users\Rui Santos\source\repos\ZocDoc2
       dockerfile: RuiSantos.ZocDoc.Api/Dockerfile
+    depends_on:
+      ruisantos.zocdoc.db:
+        condition: service_started
     environment:
       ASPNETCORE_ENVIRONMENT: Development
+      ConnectionStrings__Default: mongodb://ruisantos.zocdoc.db:27017/zocdoc
     image: ruisantoszocdocapi
     networks:
       default: null
@@ -13,6 +17,15 @@ services:
     - mode: ingress
       target: 80
       protocol: tcp
+    - mode: ingress
+      target: 80
+      published: "8001"
+      protocol: tcp
+  ruisantos.zocdoc.db:
+    image: mongo:latest
+    networks:
+      default: null
+    restart: always
 networks:
   default:
     name: dockercompose5810683767313614356_default

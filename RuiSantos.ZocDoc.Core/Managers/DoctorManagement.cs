@@ -51,7 +51,8 @@ public class DoctorManagement : ManagementBase
             if (hours.Any())
                 doctor.OfficeHours.Add(new OfficeHour(dayOfWeek, hours));
 
-            await StoreAndCancelAppointmentsAsync(doctor, dayOfWeek, hours);
+            await CancelAppointmentsAsync(doctor, dayOfWeek, hours);
+            await context.StoreAsync(doctor);
         }
         catch (ValidationFailException)
         {
@@ -104,18 +105,21 @@ public class DoctorManagement : ManagementBase
             throw validationFailException;
     }
 
-    private async Task StoreAndCancelAppointmentsAsync(Doctor doctor, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
+    private async Task CancelAppointmentsAsync(Doctor doctor, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
     {
         var appointments = doctor.Appointments.FindAll(appointment => appointment.Week == dayOfWeek && !hours.Contains(appointment.Time));
+        if (appointments is null || !appointments.Any())
+            return;
 
         var patients = await context.QueryAsync<Patient>(patient => patient.Appointments.Any(item => appointments.Any(a => a.Id == item.Id)));
-        foreach (var patient in patients)
+        if (patients is not null && patients.Any())
         {
-            patient.Appointments.RemoveAll(item => appointments.Any(a => a.Id == item.Id));
-            await context.StoreAsync(patient);
+            patients.ForEach(async p => {
+                p.Appointments.RemoveAll(pa => appointments.Any(da => da.Id == pa.Id));
+                await context.StoreAsync(p);
+            });
         }
 
-        doctor.Appointments.RemoveAll(item => appointments.Any(a => a.Id == item.Id));
-        await context.StoreAsync(doctor);
+        doctor.Appointments.RemoveAll(item => appointments.Any(a => a.Id == item.Id));        
     }
 }

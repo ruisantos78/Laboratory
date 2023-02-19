@@ -9,6 +9,9 @@ services:
         com.microsoft.visual-studio.project-name: RuiSantos.ZocDoc.Api
       target: base
     container_name: RuiSantos.ZocDoc.Api
+    depends_on:
+      ruisantos.zocdoc.db:
+        condition: service_started
     entrypoint:
     - tail
     - -f
@@ -16,6 +19,7 @@ services:
     environment:
       ASPNETCORE_ENVIRONMENT: Development
       ASPNETCORE_LOGGING__CONSOLE__DISABLECOLORS: "true"
+      ConnectionStrings__Default: mongodb://ruisantos.zocdoc.db:27017/zocdoc
       DOTNET_USE_POLLING_FILE_WATCHER: "1"
       NUGET_FALLBACK_PACKAGES: /root/.nuget/fallbackpackages
     image: ruisantoszocdocapi:dev
@@ -31,6 +35,10 @@ services:
     ports:
     - mode: ingress
       target: 80
+      protocol: tcp
+    - mode: ingress
+      target: 80
+      published: "8001"
       protocol: tcp
     tty: true
     volumes:
@@ -73,6 +81,11 @@ services:
       read_only: true
       bind:
         create_host_path: true
+  ruisantos.zocdoc.db:
+    image: mongo:latest
+    networks:
+      default: null
+    restart: always
 networks:
   default:
     name: dockercompose5810683767313614356_default

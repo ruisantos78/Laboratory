@@ -3,6 +3,8 @@
 namespace RuiSantos.ZocDoc.Core.Tests.Factories;
 internal static class DoctorFactory
 {
+    public static Doctor Empty() => new() { Id = Guid.Empty };
+
     public static Doctor Create(
         string medicalLicense = "ABC123",
         string email = "mary@doctor.com",

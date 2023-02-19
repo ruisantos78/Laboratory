@@ -2,7 +2,7 @@ version: '3.4'
 
 services:
   ruisantos.zocdoc.api:
-    container_name: RuiSantos.ZocDoc.Api_1
+    container_name: RuiSantos.ZocDoc.Api
     build:
       labels:
         com.microsoft.created-by: "visual-studio"
