@@ -1,7 +1,10 @@
-﻿namespace RuiSantos.ZocDoc.Core.Managers
+﻿using FluentValidation;
+using FluentValidation.Results;
+
+namespace RuiSantos.ZocDoc.Core.Managers.Exceptions
 {
     [Serializable]
-    public class ValidationFailException : FluentValidation.ValidationException, IFailure
+    public class ValidationFailException : ValidationException, IFailure
     {
         public static readonly ValidationFailException Empty = new();
 
@@ -9,7 +12,7 @@
 
         public ValidationFailException(string message) : base(message) { }
 
-        public ValidationFailException(IEnumerable<FluentValidation.Results.ValidationFailure> erros) : base(erros) { }
+        public ValidationFailException(IEnumerable<ValidationFailure> erros) : base(erros) { }
 
         protected ValidationFailException(System.Runtime.Serialization.SerializationInfo serializationInfo, System.Runtime.Serialization.StreamingContext streamingContext) : base(serializationInfo, streamingContext) { }
     }

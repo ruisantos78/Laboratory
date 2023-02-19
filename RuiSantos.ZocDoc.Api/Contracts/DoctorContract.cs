@@ -3,41 +3,42 @@
 namespace RuiSantos.ZocDoc.Api.Contracts;
 
 /// <summary>
-/// Doctor's informations
+/// Contract for a doctor's information
 /// </summary>
 public class DoctorContract
 {
     /// <summary>
-    /// Doctor license number
+    /// The doctor's license number.
     /// </summary>
     public string License { get; set; }
 
     /// <summary>
-    /// E-mail
+    /// The doctor's email.
     /// </summary>
     public string Email { get; set; }
 
     /// <summary>
-    /// First name
+    /// The doctor's first name.
     /// </summary>
     public string FirstName { get; set; }
 
     /// <summary>
-    /// Last name
+    /// The doctor's last name.
     /// </summary>
     public string LastName { get; set; }
 
     /// <summary>
-    /// Array of contact numbers
+    /// An array of contact numbers for the doctor.
     /// </summary>
     public IEnumerable<string> ContactNumbers { get; set; }
 
     /// <summary>
-    /// Array of medical spcialties
+    /// An array of medical specialties that the doctor is trained in.
     /// </summary>
     public IEnumerable<string> Specialties { get; set; }
 
     public DoctorContract() : this(new Doctor()) { }
+
     public DoctorContract(Doctor model)
     {
         License = model.License;

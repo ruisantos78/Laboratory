@@ -2,7 +2,7 @@
 
 public class Doctor : Person
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; }
     public string License { get; set; }
     public List<string> Specialties { get; set; }
     public List<OfficeHour> OfficeHours { get; set; }

@@ -2,7 +2,7 @@
 
 public class MedicalSpeciality
 {
-    public Guid Id { get; set; }
+    public Guid Id { get; }
     public string Description { get; set; }
 
 	public MedicalSpeciality()

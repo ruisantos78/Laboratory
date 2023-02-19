@@ -1,4 +1,5 @@
 ﻿using FluentValidation;
+using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 

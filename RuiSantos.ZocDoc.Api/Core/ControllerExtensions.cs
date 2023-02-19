@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RuiSantos.ZocDoc.Core.Managers;
+using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 
 namespace RuiSantos.ZocDoc.Api.Core;
 

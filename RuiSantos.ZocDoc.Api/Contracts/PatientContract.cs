@@ -3,36 +3,37 @@
 namespace RuiSantos.ZocDoc.Api.Contracts;
 
 /// <summary>
-/// Patient's informations
+/// Contract for a patient's information
 /// </summary>
 public class PatientContract
 {
     /// <summary>
-    /// Social Securiy Number
+    /// The Social Security Number of the patient
     /// </summary>
     public string SocialSecurityNumber { get; set; }
 
     /// <summary>
-    /// E-mail
+    /// The email of the patient
     /// </summary>
     public string Email { get; set; }
 
     /// <summary>
-    /// First name
+    /// The first name of the patient
     /// </summary>
     public string FirstName { get; set; }
 
     /// <summary>
-    /// Last name
+    /// The last name of the patient
     /// </summary>
     public string LastName { get; set; }
 
     /// <summary>
-    /// Array of contact numbers
+    /// An array of contact numbers of the patient
     /// </summary>
     public IEnumerable<string> ContactNumbers { get; set; }
 
     public PatientContract() : this(new Patient()) { }
+
     public PatientContract(Patient model)
     {
         SocialSecurityNumber = model.SocialSecurityNumber;

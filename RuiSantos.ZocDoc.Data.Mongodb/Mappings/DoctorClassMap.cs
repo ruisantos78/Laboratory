@@ -15,7 +15,7 @@ internal sealed class DoctorClassMap : IRegisterClassMap
             map.AutoMap();
             map.SetDiscriminator(DoctorEntity.Discriminator);
 
-            map.MapIdMember(e => e.Id).SetIdGenerator(CombGuidGenerator.Instance);
+            map.MapIdProperty(e => e.Id).SetIdGenerator(CombGuidGenerator.Instance);
 
             map.MapMember(e => e.License);
             map.MapMember(e => e.Specialties);

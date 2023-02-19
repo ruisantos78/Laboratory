@@ -3,79 +3,82 @@ using RuiSantos.ZocDoc.Api.Contracts;
 using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core.Managers;
 
-namespace RuiSantos.ZocDoc.Api.Controllers
+namespace RuiSantos.ZocDoc.Api.Controllers;
+
+[Route("[controller]")]
+[Produces("application/json")]
+[ApiController]
+public class SchedulesController : Controller
 {
-    [Route("[controller]")]
-    [Produces("application/json")]
-    [ApiController]
-    public class SchedulesController : Controller
+    private readonly AppointmentManagement management;
+
+    public SchedulesController(AppointmentManagement management)
     {
-        private readonly AppointmentManagement management;
+        this.management = management;
+    }
 
-        public SchedulesController(AppointmentManagement management)
+    /// <summary>
+    /// Get doctor's schedules
+    /// </summary>
+    /// <param name="date">The expected date for the appointment</param>
+    /// <param name="specialty">The medical specialty</param>
+    /// <response code="200">The doctors' schedules</response>
+    /// <response code="404">No records were found</response>
+    [HttpGet]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<DoctorAvailabilityContract>>> GetAsync([FromQuery] DateTime date, [FromQuery] string specialty)
+    {
+        var result = new List<DoctorAvailabilityContract>();
+        await foreach (var (doctor, schedule) in management.GetAvailabilityAsync(specialty, date))
+            result.Add(new DoctorAvailabilityContract(doctor, schedule));
+
+        return result.Any() ? Ok(result) : NotFound();
+    }
+
+    /// <summary>
+    /// Sets a new appointment.
+    /// </summary>
+    /// <param name="request">The appointment request.</param>
+    /// <response code="200">The appointment was successfully created.</response>
+    /// <response code="400">The request parameters are invalid.</response>
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> PostAsync(AppointmentContract request)
+    {
+        try
         {
-            this.management = management;
+            await management.CreateAppointmentAsync(request.PatientSecuritySocialNumber, request.MedicalLicense, request.Date);
+            return Ok();
         }
-
-        /// <summary>
-        /// Get doctor's schedules
-        /// </summary>
-        /// <param name="date">Expected date for appointment</param>
-        /// <param name="specialty">Medical specialty</param>
-        /// <response code="200">Doctor's schedules</response>
-        /// <response code="404">No records found</response>
-        [HttpGet]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<DoctorScheduleContract>>> GetAsync([FromQuery] DateTime date, [FromQuery] string specialty)
+        catch (Exception ex)
         {
-            var result = new List<DoctorScheduleContract>();
-            await foreach (var (doctor, schedule) in management.GetAvailabilityAsync(specialty, date))
-                result.Add(new DoctorScheduleContract(doctor, schedule));
-
-            return result.Any() ? Ok(result) : NotFound();
+            return this.FromException(ex);
         }
+    }
 
-        /// <summary>
-        /// Set an appointment
-        /// </summary>
-        /// <param name="request">Appointment request</param>
-        /// <response code="200">Appointment sucessufly created</response>
-        /// <response code="400">Invalid arguments</response>
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PostAsync(AppointmentContract request)
+    /// <summary>
+    /// Delete an appointment
+    /// </summary>
+    /// <param name="request">Appointment request</param>
+    /// <response code="200">The appointment was successfully deleted.</response>
+    /// <response code="400">The request was invalid or incomplete.</response>
+    /// <response code="404">The appointment could not be found for deletion.</response>
+    [HttpDelete]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> DeleteAsync(AppointmentContract request)
+    {
+        try
         {
-            try
-            {
-                await management.CreateAppointmentAsync(request.PatientSecuritySocialNumber, request.MedicalLicense, request.Date);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return this.FromException(ex);
-            }
+            await management.DeleteAppointmentAsync(request.PatientSecuritySocialNumber, request.MedicalLicense, request.Date);
+            return Ok();
         }
-
-        /// <summary>
-        /// Delete an appointment
-        /// </summary>
-        /// <param name="request">Appointment request</param>
-        /// <response code="200">Appointment sucessufly deleted</response>
-        [HttpDelete]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        public async Task<IActionResult> DeleteAsync(AppointmentContract request)
+        catch (Exception ex)
         {
-            try
-            {
-                await management.DeleteAppointmentAsync(request.PatientSecuritySocialNumber, request.MedicalLicense, request.Date);
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return this.FromException(ex);
-            }
+            return this.FromException(ex);
         }
     }
 }

@@ -1,22 +1,22 @@
 ﻿namespace RuiSantos.ZocDoc.Api.Contracts;
 
 /// <summary>
-/// Appointment Request
+/// Contract for an appointment request for a patient to meet with a medical professional on a specific date.
 /// </summary>
 public class AppointmentContract
 {
     /// <summary>
-    /// Medical License 
+    /// The medical license number of the medical professional.
     /// </summary>
     public string MedicalLicense { get; set; }
 
     /// <summary>
-    /// Patient Security Social Number
+    /// The security social number of the patient.
     /// </summary>
     public string PatientSecuritySocialNumber { get; set; }
 
     /// <summary>
-    /// Appointment Date
+    /// The date and time of the appointment.
     /// </summary>
     public DateTime Date { get; set; }
 

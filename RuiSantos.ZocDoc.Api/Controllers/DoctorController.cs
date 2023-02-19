@@ -3,103 +3,102 @@ using RuiSantos.ZocDoc.Api.Contracts;
 using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core.Managers;
 
-namespace RuiSantos.ZocDoc.Api.Controllers
+namespace RuiSantos.ZocDoc.Api.Controllers;
+
+[Route("[controller]")]
+[Produces("application/json")]
+[ApiController]
+public class DoctorController : Controller
 {
-    [Route("[controller]")]
-    [Produces("application/json")]
-    [ApiController]
-    public class DoctorController : Controller
+    private readonly DoctorManagement management;
+
+    public DoctorController(DoctorManagement management)
     {
-        private readonly DoctorManagement management;
+        this.management = management;
+    }
 
-        public DoctorController(DoctorManagement management)
+    /// <summary>
+    /// Gets information about a doctor.
+    /// </summary>
+    /// <param name="license">The doctor's license number.</param>
+    /// <response code="200">Returns the doctor's information.</response>
+    /// <response code="404">If no records are found for the given license.</response>
+    [HttpGet("{license}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<DoctorContract>> GetAsync(string license)
+    {
+        var result = await management.GetDoctorByLicenseAsync(license);
+
+        return result is not null ? Ok(new DoctorContract(result)) : NotFound();
+    }
+
+    /// <summary>
+    /// Gets the appointments of a doctor.
+    /// </summary>
+    /// <param name="license">The doctor's medical license.</param>
+    /// <param name="dateTime">The date of the appointments (optional).</param>
+    /// <response code="200">Returns a list of the doctor's appointments.</response>
+    /// <response code="404">If no records are found for the given doctor and date.</response>
+    [HttpGet("{license}/Appointments/{dateTime?}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<ActionResult<IEnumerable<DoctorAppointmentsContract>>> GetAppointmentsAsync(string license, DateTime? dateTime)
+    {
+        var result = new List<DoctorAppointmentsContract>();
+        await foreach (var (patient, date) in management.GetAppointmentsAsync(license, dateTime))
+            result.Add(new DoctorAppointmentsContract(patient, date));
+
+        return result.Any() ? Ok(result) : NotFound();
+    }
+
+    /// <summary>
+    /// Creates a new doctor.
+    /// </summary>
+    /// <param name="request">The request object containing the doctor's details.</param>
+    /// <response code="200">Returns a success message if the doctor is successfully created.</response>
+    /// <response code="400">If the request object contains invalid arguments.</response>
+    [HttpPost]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> PostAsync(DoctorContract request)
+    {
+        try
         {
-            this.management = management;
+            await management.CreateDoctorAsync(request.License, request.Email, request.FirstName,
+                request.LastName, request.ContactNumbers, request.Specialties);
+
+            return Ok();
         }
-
-        /// <summary>
-        /// Get the doctor informations
-        /// </summary>
-        /// <param name="license">Doctor license number</param>
-        /// <response code="200">Doctor informations</response>
-        /// <response code="400">No records found</response>
-        [HttpGet("{license}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<DoctorContract>> GetAsync(string license)
+        catch (Exception ex)
         {
-            var result = await management.GetDoctorByLicenseAsync(license);
-
-            return result is not null ? Ok(new DoctorContract(result)) : NotFound();
+            return this.FromException(ex);
         }
+    }
 
-        /// <summary>
-        /// Get doctor's appointments
-        /// </summary>
-        /// <param name="license">Medical license</param>
-        /// <param name="dateTime">Date of appointments</param>
-        /// <response code="200">Doctors appointments</response>
-        /// <response code="400">No records found</response>
-        [HttpGet("{license}/Appointments/{dateTime?}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<DoctorAppointmentsContract>>> GetAppointmentsAsync(string license, DateTime? dateTime)
+    /// <summary>
+    /// Sets the office hours of a doctor.
+    /// </summary>
+    /// <param name="license">The doctor's license number.</param>
+    /// <param name="week">The day of the week to set the office hours for (0 = Sunday, 6 = Saturday).</param>
+    /// <param name="hours">An array of strings representing the office hours in HH:mm format.</param>
+    /// <response code="200">Returns a success message if the office hours are successfully set.</response>
+    /// <response code="400">If the request object contains invalid arguments.</response>
+    [HttpPut("{license}/OfficeHours/{week}")]
+    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> PutOfficeHoursAsync(string license, DayOfWeek week, string[] hours)
+    {
+        try
         {
-            var result = new List<DoctorAppointmentsContract>();
-            await foreach (var (patient, date) in management.GetAppointmentsAsync(license, dateTime))
-                result.Add(new DoctorAppointmentsContract(patient, date));
+            var timespans = hours.Select(TimeSpan.Parse);
+            await management.SetOfficeHoursAsync(license, week, timespans);
 
-            return result.Any() ? Ok(result) : NotFound();
+            return Ok();
         }
-
-        /// <summary>
-        /// Create a new Doctor
-        /// </summary>
-        /// <param name="request"></param>
-        /// <response code="200">Doctor sucessufly created</response>
-        /// <response code="400">Invalid arguments</response>
-        [HttpPost]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PostAsync(DoctorContract request)
+        catch (Exception ex)
         {
-            try
-            {
-                await management.CreateDoctorAsync(request.License, request.Email, request.FirstName,
-                    request.LastName, request.ContactNumbers, request.Specialties);
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return this.FromException(ex);
-            }
-        }
-
-        /// <summary>
-        /// Set the doctor's office hours
-        /// </summary>
-        /// <param name="license">Doctor license</param>
-        /// <param name="week">Day of the week: 0 - Sunday, 7 - Saturday</param>
-        /// <param name="hours">Array with office hours in HH:mm format</param>
-        /// <response code="200">Doctor sucessufly created</response>
-        /// <response code="400">Invalid arguments</response>
-        [HttpPut("{license}/OfficeHours/{week}")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PutOfficeHoursAsync(string license, DayOfWeek week, string[] hours)
-        {
-            try
-            {
-                var timespans = hours.Select(TimeSpan.Parse);
-                await management.SetOfficeHoursAsync(license, week, timespans);
-
-                return Ok();
-            }
-            catch (Exception ex)
-            {
-                return this.FromException(ex);
-            }
+            return this.FromException(ex);
         }
     }
 }

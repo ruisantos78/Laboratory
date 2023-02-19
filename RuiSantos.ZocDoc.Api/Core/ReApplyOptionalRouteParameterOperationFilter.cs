@@ -4,7 +4,7 @@ using System.Text.RegularExpressions;
 
 namespace RuiSantos.ZocDoc.Api.Core;
 
-public class ReApplyOptionalRouteParameterOperationFilter : IOperationFilter
+internal class ReApplyOptionalRouteParameterOperationFilter : IOperationFilter
 {
     const string captureName = "routeParameter";
 

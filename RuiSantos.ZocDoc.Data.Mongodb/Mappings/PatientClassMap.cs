@@ -15,7 +15,7 @@ internal sealed class PatientClassMap : IRegisterClassMap
             map.AutoMap();
             map.SetDiscriminator(PatientEntity.Discriminator);
 
-            map.MapIdMember(e => e.Id).SetIdGenerator(CombGuidGenerator.Instance);
+            map.MapIdProperty(e => e.Id).SetIdGenerator(CombGuidGenerator.Instance);
 
             map.MapMember(e => e.SocialSecurityNumber);
             map.MapMember(e => e.Appointments);

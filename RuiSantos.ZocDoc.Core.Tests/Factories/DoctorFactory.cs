@@ -3,7 +3,7 @@
 namespace RuiSantos.ZocDoc.Core.Tests.Factories;
 internal static class DoctorFactory
 {
-    public static Doctor Empty() => new() { Id = Guid.Empty };
+    public static Doctor Empty() => new();
 
     public static Doctor Create(
         string medicalLicense = "ABC123",
@@ -16,19 +16,31 @@ internal static class DoctorFactory
 
     public static Doctor SetSpecialties(this Doctor doctor, params string[] specialties)
     {
-        doctor.Specialties = (specialties ?? Array.Empty<string>()).ToList();
+        doctor.Specialties.Clear();
+
+        if (specialties.Any())
+            doctor.Specialties.AddRange(specialties);
+
         return doctor;
     }
 
     public static Doctor SetOfficeHours(this Doctor doctor, params OfficeHour[] officeHours)
     {
-        doctor.OfficeHours = officeHours?.ToList() ?? new List<OfficeHour>();
+        doctor.OfficeHours.Clear();
+        
+        if (officeHours.Any())
+            doctor.OfficeHours.AddRange(officeHours);
+        
         return doctor;
     }
 
     public static Doctor SetAppointments(this Doctor doctor, params Appointment[] appointments)
     {
-        doctor.Appointments = appointments?.ToList() ?? new List<Appointment>();
+        doctor.Appointments.Clear();
+
+        if (appointments.Any())
+            doctor.Appointments.AddRange(appointments);
+
         return doctor;
     }
 }

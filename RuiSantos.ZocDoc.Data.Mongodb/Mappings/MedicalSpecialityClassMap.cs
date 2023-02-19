@@ -15,7 +15,7 @@ internal sealed class MedicalSpecialityClassMap : IRegisterClassMap
             map.AutoMap();
             map.SetDiscriminator(MedicalSpecialityEntity.Discriminator);
 
-            map.MapIdMember(e => e.Id).SetIdGenerator(CombGuidGenerator.Instance);
+            map.MapIdProperty(e => e.Id).SetIdGenerator(CombGuidGenerator.Instance);
 
             map.MapMember(e => e.Description);
         });

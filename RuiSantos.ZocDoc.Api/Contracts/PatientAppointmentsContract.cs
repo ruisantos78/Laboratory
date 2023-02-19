@@ -3,17 +3,17 @@
 namespace RuiSantos.ZocDoc.Api.Contracts;
 
 /// <summary>
-/// Patient's appointments contract
+/// Contract for a patient's appointment with a doctor
 /// </summary>
 public class PatientAppointmentsContract
 {
     /// <summary>
-    /// Doctor's informations
+    /// The doctor's information
     /// </summary>
     public DoctorContract Doctor { get; set; }
 
     /// <summary>
-    /// Appointment's date
+    /// The date of the appointment
     /// </summary>
     public DateTime Date { get; set; }
 

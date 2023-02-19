@@ -3,29 +3,29 @@
 namespace RuiSantos.ZocDoc.Api.Contracts;
 
 /// <summary>
-/// Doctor's appointments contract
+/// Contract for a doctor's appointments with a patient
 /// </summary>
 public class DoctorAppointmentsContract
 {
     /// <summary>
-    /// Patient's information
+    /// The information about the patient
     /// </summary>
     public PatientContract Patient { get; set; }
 
     /// <summary>
-    /// Appointment date
+    /// The appointment date
     /// </summary>
     public DateTime Date { get; set; }
 
     public DoctorAppointmentsContract()
     {
-        this.Patient = new PatientContract();
-        this.Date = DateTime.MinValue;
+        Patient = new PatientContract();
+        Date = DateTime.MinValue;
     }
 
     public DoctorAppointmentsContract(Patient patient, DateTime date)
     {
-        this.Patient = new PatientContract(patient);
-        this.Date = date;
+        Patient = new PatientContract(patient);
+        Date = date;
     }
 }

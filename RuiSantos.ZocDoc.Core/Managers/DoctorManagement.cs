@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using RuiSantos.ZocDoc.Core.Data;
+using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Resources;
 using RuiSantos.ZocDoc.Core.Validators;

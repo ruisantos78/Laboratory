@@ -3,6 +3,7 @@ using Microsoft.Extensions.Logging;
 using Moq;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers;
+using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Tests.Factories;
 using System.Linq.Expressions;

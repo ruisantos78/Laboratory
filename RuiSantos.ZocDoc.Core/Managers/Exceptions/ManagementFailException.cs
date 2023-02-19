@@ -1,6 +1,6 @@
 ﻿using System.Runtime.Serialization;
 
-namespace RuiSantos.ZocDoc.Core.Managers;
+namespace RuiSantos.ZocDoc.Core.Managers.Exceptions;
 
 [Serializable]
 public class ManagementFailException : Exception, IFailure
