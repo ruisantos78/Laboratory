@@ -94,7 +94,6 @@ public class AppointmentManagement: ManagementBase
         var date = DateOnly.FromDateTime(dateTime);
 
         var doctors = await GetDoctorsBySpecialtyWithAvailabilityAsync(speciality, date);
-
         foreach (var doctor in doctors)
         {
             var officeHours = doctor.OfficeHours.Where(hour => hour.Week == date.DayOfWeek)
@@ -114,11 +113,11 @@ public class AppointmentManagement: ManagementBase
     {
         try
         {
-            return await context.QueryAsync<Doctor>(doctor =>
-                doctor.Specialties.Any(item => item.Equals(speciality, StringComparison.OrdinalIgnoreCase)) &&
-                !doctor.OfficeHours.All(officeHour => 
-                    officeHour.Week == date.DayOfWeek && 
-                    officeHour.Hours.Any(hour => doctor.Appointments.Any(app => app.Date == date && app.Time == hour))
+            return await context.QueryAsync<Doctor>(dr => 
+                dr.Specialties.Contains(speciality) && 
+                !dr.OfficeHours.All(oh => 
+                    oh.Week == date.DayOfWeek && 
+                    oh.Hours.Any(hour => dr.Appointments.Any(app => app.Date == date && app.Time == hour))
                 )
             );
         }

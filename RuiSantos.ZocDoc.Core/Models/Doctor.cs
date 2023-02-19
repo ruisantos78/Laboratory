@@ -4,7 +4,7 @@ public class Doctor: Person
 {
     public Guid Id { get; set; }
     public string License { get; set; }
-	public IEnumerable<string> Specialties { get; set; }
+	public List<string> Specialties { get; set; }
     public List<OfficeHour> OfficeHours { get; set; }   
     public List<Appointment> Appointments { get; set; }
 
@@ -12,7 +12,7 @@ public class Doctor: Person
 	{
 		Id = Guid.NewGuid();
 		License = string.Empty;
-        Specialties = Enumerable.Empty<string>();
+        Specialties = new List<string>();
         OfficeHours = new List<OfficeHour>();
         Appointments = new List<Appointment>();
     }
@@ -23,7 +23,7 @@ public class Doctor: Person
     {
         Id = Guid.NewGuid();
         License = license;
-        Specialties = specialities;
+        Specialties = specialities.ToList();
         OfficeHours = new List<OfficeHour>();
         Appointments = new List<Appointment>();
     }
