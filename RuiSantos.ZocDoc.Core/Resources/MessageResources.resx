@@ -144,4 +144,7 @@
   <data name="RecordAlreadyExists" xml:space="preserve">
     <value>There is already a record with the parameters provided.</value>
   </data>
+  <data name="MedicalSpecialitiesDescriptionNotFound" xml:space="preserve">
+    <value>Cannot find a medical specialty with this descritpion.</value>
+  </data>
 </root>

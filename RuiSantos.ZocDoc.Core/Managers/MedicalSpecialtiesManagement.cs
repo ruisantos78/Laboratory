@@ -34,8 +34,8 @@ public class MedicalSpecialtiesManagement : ManagementBase
             }
         }
         catch (ValidationFailException)
-        { 
-            throw; 
+        {
+            throw;
         }
         catch (Exception ex)
         {
@@ -49,9 +49,15 @@ public class MedicalSpecialtiesManagement : ManagementBase
         try
         {
             var query = await context.QueryAsync<MedicalSpeciality>(i => string.Equals(i.Description, description, StringComparison.OrdinalIgnoreCase));
-            
-            if (query.FirstOrDefault() is MedicalSpeciality model)
-                await context.RemoveAsync<MedicalSpeciality>(model.Id);
+
+            if (query.FirstOrDefault() is not MedicalSpeciality model)
+                throw new ValidationFailException(MessageResources.MedicalSpecialitiesDescriptionNotFound);
+
+            await context.RemoveAsync<MedicalSpeciality>(model.Id);
+        }
+        catch (ValidationFailException)
+        {
+            throw;
         }
         catch (Exception ex)
         {

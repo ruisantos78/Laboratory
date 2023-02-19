@@ -88,6 +88,15 @@ namespace RuiSantos.ZocDoc.Core.Resources {
         }
         
         /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot find a medical specialty with this descritpion..
+        /// </summary>
+        internal static string MedicalSpecialitiesDescriptionNotFound {
+            get {
+                return ResourceManager.GetString("MedicalSpecialitiesDescriptionNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to get the medical speciality..
         /// </summary>
         internal static string MedicalSpecialitiesGetFail {
