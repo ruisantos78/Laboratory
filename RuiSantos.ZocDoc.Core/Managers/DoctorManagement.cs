@@ -88,13 +88,12 @@ public class DoctorManagement : ManagementBase
 
         var appointments = doctor.Appointments.FindAll(a => a.Date == date);
 
-        var patients = await context.QueryAsync<Patient>(p => p.Appointments.Any(pa => appointments.Any(da => da.Id == pa.Id)));
+        var patients = await context.QueryAsync<Patient>(p => p.Appointments.Intersect(appointments).Any());
         foreach (var patient in patients)
         {
-            var dates = patient.Appointments.Where(pa => appointments.Any(da => da.Id == pa.Id))
-                .Select(pa => pa.GetDateTime());
-
-            foreach (var appointmentDate in dates) yield return (patient, appointmentDate);
+            var patientAppointments = patient.Appointments.Where(pa => appointments.Any(da => da.Id == pa.Id));
+            foreach (var pa in patientAppointments) 
+                yield return (patient, pa.GetDateTime());
         }
     }
 

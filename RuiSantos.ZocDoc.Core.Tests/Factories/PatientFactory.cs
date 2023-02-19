@@ -12,4 +12,10 @@ internal static class PatientFactory
         string[]? contactNumbers = null
     )
     => new(socialNumber, email, firstName, lastName, contactNumbers ?? Array.Empty<string>());
+
+    public static Patient SetAppointments(this Patient patient, params Appointment[] appointments)
+    {
+        patient.Appointments = appointments?.ToList() ?? new List<Appointment>();
+        return patient;
+    }
 }
