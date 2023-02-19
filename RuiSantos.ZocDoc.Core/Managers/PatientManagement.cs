@@ -17,7 +17,7 @@ public class PatientManagement: ManagementBase
         this.logger = logger;
     }
 
-    public async Task CreatePatientAsync(string socialNumber, string email, string firstName, string lastName, List<string> contactNumbers)
+    public async Task CreatePatientAsync(string socialNumber, string email, string firstName, string lastName, IEnumerable<string> contactNumbers)
     {
         try
         {
@@ -35,7 +35,7 @@ public class PatientManagement: ManagementBase
         catch (Exception ex)
         {
             logger?.LogException(nameof(PatientManagement), nameof(CreatePatientAsync), ex);
-            throw new ManagementFailException(MessageResources.PatientStoreFail);
+            throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }
 
@@ -48,7 +48,7 @@ public class PatientManagement: ManagementBase
         catch (Exception ex)
         {
             logger?.LogException(nameof(PatientManagement), nameof(GetPatientBySocialNumberAsync), ex);
-            throw new ManagementFailException(MessageResources.PatientStoreFail);
+            throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }
 }

@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "ApVmv/sXrzcznEr52CJfKOE+DAKKc4x1losJn8WdxlajMRnVZdT63+Uvrgevn2X25RvtIUSX1n8gY1vPXBRJAA==",
+  "dgSpecHash": "8BmSk7qR2Rrv7/WOOfif6IE/2Dv0yz//ginjJz3UfsixuO1TOFRHsiCOoWTIHvPRkYyjKlsOqY+Px2xgA4g/VA==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core.Tests\\RuiSantos.ZocDoc.Core.Tests.csproj",
+  "projectFilePath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core.Tests\\RuiSantos.ZocDoc.Core.Tests.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Rui Santos\\.nuget\\packages\\castle.core\\5.1.1\\castle.core.5.1.1.nupkg.sha512",
     "C:\\Users\\Rui Santos\\.nuget\\packages\\coverlet.collector\\3.2.0\\coverlet.collector.3.2.0.nupkg.sha512",

@@ -1,11 +1,18 @@
-﻿namespace RuiSantos.ZocDoc.Core.Managers;
+﻿using System.Runtime.Serialization;
 
+namespace RuiSantos.ZocDoc.Core.Managers;
+
+[Serializable]
 public class ManagementFailException : Exception, IFailure
 {
-    public static readonly ManagementFailException Empty = new ManagementFailException(string.Empty);
+    public static readonly ManagementFailException Empty = new();
+
+    protected ManagementFailException() { }
 
     public ManagementFailException(string message) : base(message) { }
 
-    public static Task FromException(string message) => Task.FromException(new ManagementFailException(message));
+    public ManagementFailException(string? message, Exception? innerException) : base(message, innerException) { }
+
+    protected ManagementFailException(SerializationInfo info, StreamingContext context) : base(info, context) { }
 }
 

@@ -1,19 +1,21 @@
 ﻿using MongoDB.Bson.Serialization;
-using MongoDB.Bson.Serialization.Serializers;
 using RuiSantos.ZocDoc.Core.Models;
-using RuiSantos.ZocDoc.Data.Mongodb.Core;
+using RuiSantos.ZocDoc.Data.Mongodb.Core.Interfaces;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Mappings;
 
-internal class AppointmentClassMap: IRegisterClassMap
+internal sealed class AppointmentClassMap: IRegisterClassMap
 {		
     public void Register()
     {
         BsonClassMap.RegisterClassMap<Appointment>(map =>
         {
             map.AutoMap();
+
             map.MapMember(e => e.Id);
+            map.MapMember(e => e.Week);
             map.MapMember(e => e.Date);
+            map.MapMember(e => e.Time);
         });
     }
 }

@@ -1,7 +1,7 @@
 ﻿using MongoDB.Bson.Serialization.Serializers;
 using MongoDB.Bson.Serialization;
 
-namespace RuiSantos.ZocDoc.Data.Mongodb.Core;
+namespace RuiSantos.ZocDoc.Data.Mongodb.Core.Serializers;
 
 internal sealed class TimeOnlySerializer : StructSerializerBase<TimeOnly>
 {

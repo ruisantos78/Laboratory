@@ -70,56 +70,56 @@ namespace RuiSantos.ZocDoc.Core.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to get the doctors..
-        /// </summary>
-        internal static string DoctorsListFail {
-            get {
-                return ResourceManager.GetString("DoctorsListFail", resourceCulture);
-            }
-        }
-        
-        /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to store a doctor..
         /// </summary>
-        internal static string DoctorStoreFail {
+        internal static string DoctorSetFail {
             get {
-                return ResourceManager.GetString("DoctorStoreFail", resourceCulture);
+                return ResourceManager.GetString("DoctorSetFail", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to get the medical specialities..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to get the doctor..
         /// </summary>
-        internal static string MedicalSpecialitiesListFail {
+        internal static string DoctorsGetFail {
             get {
-                return ResourceManager.GetString("MedicalSpecialitiesListFail", resourceCulture);
+                return ResourceManager.GetString("DoctorsGetFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to get the medical speciality..
+        /// </summary>
+        internal static string MedicalSpecialitiesGetFail {
+            get {
+                return ResourceManager.GetString("MedicalSpecialitiesGetFail", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to store a medical speciality..
         /// </summary>
-        internal static string MedicalSpecialitiesStoreFail {
+        internal static string MedicalSpecialitiesSetFail {
             get {
-                return ResourceManager.GetString("MedicalSpecialitiesStoreFail", resourceCulture);
+                return ResourceManager.GetString("MedicalSpecialitiesSetFail", resourceCulture);
             }
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to store the office hours..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to get the patient..
         /// </summary>
-        internal static string OfficeHoursStoreFailed {
+        internal static string PatientGetFail {
             get {
-                return ResourceManager.GetString("OfficeHoursStoreFailed", resourceCulture);
+                return ResourceManager.GetString("PatientGetFail", resourceCulture);
             }
         }
         
         /// <summary>
         ///   Consulta uma cadeia de caracteres localizada semelhante a Failed to store a patient..
         /// </summary>
-        internal static string PatientStoreFail {
+        internal static string PatientSetFail {
             get {
-                return ResourceManager.GetString("PatientStoreFail", resourceCulture);
+                return ResourceManager.GetString("PatientSetFail", resourceCulture);
             }
         }
     }

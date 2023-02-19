@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "9fb5eSJRKx/g4Lv4tXfOytYbl7JgmALTy3kYq+nrrMEE98eql66g48LhbzH85QovydEHmJVaXI1K6mh+UcgKpQ==",
+  "dgSpecHash": "gYb3cZAyAP1aq6wxJqTlrD7aGrS2Az5JijBsAbwjOQ3hxkZfqz8Z45kyVKiT/UUVttOOOFj3NLCVWMdS2FNEmw==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj",
+  "projectFilePath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Rui Santos\\.nuget\\packages\\awssdk.core\\3.7.100.14\\awssdk.core.3.7.100.14.nupkg.sha512",
     "C:\\Users\\Rui Santos\\.nuget\\packages\\awssdk.securitytoken\\3.7.100.14\\awssdk.securitytoken.3.7.100.14.nupkg.sha512",

@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers;
 using RuiSantos.ZocDoc.Data.Mongodb;
 using System.Reflection;
@@ -10,6 +11,8 @@ builder.Services.AddLogging(config => config.AddConsole());
 builder.Services.AddDataContext(builder.Configuration.GetSection("Database").Get<MongoSettings>());
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
+
+builder.Services.AddSingleton<DomainContext>();
 
 builder.Services.AddTransient<MedicalSpecialtiesManagement>();
 builder.Services.AddTransient<DoctorManagement>();

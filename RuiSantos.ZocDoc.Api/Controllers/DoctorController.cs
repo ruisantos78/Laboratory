@@ -18,10 +18,10 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         }
 
         /// <summary>
-        /// Get the doctor by the license number
+        /// Get the doctor informations
         /// </summary>
-        /// <param name="license">Medical license number</param>
-        /// <response code="200">Doctor information</response>
+        /// <param name="license">Doctor license number</param>
+        /// <response code="200">Doctor informations</response>
         /// <response code="400">No records found</response>
         [HttpGet("{license}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -35,23 +35,33 @@ namespace RuiSantos.ZocDoc.Api.Controllers
             return Ok(new DoctorContract(result));
         }
 
-        [HttpGet()]
+        /// <summary>
+        /// Search for doctor with their schedules
+        /// </summary>
+        /// <param name="date">Expected date for appointment</param>
+        /// <param name="specialty">Medical specialty</param>
+        /// <response code="200">List of doctors with a free schedule</response>
+        /// <response code="404">No records found</response>
+        [HttpGet("schedule")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<DoctorAvailabilityContract[]>> GetAsync([FromQuery] DateTime date, [FromQuery] string specialty)
+        public async Task<ActionResult<IEnumerable<DoctorWithScheduleContract>>> GetAsync([FromQuery] DateTime date, [FromQuery] string specialty)
         {
-            var result = await management.GetDoctorBySpecialityAsync(specialty, date);
+            var result = new List<DoctorWithScheduleContract>();
+            await foreach (var (doctor, schedule) in management.GetDoctorWithScheduleBySpecialityAsync(specialty, date))
+                result.Add(new DoctorWithScheduleContract(doctor, schedule));
+            
             if (!result.Any())
                 return NotFound();
 
-            return Ok(result.Select(s => new DoctorAvailabilityContract(s, date)).ToArray());
+            return Ok(result);
         }
 
         /// <summary>
         /// Create a new Doctor
         /// </summary>
         /// <param name="request"></param>
-        /// <response code="200">Doctor sucessufly create</response>
+        /// <response code="200">Doctor sucessufly created</response>
         /// <response code="400">Invalid arguments</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]
@@ -60,8 +70,8 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         {
             try
             {
-                await management.CreateDoctorAsync(request.License, request.Specialties, request.Email, 
-                    request.FirstName, request.LastName, request.ContactNumbers);
+                await management.CreateDoctorAsync(request.License, request.Email, request.FirstName,
+                    request.LastName, request.ContactNumbers, request.Specialties);
 
                 return Ok();
             }
@@ -77,7 +87,8 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         /// <param name="license">Doctor license</param>
         /// <param name="dayOfWeek">Day of the week: 0 - Sunday, 7 - Saturday</param>
         /// <param name="hours">Array with office hours in HH:mm format</param>
-        /// <returns></returns>
+        /// <response code="200">Doctor sucessufly created</response>
+        /// <response code="400">Invalid arguments</response>
         [HttpPut("hours/{license}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -85,7 +96,8 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         {
             try
             {
-                await management.SetOfficeHoursAsync(license, dayOfWeek, hours);
+                var timespans = hours.Select(TimeSpan.Parse);
+                await management.SetOfficeHoursAsync(license, dayOfWeek, timespans);
 
                 return Ok();
             }

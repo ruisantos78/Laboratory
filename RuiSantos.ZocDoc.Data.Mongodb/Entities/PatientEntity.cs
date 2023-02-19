@@ -1,15 +1,13 @@
 ﻿using MongoDB.Driver;
 using RuiSantos.ZocDoc.Core.Models;
-using RuiSantos.ZocDoc.Data.Mongodb.Core;
+using RuiSantos.ZocDoc.Data.Mongodb.Core.Interfaces;
 using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Entities;
 
-public class PatientEntity: IEntity<Patient>
+internal sealed class PatientEntity: IEntity<Patient>
 {
     public const string Discriminator = "Patients";
-
-    public PatientEntity(): base() { }
 
     public async Task StoreAsync(IMongoDatabase context, Patient model)
     {

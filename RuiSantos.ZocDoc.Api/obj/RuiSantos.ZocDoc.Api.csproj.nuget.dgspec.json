@@ -1,17 +1,17 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj": {}
+    "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj": {
+    "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj",
+        "projectUniqueName": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj",
         "projectName": "RuiSantos.ZocDoc.Api",
-        "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj",
+        "projectPath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj",
         "packagesPath": "C:\\Users\\Rui Santos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\obj\\",
+        "outputPath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -33,11 +33,11 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {
-                "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj"
+              "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {
+                "projectPath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj"
               },
-              "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj": {
-                "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj"
+              "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj": {
+                "projectPath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj"
               }
             }
           }
@@ -80,14 +80,14 @@
         }
       }
     },
-    "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {
+    "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
+        "projectUniqueName": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
         "projectName": "RuiSantos.ZocDoc.Core",
-        "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
+        "projectPath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
         "packagesPath": "C:\\Users\\Rui Santos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\obj\\",
+        "outputPath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -154,14 +154,14 @@
         }
       }
     },
-    "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj": {
+    "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj",
+        "projectUniqueName": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj",
         "projectName": "RuiSantos.ZocDoc.Data.Mongodb",
-        "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj",
+        "projectPath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\RuiSantos.ZocDoc.Data.Mongodb.csproj",
         "packagesPath": "C:\\Users\\Rui Santos\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\obj\\",
+        "outputPath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Data.Mongodb\\obj\\",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
           "C:\\Program Files (x86)\\Microsoft Visual Studio\\Shared\\NuGetPackages"
@@ -183,8 +183,8 @@
           "net7.0": {
             "targetAlias": "net7.0",
             "projectReferences": {
-              "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {
-                "projectPath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj"
+              "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj": {
+                "projectPath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj"
               }
             }
           }

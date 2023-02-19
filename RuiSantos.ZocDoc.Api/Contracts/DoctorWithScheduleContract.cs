@@ -2,7 +2,7 @@
 
 namespace RuiSantos.ZocDoc.Api.Contracts
 {
-    public class DoctorAvailabilityContract
+    public class DoctorWithScheduleContract
     {
         /// <summary>
         /// Doctor license number
@@ -12,7 +12,7 @@ namespace RuiSantos.ZocDoc.Api.Contracts
         /// <summary>
         /// Array of medical spcialties
         /// </summary>
-        public List<string> Specialties { get; set; }
+        public IEnumerable<string> Specialties { get; set; }
 
         /// <summary>
         /// E-mail
@@ -32,29 +32,23 @@ namespace RuiSantos.ZocDoc.Api.Contracts
         /// <summary>
         /// Array of contact numbers
         /// </summary>
-        public List<string> ContactNumbers { get; set; }
+        public IEnumerable<string> ContactNumbers { get; set; }
 
         /// <summary>
         /// Availability
         /// </summary>
-        public List<DateTime> Availability { get; set; }
+        public IEnumerable<DateTime> Schedule { get; set; }
 
-        public DoctorAvailabilityContract() : this(new Doctor(), DateTime.MinValue) { }
-        public DoctorAvailabilityContract(Doctor model, DateTime dateTime)
+        public DoctorWithScheduleContract() : this(new Doctor(), Enumerable.Empty<DateTime>()) { }
+        public DoctorWithScheduleContract(Doctor model, IEnumerable<DateTime> schedule)
         {
-            var date = DateOnly.FromDateTime(dateTime);
-
             License = model.License;
             Specialties = model.Specialties;
             Email = model.Email;
             FirstName = model.FirstName;
             LastName = model.LastName;
             ContactNumbers = model.ContactNumbers;
-            Availability = model.OfficeHours.Where(oh => oh.Week == date.DayOfWeek)
-                .SelectMany(oh => oh.Hours)
-                .Except(model.Appointments.Where(app => app.Date == date).Select(s => s.Time))
-                .Select(time => date.ToDateTime(TimeOnly.FromTimeSpan(time)))
-                .ToList();
+            Schedule = schedule;
         }
     }
 }

@@ -17,18 +17,18 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         }
 
         /// <summary>
-        /// List all medical specialties avaliable
+        /// Get all medical specialties avaliable
         /// </summary>
         /// <response code="200">Array of medical specialties descriptions</response>
-        /// <response code="400">No medical specialties founded</response>
+        /// <response code="404">No medical specialties founded</response>
         [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]        
-        public async Task<ActionResult<string[]>> GetAsync()
+        public async Task<ActionResult<IEnumerable<string>>> GetAsync()
         {
             var result = await management.GetMedicalSpecialitiesAsync();
             if (result.Any())
-                return Ok(result.Select(s => s.Description).ToArray());
+                return Ok(result.Select(s => s.Description));
 
             return NotFound();
         }

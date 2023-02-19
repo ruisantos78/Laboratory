@@ -1,7 +1,7 @@
 ﻿using MongoDB.Driver;
 using System.Linq.Expressions;
 
-namespace RuiSantos.ZocDoc.Data.Mongodb.Core;
+namespace RuiSantos.ZocDoc.Data.Mongodb.Core.Interfaces;
 
 internal interface IEntity<TModel>
 {

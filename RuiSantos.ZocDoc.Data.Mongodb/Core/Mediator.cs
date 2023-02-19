@@ -1,4 +1,6 @@
 ﻿using MongoDB.Bson.Serialization;
+using RuiSantos.ZocDoc.Data.Mongodb.Core.Interfaces;
+using RuiSantos.ZocDoc.Data.Mongodb.Core.Serializers;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Core;
 
@@ -6,7 +8,8 @@ internal static class Mediator
 {
     public static IEntity<TModel>? GetEntity<TModel>()
     {
-        var entityType = typeof(IEntity<>).MakeGenericType(typeof(TModel));
+        var entityType = typeof(IEntity<>).MakeGenericType(typeof(TModel));        
+        
         var entityImplType = entityType.Assembly.GetTypes()
             .FirstOrDefault(entityType.IsAssignableFrom);
 

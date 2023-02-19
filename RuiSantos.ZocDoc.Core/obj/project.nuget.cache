@@ -1,8 +1,8 @@
 {
   "version": 2,
-  "dgSpecHash": "hmxqXLHe74KgKFK7j9k9m1r4kFG+9W113lBLkRzdWYPFjwHBHfbkJ9chiciSGGpLlbxGR2G2yCCIJ05yT0vswQ==",
+  "dgSpecHash": "jIWw69mK6w2gvJZy45DY9YX5En5Y7h37YxjfIiAojyzNtr7gAswmag0rYpWeq83ygE1BCV0Wt3UpgTKfgYmfRg==",
   "success": true,
-  "projectFilePath": "C:\\Users\\Rui Santos\\Source\\Repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
+  "projectFilePath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Core\\RuiSantos.ZocDoc.Core.csproj",
   "expectedPackageFiles": [
     "C:\\Users\\Rui Santos\\.nuget\\packages\\fluentvalidation\\11.5.0\\fluentvalidation.11.5.0.nupkg.sha512",
     "C:\\Users\\Rui Santos\\.nuget\\packages\\microsoft.extensions.caching.abstractions\\7.0.0\\microsoft.extensions.caching.abstractions.7.0.0.nupkg.sha512",

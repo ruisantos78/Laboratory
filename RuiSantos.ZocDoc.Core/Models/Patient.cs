@@ -13,7 +13,7 @@ public class Patient : Person
         Appointments= new List<Appointment>();
     }
 
-    public Patient(Guid id, string socialSecurityNumber, string email, string firstName, string lastName, List<string> contactNumbers)
+    public Patient(Guid id, string socialSecurityNumber, string email, string firstName, string lastName, IEnumerable<string> contactNumbers)
         : base(email, firstName, lastName, contactNumbers)
     {
         Id = id;

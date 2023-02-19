@@ -10,5 +10,10 @@ public class MedicalSpeciality
 		this.Id = Guid.NewGuid();
 		this.Description = String.Empty;
 	}
+
+	public MedicalSpeciality(string description): this()
+	{
+		this.Description = description;
+	}
 }
 

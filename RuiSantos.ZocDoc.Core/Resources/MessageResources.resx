@@ -117,25 +117,25 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
-  <data name="DoctorStoreFail" xml:space="preserve">
+  <data name="DoctorSetFail" xml:space="preserve">
     <value>Failed to store a doctor.</value>
   </data>
-  <data name="MedicalSpecialitiesStoreFail" xml:space="preserve">
+  <data name="MedicalSpecialitiesSetFail" xml:space="preserve">
     <value>Failed to store a medical speciality.</value>
   </data>
-  <data name="MedicalSpecialitiesListFail" xml:space="preserve">
-    <value>Failed to get the medical specialities.</value>
+  <data name="MedicalSpecialitiesGetFail" xml:space="preserve">
+    <value>Failed to get the medical speciality.</value>
   </data>
-  <data name="DoctorsListFail" xml:space="preserve">
-    <value>Failed to get the doctors.</value>
-  </data>
-  <data name="OfficeHoursStoreFailed" xml:space="preserve">
-    <value>Failed to store the office hours.</value>
+  <data name="DoctorsGetFail" xml:space="preserve">
+    <value>Failed to get the doctor.</value>
   </data>
   <data name="DoctorLicenseNotFound" xml:space="preserve">
     <value>Cannot found a doctor with the given license.</value>
   </data>
-  <data name="PatientStoreFail" xml:space="preserve">
+  <data name="PatientSetFail" xml:space="preserve">
     <value>Failed to store a patient.</value>
+  </data>
+  <data name="PatientGetFail" xml:space="preserve">
+    <value>Failed to get the patient.</value>
   </data>
 </root>

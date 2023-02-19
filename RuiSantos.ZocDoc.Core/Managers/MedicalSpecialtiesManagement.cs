@@ -26,7 +26,7 @@ public class MedicalSpecialtiesManagement : ManagementBase
                 if (await context.ExistsAsync<MedicalSpeciality>(i => string.Equals(i.Description, description, StringComparison.OrdinalIgnoreCase)))
                     continue;
 
-                var model = new MedicalSpeciality { Description = description };
+                var model = new MedicalSpeciality(description);
                 if (!IsValid(model, MedicalSpecialityValidator.Instance, out var validationException))
                     throw validationException;
 
@@ -40,7 +40,7 @@ public class MedicalSpecialtiesManagement : ManagementBase
         catch (Exception ex)
         {
             logger?.LogException(nameof(MedicalSpecialtiesManagement), nameof(CreateMedicalSpecialtiesAsync), ex);
-            throw new ManagementFailException(MessageResources.MedicalSpecialitiesStoreFail);
+            throw new ManagementFailException(MessageResources.MedicalSpecialitiesSetFail);
         }
     }
 
@@ -56,7 +56,7 @@ public class MedicalSpecialtiesManagement : ManagementBase
         catch (Exception ex)
         {
             logger?.LogException(nameof(MedicalSpecialtiesManagement), nameof(RemoveMedicalSpecialtiesAsync), ex);
-            throw new ManagementFailException(MessageResources.MedicalSpecialitiesStoreFail);
+            throw new ManagementFailException(MessageResources.MedicalSpecialitiesSetFail);
         }
     }
 
@@ -69,7 +69,7 @@ public class MedicalSpecialtiesManagement : ManagementBase
         catch (Exception ex)
         {
             logger?.LogException(nameof(MedicalSpecialtiesManagement), nameof(GetMedicalSpecialitiesAsync), ex);
-            throw new ManagementFailException(MessageResources.MedicalSpecialitiesListFail);
+            throw new ManagementFailException(MessageResources.MedicalSpecialitiesGetFail);
         }
     }
 }

@@ -27,7 +27,7 @@ namespace RuiSantos.ZocDoc.Api.Contracts
         /// <summary>
         /// Array of contact numbers
         /// </summary>
-        public List<string> ContactNumbers { get; set; }
+        public IEnumerable<string> ContactNumbers { get; set; }
 
         public PatientContract() : this(new Patient()) { }
         public PatientContract(Patient model)

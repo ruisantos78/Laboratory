@@ -4,7 +4,7 @@ public class Doctor: Person
 {
     public Guid Id { get; set; }
     public string License { get; set; }
-	public List<string> Specialties { get; set; }
+	public IEnumerable<string> Specialties { get; set; }
     public List<OfficeHour> OfficeHours { get; set; }   
     public List<Appointment> Appointments { get; set; }
 
@@ -12,13 +12,13 @@ public class Doctor: Person
 	{
 		Id = Guid.NewGuid();
 		License = string.Empty;
-        Specialties = new List<string>();
+        Specialties = Enumerable.Empty<string>();
         OfficeHours = new List<OfficeHour>();
         Appointments = new List<Appointment>();
     }
 
-    public Doctor(Guid id, string license, List<string> specialities,
-        string email, string firstName, string lastName, List<string> contactNumbers)
+    public Doctor(Guid id, string license, string email,
+        string firstName, string lastName, IEnumerable<string> contactNumbers, IEnumerable<string> specialities)
         : base(email, firstName, lastName, contactNumbers)
     {
         Id = id;

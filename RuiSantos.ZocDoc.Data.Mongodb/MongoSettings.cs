@@ -1,6 +1,4 @@
-﻿using System;
-using System.Data.Common;
-using MongoDB.Driver;
+﻿using MongoDB.Driver;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb;
 
@@ -17,7 +15,7 @@ public class MongoSettings
 		this.Schema = string.Empty;
 	}
 
-	public MongoClientSettings ToMongoClientSettings()
+	internal MongoClientSettings ToMongoClientSettings()
 	{
 		var settings = MongoClientSettings.FromConnectionString($"mongodb://{Host}:{Port}");
 		settings.LinqProvider = MongoDB.Driver.Linq.LinqProvider.V3;

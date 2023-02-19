@@ -3,11 +3,17 @@
 public class OfficeHour
 {
     public DayOfWeek Week { get; set; }
-    public List<TimeSpan> Hours { get; set; }
+    public IEnumerable<TimeSpan> Hours { get; set; }
 
     public OfficeHour()
     {
         this.Week= DayOfWeek.Monday;
-        this.Hours = new List<TimeSpan>();
+        this.Hours = Enumerable.Empty<TimeSpan>();
+    }
+
+    public OfficeHour(DayOfWeek week, IEnumerable<TimeSpan> hours)
+    {
+        Week = week;
+        Hours = hours;
     }
 }
