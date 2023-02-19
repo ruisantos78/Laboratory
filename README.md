@@ -21,19 +21,19 @@ This API was built using the following technologies:
 To get started with the Rui Santos - ZocDoc Backend Test, follow these steps:
 
 1. Clone this repository to your local machine:
-
-    git clone https://github.com/ruisantos78/ZocDoc.git
-
+```
+git clone https://github.com/ruisantos78/ZocDoc.git
+```
 
 2. Navigate to the root directory of the project:
-
-    cd ZocDoc
-
+```
+cd ZocDoc
+```
 
 3. Build and start the API using Docker Compose:
-
-    docker-compose up --build
-
+```
+docker-compose up --build
+```
 
 4. The API will now be available at `http://localhost:8001`.
 
