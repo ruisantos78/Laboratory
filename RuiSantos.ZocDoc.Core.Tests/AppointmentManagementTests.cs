@@ -11,8 +11,8 @@ namespace RuiSantos.ZocDoc.Core.Tests;
 
 public class AppointmentManagementTests
 {
-    private readonly Mock<IDataContext> mockDataContext = new Mock<IDataContext>();
-    private readonly Mock<ILogger<AppointmentManagement>> mockLogger = new Mock<ILogger<AppointmentManagement>>();
+    private readonly Mock<IDataContext> mockDataContext = new();
+    private readonly Mock<ILogger<AppointmentManagement>> mockLogger = new();
 
     [Fact]
     public async Task CreateAppointmentAsync_WithValidInput_ShouldStoreAppointment()

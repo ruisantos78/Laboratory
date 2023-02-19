@@ -6,7 +6,7 @@ using RuiSantos.ZocDoc.Data.Mongodb.Entities;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Mappings;
 
-internal sealed class PatientClassMap: IRegisterClassMap
+internal sealed class PatientClassMap : IRegisterClassMap
 {
     public void Register()
     {

@@ -12,8 +12,8 @@ namespace RuiSantos.ZocDoc.Core.Tests;
 
 public class MedicalSpecialtiesManagementTests
 {
-    private readonly Mock<IDataContext> mockDataContext = new Mock<IDataContext>();
-    private readonly Mock<ILogger<MedicalSpecialtiesManagement>> mockLogger = new Mock<ILogger<MedicalSpecialtiesManagement>>();
+    private readonly Mock<IDataContext> mockDataContext = new();
+    private readonly Mock<ILogger<MedicalSpecialtiesManagement>> mockLogger = new(  );
 
     [Fact]
     public async Task CreateMedicalSpecialtiesAsync_WithValidInput_ShouldStoreMedicalSpecialties()

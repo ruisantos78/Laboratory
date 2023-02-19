@@ -6,7 +6,7 @@ using RuiSantos.ZocDoc.Core.Validators;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 
-public class AppointmentManagement: ManagementBase
+public class AppointmentManagement : ManagementBase
 {
     private readonly IDataContext context;
     private readonly ILogger logger;
@@ -107,16 +107,16 @@ public class AppointmentManagement: ManagementBase
 
             yield return (doctor, schedule);
         }
-    }    
+    }
 
     private async Task<IEnumerable<Doctor>> GetDoctorsBySpecialtyWithAvailabilityAsync(string speciality, DateOnly date)
     {
         try
         {
-            return await context.QueryAsync<Doctor>(dr => 
-                dr.Specialties.Any(ds => ds.Equals(speciality, StringComparison.OrdinalIgnoreCase)) && 
-                !dr.OfficeHours.All(oh => 
-                    oh.Week == date.DayOfWeek && 
+            return await context.QueryAsync<Doctor>(dr =>
+                dr.Specialties.Any(ds => ds.Equals(speciality, StringComparison.OrdinalIgnoreCase)) &&
+                !dr.OfficeHours.All(oh =>
+                    oh.Week == date.DayOfWeek &&
                     oh.Hours.Any(hour => dr.Appointments.Any(app => app.Date == date && app.Time == hour))
                 )
             );

@@ -6,7 +6,7 @@ using RuiSantos.ZocDoc.Core.Validators;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 
-public class PatientManagement: ManagementBase
+public class PatientManagement : ManagementBase
 {
     private readonly IDataContext context;
     private readonly ILogger logger;

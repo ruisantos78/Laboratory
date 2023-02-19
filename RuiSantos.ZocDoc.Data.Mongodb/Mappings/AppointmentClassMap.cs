@@ -4,8 +4,8 @@ using RuiSantos.ZocDoc.Data.Mongodb.Core.Interfaces;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Mappings;
 
-internal sealed class AppointmentClassMap: IRegisterClassMap
-{		
+internal sealed class AppointmentClassMap : IRegisterClassMap
+{
     public void Register()
     {
         BsonClassMap.RegisterClassMap<Appointment>(map =>

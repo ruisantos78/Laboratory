@@ -1,5 +1,6 @@
 ﻿using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.SwaggerGen;
+using System.Text.RegularExpressions;
 
 namespace RuiSantos.ZocDoc.Api.Core;
 
@@ -13,15 +14,15 @@ public class ReApplyOptionalRouteParameterOperationFilter : IOperationFilter
             .GetCustomAttributes(true)
             .OfType<Microsoft.AspNetCore.Mvc.Routing.HttpMethodAttribute>();
 
-        var httpMethodWithOptional = httpMethodAttributes?.FirstOrDefault(m => m.Template?.Contains("?") ?? false);
+        var httpMethodWithOptional = httpMethodAttributes?.FirstOrDefault(m => m.Template?.Contains('?') ?? false);
         if (httpMethodWithOptional?.Template is null)
             return;
 
         string regex = $"{{(?<{captureName}>\\w+)\\?}}";
-        
-        var matches = System.Text.RegularExpressions.Regex.Matches(httpMethodWithOptional.Template, regex);
 
-        foreach (System.Text.RegularExpressions.Match match in matches)
+        var matches = Regex.Matches(httpMethodWithOptional.Template, regex);
+
+        foreach (Match match in matches.Cast<Match>())
         {
             var name = match.Groups[captureName].Value;
 

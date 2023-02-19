@@ -10,7 +10,7 @@ public class Patient : Person
     {
         Id = Guid.NewGuid();
         SocialSecurityNumber = string.Empty;
-        Appointments= new List<Appointment>();
+        Appointments = new List<Appointment>();
     }
 
     public Patient(string socialSecurityNumber, string email, string firstName, string lastName, IEnumerable<string> contactNumbers)

@@ -7,7 +7,7 @@ public class OfficeHour
 
     public OfficeHour()
     {
-        this.Week= DayOfWeek.Monday;
+        this.Week = DayOfWeek.Monday;
         this.Hours = Enumerable.Empty<TimeSpan>();
     }
 

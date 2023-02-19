@@ -1,7 +1,6 @@
 ﻿using MongoDB.Driver;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Data.Mongodb.Core.Interfaces;
-using System.Diagnostics.CodeAnalysis;
 using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Entities;

@@ -8,8 +8,8 @@ internal static class Mediator
 {
     public static IEntity<TModel>? GetEntity<TModel>()
     {
-        var entityType = typeof(IEntity<>).MakeGenericType(typeof(TModel));        
-        
+        var entityType = typeof(IEntity<>).MakeGenericType(typeof(TModel));
+
         var entityImplType = entityType.Assembly.GetTypes()
             .FirstOrDefault(entityType.IsAssignableFrom);
 

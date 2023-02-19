@@ -11,9 +11,9 @@ namespace RuiSantos.ZocDoc.Core.Tests;
 
 public class DoctorManagementTests
 {
-    private readonly Mock<IDataContext> mockDataContext = new Mock<IDataContext>();
-    private readonly Mock<IDomainContext> mockDomainContext = new Mock<IDomainContext>();
-    private readonly Mock<ILogger<DoctorManagement>> mockLogger = new Mock<ILogger<DoctorManagement>>();
+    private readonly Mock<IDataContext> mockDataContext = new();
+    private readonly Mock<IDomainContext> mockDomainContext = new();
+    private readonly Mock<ILogger<DoctorManagement>> mockLogger = new();
 
     [Fact]
     public async Task CreateDoctorAsync_WithValidInput_ShouldStoreDoctor()
@@ -21,12 +21,12 @@ public class DoctorManagementTests
         // Arrange
         var specialty = "Neurology";
         var args = DoctorFactory.Create().SetSpecialties(specialty);
-        
-        var doctor = DoctorFactory.Empty(); 
-        
+
+        var doctor = DoctorFactory.Empty();
+
         mockDomainContext.Setup(m => m.GetMedicalSpecialtiesAsync()).ReturnsAsync(SpecialtyFactory.Create(specialty));
         mockDataContext.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Callback<Doctor>(value => doctor = value);
-        
+
         var management = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
 
         // Act
@@ -34,7 +34,7 @@ public class DoctorManagementTests
 
         // Assert
         mockDataContext.Verify(m => m.StoreAsync(It.IsAny<Doctor>()), Times.Once);
-        
+
         doctor.Should().NotBeNull();
         doctor.Id.Should().NotBe(args.Id).And.NotBeEmpty();
         doctor.License.Should().Be(args.License);
@@ -64,7 +64,7 @@ public class DoctorManagementTests
         mockDataContext.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Callback<Doctor>(value => doctor = value);
 
         var management = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
-        
+
         // Act
         await management.SetOfficeHoursAsync(license, dayOfWeek, hours);
 
@@ -105,7 +105,7 @@ public class DoctorManagementTests
         // Arrange
         var license = "ABC123";
         var dateTime = DateTime.Parse("2022-01-04 08:00");
-      
+
         var appointment = new Appointment(dateTime);
         var doctor = DoctorFactory.Create(license).SetAppointments(appointment);
         var patient = PatientFactory.Create().SetAppointments(appointment);

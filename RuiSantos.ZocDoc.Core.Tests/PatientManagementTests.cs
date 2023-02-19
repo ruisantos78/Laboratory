@@ -11,8 +11,8 @@ namespace RuiSantos.ZocDoc.Core.Tests;
 
 public class PatientManagementTests
 {
-    private readonly Mock<IDataContext> mockDataContext = new Mock<IDataContext>();
-    private readonly Mock<ILogger<PatientManagement>> mockLogger = new Mock<ILogger<PatientManagement>>();
+    private readonly Mock<IDataContext> mockDataContext = new();
+    private readonly Mock<ILogger<PatientManagement>> mockLogger = new();
 
     [Fact]
     public async Task CreatePatientAsync_WithValidInput_SholdStorePatient()

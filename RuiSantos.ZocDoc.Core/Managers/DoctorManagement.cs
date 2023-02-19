@@ -92,7 +92,7 @@ public class DoctorManagement : ManagementBase
         foreach (var patient in patients)
         {
             var patientAppointments = patient.Appointments.Where(pa => appointments.Any(da => da.Id == pa.Id));
-            foreach (var pa in patientAppointments) 
+            foreach (var pa in patientAppointments)
                 yield return (patient, pa.GetDateTime());
         }
     }
@@ -113,12 +113,13 @@ public class DoctorManagement : ManagementBase
         var patients = await context.QueryAsync<Patient>(patient => patient.Appointments.Any(item => appointments.Any(a => a.Id == item.Id)));
         if (patients is not null && patients.Any())
         {
-            patients.ForEach(async p => {
+            patients.ForEach(async p =>
+            {
                 p.Appointments.RemoveAll(pa => appointments.Any(da => da.Id == pa.Id));
                 await context.StoreAsync(p);
             });
         }
 
-        doctor.Appointments.RemoveAll(item => appointments.Any(a => a.Id == item.Id));        
+        doctor.Appointments.RemoveAll(item => appointments.Any(a => a.Id == item.Id));
     }
 }

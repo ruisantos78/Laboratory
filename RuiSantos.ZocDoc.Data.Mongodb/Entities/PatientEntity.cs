@@ -5,15 +5,15 @@ using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Entities;
 
-internal sealed class PatientEntity: IEntity<Patient>
+internal sealed class PatientEntity : IEntity<Patient>
 {
     public const string Discriminator = "Patients";
 
     public async Task StoreAsync(IMongoDatabase context, Patient model)
     {
         var collection = context.GetCollection<Patient>(Discriminator);
-        
-        await collection.FindOneAndDeleteAsync(entity => entity.Id == model.Id);        
+
+        await collection.FindOneAndDeleteAsync(entity => entity.Id == model.Id);
         await collection.InsertOneAsync(model);
     }
 
