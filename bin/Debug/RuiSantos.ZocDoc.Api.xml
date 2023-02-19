@@ -167,11 +167,12 @@
             <response code="200">Doctor informations</response>
             <response code="400">No records found</response>
         </member>
-        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.GetAppointmentsAsync(System.String)">
+        <member name="M:RuiSantos.ZocDoc.Api.Controllers.DoctorController.GetAppointmentsAsync(System.String,System.Nullable{System.DateTime})">
             <summary>
             Get doctor's appointments
             </summary>
             <param name="license">Medical license</param>
+            <param name="dateTime">Date of appointments</param>
             <response code="200">Doctors appointments</response>
             <response code="400">No records found</response>
         </member>

@@ -77,19 +77,23 @@ public class DoctorManagement : ManagementBase
         }
     }
 
-    public async IAsyncEnumerable<(Patient patient, DateTime date)> GetAppointmentsAsync(string license)
+    public async IAsyncEnumerable<(Patient patient, DateTime date)> GetAppointmentsAsync(string license, DateTime? dateTime)
     {
-        var doctor = await context.FindAsync<Doctor>(doctor => doctor.License == license);
-        if (doctor is null || !doctor.Appointments.Any())
+        var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
+
+        var doctor = await context.FindAsync<Doctor>(doctor => doctor.License == license && doctor.Appointments.Any(da => da.Date == date));
+        if (doctor is null)
             yield break;
 
-        var patients = await context.QueryAsync<Patient>(p => p.Appointments.Any(pa => doctor.Appointments.Any(da => da.Id == pa.Id)));
+        var appointments = doctor.Appointments.FindAll(a => a.Date == date);
+
+        var patients = await context.QueryAsync<Patient>(p => p.Appointments.Any(pa => appointments.Any(da => da.Id == pa.Id)));
         foreach (var patient in patients)
         {
-            var dates = patient.Appointments.Where(pa => doctor.Appointments.Any(da => da.Id == pa.Id))
+            var dates = patient.Appointments.Where(pa => appointments.Any(da => da.Id == pa.Id))
                 .Select(pa => pa.GetDateTime());
 
-            foreach (var date in dates) yield return (patient, date);
+            foreach (var appointmentDate in dates) yield return (patient, appointmentDate);
         }
     }
 

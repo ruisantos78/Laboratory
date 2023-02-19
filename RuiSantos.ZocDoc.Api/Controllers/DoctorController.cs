@@ -37,15 +37,16 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         /// Get doctor's appointments
         /// </summary>
         /// <param name="license">Medical license</param>
+        /// <param name="dateTime">Date of appointments</param>
         /// <response code="200">Doctors appointments</response>
         /// <response code="400">No records found</response>
-        [HttpGet("{license}/Appointments")]
+        [HttpGet("{license}/Appointments/{dateTime?}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<DoctorAppointmentsContract>>> GetAppointmentsAsync(string license)
+        public async Task<ActionResult<IEnumerable<DoctorAppointmentsContract>>> GetAppointmentsAsync(string license, DateTime? dateTime)
         {
             var result = new List<DoctorAppointmentsContract>();
-            await foreach (var (patient, date) in management.GetAppointmentsAsync(license))
+            await foreach (var (patient, date) in management.GetAppointmentsAsync(license, dateTime))
                 result.Add(new DoctorAppointmentsContract(patient, date));
 
             return result.Any() ? Ok(result) : NotFound();

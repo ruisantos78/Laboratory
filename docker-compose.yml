@@ -11,6 +11,8 @@ services:
       - ruisantos.zocdoc.db
     environment:
       - ConnectionStrings__Default=mongodb://ruisantos.zocdoc.db:27017/zocdoc
+    ports:
+      - 8001:80
     build:
       context: .
       dockerfile: RuiSantos.ZocDoc.Api/Dockerfile

@@ -6,7 +6,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ConnectionStrings__Default": "mongodb://ruisantos.zocdoc.db:27017/zocdoc"
+        "ConnectionStrings__Default": "mongodb://localhost:27017/ZocDoc"
       },
       "applicationUrl": "http://localhost:5188"
     },
@@ -16,7 +16,7 @@
       "launchUrl": "swagger",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "ConnectionStrings__Default": "mongodb://ruisantos.zocdoc.db:27017/zocdoc"
+        "ConnectionStrings__Default": "mongodb://localhost:27017/ZocDoc"
       }
     },
     "Docker": {

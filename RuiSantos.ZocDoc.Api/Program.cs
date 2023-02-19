@@ -1,4 +1,5 @@
 ﻿using Microsoft.OpenApi.Models;
+using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers;
 using RuiSantos.ZocDoc.Data.Mongodb;
@@ -21,6 +22,8 @@ builder.Services.AddTransient<AppointmentManagement>();
 
 builder.Services.AddSwaggerGen(options =>
 {
+    options.OperationFilter<ReApplyOptionalRouteParameterOperationFilter>();
+
     options.SwaggerDoc("v1", new OpenApiInfo
     {
         Version = "v1",
