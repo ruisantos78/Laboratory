@@ -1,15 +1,17 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Version 16
-VisualStudioVersion = 25.0.1704.3
+# Visual Studio Version 17
+VisualStudioVersion = 17.4.33213.308
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.ZocDoc.Core", "RuiSantos.ZocDoc.Core\RuiSantos.ZocDoc.Core.csproj", "{43693538-CBC0-4939-8361-3E9358711CFB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.ZocDoc.Core", "RuiSantos.ZocDoc.Core\RuiSantos.ZocDoc.Core.csproj", "{43693538-CBC0-4939-8361-3E9358711CFB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.ZocDoc.Data.Mongodb", "RuiSantos.ZocDoc.Data.Mongodb\RuiSantos.ZocDoc.Data.Mongodb.csproj", "{20508524-6EF7-4230-B329-8DB02946C299}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.ZocDoc.Data.Mongodb", "RuiSantos.ZocDoc.Data.Mongodb\RuiSantos.ZocDoc.Data.Mongodb.csproj", "{20508524-6EF7-4230-B329-8DB02946C299}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.ZocDoc.Api", "RuiSantos.ZocDoc.Api\RuiSantos.ZocDoc.Api.csproj", "{2BE490C6-624E-4300-97FA-76790D6E6867}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.ZocDoc.Api", "RuiSantos.ZocDoc.Api\RuiSantos.ZocDoc.Api.csproj", "{2BE490C6-624E-4300-97FA-76790D6E6867}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.ZocDoc.Core.Tests", "RuiSantos.ZocDoc.Core.Tests\RuiSantos.ZocDoc.Core.Tests.csproj", "{4DF52B38-5E41-4B9A-8CA5-3FCD360A0BCB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.ZocDoc.Core.Tests", "RuiSantos.ZocDoc.Core.Tests\RuiSantos.ZocDoc.Core.Tests.csproj", "{4DF52B38-5E41-4B9A-8CA5-3FCD360A0BCB}"
+EndProject
+Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D7D83827-0041-41A4-9CF8-F7C54A706DCD}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -33,6 +35,10 @@ Global
 		{4DF52B38-5E41-4B9A-8CA5-3FCD360A0BCB}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{4DF52B38-5E41-4B9A-8CA5-3FCD360A0BCB}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{4DF52B38-5E41-4B9A-8CA5-3FCD360A0BCB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{D7D83827-0041-41A4-9CF8-F7C54A706DCD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D7D83827-0041-41A4-9CF8-F7C54A706DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D7D83827-0041-41A4-9CF8-F7C54A706DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D7D83827-0041-41A4-9CF8-F7C54A706DCD}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

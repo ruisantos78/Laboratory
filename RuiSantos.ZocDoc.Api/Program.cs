@@ -8,7 +8,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddLogging(config => config.AddConsole());
-builder.Services.AddDataContext(builder.Configuration.GetSection("Database").Get<MongoSettings>());
+builder.Services.AddDataContext(builder.Configuration.GetConnectionString("Default"));
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 

@@ -11,7 +11,7 @@ public class AppointmentManagement: ManagementBase
     private readonly IDataContext context;
     private readonly ILogger logger;
 
-    public AppointmentManagement(IDataContext context, ILogger<PatientManagement> logger)
+    public AppointmentManagement(IDataContext context, ILogger<AppointmentManagement> logger)
     {
         this.context = context;
         this.logger = logger;

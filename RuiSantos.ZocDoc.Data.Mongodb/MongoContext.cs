@@ -10,10 +10,11 @@ public class MongoContext: IDataContext
 {
     private readonly IMongoDatabase database;
 
-    public MongoContext(MongoSettings settings)
+    public MongoContext(string connectionString)
     {
-        var client = new MongoClient(settings.ToMongoClientSettings());
-        this.database = client.GetDatabase(settings.Schema);
+        var mongoUrl = MongoUrl.Create(connectionString);
+        var client = new MongoClient(mongoUrl);
+        this.database = client.GetDatabase(mongoUrl.DatabaseName);
 
         Mediator.RegisterClassMaps();
     }

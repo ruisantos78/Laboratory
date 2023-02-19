@@ -5,12 +5,12 @@ namespace RuiSantos.ZocDoc.Data.Mongodb;
 
 public static class MongoExtensions
 {
-    public static IServiceCollection AddDataContext(this IServiceCollection services, MongoSettings? settings)
+    public static IServiceCollection AddDataContext(this IServiceCollection services, string? connectionString)
     {
-        if (settings is null)
-            throw new ArgumentNullException(nameof(settings));
+        if (connectionString is null)
+            throw new ArgumentNullException(nameof(connectionString));
 
-        services.AddSingleton<IDataContext>(new MongoContext(settings));
+        services.AddSingleton<IDataContext>(new MongoContext(connectionString));
         return services;
     }
 }

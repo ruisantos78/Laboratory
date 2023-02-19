@@ -1,6 +1,6 @@
 {
   "version": 2,
-  "dgSpecHash": "gYb3cZAyAP1aq6wxJqTlrD7aGrS2Az5JijBsAbwjOQ3hxkZfqz8Z45kyVKiT/UUVttOOOFj3NLCVWMdS2FNEmw==",
+  "dgSpecHash": "mhwC/HwjkoiWB8z4BwIuPCkPC5l4kuQTJKAcILWTS0Z1T7zvnheDapuzJPQ2F5Yt9M+VNUhrd3sUtXswTayfkg==",
   "success": true,
   "projectFilePath": "C:\\Users\\Rui Santos\\source\\repos\\ZocDoc2\\RuiSantos.ZocDoc.Api\\RuiSantos.ZocDoc.Api.csproj",
   "expectedPackageFiles": [
@@ -17,6 +17,7 @@
     "C:\\Users\\Rui Santos\\.nuget\\packages\\microsoft.netcore.platforms\\5.0.0\\microsoft.netcore.platforms.5.0.0.nupkg.sha512",
     "C:\\Users\\Rui Santos\\.nuget\\packages\\microsoft.netcore.targets\\1.1.0\\microsoft.netcore.targets.1.1.0.nupkg.sha512",
     "C:\\Users\\Rui Santos\\.nuget\\packages\\microsoft.openapi\\1.2.3\\microsoft.openapi.1.2.3.nupkg.sha512",
+    "C:\\Users\\Rui Santos\\.nuget\\packages\\microsoft.visualstudio.azure.containers.tools.targets\\1.17.0\\microsoft.visualstudio.azure.containers.tools.targets.1.17.0.nupkg.sha512",
     "C:\\Users\\Rui Santos\\.nuget\\packages\\microsoft.win32.registry\\5.0.0\\microsoft.win32.registry.5.0.0.nupkg.sha512",
     "C:\\Users\\Rui Santos\\.nuget\\packages\\mongodb.bson\\2.19.0\\mongodb.bson.2.19.0.nupkg.sha512",
     "C:\\Users\\Rui Santos\\.nuget\\packages\\mongodb.driver\\2.19.0\\mongodb.driver.2.19.0.nupkg.sha512",
