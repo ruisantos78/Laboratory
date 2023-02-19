@@ -132,7 +132,7 @@ public class MedicalSpecialtiesManagementTests
     }
 
     [Fact]
-    public async Task GetMedicalSpecialitiesAsync_WithEmptyRepository_ReturnsEmpty()
+    public async Task GetMedicalSpecialitiesAsync_WithEmptyRepository_ReturnsEmptyResult()
     {
         // Arrange
         var specialties = new List<MedicalSpeciality>();

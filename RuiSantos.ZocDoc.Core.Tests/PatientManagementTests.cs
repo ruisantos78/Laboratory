@@ -42,13 +42,59 @@ public class PatientManagementTests
     }
 
     [Fact]
+    public async Task CreatePatientAsync_WithInvalidSocialNumber_SholdRaiseError()
+    {
+        // Arrange
+        var args = PatientFactory.Create(socialNumber: "Invalid SSN");
+        var patient = PatientFactory.Empty();
+
+        mockDataContext.Setup(m => m.StoreAsync(It.IsAny<Patient>()))
+            .Callback<Patient>(value => patient = value);
+
+        var management = new PatientManagement(mockDataContext.Object, mockLogger.Object);
+
+        // Act & Assert
+        var failures = await management.Invoking(async m => await m.CreatePatientAsync(args.SocialSecurityNumber, args.Email, args.FirstName, args.LastName, args.ContactNumbers))
+            .Should().ThrowAsync<ValidationFailException>();
+
+        failures.Which.Errors.Should().ContainSingle()
+            .Subject.PropertyName.Should().Be(nameof(Patient.SocialSecurityNumber));
+
+        mockDataContext.Verify(m => m.StoreAsync(It.IsAny<Patient>()), Times.Never);
+    }
+
+    [Fact]
+    public async Task CreatePatientAsync_WithInvalidEmail_SholdRaiseError()
+    {
+        // Arrange
+        var args = PatientFactory.Create(email: "Invalid Email");
+        var patient = PatientFactory.Empty();
+
+        mockDataContext.Setup(m => m.StoreAsync(It.IsAny<Patient>()))
+            .Callback<Patient>(value => patient = value);
+
+        var management = new PatientManagement(mockDataContext.Object, mockLogger.Object);
+
+        // Act & Assert
+        var failures = await management.Invoking(async m => await m.CreatePatientAsync(args.SocialSecurityNumber, args.Email, args.FirstName, args.LastName, args.ContactNumbers))
+            .Should().ThrowAsync<ValidationFailException>();
+
+        failures.Which.Errors.Should().ContainSingle()
+            .Subject.PropertyName.Should().Be(nameof(Patient.Email));
+
+        mockDataContext.Verify(m => m.StoreAsync(It.IsAny<Patient>()), Times.Never);
+    }
+
+    [Fact]
     public async Task GetPatientBySocialNumberAsync_WithValidInput_ReturnsExpectedResult()
     {
         // Arrange
-        var socialNumber = "123-45-6789";
+        var socialNumber = "100-00-0005";
+
+        var patients = Enumerable.Range(1, 5).Select(i => PatientFactory.Create($"100-00-000{i}"));
 
         mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Patient, bool>>>()))
-            .ReturnsAsync(PatientFactory.Create(socialNumber));
+            .ReturnsAsync((Expression<Func<Patient, bool>> expression) => patients.FirstOrDefault(expression.Compile()));
 
         var manager = new PatientManagement(mockDataContext.Object, mockLogger.Object);
 
@@ -59,6 +105,26 @@ public class PatientManagementTests
         result.Should().NotBeNull();
         result?.Id.Should().NotBeEmpty();
         result?.SocialSecurityNumber.Should().Be(socialNumber);
+    }
+
+    [Fact]
+    public async Task GetPatientBySocialNumberAsync_WithInvalidInput_ReturnsNullResult()
+    {
+        // Arrange
+        var socialNumber = String.Empty;
+
+        var patients = Enumerable.Range(1, 5).Select(i => PatientFactory.Create($"100-00-000{i}"));
+
+        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Patient, bool>>>()))
+            .ReturnsAsync((Expression<Func<Patient, bool>> expression) => patients.FirstOrDefault(expression.Compile()));
+
+        var manager = new PatientManagement(mockDataContext.Object, mockLogger.Object);
+
+        // Act
+        var result = await manager.GetPatientBySocialNumberAsync(socialNumber);
+
+        // Assert
+        result.Should().BeNull();
     }
 
     [Fact]
