@@ -13,7 +13,7 @@ builder.Services.AddDataContext(builder.Configuration.GetConnectionString("Defau
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 
-builder.Services.AddSingleton<DomainContext>();
+builder.Services.AddSingleton<IDomainContext, DomainContext>();
 
 builder.Services.AddTransient<MedicalSpecialtiesManagement>();
 builder.Services.AddTransient<DoctorManagement>();

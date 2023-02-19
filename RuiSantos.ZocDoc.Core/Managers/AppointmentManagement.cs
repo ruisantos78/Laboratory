@@ -114,7 +114,7 @@ public class AppointmentManagement: ManagementBase
         try
         {
             return await context.QueryAsync<Doctor>(dr => 
-                dr.Specialties.Contains(speciality) && 
+                dr.Specialties.Any(ds => ds.Equals(speciality, StringComparison.OrdinalIgnoreCase)) && 
                 !dr.OfficeHours.All(oh => 
                     oh.Week == date.DayOfWeek && 
                     oh.Hours.Any(hour => dr.Appointments.Any(app => app.Date == date && app.Time == hour))

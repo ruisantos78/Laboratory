@@ -1,5 +1,73 @@
-﻿################################################################################
-# Este arquivo .gitignore foi criado automaticamente pelo Microsoft(R) Visual Studio.
-################################################################################
+﻿# Visual Studio .NET 7 #
+#######################
+# User-specific files #
+#######################
+*.rsuser
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
 
-/.vs
+# User-specific files (MonoDevelop/Xamarin Studio) #
+*.userprefs
+
+###############
+# Build results#
+###############
+[Dd]ebug/
+[Rr]elease/
+x64/
+build/
+[Bb]in/
+[Oo]bj/
+[Nn]ode_modules/
+[Ll]og/
+
+###########
+# NuGet ###
+###########
+packages/
+
+# Microsoft Azure Service Fabric
+*.sfpkg
+*.sfproj
+
+# StyleCop
+StyleCopReport.xml
+
+# Files built by Visual Studio
+*_i.c
+*_p.c
+*_h.h
+*.ilk
+*.meta
+*.obj
+*.iobj
+*.pch
+*.pdb
+*.ipdb
+*.pgc
+*.pgd
+*.rsp
+*.sbr
+*.tlb
+*.tli
+*.tlh
+*.tmp
+*.tmp_proj
+*_wpftmp.csproj
+*.log
+*.vspscc
+*.vssscc
+.builds
+
+# Miscellaneous
+[Tt]est[Rr]esult*
+[Bb]enchmark[Rr]esult*
+*.psess
+*.vsp
+*.vspx
+*.trx
+*.md
+*.zone.identifier
+*.pfx

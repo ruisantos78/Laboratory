@@ -3,7 +3,7 @@ using RuiSantos.ZocDoc.Core.Models;
 
 namespace RuiSantos.ZocDoc.Core.Data;
 
-public class DomainContext
+public class DomainContext : IDomainContext
 {
     private static readonly TimeSpan CacheSlidingExpiration = TimeSpan.FromMinutes(5);
 
@@ -11,7 +11,7 @@ public class DomainContext
     private readonly IMemoryCache cache;
 
     public DomainContext(IDataContext context, IMemoryCache cache)
-	{
+    {
         this.context = context;
         this.cache = cache;
     }

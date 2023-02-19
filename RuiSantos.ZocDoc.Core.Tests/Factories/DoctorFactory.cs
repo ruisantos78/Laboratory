@@ -1,20 +1,9 @@
 ﻿using RuiSantos.ZocDoc.Core.Models;
-using System.Runtime.CompilerServices;
 
-namespace RuiSantos.ZocDoc.Core.Tests.Core;
-
-internal static class ModelsFactory
+namespace RuiSantos.ZocDoc.Core.Tests.Factories;
+internal static class DoctorFactory
 {
-    public static Patient CreatePatient(
-        string socialNumber = "123-45-6789",
-        string email = "john@patient.com",
-        string firstName = "Jhon",
-        string lastName = "Doe",
-        string[]? contactNumbers = null
-    )
-    => new(socialNumber, email, firstName, lastName, contactNumbers ?? Array.Empty<string>());
-
-    public static Doctor CreateDoctor(
+    public static Doctor Create(
         string medicalLicense = "ABC123",
         string email = "mary@doctor.com",
         string firstName = "Mary",
@@ -25,7 +14,7 @@ internal static class ModelsFactory
 
     public static Doctor SetSpecialties(this Doctor doctor, params string[] specialties)
     {
-        doctor.Specialties = (specialties ?? Array.Empty<String>()).ToList();
+        doctor.Specialties = (specialties ?? Array.Empty<string>()).ToList();
         return doctor;
     }
 

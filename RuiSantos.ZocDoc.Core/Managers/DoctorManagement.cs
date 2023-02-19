@@ -8,11 +8,11 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 
 public class DoctorManagement : ManagementBase
 {
-    private readonly DomainContext domainContext;
+    private readonly IDomainContext domainContext;
     private readonly IDataContext context;
     private readonly ILogger logger;
 
-    public DoctorManagement(DomainContext domainContext, IDataContext context, ILogger<DoctorManagement> logger)
+    public DoctorManagement(IDomainContext domainContext, IDataContext context, ILogger<DoctorManagement> logger)
     {
         this.domainContext = domainContext;
         this.context = context;

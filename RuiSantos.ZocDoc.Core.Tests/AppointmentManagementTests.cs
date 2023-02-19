@@ -4,7 +4,7 @@ using Moq;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers;
 using RuiSantos.ZocDoc.Core.Models;
-using RuiSantos.ZocDoc.Core.Tests.Core;
+using RuiSantos.ZocDoc.Core.Tests.Factories;
 using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Core.Tests;
@@ -24,8 +24,8 @@ public class AppointmentManagementTests
 
         var officeHours = new[] { new OfficeHour(dateTime.DayOfWeek, new[] { dateTime.TimeOfDay }) };
 
-        var patient = ModelsFactory.CreatePatient(socialNumber);
-        var doctor = ModelsFactory.CreateDoctor(medicalLicence).SetOfficeHours(officeHours);
+        var patient = PatientFactory.Create(socialNumber);
+        var doctor = DoctorFactory.Create(medicalLicence).SetOfficeHours(officeHours);
 
         mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(patient);
         mockDataContext.Setup(m => m.StoreAsync(patient)).Verifiable();
@@ -54,8 +54,8 @@ public class AppointmentManagementTests
         var medicalLicence = "ABC123";
         var dateTime = DateTime.Parse("2022-01-01 08:00");
 
-        var patient = ModelsFactory.CreatePatient(socialNumber);
-        var doctor = ModelsFactory.CreateDoctor(medicalLicence);
+        var patient = PatientFactory.Create(socialNumber);
+        var doctor = DoctorFactory.Create(medicalLicence);
 
         var appointment = new Appointment(dateTime);
         patient.Appointments.Add(appointment);
@@ -106,8 +106,8 @@ public class AppointmentManagementTests
 
         var doctors = new[]
         {
-            ModelsFactory.CreateDoctor("001").SetSpecialties(speciality).SetOfficeHours(officeHours).SetAppointments(appointments),
-            ModelsFactory.CreateDoctor("002").SetSpecialties("another speciality").SetOfficeHours(officeHours).SetAppointments(appointments)
+            DoctorFactory.Create("001").SetSpecialties(speciality).SetOfficeHours(officeHours).SetAppointments(appointments),
+            DoctorFactory.Create("002").SetSpecialties("another speciality").SetOfficeHours(officeHours).SetAppointments(appointments)
         };
 
         mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<Doctor, bool>>>()))
