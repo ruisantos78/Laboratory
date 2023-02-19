@@ -31,11 +31,11 @@ public class MedicalSpecialtiesManagementTests
         await management.CreateMedicalSpecialtiesAsync(descriptions);
 
         // Assert
+        mockDataContext.Verify(m => m.StoreAsync(It.IsAny<MedicalSpeciality>()), Times.Exactly(descriptions.Count()));
+
         specialties.Should().NotBeNullOrEmpty();
         specialties.Should().HaveSameCount(descriptions);
         specialties.Select(s => s.Description).Should().BeEquivalentTo(descriptions);
-
-        mockDataContext.Verify(m => m.StoreAsync(It.IsAny<MedicalSpeciality>()), Times.Exactly(descriptions.Count()));
     }
 
     [Fact]
@@ -59,10 +59,10 @@ public class MedicalSpecialtiesManagementTests
         await management.RemoveMedicalSpecialtiesAsync(description);
 
         // Assert
+        mockDataContext.Verify(m => m.RemoveAsync<MedicalSpeciality>(It.IsAny<Guid>()), Times.Once);
+
         specialties.Should().NotBeNullOrEmpty();
         specialties.Select(s => s.Description).Should().NotContain(description);
-
-        mockDataContext.Verify(m => m.RemoveAsync<MedicalSpeciality>(It.IsAny<Guid>()), Times.Once);
     }
 
     [Fact]

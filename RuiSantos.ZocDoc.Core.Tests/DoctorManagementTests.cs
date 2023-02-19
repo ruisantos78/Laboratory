@@ -27,10 +27,10 @@ public class DoctorManagementTests
         mockDomainContext.Setup(m => m.GetMedicalSpecialtiesAsync()).ReturnsAsync(SpecialtyFactory.Create(specialty));
         mockDataContext.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Callback<Doctor>(value => doctor = value);
         
-        var doctorManagement = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
+        var management = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
 
         // Act
-        await doctorManagement.CreateDoctorAsync(args.License, args.Email, args.FirstName, args.LastName, args.ContactNumbers, args.Specialties);
+        await management.CreateDoctorAsync(args.License, args.Email, args.FirstName, args.LastName, args.ContactNumbers, args.Specialties);
 
         // Assert
         mockDataContext.Verify(m => m.StoreAsync(It.IsAny<Doctor>()), Times.Once);
@@ -63,10 +63,10 @@ public class DoctorManagementTests
         mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(DoctorFactory.Create(license));
         mockDataContext.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Callback<Doctor>(value => doctor = value);
 
-        var doctorManagement = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
+        var management = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
         
         // Act
-        await doctorManagement.SetOfficeHoursAsync(license, dayOfWeek, hours);
+        await management.SetOfficeHoursAsync(license, dayOfWeek, hours);
 
         // Assert
         mockDataContext.Verify(m => m.StoreAsync(It.IsAny<Doctor>()), Times.Once);
@@ -85,15 +85,16 @@ public class DoctorManagementTests
         // Arrange
         var license = "ABC123";
 
-        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(DoctorFactory.Create(license));
+        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Doctor, bool>>>()))
+            .ReturnsAsync(DoctorFactory.Create(license));
 
-        var doctorManagement = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
+        var management = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
 
         // Act
-        var result = await doctorManagement.GetDoctorByLicenseAsync(license);
+        var result = await management.GetDoctorByLicenseAsync(license);
 
         // Assert
-        result?.Should().NotBeNull();
+        result.Should().NotBeNull();
         result?.Id.Should().NotBeEmpty();
         result?.License.Should().Be(license);
     }
@@ -116,14 +117,14 @@ public class DoctorManagementTests
         mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(doctor);
         mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(patients);
 
-        var doctorManagement = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
+        var management = new DoctorManagement(mockDomainContext.Object, mockDataContext.Object, mockLogger.Object);
 
         // Act
-        var result = await doctorManagement.GetAppointmentsAsync(license, dateTime).ToListAsync();
+        var result = await management.GetAppointmentsAsync(license, dateTime).ToListAsync();
 
         // Assert
-        result?.Should().NotBeNullOrEmpty();
-        result?.Should().ContainSingle().Which.patient.Should().Be(patient);
-        result?.Should().ContainSingle().Which.date.Should().Be(dateTime);
+        result.Should().NotBeNullOrEmpty();
+        result.Should().ContainSingle().Subject.patient.Should().Be(patient);
+        result.Should().ContainSingle().Subject.date.Should().Be(dateTime);
     }
 }

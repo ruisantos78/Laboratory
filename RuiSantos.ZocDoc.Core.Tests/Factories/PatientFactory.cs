@@ -4,6 +4,8 @@ namespace RuiSantos.ZocDoc.Core.Tests.Factories;
 
 internal static class PatientFactory
 {
+    public static Patient Empty() => new() {  Id= Guid.Empty };
+
     public static Patient Create(
         string socialNumber = "123-45-6789",
         string email = "john@patient.com",
