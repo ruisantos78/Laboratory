@@ -39,7 +39,7 @@ docker-compose up --build
 
 ### API Documentation
 
-API documentation is available at `http://localhost:5000/swagger`.
+API documentation is available at `http://localhost:8001/swagger`.
 
 ## Contributing
 
