@@ -27,10 +27,8 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         public async Task<ActionResult<IEnumerable<string>>> GetAsync()
         {
             var result = await management.GetMedicalSpecialitiesAsync();
-            if (result.Any())
-                return Ok(result.Select(s => s.Description));
 
-            return NotFound();
+            return result.Any() ? Ok(result.Select(s => s.Description)) : NotFound();
         }
 
         /// <summary>

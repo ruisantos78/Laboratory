@@ -19,14 +19,14 @@ public class DoctorManagement : ManagementBase
         this.logger = logger;
     }
 
-    public async Task CreateDoctorAsync(string license, string email, string firstName, string lastName, 
+    public async Task CreateDoctorAsync(string license, string email, string firstName, string lastName,
         IEnumerable<string> contactNumbers, IEnumerable<string> specialties)
     {
         try
         {
-            var model = new Doctor(Guid.NewGuid(), license, email, firstName, lastName, contactNumbers, specialties);
-            await ValidateDoctorAsync(model);
-            await context.StoreAsync(model);
+            var doctor = new Doctor(license, email, firstName, lastName, contactNumbers, specialties);
+            await ValidateDoctorAsync(doctor);
+            await context.StoreAsync(doctor);
         }
         catch (ValidationFailException)
         {
@@ -47,12 +47,11 @@ public class DoctorManagement : ManagementBase
             if (doctor is null)
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
-            doctor.Appointments.RemoveAll(appointment => appointment.Week == dayOfWeek && !hours.Contains(appointment.Time));
             doctor.OfficeHours.RemoveAll(hour => hour.Week == dayOfWeek);
-            doctor.OfficeHours.Add(new OfficeHour(dayOfWeek, hours));            
+            if (hours.Any())
+                doctor.OfficeHours.Add(new OfficeHour(dayOfWeek, hours));
 
-            await ValidateDoctorAsync(doctor);
-            await context.StoreAsync(doctor);
+            await StoreAndCancelAppointmentsAsync(doctor, dayOfWeek, hours);
         }
         catch (ValidationFailException)
         {
@@ -78,45 +77,41 @@ public class DoctorManagement : ManagementBase
         }
     }
 
-    public async IAsyncEnumerable<(Doctor doctor, IEnumerable<DateTime> schedule)> GetDoctorWithScheduleBySpecialityAsync(
-        string speciality, DateTime dateTime)
+    public async IAsyncEnumerable<(Patient patient, DateTime date)> GetAppointmentsAsync(string license)
     {
-        var date = DateOnly.FromDateTime(dateTime);
+        var doctor = await context.FindAsync<Doctor>(doctor => doctor.License == license);
+        if (doctor is null || !doctor.Appointments.Any())
+            yield break;
 
-        var doctors = await GetDoctorsBySpecialtyWithAvailabilityAtAsync(speciality, date);
-
-        foreach (var doctor in doctors)
+        var patients = await context.QueryAsync<Patient>(p => p.Appointments.Any(pa => doctor.Appointments.Any(da => da.Id == pa.Id)));
+        foreach (var patient in patients)
         {
-            var schedule = doctor.OfficeHours
-                .Where(hour => hour.Week == date.DayOfWeek)
-                .SelectMany(hour => hour.Hours)
-                .Except(doctor.Appointments.Where(appointment => appointment.Date == date).Select(appointment => appointment.Time))
-                .Select(time => date.ToDateTime(TimeOnly.FromTimeSpan(time)));
+            var dates = patient.Appointments.Where(pa => doctor.Appointments.Any(da => da.Id == pa.Id))
+                .Select(pa => pa.GetDateTime());
 
-            yield return (doctor, schedule);
+            foreach (var date in dates) yield return (patient, date);
         }
     }
 
-    public async Task<List<Doctor>> GetDoctorsBySpecialtyWithAvailabilityAtAsync(string speciality, DateOnly date)
-    {
-        try
-        {
-            return await context.QueryAsync<Doctor>(doctor =>
-                doctor.Specialties.Any(item => item.Equals(speciality, StringComparison.OrdinalIgnoreCase)) &&
-                doctor.Appointments.Count(ap => ap.Date == date) < doctor.OfficeHours.Count(hour => hour.Week == date.DayOfWeek)
-            );
-        }
-        catch (Exception ex)
-        {
-            logger?.LogException(nameof(DoctorManagement), nameof(GetDoctorByLicenseAsync), ex);
-            throw new ManagementFailException(MessageResources.DoctorsGetFail);
-        }
-    }
-    
     private async Task ValidateDoctorAsync(Doctor model)
     {
         var medicalSpecialties = await domainContext.GetMedicalSpecialtiesAsync();
         if (!IsValid(model, new DoctorValidator(medicalSpecialties), out var validationFailException))
             throw validationFailException;
+    }
+
+    private async Task StoreAndCancelAppointmentsAsync(Doctor doctor, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
+    {
+        var appointments = doctor.Appointments.FindAll(appointment => appointment.Week == dayOfWeek && !hours.Contains(appointment.Time));
+
+        var patients = await context.QueryAsync<Patient>(patient => patient.Appointments.Any(item => appointments.Any(a => a.Id == item.Id)));
+        foreach (var patient in patients)
+        {
+            patient.Appointments.RemoveAll(item => appointments.Any(a => a.Id == item.Id));
+            await context.StoreAsync(patient);
+        }
+
+        doctor.Appointments.RemoveAll(item => appointments.Any(a => a.Id == item.Id));
+        await context.StoreAsync(doctor);
     }
 }

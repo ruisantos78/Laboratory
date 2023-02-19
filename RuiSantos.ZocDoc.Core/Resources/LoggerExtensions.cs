@@ -1,8 +1,6 @@
-﻿using System;
-using Microsoft.Extensions.Logging;
-using RuiSantos.ZocDoc.Core.Managers;
+﻿using Microsoft.Extensions.Logging;
 
-namespace RuiSantos.ZocDoc.Core.Resources;
+namespace RuiSantos.ZocDoc.Core;
 
 internal static class LoggerExtensions
 {
@@ -10,6 +8,5 @@ internal static class LoggerExtensions
     {
         logger?.LogError(ex, "Error on {Class}.{Method}: {Message}", className, methodName, ex.Message);
     }
-
 }
 

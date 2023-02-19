@@ -25,36 +25,30 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         /// <response code="400">No records found</response>
         [HttpGet("{license}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status404NotFound)]        
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<DoctorContract>> GetAsync(string license)
         {
             var result = await management.GetDoctorByLicenseAsync(license);
-            if (result is null)
-                return NotFound();
-                
-            return Ok(new DoctorContract(result));
+
+            return result is not null ? Ok(new DoctorContract(result)) : NotFound();
         }
 
         /// <summary>
-        /// Search for doctor with their schedules
+        /// Get doctor's appointments
         /// </summary>
-        /// <param name="date">Expected date for appointment</param>
-        /// <param name="specialty">Medical specialty</param>
-        /// <response code="200">List of doctors with a free schedule</response>
-        /// <response code="404">No records found</response>
-        [HttpGet("schedule")]
+        /// <param name="license">Medical license</param>
+        /// <response code="200">Doctors appointments</response>
+        /// <response code="400">No records found</response>
+        [HttpGet("{license}/Appointments")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
-        public async Task<ActionResult<IEnumerable<DoctorWithScheduleContract>>> GetAsync([FromQuery] DateTime date, [FromQuery] string specialty)
+        public async Task<ActionResult<IEnumerable<DoctorAppointmentsContract>>> GetAppointmentsAsync(string license)
         {
-            var result = new List<DoctorWithScheduleContract>();
-            await foreach (var (doctor, schedule) in management.GetDoctorWithScheduleBySpecialityAsync(specialty, date))
-                result.Add(new DoctorWithScheduleContract(doctor, schedule));
-            
-            if (!result.Any())
-                return NotFound();
+            var result = new List<DoctorAppointmentsContract>();
+            await foreach (var (patient, date) in management.GetAppointmentsAsync(license))
+                result.Add(new DoctorAppointmentsContract(patient, date));
 
-            return Ok(result);
+            return result.Any() ? Ok(result) : NotFound();
         }
 
         /// <summary>
@@ -85,19 +79,19 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         /// Set the doctor's office hours
         /// </summary>
         /// <param name="license">Doctor license</param>
-        /// <param name="dayOfWeek">Day of the week: 0 - Sunday, 7 - Saturday</param>
+        /// <param name="week">Day of the week: 0 - Sunday, 7 - Saturday</param>
         /// <param name="hours">Array with office hours in HH:mm format</param>
         /// <response code="200">Doctor sucessufly created</response>
         /// <response code="400">Invalid arguments</response>
-        [HttpPut("hours/{license}")]
+        [HttpPut("{license}/OfficeHours/{week}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public async Task<IActionResult> PutAvailabilityAsync([FromRoute] string license, [FromQuery] DayOfWeek dayOfWeek, string[] hours)
+        public async Task<IActionResult> PutOfficeHoursAsync(string license, DayOfWeek week, string[] hours)
         {
             try
             {
                 var timespans = hours.Select(TimeSpan.Parse);
-                await management.SetOfficeHoursAsync(license, dayOfWeek, timespans);
+                await management.SetOfficeHoursAsync(license, week, timespans);
 
                 return Ok();
             }

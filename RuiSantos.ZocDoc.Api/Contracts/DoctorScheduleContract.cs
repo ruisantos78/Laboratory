@@ -3,14 +3,19 @@
 namespace RuiSantos.ZocDoc.Api.Contracts;
 
 /// <summary>
-/// Patient's informations
+/// Doctor's informations with available schedule for a specific date
 /// </summary>
-public class PatientContract
+public class DoctorScheduleContract
 {
     /// <summary>
-    /// Social Securiy Number
+    /// Doctor license number
     /// </summary>
-    public string SocialSecurityNumber { get; set; }
+    public string License { get; set; }
+
+    /// <summary>
+    /// Array of medical spcialties
+    /// </summary>
+    public IEnumerable<string> Specialties { get; set; }
 
     /// <summary>
     /// E-mail
@@ -32,13 +37,21 @@ public class PatientContract
     /// </summary>
     public IEnumerable<string> ContactNumbers { get; set; }
 
-    public PatientContract() : this(new Patient()) { }
-    public PatientContract(Patient model)
+    /// <summary>
+    /// Availability
+    /// </summary>
+    public IEnumerable<DateTime> Schedule { get; set; }
+
+    public DoctorScheduleContract() : this(new Doctor(), Enumerable.Empty<DateTime>()) { }
+
+    public DoctorScheduleContract(Doctor model, IEnumerable<DateTime> schedule)
     {
-        SocialSecurityNumber = model.SocialSecurityNumber;
+        License = model.License;
+        Specialties = model.Specialties;
         Email = model.Email;
         FirstName = model.FirstName;
         LastName = model.LastName;
         ContactNumbers = model.ContactNumbers;
+        Schedule = schedule;
     }
 }

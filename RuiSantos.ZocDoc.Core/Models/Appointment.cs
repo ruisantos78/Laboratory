@@ -1,5 +1,4 @@
-﻿using System;
-namespace RuiSantos.ZocDoc.Core.Models;
+﻿namespace RuiSantos.ZocDoc.Core.Models;
 
 public class Appointment
 {
@@ -10,10 +9,20 @@ public class Appointment
 
     public Appointment()
     {
-        this.Id = Guid.NewGuid();
-        this.Week = DayOfWeek.Monday;
-        this.Date = DateOnly.MinValue;
-        this.Time = TimeSpan.MinValue;
+        Id = Guid.NewGuid();
+        Week = DayOfWeek.Monday;
+        Date = DateOnly.MinValue;
+        Time = TimeSpan.MinValue;
     }
+
+    public Appointment(DateTime date)
+    {
+        Id = Guid.NewGuid();
+        Week = date.DayOfWeek;
+        Date = DateOnly.FromDateTime(date);
+        Time = date.TimeOfDay;
+    }
+
+    public DateTime GetDateTime() => Date.ToDateTime(Time);
 }
 

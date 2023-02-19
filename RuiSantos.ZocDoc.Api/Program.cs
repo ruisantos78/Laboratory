@@ -17,6 +17,7 @@ builder.Services.AddSingleton<DomainContext>();
 builder.Services.AddTransient<MedicalSpecialtiesManagement>();
 builder.Services.AddTransient<DoctorManagement>();
 builder.Services.AddTransient<PatientManagement>();
+builder.Services.AddTransient<AppointmentManagement>();
 
 builder.Services.AddSwaggerGen(options =>
 {

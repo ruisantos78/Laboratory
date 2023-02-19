@@ -18,28 +18,44 @@ namespace RuiSantos.ZocDoc.Api.Controllers
         }
 
         /// <summary>
-        /// Get the doctor by the license number
+        /// Get a patient by security social numeber
         /// </summary>
         /// <param name="socialNumber">Security Social Number</param>
-        /// <response code="200">Doctor information</response>
-        /// <response code="400">No records found</response>
+        /// <response code="200">Patient information</response>
+        /// <response code="404">No records found</response>
         [HttpGet("{socialNumber}")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public async Task<ActionResult<PatientContract>> GetAsync(string socialNumber)
         {
             var result = await management.GetPatientBySocialNumberAsync(socialNumber);
-            if (result is null)
-                return NotFound();
 
-            return Ok(new PatientContract(result));
+            return (result is not null) ? Ok(new PatientContract(result)) : NotFound();
         }
 
         /// <summary>
-        /// Create a new Doctor
+        /// Get patient's appointments
+        /// </summary>
+        /// <param name="socialNumber">Security Social Number</param>
+        /// <response code="200">Patient appointments</response>
+        /// <response code="400">No records found</response>
+        [HttpGet("{socialNumber}/Appointments")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public async Task<ActionResult<IEnumerable<PatientAppointmentsContract>>> GetAppointmentsAsync(string socialNumber)
+        {
+            var result = new List<PatientAppointmentsContract>();
+            await foreach (var (doctor, date) in management.GetAppointmentsAsync(socialNumber))
+                result.Add(new PatientAppointmentsContract(doctor, date));
+
+            return result.Any() ? Ok(result) : NotFound();
+        }
+
+        /// <summary>
+        /// Create a new patient
         /// </summary>
         /// <param name="request"></param>
-        /// <response code="200">Doctor sucessufly create</response>
+        /// <response code="200">Patient sucessufly create</response>
         /// <response code="400">Invalid arguments</response>
         [HttpPost]
         [ProducesResponseType(StatusCodes.Status200OK)]

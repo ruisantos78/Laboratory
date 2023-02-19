@@ -21,12 +21,12 @@ public class PatientManagement: ManagementBase
     {
         try
         {
-            var model = new Patient(Guid.NewGuid(), socialNumber, email, firstName, lastName, contactNumbers);
+            var patient = new Patient(socialNumber, email, firstName, lastName, contactNumbers);
 
-            if (!IsValid(model, PatientValidator.Instance, out var validationFailException))
+            if (!IsValid(patient, PatientValidator.Instance, out var validationFailException))
                 throw validationFailException;
 
-            await context.StoreAsync(model);
+            await context.StoreAsync(patient);
         }
         catch (ValidationFailException)
         {
@@ -49,6 +49,22 @@ public class PatientManagement: ManagementBase
         {
             logger?.LogException(nameof(PatientManagement), nameof(GetPatientBySocialNumberAsync), ex);
             throw new ManagementFailException(MessageResources.PatientSetFail);
+        }
+    }
+
+    public async IAsyncEnumerable<(Doctor doctor, DateTime date)> GetAppointmentsAsync(string socialNumber)
+    {
+        var patient = await context.FindAsync<Patient>(patient => patient.SocialSecurityNumber == socialNumber);
+        if (patient is null || !patient.Appointments.Any())
+            yield break;
+
+        var doctors = await context.QueryAsync<Doctor>(d => d.Appointments.Any(da => patient.Appointments.Any(pa => pa.Id == da.Id)));
+        foreach (var doctor in doctors)
+        {
+            var dates = doctor.Appointments.Where(da => patient.Appointments.Any(pa => da.Id == pa.Id))
+                .Select(da => da.GetDateTime());
+
+            foreach (var date in dates) yield return (doctor, date);
         }
     }
 }

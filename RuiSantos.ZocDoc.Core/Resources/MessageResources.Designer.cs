@@ -61,7 +61,7 @@ namespace RuiSantos.ZocDoc.Core.Resources {
         }
         
         /// <summary>
-        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot found a doctor with the given license..
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot find a doctor with this medical license..
         /// </summary>
         internal static string DoctorLicenseNotFound {
             get {
@@ -120,6 +120,24 @@ namespace RuiSantos.ZocDoc.Core.Resources {
         internal static string PatientSetFail {
             get {
                 return ResourceManager.GetString("PatientSetFail", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a Cannot find a patient with this security social number..
+        /// </summary>
+        internal static string PatientSocialNumberNotFound {
+            get {
+                return ResourceManager.GetString("PatientSocialNumberNotFound", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Consulta uma cadeia de caracteres localizada semelhante a There is already a record with the parameters provided..
+        /// </summary>
+        internal static string RecordAlreadyExists {
+            get {
+                return ResourceManager.GetString("RecordAlreadyExists", resourceCulture);
             }
         }
     }

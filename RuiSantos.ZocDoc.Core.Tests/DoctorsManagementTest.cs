@@ -6,7 +6,7 @@ public class DoctorsManagementTest
 	[Fact]
 	public void ShouldCreateNewDoctor()
 	{
-
+		throw new NotImplementedException();
 	}
 }
 

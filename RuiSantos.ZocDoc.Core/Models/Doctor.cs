@@ -17,11 +17,11 @@ public class Doctor: Person
         Appointments = new List<Appointment>();
     }
 
-    public Doctor(Guid id, string license, string email,
+    public Doctor(string license, string email,
         string firstName, string lastName, IEnumerable<string> contactNumbers, IEnumerable<string> specialities)
         : base(email, firstName, lastName, contactNumbers)
     {
-        Id = id;
+        Id = Guid.NewGuid();
         License = license;
         Specialties = specialities;
         OfficeHours = new List<OfficeHour>();

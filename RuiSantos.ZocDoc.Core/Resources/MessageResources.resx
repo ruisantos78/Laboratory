@@ -130,12 +130,18 @@
     <value>Failed to get the doctor.</value>
   </data>
   <data name="DoctorLicenseNotFound" xml:space="preserve">
-    <value>Cannot found a doctor with the given license.</value>
+    <value>Cannot find a doctor with this medical license.</value>
   </data>
   <data name="PatientSetFail" xml:space="preserve">
     <value>Failed to store a patient.</value>
   </data>
   <data name="PatientGetFail" xml:space="preserve">
     <value>Failed to get the patient.</value>
+  </data>
+  <data name="PatientSocialNumberNotFound" xml:space="preserve">
+    <value>Cannot find a patient with this security social number.</value>
+  </data>
+  <data name="RecordAlreadyExists" xml:space="preserve">
+    <value>There is already a record with the parameters provided.</value>
   </data>
 </root>
