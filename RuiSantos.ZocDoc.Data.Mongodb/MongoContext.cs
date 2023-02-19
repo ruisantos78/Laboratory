@@ -14,7 +14,7 @@ public class MongoContext : IDataContext
     {
         var mongoUrl = MongoUrl.Create(connectionString);
         var client = new MongoClient(mongoUrl);
-        this.database = client.GetDatabase(mongoUrl.DatabaseName);
+        database = client.GetDatabase(mongoUrl.DatabaseName);
 
         Mediator.RegisterClassMaps();
     }

@@ -19,13 +19,13 @@ public class PatientAppointmentsContract
 
     public PatientAppointmentsContract()
     {
-        this.Doctor = new DoctorContract();
-        this.Date = DateTime.Now;
+        Doctor = new DoctorContract();
+        Date = DateTime.Now;
     }
 
     public PatientAppointmentsContract(Doctor doctor, DateTime date)
     {
-        this.Doctor = new DoctorContract(doctor);
-        this.Date = date;
+        Doctor = new DoctorContract(doctor);
+        Date = date;
     }
 }

@@ -83,6 +83,10 @@ public class AppointmentManagement : ManagementBase
             if (doctor.Appointments.RemoveAll(app => app.Id == appointment.Id) > 0)
                 await context.StoreAsync(doctor);
         }
+        catch (ValidationFailException)
+        {
+            throw;
+        }
         catch (Exception ex)
         {
             logger?.LogException(nameof(AppointmentManagement), nameof(DeleteAppointmentAsync), ex);

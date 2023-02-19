@@ -3,7 +3,7 @@
 namespace RuiSantos.ZocDoc.Core.Data;
 
 public interface IDataContext
-	{
+{
     Task<bool> ExistsAsync<TModel>(Expression<Func<TModel, bool>> expression);
     Task<TModel?> FindAsync<TModel>(Guid id);
     Task<TModel?> FindAsync<TModel>(Expression<Func<TModel, bool>> expression);

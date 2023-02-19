@@ -5,16 +5,16 @@ public class MedicalSpeciality
     public Guid Id { get; }
     public string Description { get; set; }
 
-	public MedicalSpeciality()
-	{
-		this.Id = Guid.NewGuid();
-		this.Description = String.Empty;
-	}
+    public MedicalSpeciality()
+    {
+        Id = Guid.NewGuid();
+        Description = String.Empty;
+    }
 
-	public MedicalSpeciality(string description)
-	{
-        this.Id = Guid.NewGuid();
-        this.Description = description;
-	}
+    public MedicalSpeciality(string description)
+    {
+        Id = Guid.NewGuid();
+        Description = description;
+    }
 }
 

@@ -23,7 +23,7 @@ public class SpecialtiesController : Controller
     /// <response code="404">No medical specialties found.</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]        
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<ActionResult<IEnumerable<string>>> GetAsync()
     {
         var result = await management.GetMedicalSpecialitiesAsync();

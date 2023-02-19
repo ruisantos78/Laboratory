@@ -6,7 +6,7 @@ namespace RuiSantos.ZocDoc.Api.Core;
 
 internal class ReApplyOptionalRouteParameterOperationFilter : IOperationFilter
 {
-    const string captureName = "routeParameter";
+    private const string captureName = "routeParameter";
 
     public void Apply(OpenApiOperation operation, OperationFilterContext context)
     {

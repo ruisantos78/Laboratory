@@ -27,10 +27,10 @@ internal static class DoctorFactory
     public static Doctor SetOfficeHours(this Doctor doctor, params OfficeHour[] officeHours)
     {
         doctor.OfficeHours.Clear();
-        
+
         if (officeHours.Any())
             doctor.OfficeHours.AddRange(officeHours);
-        
+
         return doctor;
     }
 

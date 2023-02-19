@@ -22,8 +22,8 @@ public class AppointmentContract
 
     public AppointmentContract()
     {
-        this.MedicalLicense = string.Empty;
-        this.PatientSecuritySocialNumber = string.Empty;
-        this.Date = DateTime.MinValue;
+        MedicalLicense = string.Empty;
+        PatientSecuritySocialNumber = string.Empty;
+        Date = DateTime.MinValue;
     }
 }
