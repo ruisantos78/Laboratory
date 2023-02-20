@@ -8,17 +8,17 @@ public class AppointmentContract
     /// <summary>
     /// The medical license number of the medical professional.
     /// </summary>
-    public string MedicalLicense { get; set; }
+    public string MedicalLicense { get; init; }
 
     /// <summary>
     /// The security social number of the patient.
     /// </summary>
-    public string PatientSecuritySocialNumber { get; set; }
+    public string PatientSecuritySocialNumber { get; init; }
 
     /// <summary>
     /// The date and time of the appointment.
     /// </summary>
-    public DateTime Date { get; set; }
+    public DateTime Date { get; init; }
 
     public AppointmentContract()
     {

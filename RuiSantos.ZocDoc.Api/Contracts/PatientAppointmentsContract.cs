@@ -10,16 +10,16 @@ public class PatientAppointmentsContract
     /// <summary>
     /// The doctor's information
     /// </summary>
-    public DoctorContract Doctor { get; set; }
+    public DoctorContract Doctor { get; init; }
 
     /// <summary>
     /// The date of the appointment
     /// </summary>
-    public DateTime Date { get; set; }
+    public DateTime Date { get; init; }
 
     public PatientAppointmentsContract()
     {
-        Doctor = new DoctorContract();
+        Doctor = DoctorContract.Empty;
         Date = DateTime.Now;
     }
 

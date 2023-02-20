@@ -2,6 +2,8 @@
 
 public class Patient : Person
 {
+    public static readonly Patient Empty = new(Guid.Empty);
+
     public Guid Id { get; }
     public string SocialSecurityNumber { get; set; }
     public List<Appointment> Appointments { get; set; }
@@ -11,7 +13,7 @@ public class Patient : Person
         Id = Guid.NewGuid();
         SocialSecurityNumber = string.Empty;
         Appointments = new List<Appointment>();
-    }
+    }    
 
     public Patient(string socialSecurityNumber, string email, string firstName, string lastName, IEnumerable<string> contactNumbers)
         : base(email, firstName, lastName, contactNumbers)
@@ -20,5 +22,7 @@ public class Patient : Person
         SocialSecurityNumber = socialSecurityNumber;
         Appointments = new List<Appointment>();
     }
+
+    private Patient(Guid id): this() { Id = id; }
 }
 
