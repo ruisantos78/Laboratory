@@ -20,15 +20,23 @@ public class SpecialtiesController : Controller
     /// Get all available medical specialties.
     /// </summary>
     /// <response code="200">An array of medical specialty descriptions.</response>
+    /// <response code="400">If the request object contains invalid arguments.</response>
     /// <response code="404">No medical specialties found.</response>
     [HttpGet]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string[]))]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<string>>> GetAsync()
+    public async Task<IActionResult> GetAsync()
     {
-        var result = await management.GetMedicalSpecialitiesAsync();
-
-        return result.Any() ? Ok(result.Select(s => s.Description)) : NotFound();
+        try
+        {
+            var result = await management.GetMedicalSpecialitiesAsync();
+            return this.OkOrNotFound(result);
+        }
+        catch (Exception ex)
+        {
+            return this.FromException(ex);
+        }
     }
 
     /// <summary>
@@ -36,7 +44,7 @@ public class SpecialtiesController : Controller
     /// </summary>
     /// <param name="descriptions">An array of medical specialty descriptions.</param>
     /// <response code="200">Medical specialties created successfully.</response>
-    /// <response code="400">Invalid arguments.</response>
+    /// <response code="400">If the request object contains invalid arguments.</response>
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -58,8 +66,10 @@ public class SpecialtiesController : Controller
     /// </summary>
     /// <param name="description">The description of the medical specialty to be removed.</param>
     /// <response code="200">The medical specialty was successfully removed.</response>
+    /// <response code="400">If the request object contains invalid arguments.</response>
     [HttpDelete("{description}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> DeleteAsync(string description)
     {
         try

@@ -26,7 +26,7 @@ public class DoctorController : Controller
     /// <response code="400">If the request object contains invalid arguments.</response>
     /// <response code="404">If no records are found for the given license.</response>
     [HttpGet("{license}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorContract))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAsync(string license)
@@ -52,7 +52,7 @@ public class DoctorController : Controller
     /// <response code="400">If the request object contains invalid arguments.</response>
     /// <response code="404">If no records are found for the given doctor and date.</response>
     [HttpGet("{license}/Appointments/{dateTime?}")]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorAppointmentsContract[]))]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAppointmentsAsync(string license, DateTime? dateTime)
