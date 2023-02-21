@@ -1,0 +1,49 @@
+name: .NET Core Desktop
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+jobs:
+
+  build:
+
+    strategy:
+      matrix:
+        configuration: [Debug, Release]
+
+    runs-on: windows-latest  # For a list of available runner types, refer to
+                             # https://help.github.com/en/actions/reference/workflow-syntax-for-github-actions#jobsjob_idruns-on
+
+    env:
+      Solution_Name: RuiSantos.ZocDoc.sln                       
+      Test_Project_Path: RuiSantos.ZocDoc.Core.Tests\RuiSantos.ZocDoc.Core.Tests.csproj
+      Api_Project_Directory: RuiSantos.ZocDoc.Api 
+      Api_Project_Path: RuiSantos.ZocDoc.Api\RuiSantos.ZocDoc.Api.csproj
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+      with:
+        fetch-depth: 0
+
+    # Install the .NET Core workload
+    - name: Install .NET Core
+      uses: actions/setup-dotnet@v3
+      with:
+        dotnet-version: 7.0.x
+
+    # Add  MSBuild to the PATH: https://github.com/microsoft/setup-msbuild
+    - name: Setup MSBuild.exe
+      uses: microsoft/setup-msbuild@v1.0.2
+
+    # Execute all unit tests in the solution
+    - name: Execute unit tests
+      run: dotnet test    
+    
+    # Execute SonarQube
+    - name: Official SonarQube Scan
+      uses: SonarSource/sonarqube-scan-action@v1.2.0
+  
