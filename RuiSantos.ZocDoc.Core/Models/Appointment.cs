@@ -3,9 +3,9 @@
 public class Appointment
 {
     public Guid Id { get; init; }
-    public DayOfWeek Week { get; set; }
-    public DateOnly Date { get; set; }
-    public TimeSpan Time { get; set; }
+    public DayOfWeek Week { get; init; }
+    public DateOnly Date { get; init; }
+    public TimeSpan Time { get; init; }
 
     public Appointment()
     {

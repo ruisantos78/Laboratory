@@ -17,7 +17,10 @@ internal static class PatientFactory
 
     public static Patient SetAppointments(this Patient patient, params Appointment[] appointments)
     {
-        patient.Appointments = appointments?.ToList() ?? new List<Appointment>();
+        patient.Appointments.Clear();
+        if (appointments is not null && appointments.Any())
+            patient.Appointments.AddRange(appointments);
+
         return patient;
     }
 }

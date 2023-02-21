@@ -35,7 +35,7 @@ public class DoctorManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(DoctorManagement), nameof(CreateDoctorAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.DoctorSetFail);
         }
     }
@@ -61,7 +61,7 @@ public class DoctorManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(DoctorManagement), nameof(SetOfficeHoursAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.DoctorSetFail);
         }
     }
@@ -74,7 +74,7 @@ public class DoctorManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(DoctorManagement), nameof(GetDoctorByLicenseAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.DoctorsGetFail);
         }
     }

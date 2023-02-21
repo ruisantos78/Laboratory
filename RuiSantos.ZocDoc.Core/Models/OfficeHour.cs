@@ -2,8 +2,8 @@
 
 public class OfficeHour
 {
-    public DayOfWeek Week { get; set; }
-    public IEnumerable<TimeSpan> Hours { get; set; }
+    public DayOfWeek Week { get; init; }
+    public IEnumerable<TimeSpan> Hours { get; init; }
 
     public OfficeHour()
     {

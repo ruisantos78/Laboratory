@@ -35,7 +35,7 @@ public class PatientManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(PatientManagement), nameof(CreatePatientAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }
@@ -48,7 +48,7 @@ public class PatientManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(PatientManagement), nameof(GetPatientBySocialNumberAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }

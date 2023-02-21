@@ -56,7 +56,7 @@ public class AppointmentManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(AppointmentManagement), nameof(CreateAppointmentAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }
@@ -89,7 +89,7 @@ public class AppointmentManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(AppointmentManagement), nameof(DeleteAppointmentAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }
@@ -128,7 +128,7 @@ public class AppointmentManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(AppointmentManagement), nameof(GetDoctorsBySpecialtyWithAvailabilityAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.DoctorsGetFail);
         }
     }

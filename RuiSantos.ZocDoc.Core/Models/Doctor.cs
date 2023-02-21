@@ -5,10 +5,10 @@ public class Doctor : Person
     public static readonly Doctor Empty = new() { Id = Guid.Empty };
 
     public Guid Id { get; init; }
-    public string License { get; set; }
-    public List<string> Specialties { get; set; }
-    public List<OfficeHour> OfficeHours { get; set; }
-    public List<Appointment> Appointments { get; set; }
+    public string License { get; init; }
+    public List<string> Specialties { get; init; }
+    public List<OfficeHour> OfficeHours { get; init; }
+    public List<Appointment> Appointments { get; init; }
 
     public Doctor() : base()
     {

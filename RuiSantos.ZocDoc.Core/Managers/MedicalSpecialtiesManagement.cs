@@ -40,7 +40,7 @@ public class MedicalSpecialtiesManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(MedicalSpecialtiesManagement), nameof(CreateMedicalSpecialtiesAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.MedicalSpecialitiesSetFail);
         }
     }
@@ -62,7 +62,7 @@ public class MedicalSpecialtiesManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(MedicalSpecialtiesManagement), nameof(RemoveMedicalSpecialtiesAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.MedicalSpecialitiesSetFail);
         }
     }
@@ -75,7 +75,7 @@ public class MedicalSpecialtiesManagement : ManagementBase
         }
         catch (Exception ex)
         {
-            logger?.LogException(nameof(MedicalSpecialtiesManagement), nameof(GetMedicalSpecialitiesAsync), ex);
+            logger?.LogException(ex);
             throw new ManagementFailException(MessageResources.MedicalSpecialitiesGetFail);
         }
     }

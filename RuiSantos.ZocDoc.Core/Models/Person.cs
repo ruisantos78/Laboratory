@@ -2,10 +2,10 @@
 
 public class Person
 {
-    public string Email { get; set; }
-    public string FirstName { get; set; }
-    public string LastName { get; set; }
-    public IEnumerable<string> ContactNumbers { get; set; }
+    public string Email { get; init; }
+    public string FirstName { get; init; }
+    public string LastName { get; init; }
+    public IEnumerable<string> ContactNumbers { get; init; }
 
     public Person()
     {
