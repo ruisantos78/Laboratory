@@ -3,11 +3,11 @@ using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Resources;
-using RuiSantos.ZocDoc.Core.Validators;
+using static RuiSantos.ZocDoc.Core.Resources.ManagementUtils;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 
-public class MedicalSpecialtiesManagement : ManagementBase
+public class MedicalSpecialtiesManagement
 {
     private readonly IDataContext context;
     private readonly ILogger logger;
@@ -28,7 +28,7 @@ public class MedicalSpecialtiesManagement : ManagementBase
                     continue;
 
                 var model = new MedicalSpeciality(description);
-                if (!IsValid(model, MedicalSpecialityValidator.Instance, out var validationException))
+                if (!IsValid(model, out var validationException))
                     throw validationException;
 
                 await context.StoreAsync(model);
@@ -71,7 +71,7 @@ public class MedicalSpecialtiesManagement : ManagementBase
     {
         try
         {
-            return await context.ListAsync<MedicalSpeciality>();
+            return await context.ToListAsync<MedicalSpeciality>();
         }
         catch (Exception ex)
         {

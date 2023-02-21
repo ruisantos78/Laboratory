@@ -4,10 +4,8 @@ using RuiSantos.ZocDoc.Core.Models;
 
 namespace RuiSantos.ZocDoc.Core.Validators;
 
-internal class DoctorValidator : AbstractValidator<Doctor>
+internal sealed class DoctorValidator : AbstractValidator<Doctor>
 {
-    public readonly static DoctorValidator Instance = new();
-
     public DoctorValidator()
     {
         RuleFor(model => model)

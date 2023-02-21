@@ -3,11 +3,11 @@ using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Resources;
-using RuiSantos.ZocDoc.Core.Validators;
+using static RuiSantos.ZocDoc.Core.Resources.ManagementUtils;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 
-public class AppointmentManagement : ManagementBase
+public class AppointmentManagement
 {
     private readonly IDataContext context;
     private readonly ILogger logger;
@@ -39,13 +39,13 @@ public class AppointmentManagement : ManagementBase
             var appointment = new Appointment(dateTime);
 
             doctor.Appointments.Add(appointment);
-            if (!IsValid(doctor, DoctorValidator.Instance, out var validationFailException))
+            if (!IsValid(doctor, out var validationFailException))
                 throw validationFailException;
 
             await context.StoreAsync(doctor);
 
             patient.Appointments.Add(appointment);
-            if (!IsValid(patient, PatientValidator.Instance, out validationFailException))
+            if (!IsValid(patient, out validationFailException))
                 throw validationFailException;
 
             await context.StoreAsync(patient);

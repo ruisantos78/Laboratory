@@ -3,11 +3,11 @@ using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Resources;
-using RuiSantos.ZocDoc.Core.Validators;
+using static RuiSantos.ZocDoc.Core.Resources.ManagementUtils;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 
-public class DoctorManagement : ManagementBase
+public class DoctorManagement
 {
     private readonly IDomainContext domainContext;
     private readonly IDataContext context;
@@ -101,7 +101,7 @@ public class DoctorManagement : ManagementBase
     private async Task ValidateDoctorAsync(Doctor model)
     {
         var medicalSpecialties = await domainContext.GetMedicalSpecialtiesAsync();
-        if (!IsValid(model, new DoctorValidator(medicalSpecialties), out var validationFailException))
+        if (!IsValid(model, out var validationFailException, medicalSpecialties))
             throw validationFailException;
     }
 

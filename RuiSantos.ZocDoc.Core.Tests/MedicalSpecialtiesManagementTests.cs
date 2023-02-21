@@ -119,7 +119,7 @@ public class MedicalSpecialtiesManagementTests
         // Arrange
         var specialties = SpecialtyFactory.Create().ToList();
 
-        mockDataContext.Setup(m => m.ListAsync<MedicalSpeciality>()).ReturnsAsync(specialties);
+        mockDataContext.Setup(m => m.ToListAsync<MedicalSpeciality>()).ReturnsAsync(specialties);
 
         var management = new MedicalSpecialtiesManagement(mockDataContext.Object, mockLogger.Object);
 
@@ -138,7 +138,7 @@ public class MedicalSpecialtiesManagementTests
         // Arrange
         var specialties = new List<MedicalSpeciality>();
 
-        mockDataContext.Setup(m => m.ListAsync<MedicalSpeciality>()).ReturnsAsync(specialties);
+        mockDataContext.Setup(m => m.ToListAsync<MedicalSpeciality>()).ReturnsAsync(specialties);
 
         var management = new MedicalSpecialtiesManagement(mockDataContext.Object, mockLogger.Object);
 

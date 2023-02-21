@@ -39,7 +39,7 @@ public class MongoContext : IDataContext
         return false;
     }
 
-    public async Task<List<TModel>> ListAsync<TModel>()
+    public async Task<List<TModel>> ToListAsync<TModel>()
     {
         if (Mediator.GetEntity<TModel>() is IEntity<TModel> entity)
             return await entity.ListAsync(database);

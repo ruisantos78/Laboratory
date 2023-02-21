@@ -20,7 +20,7 @@ public class DomainContext : IDomainContext
     {
         return cache.GetOrCreateAsync(nameof(MedicalSpeciality), entry =>
         {
-            var values = context.ListAsync<MedicalSpeciality>();
+            var values = context.ToListAsync<MedicalSpeciality>();
             entry.SetSlidingExpiration(CacheSlidingExpiration).SetValue(values);
             return values;
         });
