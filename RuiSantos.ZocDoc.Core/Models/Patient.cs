@@ -2,9 +2,9 @@
 
 public class Patient : Person
 {
-    public static readonly Patient Empty = new(Guid.Empty);
+    public static readonly Patient Empty = new() { Id = Guid.Empty };
 
-    public Guid Id { get; }
+    public Guid Id { get; init; }
     public string SocialSecurityNumber { get; set; }
     public List<Appointment> Appointments { get; set; }
 
@@ -22,7 +22,5 @@ public class Patient : Person
         SocialSecurityNumber = socialSecurityNumber;
         Appointments = new List<Appointment>();
     }
-
-    private Patient(Guid id): this() { Id = id; }
 }
 

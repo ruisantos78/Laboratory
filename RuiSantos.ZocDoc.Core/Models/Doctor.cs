@@ -2,9 +2,9 @@
 
 public class Doctor : Person
 {
-    public static readonly Doctor Empty = new(Guid.Empty);
+    public static readonly Doctor Empty = new() { Id = Guid.Empty };
 
-    public Guid Id { get; }
+    public Guid Id { get; init; }
     public string License { get; set; }
     public List<string> Specialties { get; set; }
     public List<OfficeHour> OfficeHours { get; set; }
@@ -29,6 +29,4 @@ public class Doctor : Person
         OfficeHours = new List<OfficeHour>();
         Appointments = new List<Appointment>();
     }
-
-    private Doctor(Guid id): this() { Id = id; }
 }

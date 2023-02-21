@@ -2,6 +2,7 @@
 using RuiSantos.ZocDoc.Api.Contracts;
 using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core.Managers;
+using static RuiSantos.ZocDoc.Api.Core.ControllerUtils;
 
 namespace RuiSantos.ZocDoc.Api.Controllers;
 
@@ -22,15 +23,24 @@ public class DoctorController : Controller
     /// </summary>
     /// <param name="license">The doctor's license number.</param>
     /// <response code="200">Returns the doctor's information.</response>
+    /// <response code="400">If the request object contains invalid arguments.</response>
     /// <response code="404">If no records are found for the given license.</response>
     [HttpGet("{license}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<DoctorContract>> GetAsync(string license)
+    public async Task<IActionResult> GetAsync(string license)
     {
-        var result = await management.GetDoctorByLicenseAsync(license);
+        try
+        {
+            var result = await management.GetDoctorByLicenseAsync(license);
 
-        return result is not null ? Ok(new DoctorContract(result)) : NotFound();
+            return this.OkOrNotFound<DoctorContract>(result);
+        }
+        catch (Exception ex)
+        {
+            return this.FromException(ex);
+        }
     }
 
     /// <summary>
@@ -39,17 +49,26 @@ public class DoctorController : Controller
     /// <param name="license">The doctor's medical license.</param>
     /// <param name="dateTime">The date of the appointments (optional).</param>
     /// <response code="200">Returns a list of the doctor's appointments.</response>
+    /// <response code="400">If the request object contains invalid arguments.</response>
     /// <response code="404">If no records are found for the given doctor and date.</response>
     [HttpGet("{license}/Appointments/{dateTime?}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
     [ProducesResponseType(StatusCodes.Status404NotFound)]
-    public async Task<ActionResult<IEnumerable<DoctorAppointmentsContract>>> GetAppointmentsAsync(string license, DateTime? dateTime)
+    public async Task<IActionResult> GetAppointmentsAsync(string license, DateTime? dateTime)
     {
-        var result = new List<DoctorAppointmentsContract>();
-        await foreach (var (patient, date) in management.GetAppointmentsAsync(license, dateTime))
-            result.Add(new DoctorAppointmentsContract(patient, date));
+        try
+        {
+            var result = new List<DoctorAppointmentsContract>();
+            await foreach (var (patient, date) in management.GetAppointmentsAsync(license, dateTime))
+                result.Add(new DoctorAppointmentsContract(patient, date));
 
-        return result.Any() ? Ok(result) : NotFound();
+            return this.OkOrNotFound(result);
+        }
+        catch (Exception ex)
+        {
+            return this.FromException(ex);
+        }
     }
 
     /// <summary>
@@ -65,8 +84,13 @@ public class DoctorController : Controller
     {
         try
         {
-            await management.CreateDoctorAsync(request.License, request.Email, request.FirstName,
-                request.LastName, request.ContactNumbers, request.Specialties);
+            await management.CreateDoctorAsync(
+                request.License,
+                request.Email,
+                request.FirstName,
+                request.LastName,
+                request.ContactNumbers,
+                request.Specialties);
 
             return Ok();
         }
@@ -91,8 +115,10 @@ public class DoctorController : Controller
     {
         try
         {
-            var timespans = hours.Select(TimeSpan.Parse);
-            await management.SetOfficeHoursAsync(license, week, timespans);
+            await management.SetOfficeHoursAsync(
+                license,
+                week,
+                StringToTimeSpanArray(hours));
 
             return Ok();
         }
