@@ -49,12 +49,18 @@ public class MedicalSpecialtiesManagement
     {
         try
         {
-            var query = await context.QueryAsync<MedicalSpeciality>(i => string.Equals(i.Description, description, StringComparison.OrdinalIgnoreCase));
-
-            if (query.FirstOrDefault() is not MedicalSpeciality model)
+            var speciality = await context.FindAsync<MedicalSpeciality>(i => string.Equals(i.Description, description, StringComparison.OrdinalIgnoreCase));
+            if (speciality is null)
                 throw new ValidationFailException(MessageResources.MedicalSpecialitiesDescriptionNotFound);
 
-            await context.RemoveAsync<MedicalSpeciality>(model.Id);
+            await context.RemoveAsync<MedicalSpeciality>(speciality.Id);
+
+            var doctors = await context.QueryAsync<Doctor>(i => i.Specialties.Contains(description));
+            foreach ( var doctor in doctors)
+            {
+                doctor.Specialties.Remove(description);
+                await context.StoreAsync<Doctor>(doctor);
+            }
         }
         catch (ValidationFailException)
         {
