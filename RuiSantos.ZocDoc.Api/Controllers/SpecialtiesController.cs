@@ -31,7 +31,7 @@ public class SpecialtiesController : Controller
         try
         {
             var result = await management.GetMedicalSpecialitiesAsync();
-            return this.OkOrNotFound(result);
+            return this.OkOrNotFound(result.Select(s => s.Description).OrderBy(s => s));
         }
         catch (Exception ex)
         {
