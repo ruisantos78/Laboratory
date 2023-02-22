@@ -69,14 +69,22 @@ public class MedicalSpecialtiesManagementTests
         // Arrange
         var description = "Wrong Specialty";
 
+        var doctor = DoctorFactory.Create().SetSpecialties(description, "Cardiology");
+
         var specialties = SpecialtyFactory.Create().ToList();
         specialties.Add(new(description));
 
-        mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<MedicalSpeciality, bool>>>()))
-            .ReturnsAsync((Expression<Func<MedicalSpeciality, bool>> expression) => specialties.Where(expression.Compile()).ToList());
+        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<MedicalSpeciality, bool>>>()))
+            .ReturnsAsync((Expression<Func<MedicalSpeciality, bool>> expression) => specialties.FirstOrDefault(expression.Compile()));
+
+        mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<Doctor, bool>>>()))
+            .ReturnsAsync(new List<Doctor>() { doctor });
 
         mockDataContext.Setup(m => m.RemoveAsync<MedicalSpeciality>(It.IsAny<Guid>()))
             .Callback<Guid>(value => specialties.RemoveAll(i => i.Id == value));
+
+        mockDataContext.Setup(m => m.StoreAsync<Doctor>(It.IsAny<Doctor>()))
+            .Callback<Doctor>(value => doctor = value);
 
         var management = new MedicalSpecialtiesManagement(mockDataContext.Object, mockLogger.Object);
 
@@ -88,6 +96,10 @@ public class MedicalSpecialtiesManagementTests
 
         specialties.Should().NotBeNullOrEmpty();
         specialties.Select(s => s.Description).Should().NotContain(description);
+
+        doctor.Should().NotBeNull();
+        doctor.Specialties.Should().NotBeNullOrEmpty();
+        doctor.Specialties.Should().NotContain(description);
     }
 
     [Fact]
