@@ -7,17 +7,38 @@ using static RuiSantos.ZocDoc.Core.Resources.ManagementUtils;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 
+/// <summary>
+/// Manages the medical specialties.
+/// </summary>
 public class MedicalSpecialtiesManagement
 {
+    /// <summary>
+    /// The data context.
+    /// </summary>
     private readonly IDataContext context;
+
+    /// <summary>
+    /// The logger.
+    /// </summary>
     private readonly ILogger logger;
 
+    /// <summary>
+    /// Creates a new instance of the medical specialties management.
+    /// </summary>
+    /// <param name="context">The data context.</param>
+    /// <param name="logger">The logger.</param>
     public MedicalSpecialtiesManagement(IDataContext context, ILogger<MedicalSpecialtiesManagement> logger)
     {
         this.context = context;
         this.logger = logger;
     }
 
+    /// <summary>
+    /// Creates one or more medical specialties.
+    /// </summary>
+    /// <param name="descriptions">The medical specialties descriptions.</param>
+    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
+    /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
     public async Task CreateMedicalSpecialtiesAsync(IEnumerable<string> decriptions)
     {
         try
@@ -45,6 +66,12 @@ public class MedicalSpecialtiesManagement
         }
     }
 
+    /// <summary>
+    /// Removes one medical specialties.
+    /// </summary>
+    /// <param name="description">The medical specialties description.</param>
+    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
+    /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
     public async Task RemoveMedicalSpecialtiesAsync(string description)
     {
         try
@@ -73,6 +100,11 @@ public class MedicalSpecialtiesManagement
         }
     }
 
+    /// <summary>
+    /// Gets all the medical specialties.
+    /// </summary>
+    /// <returns>The medical specialties.</returns>
+    /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
     public async Task<List<MedicalSpeciality>> GetMedicalSpecialitiesAsync()
     {
         try

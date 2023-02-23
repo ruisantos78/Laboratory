@@ -7,12 +7,21 @@ using static RuiSantos.ZocDoc.Core.Resources.ManagementUtils;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 
+/// <summary>
+/// Manages the creation and modification of doctors.
+/// </summary>
 public class DoctorManagement
 {
     private readonly IDomainContext domainContext;
     private readonly IDataContext context;
     private readonly ILogger logger;
 
+    /// <summary>
+    /// Creates a new instance of the DoctorManagement class.
+    /// </summary>
+    /// <param name="domainContext">The domain context.</param>
+    /// <param name="context">The data context.</param>
+    /// <param name="logger">The logger.</param>
     public DoctorManagement(IDomainContext domainContext, IDataContext context, ILogger<DoctorManagement> logger)
     {
         this.domainContext = domainContext;
@@ -20,6 +29,17 @@ public class DoctorManagement
         this.logger = logger;
     }
 
+    /// <summary>
+    /// Creates a new doctor.
+    /// </summary>
+    /// <param name="license">The doctor's license number.</param>
+    /// <param name="email">The doctor's email.</param>
+    /// <param name="firstName">The doctor's first name.</param>
+    /// <param name="lastName">The doctor's last name.</param>
+    /// <param name="contactNumbers">The doctor's contact numbers.</param>
+    /// <param name="specialties">The doctor's specialties.</param>
+    /// <exception cref="ValidationFailException">Thrown when the doctor's license number is not unique.</exception>
+    /// <exception cref="ManagementFailException">Thrown when the operation fails.</exception>
     public async Task CreateDoctorAsync(string license, string email, string firstName, string lastName,
         IEnumerable<string> contactNumbers, IEnumerable<string> specialties)
     {
@@ -40,6 +60,14 @@ public class DoctorManagement
         }
     }
 
+    /// <summary>
+    /// Set the office hours for a doctor.
+    /// </summary>
+    /// <param name="license">The doctor's license number.</param>
+    /// <param name="dayOfWeek">The day of the week.</param>
+    /// <param name="hours">The office hours.</param>
+    /// <exception cref="ValidationFailException">Thrown when the doctor's license number is not found.</exception>
+    /// <exception cref="ManagementFailException">Thrown when the operation fails.</exception>
     public async Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
     {
         try
@@ -66,6 +94,12 @@ public class DoctorManagement
         }
     }
 
+    /// <summary>
+    /// Get the doctor's informations by a given license number.
+    /// </summary>
+    /// <param name="license">The doctor's license number.</param>
+    /// <returns>The doctor's informations.</returns>
+    /// <exception cref="ManagementFailException">Thrown when the operation fails.</exception>
     public async Task<Doctor?> GetDoctorByLicenseAsync(string license)
     {
         try
@@ -79,6 +113,12 @@ public class DoctorManagement
         }
     }
 
+    /// <summary>
+    /// Get the doctor's appointments on a given date.
+    /// </summary>
+    /// <param name="license">The doctor's license number.</param>
+    /// <param name="dateTime">The date.</param>
+    /// <returns>The doctor's appointments on the given date.</returns> 
     public async IAsyncEnumerable<(Patient patient, DateTime date)> GetAppointmentsAsync(string license, DateTime? dateTime)
     {
         var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
@@ -98,6 +138,11 @@ public class DoctorManagement
         }
     }
 
+    /// <summary>
+    /// Validates a doctor.
+    /// </summary>
+    /// <param name="model">The doctor.</param>
+    /// <exception cref="ValidationFailException">Thrown if the doctor is invalid.</exception>
     private async Task ValidateDoctorAsync(Doctor model)
     {
         var medicalSpecialties = await domainContext.GetMedicalSpecialtiesAsync();
@@ -105,6 +150,12 @@ public class DoctorManagement
             throw validationFailException;
     }
 
+    /// <summary>
+    /// Cancels appointments for a given doctor.
+    /// </summary>
+    /// <param name="doctor">The doctor.</param>
+    /// <param name="dayOfWeek">The day of the week.</param>
+    /// <param name="hours">The office hours.</param>    
     private async Task CancelAppointmentsAsync(Doctor doctor, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
     {
         var appointments = doctor.Appointments.FindAll(appointment => appointment.Week == dayOfWeek && !hours.Contains(appointment.Time));

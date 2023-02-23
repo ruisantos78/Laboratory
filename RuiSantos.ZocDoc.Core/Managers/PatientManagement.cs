@@ -7,17 +7,42 @@ using static RuiSantos.ZocDoc.Core.Resources.ManagementUtils;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 
+/// <summary>
+/// This class is responsible for managing patients.
+/// </summary>
 public class PatientManagement
 {
+    /// <summary>
+    /// The data context.
+    /// </summary>
     private readonly IDataContext context;
+
+    /// <summary>
+    /// The logger.
+    /// </summary>
     private readonly ILogger logger;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="PatientManagement"/>.
+    /// </summary>
+    /// <param name="context">The data context.</param>
+    /// <param name="logger">The logger.</param>
     public PatientManagement(IDataContext context, ILogger<PatientManagement> logger)
     {
         this.context = context;
         this.logger = logger;
     }
 
+    /// <summary>
+    /// Creates a new patient.
+    /// </summary>
+    /// <param name="socialNumber">The social security number.</param>
+    /// <param name="email">The email.</param>
+    /// <param name="firstName">The first name.</param>
+    /// <param name="lastName">The last name.</param>
+    /// <param name="contactNumbers">The contact numbers.</param>
+    /// <exception cref="ValidationFailException">If the patient is not valid.</exception>
+    /// <exception cref="ManagementFailException">If the patient could not be created.</exception>
     public async Task CreatePatientAsync(string socialNumber, string email, string firstName, string lastName, IEnumerable<string> contactNumbers)
     {
         try
@@ -40,6 +65,12 @@ public class PatientManagement
         }
     }
 
+    /// <summary>
+    /// Gets a patient by social number.
+    /// </summary>
+    /// <param name="socialNumber">The social security number.</param>
+    /// <returns>The patient.</returns>
+    /// <exception cref="ManagementFailException">If the patient could not be retrieved.</exception>
     public async Task<Patient?> GetPatientBySocialNumberAsync(string socialNumber)
     {
         try
@@ -53,6 +84,11 @@ public class PatientManagement
         }
     }
 
+    /// <summary>
+    /// Gets all appointments for a patient.
+    /// </summary>
+    /// <param name="socialNumber">The social security number.</param>
+    /// <returns>The appointments.</returns>
     public async IAsyncEnumerable<(Doctor doctor, DateTime date)> GetAppointmentsAsync(string socialNumber)
     {
         var patient = await context.FindAsync<Patient>(patient => patient.SocialSecurityNumber == socialNumber);

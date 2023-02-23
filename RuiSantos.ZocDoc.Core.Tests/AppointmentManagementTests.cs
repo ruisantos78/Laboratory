@@ -9,11 +9,25 @@ using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Core.Tests;
 
+/// <summary>
+/// Tests for <see cref="AppointmentManagement"/>
+/// </summary>
 public class AppointmentManagementTests
 {
+    /// <summary>
+    /// Mocks the data context.
+    /// </summary>
     private readonly Mock<IDataContext> mockDataContext = new();
+
+    /// <summary>
+    /// Mocks the logger.
+    /// </summary>
     private readonly Mock<ILogger<AppointmentManagement>> mockLogger = new();
 
+    /// <summary>
+    /// Tests that <see cref="AppointmentManagement.CreateAppointmentAsync(string, string, DateTime)"/>
+    /// store an appointment for a valid patient and doctor. 
+    /// </summary>
     [Fact]
     public async Task CreateAppointmentAsync_WithValidInput_ShouldStoreAppointment()
     {
@@ -46,6 +60,10 @@ public class AppointmentManagementTests
         mockDataContext.Verify(m => m.StoreAsync(doctor), Times.Once);
     }
 
+    /// <summary>
+    /// Tests that <see cref="AppointmentManagement.CreateAppointmentAsync(string, string, DateTime)"/>
+    /// remove an appointment for a valid patient and doctor.
+    /// </summary>
     [Fact]
     public async Task DeleteAppointmentAsync_WithValidInput_ShouldRemoveAppointment()
     {
@@ -80,6 +98,10 @@ public class AppointmentManagementTests
         mockDataContext.Verify(m => m.StoreAsync(doctor), Times.AtMostOnce);
     }
 
+    /// <summary>
+    /// Tests that <see cref="AppointmentManagement.GetAvailabilityAsync(string, DateTime)"/>
+    /// returns the availability for a valid doctor.
+    /// </summary>
     [Fact]
     public async Task GetAvailabilityAsync_WithValidInput_ReturnsExpectedResult()
     {
@@ -126,5 +148,32 @@ public class AppointmentManagementTests
         result.Should().ContainSingle().Which.schedule.Should().NotContain(dateTime);
 
         mockDataContext.Verify();
+    }
+
+    /// <summary>
+    /// This test is to ensure that when there are no doctors with the given speciality,
+    /// the result is empty.
+    /// </summary>
+    [Fact]
+    public async Task GetAvailabilityAsync_WithInvalidInput_ReturnsExpectedResult() {
+        /// Arrange
+        var speciality = "cardiology";
+        var dateTime = DateTime.Parse("2022-01-03 09:00");
+
+        var appointments = new[] {
+            new Appointment(DateTime.Parse("2022-01-04 09:00"))
+        };
+
+        mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<Doctor, bool>>>()))
+            .ReturnsAsync(new List<Doctor>());
+
+        var management = new AppointmentManagement(mockDataContext.Object, mockLogger.Object);       
+        
+        // Act
+        var result = await management.GetAvailabilityAsync(speciality, dateTime).ToListAsync();
+
+        // Assert
+        result.Should().NotBeNull();    
+        result.Should().BeEmpty();
     }
 }

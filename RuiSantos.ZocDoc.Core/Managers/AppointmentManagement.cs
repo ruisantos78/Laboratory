@@ -7,17 +7,33 @@ using static RuiSantos.ZocDoc.Core.Resources.ManagementUtils;
 
 namespace RuiSantos.ZocDoc.Core.Managers;
 
+/// <summary>
+/// Manages the creation and deletion of appointments.
+/// </summary>
 public class AppointmentManagement
 {
     private readonly IDataContext context;
     private readonly ILogger logger;
 
+    /// <summary>
+    /// Creates a new instance of <see cref="AppointmentManagement"/>.
+    /// </summary>
+    /// <param name="context">The <see cref="IDataContext"/> to use.</param>
+    /// <param name="logger">The <see cref="ILogger"/> to use.</param>
     public AppointmentManagement(IDataContext context, ILogger<AppointmentManagement> logger)
     {
         this.context = context;
         this.logger = logger;
     }
 
+    /// <summary>
+    /// Gets the appointments for a given patient.
+    /// </summary>
+    /// <param name="socialNumber">The social number of the patient.</param>
+    /// <param name="medicalLicence">The medical licence of the doctor.</param>
+    /// <param name="dateTime">The date and time of the appointment.</param>
+    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
+    /// <exception cref="ManagementFailException">Thrown when the appointment creation fails.</exception>
     public async Task CreateAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime)
     {
         try
@@ -61,6 +77,14 @@ public class AppointmentManagement
         }
     }
 
+    /// <sumary>
+    /// Deletes an appointment for a given patient.
+    /// </sumary>
+    /// <param name="socialNumber">The social number of the patient.</param>
+    /// <param name="medicalLicence">The medical licence of the doctor.</param>
+    /// <param name="dateTime">The date and time of the appointment.</param>
+    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
+    /// <exception cref="ManagementFailException">Thrown when the appointment deletion fails.</exception>
     public async Task DeleteAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime)
     {
         try
@@ -94,6 +118,12 @@ public class AppointmentManagement
         }
     }
 
+    /// <summary>
+    /// Gets the availability for doctors with a specialty on a given date.
+    /// </summary>
+    /// <param name="speciality">The specialty.</param>
+    /// <param name="dateTime">The date and time of the appointment.</param>   
+    /// <returns>The availability for doctors with a specialty on a given date</returns> 
     public async IAsyncEnumerable<(Doctor doctor, IEnumerable<DateTime> schedule)> GetAvailabilityAsync(string speciality, DateTime dateTime)
     {
         var date = DateOnly.FromDateTime(dateTime);
@@ -114,6 +144,13 @@ public class AppointmentManagement
         }
     }
 
+    /// <summary>
+    /// Gets the doctors with a specialty and a free agenda on a given date
+    /// </summary>
+    /// <param name="speciality">The specialty.</param>
+    /// <param name="date">The date and time of the appointment.</param>
+    /// <exception cref="ManagementFailException">Thrown when the doctors retrieval fails.</exception>
+    /// <returns>The doctors with a specialty and a free agenda on a given date</returns> 
     private async Task<IEnumerable<Doctor>> GetDoctorsBySpecialtyWithAvailabilityAsync(string speciality, DateOnly date)
     {
         try
