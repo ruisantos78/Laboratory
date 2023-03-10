@@ -48,7 +48,7 @@ public class SpecialtiesController : Controller
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostAsync(string[] descriptions)
+    public async Task<IActionResult> PostAsync([FromBody]string[] descriptions)
     {
         try
         {

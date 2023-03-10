@@ -1,5 +1,3 @@
 {
-    "dotnet-test-explorer.autoWatch": true,
-    "dotnet-test-explorer.autoExpandTree": true,
-    "dotnet-test-explorer.testProjectPath": "**\\*.Tests\\*.Tests.csproj"
+    "dotnet-test-explorer.testProjectPath": "RuiSantos.ZocDoc.Core.Tests/RuiSantos.ZocDoc.Core.Tests.csproj"
 }
