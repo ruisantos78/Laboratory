@@ -10,7 +10,7 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 /// <summary>
 /// Manages the creation and modification of doctors.
 /// </summary>
-public class DoctorManagement
+public class DoctorManagement : IDoctorManagement
 {
     private readonly IDomainContext domainContext;
     private readonly IDataContext context;
@@ -119,7 +119,7 @@ public class DoctorManagement
     /// <param name="license">The doctor's license number.</param>
     /// <param name="dateTime">The date.</param>
     /// <returns>The doctor's appointments on the given date.</returns> 
-    public async IAsyncEnumerable<(Patient patient, DateTime date)> GetAppointmentsAsync(string license, DateTime? dateTime)
+    public async IAsyncEnumerable<PatientAppointment> GetAppointmentsAsync(string license, DateTime? dateTime)
     {
         var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
 
@@ -134,7 +134,7 @@ public class DoctorManagement
         {
             var patientAppointments = patient.Appointments.Where(pa => appointments.Any(da => da.Id == pa.Id));
             foreach (var pa in patientAppointments)
-                yield return (patient, pa.GetDateTime());
+                yield return new(patient, pa.GetDateTime());
         }
     }
 

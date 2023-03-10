@@ -10,7 +10,7 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 /// <summary>
 /// Manages the creation and deletion of appointments.
 /// </summary>
-public class AppointmentManagement
+public class AppointmentManagement : IAppointmentManagement
 {
     private readonly IDataContext context;
     private readonly ILogger logger;
@@ -124,7 +124,7 @@ public class AppointmentManagement
     /// <param name="speciality">The specialty.</param>
     /// <param name="dateTime">The date and time of the appointment.</param>   
     /// <returns>The availability for doctors with a specialty on a given date</returns> 
-    public async IAsyncEnumerable<(Doctor doctor, IEnumerable<DateTime> schedule)> GetAvailabilityAsync(string speciality, DateTime dateTime)
+    public async IAsyncEnumerable<DoctorSchedule> GetAvailabilityAsync(string speciality, DateTime dateTime)
     {
         var date = DateOnly.FromDateTime(dateTime);
 
@@ -140,7 +140,7 @@ public class AppointmentManagement
             var schedule = officeHours.Except(appointments)
                 .Select(time => date.ToDateTime(time));
 
-            yield return (doctor, schedule);
+            yield return new(doctor, schedule);
         }
     }
 

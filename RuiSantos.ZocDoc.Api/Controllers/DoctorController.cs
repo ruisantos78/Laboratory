@@ -11,9 +11,9 @@ namespace RuiSantos.ZocDoc.Api.Controllers;
 [ApiController]
 public class DoctorController : Controller
 {
-    private readonly DoctorManagement management;
+    private readonly IDoctorManagement management;
 
-    public DoctorController(DoctorManagement management)
+    public DoctorController(IDoctorManagement management)
     {
         this.management = management;
     }
@@ -60,8 +60,8 @@ public class DoctorController : Controller
         try
         {
             var result = new List<DoctorAppointmentsContract>();
-            await foreach (var (patient, date) in management.GetAppointmentsAsync(license, dateTime))
-                result.Add(new DoctorAppointmentsContract(patient, date));
+            await foreach (var patientAppointment in management.GetAppointmentsAsync(license, dateTime))
+                result.Add(new DoctorAppointmentsContract(patientAppointment));
 
             return this.OkOrNotFound(result);
         }

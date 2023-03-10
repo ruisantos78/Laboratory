@@ -143,9 +143,9 @@ public class AppointmentManagementTests
         // Assert
         result.Should().NotBeNull();
         result.Should().NotBeEmpty();
-        result.Should().ContainSingle().Which.doctor.License.Should().Be("001");
-        result.Should().ContainSingle().Which.schedule.Should().HaveCount(3);
-        result.Should().ContainSingle().Which.schedule.Should().NotContain(dateTime);
+        result.Should().ContainSingle().Which.Doctor.License.Should().Be("001");
+        result.Should().ContainSingle().Which.Schedule.Should().HaveCount(3);
+        result.Should().ContainSingle().Which.Schedule.Should().NotContain(dateTime);
 
         mockDataContext.Verify();
     }

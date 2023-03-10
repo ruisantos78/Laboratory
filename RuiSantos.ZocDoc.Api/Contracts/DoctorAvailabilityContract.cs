@@ -17,11 +17,18 @@ public class DoctorAvailabilityContract
     /// </summary>
     public IEnumerable<DateTime> Schedule { get; init; }
 
-    public DoctorAvailabilityContract() : this(ZocDoc.Core.Models.Doctor.Empty, Enumerable.Empty<DateTime>()) { }
+    /// <summary>
+    /// Constructor for an empty doctor availability
+    /// </summary>
+    public DoctorAvailabilityContract() : this(DoctorSchedule.Empty) { }
 
-    public DoctorAvailabilityContract(Doctor doctor, IEnumerable<DateTime> schedule)
+    /// <summary>
+    /// Constructor for a doctor availability
+    /// </summary>
+    /// <param name="doctorSchedule">The doctor's availability</param>
+    public DoctorAvailabilityContract(DoctorSchedule doctorSchedule)
     {
-        Doctor =  new DoctorContract(doctor);
-        Schedule = schedule;
+        Doctor =  new DoctorContract(doctorSchedule.Doctor);
+        Schedule = doctorSchedule.Schedule;
     }
 }

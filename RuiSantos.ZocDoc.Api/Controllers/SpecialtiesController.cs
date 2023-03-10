@@ -9,9 +9,9 @@ namespace RuiSantos.ZocDoc.Api.Controllers;
 [ApiController]
 public class SpecialtiesController : Controller
 {
-    private readonly MedicalSpecialtiesManagement management;
+    private readonly IMedicalSpecialtiesManagement management;
 
-    public SpecialtiesController(MedicalSpecialtiesManagement management)
+    public SpecialtiesController(IMedicalSpecialtiesManagement management)
     {
         this.management = management;
     }

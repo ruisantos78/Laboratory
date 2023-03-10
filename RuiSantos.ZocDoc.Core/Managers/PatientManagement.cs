@@ -10,7 +10,7 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 /// <summary>
 /// This class is responsible for managing patients.
 /// </summary>
-public class PatientManagement
+public class PatientManagement : IPatientManagement
 {
     /// <summary>
     /// The data context.
@@ -89,7 +89,7 @@ public class PatientManagement
     /// </summary>
     /// <param name="socialNumber">The social security number.</param>
     /// <returns>The appointments.</returns>
-    public async IAsyncEnumerable<(Doctor doctor, DateTime date)> GetAppointmentsAsync(string socialNumber)
+    public async IAsyncEnumerable<DoctorAppointment> GetAppointmentsAsync(string socialNumber)
     {
         var patient = await context.FindAsync<Patient>(patient => patient.SocialSecurityNumber == socialNumber);
         if (patient is null || !patient.Appointments.Any())
@@ -101,7 +101,7 @@ public class PatientManagement
             var dates = doctor.Appointments.Where(da => patient.Appointments.Any(pa => da.Id == pa.Id))
                 .Select(da => da.GetDateTime());
 
-            foreach (var date in dates) yield return (doctor, date);
+            foreach (var date in dates) yield return new(doctor, date);
         }
     }
 }

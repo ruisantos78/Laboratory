@@ -10,7 +10,7 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 /// <summary>
 /// Manages the medical specialties.
 /// </summary>
-public class MedicalSpecialtiesManagement
+public class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
 {
     /// <summary>
     /// The data context.
@@ -83,7 +83,7 @@ public class MedicalSpecialtiesManagement
             await context.RemoveAsync<MedicalSpeciality>(speciality.Id);
 
             var doctors = await context.QueryAsync<Doctor>(i => i.Specialties.Contains(description));
-            foreach ( var doctor in doctors)
+            foreach (var doctor in doctors)
             {
                 doctor.Specialties.Remove(description);
                 await context.StoreAsync<Doctor>(doctor);

@@ -17,15 +17,11 @@ public class PatientAppointmentsContract
     /// </summary>
     public DateTime Date { get; init; }
 
-    public PatientAppointmentsContract()
-    {
-        Doctor = DoctorContract.Empty;
-        Date = DateTime.Now;
-    }
+    public PatientAppointmentsContract(): this(DoctorAppointment.Empty) { }
 
-    public PatientAppointmentsContract(Doctor doctor, DateTime date)
+    public PatientAppointmentsContract(DoctorAppointment doctorAppointment)
     {
-        Doctor = new DoctorContract(doctor);
-        Date = date;
+        Doctor = new DoctorContract(doctorAppointment.Doctor);
+        Date = doctorAppointment.Date;
     }
 }

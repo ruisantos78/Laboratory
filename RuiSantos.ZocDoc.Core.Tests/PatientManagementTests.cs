@@ -153,7 +153,7 @@ public class PatientManagementTests
 
         // Assert
         result.Should().NotBeNullOrEmpty();
-        result.Should().ContainSingle().Subject.doctor.Should().Be(doctor);
-        result.Should().ContainSingle().Subject.date.Should().Be(dateTime);
+        result.Should().ContainSingle().Subject.Doctor.Should().Be(doctor);
+        result.Should().ContainSingle().Subject.Date.Should().Be(dateTime);
     }
 }

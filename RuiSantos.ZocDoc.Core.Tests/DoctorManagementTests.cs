@@ -124,7 +124,7 @@ public class DoctorManagementTests
 
         // Assert
         result.Should().NotBeNullOrEmpty();
-        result.Should().ContainSingle().Subject.patient.Should().Be(patient);
-        result.Should().ContainSingle().Subject.date.Should().Be(dateTime);
+        result.Should().ContainSingle().Subject.Patient.Should().Be(patient);
+        result.Should().ContainSingle().Subject.Date.Should().Be(dateTime);
     }
 }

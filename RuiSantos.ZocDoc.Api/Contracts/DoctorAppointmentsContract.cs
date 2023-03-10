@@ -17,15 +17,18 @@ public class DoctorAppointmentsContract
     /// </summary>
     public DateTime Date { get; init; }
 
-    public DoctorAppointmentsContract()
-    {
-        Patient = PatientContract.Empty;
-        Date = DateTime.MinValue;
-    }
+    /// <summary>
+    /// Empty constructor for serialization
+    /// </summary>
+    public DoctorAppointmentsContract(): this(PatientAppointment.Empty) { }
 
-    public DoctorAppointmentsContract(Patient patient, DateTime date)
+    /// <summary>
+    /// Constructor for a patient appointment
+    /// </summary>
+    /// <param name="patientAppointment">The patient appointment</param>
+    public DoctorAppointmentsContract(PatientAppointment patientAppointment)
     {
-        Patient = new PatientContract(patient);
-        Date = date;
+        Patient = new PatientContract(patientAppointment.Patient);
+        Date = patientAppointment.Date;
     }
 }

@@ -1,4 +1,6 @@
-﻿using Microsoft.OpenApi.Models;
+﻿using Autofac;
+using Autofac.Extensions.DependencyInjection;
+using Microsoft.OpenApi.Models;
 using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers;
@@ -9,16 +11,22 @@ var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddLogging(config => config.AddConsole());
-builder.Services.AddDataContext(builder.Configuration.GetConnectionString("Default"));
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 
-builder.Services.AddSingleton<IDomainContext, DomainContext>();
+// Configure Autofac Dependency Injection container
+builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
+builder.Host.ConfigureContainer<ContainerBuilder>(_builder => 
+{
+    _builder.AddDataContext(builder.Configuration.GetConnectionString("Default"));
 
-builder.Services.AddTransient<MedicalSpecialtiesManagement>();
-builder.Services.AddTransient<DoctorManagement>();
-builder.Services.AddTransient<PatientManagement>();
-builder.Services.AddTransient<AppointmentManagement>();
+    _builder.RegisterType<DomainContext>().As<IDomainContext>().SingleInstance();
+
+    _builder.RegisterType<MedicalSpecialtiesManagement>().As<IMedicalSpecialtiesManagement>().InstancePerDependency();
+    _builder.RegisterType<DoctorManagement>().As<IDoctorManagement>().InstancePerDependency();
+    _builder.RegisterType<PatientManagement>().As<IPatientManagement>().InstancePerDependency();
+    _builder.RegisterType<AppointmentManagement>().As<IAppointmentManagement>().InstancePerDependency();
+});
 
 builder.Services.AddSwaggerGen(options =>
 {
