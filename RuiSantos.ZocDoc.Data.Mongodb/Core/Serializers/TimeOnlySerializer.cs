@@ -5,7 +5,9 @@ namespace RuiSantos.ZocDoc.Data.Mongodb.Core.Serializers;
 
 internal sealed class TimeOnlySerializer : StructSerializerBase<TimeOnly>
 {
-    public static readonly TimeOnlySerializer Instance = new();
+    private static readonly Lazy<TimeOnlySerializer> _instance = new(() => new TimeOnlySerializer());
+
+    public static TimeOnlySerializer Instance => _instance.Value;
 
     public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, TimeOnly value)
     {

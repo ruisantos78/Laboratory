@@ -15,17 +15,18 @@ builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 
 // Configure Autofac Dependency Injection container
+var defaultConnectionString = builder.Configuration.GetConnectionString("Default");
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
-builder.Host.ConfigureContainer<ContainerBuilder>(_builder => 
+builder.Host.ConfigureContainer<ContainerBuilder>(container => 
 {
-    _builder.AddDataContext(builder.Configuration.GetConnectionString("Default"));
+    container.RegisterDataContext(defaultConnectionString);
 
-    _builder.RegisterType<DomainContext>().As<IDomainContext>().SingleInstance();
+    container.RegisterType<DomainContext>().As<IDomainContext>().SingleInstance();
 
-    _builder.RegisterType<MedicalSpecialtiesManagement>().As<IMedicalSpecialtiesManagement>().InstancePerDependency();
-    _builder.RegisterType<DoctorManagement>().As<IDoctorManagement>().InstancePerDependency();
-    _builder.RegisterType<PatientManagement>().As<IPatientManagement>().InstancePerDependency();
-    _builder.RegisterType<AppointmentManagement>().As<IAppointmentManagement>().InstancePerDependency();
+    container.RegisterType<MedicalSpecialtiesManagement>().As<IMedicalSpecialtiesManagement>().InstancePerDependency();
+    container.RegisterType<DoctorManagement>().As<IDoctorManagement>().InstancePerDependency();
+    container.RegisterType<PatientManagement>().As<IPatientManagement>().InstancePerDependency();
+    container.RegisterType<AppointmentManagement>().As<IAppointmentManagement>().InstancePerDependency();
 });
 
 builder.Services.AddSwaggerGen(options =>

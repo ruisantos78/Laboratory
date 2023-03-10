@@ -14,7 +14,7 @@ public static class MongoExtensions
         services.AddSingleton<IDataContext>(new MongoContext(connectionString));
         return services;
     }
-    public static ContainerBuilder AddDataContext(this ContainerBuilder builder, string? connectionString)
+    public static ContainerBuilder RegisterDataContext(this ContainerBuilder builder, string? connectionString)
     {
         if (connectionString is null)
             throw new ArgumentNullException(nameof(connectionString));

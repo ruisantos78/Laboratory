@@ -6,7 +6,7 @@ using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb;
 
-public class MongoContext : IDataContext
+internal class MongoContext : IDataContext
 {
     private readonly IMongoDatabase database;
 

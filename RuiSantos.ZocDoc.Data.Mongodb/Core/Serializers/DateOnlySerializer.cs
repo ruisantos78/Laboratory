@@ -5,7 +5,9 @@ namespace RuiSantos.ZocDoc.Data.Mongodb.Core.Serializers;
 
 internal sealed class DateOnlySerializer : StructSerializerBase<DateOnly>
 {
-    public static readonly DateOnlySerializer Instance = new();
+    private static readonly Lazy<DateOnlySerializer> _instance = new(() => new DateOnlySerializer());
+
+    public static DateOnlySerializer Instance => _instance.Value;
 
     public override void Serialize(BsonSerializationContext context, BsonSerializationArgs args, DateOnly value)
     {
