@@ -3,7 +3,7 @@ namespace RuiSantos.ZocDoc.Core.Models;
 /// <summary>
 /// Represents a doctor appointment.
 /// </summary>
-public struct DoctorAppointment {
+public class DoctorAppointment {
     /// <summary>
     /// Represents an empty doctor appointment.
     /// </summary>

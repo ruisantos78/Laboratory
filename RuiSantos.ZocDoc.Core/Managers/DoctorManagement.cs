@@ -55,7 +55,7 @@ internal class DoctorManagement : IDoctorManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.DoctorSetFail);
         }
     }
@@ -89,7 +89,7 @@ internal class DoctorManagement : IDoctorManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.DoctorSetFail);
         }
     }
@@ -108,7 +108,7 @@ internal class DoctorManagement : IDoctorManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.DoctorsGetFail);
         }
     }

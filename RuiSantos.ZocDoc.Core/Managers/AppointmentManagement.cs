@@ -72,7 +72,7 @@ internal class AppointmentManagement : IAppointmentManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }
@@ -113,7 +113,7 @@ internal class AppointmentManagement : IAppointmentManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }
@@ -165,7 +165,7 @@ internal class AppointmentManagement : IAppointmentManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.DoctorsGetFail);
         }
     }

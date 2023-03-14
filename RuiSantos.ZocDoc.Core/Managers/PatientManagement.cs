@@ -60,7 +60,7 @@ internal class PatientManagement : IPatientManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }
@@ -79,7 +79,7 @@ internal class PatientManagement : IPatientManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.PatientSetFail);
         }
     }

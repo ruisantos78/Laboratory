@@ -61,7 +61,7 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.MedicalSpecialitiesSetFail);
         }
     }
@@ -95,7 +95,7 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.MedicalSpecialitiesSetFail);
         }
     }
@@ -113,7 +113,7 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
         }
         catch (Exception ex)
         {
-            logger?.LogException(ex);
+            logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.MedicalSpecialitiesGetFail);
         }
     }
