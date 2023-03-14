@@ -10,7 +10,7 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 /// <summary>
 /// Manages the medical specialties.
 /// </summary>
-public class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
+internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
 {
     /// <summary>
     /// The data context.

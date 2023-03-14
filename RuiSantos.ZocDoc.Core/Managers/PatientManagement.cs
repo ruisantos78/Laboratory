@@ -10,7 +10,7 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 /// <summary>
 /// This class is responsible for managing patients.
 /// </summary>
-public class PatientManagement : IPatientManagement
+internal class PatientManagement : IPatientManagement
 {
     /// <summary>
     /// The data context.

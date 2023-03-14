@@ -53,6 +53,6 @@ public class Appointment
     /// Gets the date and time of the appointment.
     /// </summary>
     /// <returns>The date and time of the appointment.</returns>
-    public DateTime GetDateTime() => Date.ToDateTime(Time);
+    public DateTime GetDateTime() => Date.WithTime(Time);
 }
 

@@ -10,7 +10,7 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 /// <summary>
 /// Manages the creation and modification of doctors.
 /// </summary>
-public class DoctorManagement : IDoctorManagement
+internal class DoctorManagement : IDoctorManagement
 {
     private readonly IDomainContext domainContext;
     private readonly IDataContext context;

@@ -1,10 +1,15 @@
-﻿using Microsoft.Extensions.Logging;
-using System.Diagnostics;
+﻿using System.Diagnostics;
+using Microsoft.Extensions.Logging;
 
 namespace RuiSantos.ZocDoc.Core;
 
-internal static class LoggerExtensions
+internal static class InternalExtensions
 {
+    public static DateTime WithTime(this DateOnly date, TimeSpan timeSpan)
+    {
+        return date.ToDateTime(TimeOnly.FromTimeSpan(timeSpan));
+    }
+
     public static void LogException(this ILogger logger, Exception ex)
     {
         var stackTrace = new StackTrace(ex, true);
@@ -15,6 +20,4 @@ internal static class LoggerExtensions
 
         logger?.LogError(ex, "Error on {Class}.{Method}: {Message}", className, methodName, ex.Message);
     }
-
 }
-

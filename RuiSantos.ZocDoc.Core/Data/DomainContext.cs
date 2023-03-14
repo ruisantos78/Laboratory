@@ -6,7 +6,7 @@ namespace RuiSantos.ZocDoc.Core.Data;
 /// <summary>
 /// Cache controller for the domain context.
 /// </summary>
-public class DomainContext : IDomainContext
+internal class DomainContext : IDomainContext
 {
     /// <summary>
     /// The sliding expiration for the cache.

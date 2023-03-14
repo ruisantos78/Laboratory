@@ -2,8 +2,7 @@
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using RuiSantos.ZocDoc.Api.Core;
-using RuiSantos.ZocDoc.Core.Data;
-using RuiSantos.ZocDoc.Core.Managers;
+using RuiSantos.ZocDoc.Core;
 using RuiSantos.ZocDoc.Data.Mongodb;
 using System.Reflection;
 
@@ -20,13 +19,7 @@ builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(container => 
 {
     container.RegisterDataContext(defaultConnectionString);
-
-    container.RegisterType<DomainContext>().As<IDomainContext>().SingleInstance();
-
-    container.RegisterType<MedicalSpecialtiesManagement>().As<IMedicalSpecialtiesManagement>().InstancePerDependency();
-    container.RegisterType<DoctorManagement>().As<IDoctorManagement>().InstancePerDependency();
-    container.RegisterType<PatientManagement>().As<IPatientManagement>().InstancePerDependency();
-    container.RegisterType<AppointmentManagement>().As<IAppointmentManagement>().InstancePerDependency();
+    container.RegisterZocDocServices();
 });
 
 builder.Services.AddSwaggerGen(options =>

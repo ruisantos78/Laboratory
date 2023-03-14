@@ -10,7 +10,7 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 /// <summary>
 /// Manages the creation and deletion of appointments.
 /// </summary>
-public class AppointmentManagement : IAppointmentManagement
+internal class AppointmentManagement : IAppointmentManagement
 {
     private readonly IDataContext context;
     private readonly ILogger logger;
@@ -138,7 +138,7 @@ public class AppointmentManagement : IAppointmentManagement
                 .Select(appointment => appointment.Time);
 
             var schedule = officeHours.Except(appointments)
-                .Select(time => date.ToDateTime(time));
+                .Select(time => date.WithTime(time));
 
             yield return new(doctor, schedule);
         }
