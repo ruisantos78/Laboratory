@@ -33,12 +33,8 @@ public class SchedulesController : Controller
     {
         try
         {
-            var result = new List<DoctorAvailabilityContract>();
-            await foreach (var doctorSchedule in management.GetAvailabilityAsync(specialty, date))
-                result.Add(new DoctorAvailabilityContract(doctorSchedule));
-
-            return this.OkOrNotFound(result);
-
+            var models = management.GetAvailabilityAsync(specialty, date);
+            return await this.OkOrNotFoundAsync(models, typeof(DoctorAvailabilityContract));
         }
         catch (Exception ex)
         {
@@ -59,7 +55,11 @@ public class SchedulesController : Controller
     {
         try
         {
-            await management.CreateAppointmentAsync(request.PatientSecuritySocialNumber, request.MedicalLicense, request.Date);
+            await management.CreateAppointmentAsync(
+                request.PatientSecuritySocialNumber, 
+                request.MedicalLicense, 
+                request.Date);
+
             return Ok();
         }
         catch (Exception ex)
@@ -83,7 +83,11 @@ public class SchedulesController : Controller
     {
         try
         {
-            await management.DeleteAppointmentAsync(request.PatientSecuritySocialNumber, request.MedicalLicense, request.Date);
+            await management.DeleteAppointmentAsync(
+                request.PatientSecuritySocialNumber, 
+                request.MedicalLicense, 
+                request.Date);
+                
             return Ok();
         }
         catch (Exception ex)

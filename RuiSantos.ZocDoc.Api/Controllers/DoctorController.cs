@@ -33,9 +33,8 @@ public class DoctorController : Controller
     {
         try
         {
-            var result = await management.GetDoctorByLicenseAsync(license);
-
-            return this.OkOrNotFound<DoctorContract>(result);
+            var model = await management.GetDoctorByLicenseAsync(license);
+            return this.OkOrNotFound(model, typeof(DoctorContract));
         }
         catch (Exception ex)
         {
@@ -59,11 +58,11 @@ public class DoctorController : Controller
     {
         try
         {
-            var result = new List<DoctorAppointmentsContract>();
-            await foreach (var patientAppointment in management.GetAppointmentsAsync(license, dateTime))
-                result.Add(new DoctorAppointmentsContract(patientAppointment));
+            var models = management.GetAppointmentsAsync(
+                license, 
+                dateTime);
 
-            return this.OkOrNotFound(result);
+            return await this.OkOrNotFoundAsync(models, typeof(DoctorAppointmentsContract));
         }
         catch (Exception ex)
         {

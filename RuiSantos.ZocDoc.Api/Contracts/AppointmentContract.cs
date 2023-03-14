@@ -20,6 +20,9 @@ public class AppointmentContract
     /// </summary>
     public DateTime Date { get; init; }
 
+    /// <summary>
+    /// Initializes a new instance of the <see cref="AppointmentContract"/> class.
+    /// </summary>s
     public AppointmentContract()
     {
         MedicalLicense = string.Empty;

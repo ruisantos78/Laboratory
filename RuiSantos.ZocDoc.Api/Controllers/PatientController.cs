@@ -32,8 +32,8 @@ public class PatientController : Controller
     {
         try
         {
-            var result = await management.GetPatientBySocialNumberAsync(socialNumber);
-            return this.OkOrNotFound<PatientContract>(result);
+            var model = await management.GetPatientBySocialNumberAsync(socialNumber);
+            return this.OkOrNotFound(model, typeof(PatientContract));
         }
         catch (Exception ex)
         {
@@ -55,11 +55,8 @@ public class PatientController : Controller
     {
         try
         {
-            var result = new List<PatientAppointmentsContract>();
-            await foreach (var doctorAppointment in management.GetAppointmentsAsync(socialNumber))
-                result.Add(new PatientAppointmentsContract(doctorAppointment));
-
-            return this.OkOrNotFound(result);
+            var models = management.GetAppointmentsAsync(socialNumber);
+            return await this.OkOrNotFoundAsync(models, typeof(PatientAppointmentsContract));
         }
         catch (Exception ex)
         {
@@ -80,8 +77,12 @@ public class PatientController : Controller
     {
         try
         {
-            await management.CreatePatientAsync(request.SocialSecurityNumber, request.Email,
-                request.FirstName, request.LastName, request.ContactNumbers);
+            await management.CreatePatientAsync(
+                request.SocialSecurityNumber, 
+                request.Email,
+                request.FirstName, 
+                request.LastName, 
+                request.ContactNumbers);
 
             return Ok();
         }
