@@ -110,7 +110,7 @@ public class DoctorController : Controller
     [HttpPut("{license}/OfficeHours/{week}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutOfficeHoursAsync(string license, DayOfWeek week, string[] hours)
+    public async Task<IActionResult> PutOfficeHoursAsync(string license, DayOfWeek week, [FromBody] string[] hours)
     {
         try
         {

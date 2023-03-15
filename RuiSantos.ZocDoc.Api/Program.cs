@@ -31,7 +31,7 @@ builder.Services.AddSwaggerGen(options =>
         Version = "v1",
         Title = "ZocDoc from Rui Santos",
         Description = "A simple ZocDoc implementation by Rui Santos"
-    });
+    });    
 
     var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
     options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
@@ -48,7 +48,7 @@ app.MapControllers();
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
-    app.UseSwaggerUI();
+    app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.yaml", "ZocDoc from Rui Santos v1")); ;
 }
 
 app.Run();
