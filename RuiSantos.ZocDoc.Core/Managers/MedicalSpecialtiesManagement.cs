@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
@@ -15,7 +16,8 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
     /// <summary>
     /// The data context.
     /// </summary>
-    private readonly IDataContext context;
+    private readonly IMedicalSpecialityAdapter medicalSpecialityAdapter;
+    private readonly IDoctorAdapter doctorAdapter;
 
     /// <summary>
     /// The logger.
@@ -25,11 +27,14 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
     /// <summary>
     /// Creates a new instance of the medical specialties management.
     /// </summary>
-    /// <param name="context">The data context.</param>
+    /// <param name="medicalSpecialityAdapter">The medical specialities adapter.</param>
     /// <param name="logger">The logger.</param>
-    public MedicalSpecialtiesManagement(IDataContext context, ILogger<MedicalSpecialtiesManagement> logger)
+    public MedicalSpecialtiesManagement(IMedicalSpecialityAdapter medicalSpecialityAdapter,
+                                        IDoctorAdapter doctorAdapter,
+                                        ILogger<MedicalSpecialtiesManagement> logger)
     {
-        this.context = context;
+        this.medicalSpecialityAdapter = medicalSpecialityAdapter;
+        this.doctorAdapter = doctorAdapter;
         this.logger = logger;
     }
 
@@ -39,21 +44,22 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
     /// <param name="descriptions">The medical specialties descriptions.</param>
     /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
     /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
-    public async Task CreateMedicalSpecialtiesAsync(IEnumerable<string> decriptions)
+    public async Task CreateMedicalSpecialtiesAsync(List<string> decriptions)
     {
         try
         {
             foreach (var description in decriptions)
             {
-                if (await context.ExistsAsync<MedicalSpeciality>(i => string.Equals(i.Description, description, StringComparison.OrdinalIgnoreCase)))
+                if (await medicalSpecialityAdapter.ContainsAsync(description))
                     continue;
 
                 var model = new MedicalSpeciality(description);
                 if (!IsValid(model, out var validationException))
                     throw validationException;
 
-                await context.StoreAsync(model);
+                await medicalSpecialityAdapter.AddAsync(model);
             }
+            
         }
         catch (ValidationFailException)
         {
@@ -76,18 +82,17 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
     {
         try
         {
-            var speciality = await context.FindAsync<MedicalSpeciality>(i => string.Equals(i.Description, description, StringComparison.OrdinalIgnoreCase));
-            if (speciality is null)
+            if (await medicalSpecialityAdapter.ContainsAsync(description) == false) 
                 throw new ValidationFailException(MessageResources.MedicalSpecialitiesDescriptionNotFound);
 
-            await context.RemoveAsync<MedicalSpeciality>(speciality.Id);
+            await medicalSpecialityAdapter.RemoveAsync(description);
 
-            var doctors = await context.QueryAsync<Doctor>(i => i.Specialties.Contains(description));
+            var doctors = await doctorAdapter.FindBySpecialityAsync(description);
             foreach (var doctor in doctors)
             {
-                doctor.Specialties.Remove(description);
-                await context.StoreAsync<Doctor>(doctor);
-            }
+                doctor.Specialities.Remove(description);
+                await doctorAdapter.StoreAsync(doctor);
+            }            
         }
         catch (ValidationFailException)
         {
@@ -109,7 +114,7 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
     {
         try
         {
-            return await context.ToListAsync<MedicalSpeciality>();
+            return await medicalSpecialityAdapter.ToListAsync();
         }
         catch (Exception ex)
         {

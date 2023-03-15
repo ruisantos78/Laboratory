@@ -14,11 +14,10 @@ builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
 
 // Configure Autofac Dependency Injection container
-var defaultConnectionString = builder.Configuration.GetConnectionString("Default");
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(container => 
 {
-    container.RegisterDataContext(defaultConnectionString);
+    container.RegisterDataContext();
     container.RegisterZocDocServices();
 });
 

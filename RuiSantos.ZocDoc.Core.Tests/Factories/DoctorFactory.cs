@@ -16,10 +16,10 @@ internal static class DoctorFactory
 
     public static Doctor SetSpecialties(this Doctor doctor, params string[] specialties)
     {
-        doctor.Specialties.Clear();
+        doctor.Specialities.Clear();
 
         if (specialties.Any())
-            doctor.Specialties.AddRange(specialties);
+            doctor.Specialities.AddRange(specialties);
 
         return doctor;
     }

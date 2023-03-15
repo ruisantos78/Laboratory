@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
+using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
@@ -12,8 +13,9 @@ namespace RuiSantos.ZocDoc.Core.Tests;
 
 public class PatientManagementTests
 {
-    private readonly Mock<IDataContext> mockDataContext = new();
-    private readonly Mock<ILogger<PatientManagement>> mockLogger = new();
+    private readonly Mock<IDoctorAdapter> doctorAdapterMock = new();
+    private readonly Mock<IPatientAdapter> patientAdapterMock = new();
+    private readonly Mock<ILogger<PatientManagement>> loggerMock = new();
 
     [Fact]
     public async Task CreatePatientAsync_WithValidInput_SholdStorePatient()
@@ -22,16 +24,16 @@ public class PatientManagementTests
         var args = PatientFactory.Create();
         var patient = PatientFactory.Empty();
 
-        mockDataContext.Setup(m => m.StoreAsync(It.IsAny<Patient>()))
+        patientAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Patient>()))
             .Callback<Patient>(value => patient = value);
 
-        var manager = new PatientManagement(mockDataContext.Object, mockLogger.Object);
+        var manager = new PatientManagement(patientAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act
         await manager.CreatePatientAsync(args.SocialSecurityNumber, args.Email, args.FirstName, args.LastName, args.ContactNumbers);
 
         // Assert
-        mockDataContext.Verify(m => m.StoreAsync(It.IsAny<Patient>()), Times.Once);
+        patientAdapterMock.Verify(m => m.StoreAsync(It.IsAny<Patient>()), Times.Once);
 
         patient.Should().NotBeNull();
         patient.Id.Should().NotBe(args.Id).And.NotBeEmpty();
@@ -49,19 +51,19 @@ public class PatientManagementTests
         var args = PatientFactory.Create(socialNumber: "Invalid SSN");
         var patient = PatientFactory.Empty();
 
-        mockDataContext.Setup(m => m.StoreAsync(It.IsAny<Patient>()))
+        patientAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Patient>()))
             .Callback<Patient>(value => patient = value);
 
-        var management = new PatientManagement(mockDataContext.Object, mockLogger.Object);
+        var manager = new PatientManagement(patientAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act & Assert
-        var failures = await management.Invoking(async m => await m.CreatePatientAsync(args.SocialSecurityNumber, args.Email, args.FirstName, args.LastName, args.ContactNumbers))
+        var failures = await manager.Invoking(async m => await m.CreatePatientAsync(args.SocialSecurityNumber, args.Email, args.FirstName, args.LastName, args.ContactNumbers))
             .Should().ThrowAsync<ValidationFailException>();
 
         failures.Which.Errors.Should().ContainSingle()
             .Subject.PropertyName.Should().Be(nameof(Patient.SocialSecurityNumber));
 
-        mockDataContext.Verify(m => m.StoreAsync(It.IsAny<Patient>()), Times.Never);
+        patientAdapterMock.Verify(m => m.StoreAsync(It.IsAny<Patient>()), Times.Never);
     }
 
     [Fact]
@@ -71,19 +73,19 @@ public class PatientManagementTests
         var args = PatientFactory.Create(email: "Invalid Email");
         var patient = PatientFactory.Empty();
 
-        mockDataContext.Setup(m => m.StoreAsync(It.IsAny<Patient>()))
+        patientAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Patient>()))
             .Callback<Patient>(value => patient = value);
 
-        var management = new PatientManagement(mockDataContext.Object, mockLogger.Object);
+        var manager = new PatientManagement(patientAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act & Assert
-        var failures = await management.Invoking(async m => await m.CreatePatientAsync(args.SocialSecurityNumber, args.Email, args.FirstName, args.LastName, args.ContactNumbers))
+        var failures = await manager.Invoking(async m => await m.CreatePatientAsync(args.SocialSecurityNumber, args.Email, args.FirstName, args.LastName, args.ContactNumbers))
             .Should().ThrowAsync<ValidationFailException>();
 
         failures.Which.Errors.Should().ContainSingle()
             .Subject.PropertyName.Should().Be(nameof(Patient.Email));
 
-        mockDataContext.Verify(m => m.StoreAsync(It.IsAny<Patient>()), Times.Never);
+        patientAdapterMock.Verify(m => m.StoreAsync(It.IsAny<Patient>()), Times.Never);
     }
 
     [Fact]
@@ -94,10 +96,10 @@ public class PatientManagementTests
 
         var patients = Enumerable.Range(1, 5).Select(i => PatientFactory.Create($"100-00-000{i}"));
 
-        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Patient, bool>>>()))
-            .ReturnsAsync((Expression<Func<Patient, bool>> expression) => patients.FirstOrDefault(expression.Compile()));
+        patientAdapterMock.Setup(m => m.FindAsync(socialNumber))
+            .ReturnsAsync(patients.FirstOrDefault(p => p.SocialSecurityNumber == socialNumber));
 
-        var manager = new PatientManagement(mockDataContext.Object, mockLogger.Object);
+        var manager = new PatientManagement(patientAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act
         var result = await manager.GetPatientBySocialNumberAsync(socialNumber);
@@ -116,10 +118,10 @@ public class PatientManagementTests
 
         var patients = Enumerable.Range(1, 5).Select(i => PatientFactory.Create($"100-00-000{i}"));
 
-        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Patient, bool>>>()))
-            .ReturnsAsync((Expression<Func<Patient, bool>> expression) => patients.FirstOrDefault(expression.Compile()));
+        patientAdapterMock.Setup(m => m.FindAsync(socialNumber))
+            .ReturnsAsync(patients.FirstOrDefault(p => p.SocialSecurityNumber == socialNumber));
 
-        var manager = new PatientManagement(mockDataContext.Object, mockLogger.Object);
+        var manager = new PatientManagement(patientAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act
         var result = await manager.GetPatientBySocialNumberAsync(socialNumber);
@@ -143,13 +145,13 @@ public class PatientManagementTests
         var doctors = appointments.Select(a => DoctorFactory.Create().SetAppointments(a)).ToList();
         doctors.Add(doctor);
 
-        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(patient);
-        mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(doctors);
+        patientAdapterMock.Setup(m => m.FindAsync(socialNumber)).ReturnsAsync(patient);
+        doctorAdapterMock.Setup(m => m.FindAllWithAppointmentsAsync(It.IsAny<List<Appointment>>())).ReturnsAsync(new List<Doctor>() { doctor });
 
-        var management = new PatientManagement(mockDataContext.Object, mockLogger.Object);
+        var manager = new PatientManagement(patientAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act
-        var result = await management.GetAppointmentsAsync(socialNumber).ToListAsync();
+        var result = await manager.GetAppointmentsAsync(socialNumber).ToListAsync();
 
         // Assert
         result.Should().NotBeNullOrEmpty();

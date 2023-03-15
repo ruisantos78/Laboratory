@@ -1,39 +1,39 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using RuiSantos.ZocDoc.Core.Data;
+using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Managers;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Resources;
 using RuiSantos.ZocDoc.Core.Tests.Factories;
-using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Core.Tests;
 
 public class MedicalSpecialtiesManagementTests
 {
-    private readonly Mock<IDataContext> mockDataContext = new();
-    private readonly Mock<ILogger<MedicalSpecialtiesManagement>> mockLogger = new();
+    private readonly Mock<IDoctorAdapter> doctorAdapterMock = new();
+    private readonly Mock<IMedicalSpecialityAdapter> medicalSpecialityAdapterMock = new();
+    private readonly Mock<ILogger<MedicalSpecialtiesManagement>> loggerMock = new();
 
     [Fact]
     public async Task CreateMedicalSpecialtiesAsync_WithValidInput_ShouldStoreMedicalSpecialties()
     {
         // Arrange
-        var descriptions = SpecialtyFactory.Create().Select(s => s.Description);
+        var descriptions = SpecialtyFactory.Create().Select(s => s.Description).ToList();
 
         var specialties = new List<MedicalSpeciality>();
 
-        mockDataContext.Setup(m => m.StoreAsync(It.IsAny<MedicalSpeciality>()))
+        medicalSpecialityAdapterMock.Setup(m => m.AddAsync(It.IsAny<MedicalSpeciality>()))
             .Callback<MedicalSpeciality>(specialties.Add);
 
-        var management = new MedicalSpecialtiesManagement(mockDataContext.Object, mockLogger.Object);
+        var management = new MedicalSpecialtiesManagement(medicalSpecialityAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act
         await management.CreateMedicalSpecialtiesAsync(descriptions);
 
         // Assert
-        mockDataContext.Verify(m => m.StoreAsync(It.IsAny<MedicalSpeciality>()), Times.Exactly(descriptions.Count()));
+        medicalSpecialityAdapterMock.Verify(m => m.AddAsync(It.IsAny<MedicalSpeciality>()), Times.Exactly(descriptions.Count));
 
         specialties.Should().NotBeNullOrEmpty();
         specialties.Should().HaveSameCount(descriptions);
@@ -44,14 +44,14 @@ public class MedicalSpecialtiesManagementTests
     public async Task CreateMedicalSpecialtiesAsync_WithEmptyDescription_ShouldRaiseError()
     {
         // Arrange
-        var descriptions = new string[] { String.Empty };
+        var descriptions = new List<string> { String.Empty };
 
         var specialties = new List<MedicalSpeciality>();
 
-        mockDataContext.Setup(m => m.StoreAsync(It.IsAny<MedicalSpeciality>()))
+        medicalSpecialityAdapterMock.Setup(m => m.AddAsync(It.IsAny<MedicalSpeciality>()))
             .Callback<MedicalSpeciality>(specialties.Add);
 
-        var management = new MedicalSpecialtiesManagement(mockDataContext.Object, mockLogger.Object);
+        var management = new MedicalSpecialtiesManagement(medicalSpecialityAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act & Assert
         var failures = await management.Invoking(async m => await m.CreateMedicalSpecialtiesAsync(descriptions))
@@ -60,7 +60,7 @@ public class MedicalSpecialtiesManagementTests
         failures.Which.Errors.Should().ContainSingle()
             .Subject.PropertyName.Should().Be(nameof(MedicalSpeciality.Description));
 
-        mockDataContext.Verify(m => m.StoreAsync(It.IsAny<MedicalSpeciality>()), Times.Never);
+        medicalSpecialityAdapterMock.Verify(m => m.AddAsync(It.IsAny<MedicalSpeciality>()), Times.Never);
     }
 
     [Fact]
@@ -69,37 +69,39 @@ public class MedicalSpecialtiesManagementTests
         // Arrange
         var description = "Wrong Specialty";
 
-        var doctor = DoctorFactory.Create().SetSpecialties(description, "Cardiology");
+        var doctors = new List<Doctor>() { DoctorFactory.Create().SetSpecialties(description, "Cardiology") };
 
         var specialties = SpecialtyFactory.Create().ToList();
         specialties.Add(new(description));
 
-        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<MedicalSpeciality, bool>>>()))
-            .ReturnsAsync((Expression<Func<MedicalSpeciality, bool>> expression) => specialties.FirstOrDefault(expression.Compile()));
+        medicalSpecialityAdapterMock.Setup(m => m.ContainsAsync(description))
+            .ReturnsAsync(specialties.Any(s => s.Description == description));
 
-        mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<Doctor, bool>>>()))
-            .ReturnsAsync(new List<Doctor>() { doctor });
+        medicalSpecialityAdapterMock.Setup(m => m.RemoveAsync(description))
+            .Callback<string>(value => specialties.RemoveAll(i => i.Description == value));
 
-        mockDataContext.Setup(m => m.RemoveAsync<MedicalSpeciality>(It.IsAny<Guid>()))
-            .Callback<Guid>(value => specialties.RemoveAll(i => i.Id == value));
+        doctorAdapterMock.Setup(m => m.FindBySpecialityAsync(description))
+            .ReturnsAsync(doctors.Where(d => d.Specialities.Contains(description)).ToList()); 
 
-        mockDataContext.Setup(m => m.StoreAsync<Doctor>(It.IsAny<Doctor>()))
-            .Callback<Doctor>(value => doctor = value);
+        doctorAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Doctor>()))
+            .Callback<Doctor>(value => doctors[0] = value);
 
-        var management = new MedicalSpecialtiesManagement(mockDataContext.Object, mockLogger.Object);
+        var management = new MedicalSpecialtiesManagement(medicalSpecialityAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act
         await management.RemoveMedicalSpecialtiesAsync(description);
 
         // Assert
-        mockDataContext.Verify(m => m.RemoveAsync<MedicalSpeciality>(It.IsAny<Guid>()), Times.Once);
+        medicalSpecialityAdapterMock.Verify(m => m.RemoveAsync(description), Times.Once);
 
         specialties.Should().NotBeNullOrEmpty();
         specialties.Select(s => s.Description).Should().NotContain(description);
 
-        doctor.Should().NotBeNull();
-        doctor.Specialties.Should().NotBeNullOrEmpty();
-        doctor.Specialties.Should().NotContain(description);
+        doctors.Should().HaveCount(1);
+
+        doctors[0].Should().NotBeNull();
+        doctors[0].Specialities.Should().NotBeNullOrEmpty();
+        doctors[0].Specialities.Should().NotContain(description);
     }
 
     [Fact]
@@ -109,20 +111,23 @@ public class MedicalSpecialtiesManagementTests
         var description = "Wrong Specialty";
         var specialties = SpecialtyFactory.Create().ToList();
 
-        mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<MedicalSpeciality, bool>>>()))
-            .ReturnsAsync((Expression<Func<MedicalSpeciality, bool>> expression) => specialties.Where(expression.Compile()).ToList());
+        medicalSpecialityAdapterMock.Setup(m => m.ContainsAsync(description))
+            .ReturnsAsync(specialties.Any(s => s.Description == description));
 
-        mockDataContext.Setup(m => m.RemoveAsync<MedicalSpeciality>(It.IsAny<Guid>()))
-            .Callback<Guid>(value => specialties.RemoveAll(i => i.Id == value));
+        medicalSpecialityAdapterMock.Setup(m => m.RemoveAsync(description))
+            .Callback<string>(value => specialties.RemoveAll(i => i.Description == value));
 
-        var management = new MedicalSpecialtiesManagement(mockDataContext.Object, mockLogger.Object);
+        doctorAdapterMock.Setup(m => m.FindBySpecialityAsync(description))
+            .ReturnsAsync(new List<Doctor>());
+            
+        var management = new MedicalSpecialtiesManagement(medicalSpecialityAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act & Assert
         await management.Invoking(async m => await m.RemoveMedicalSpecialtiesAsync(description))
             .Should().ThrowAsync<ValidationFailException>()
             .WithMessage(MessageResources.MedicalSpecialitiesDescriptionNotFound);
 
-        mockDataContext.Verify(m => m.RemoveAsync<MedicalSpeciality>(It.IsAny<Guid>()), Times.Never);
+        medicalSpecialityAdapterMock.Verify(m => m.RemoveAsync(description), Times.Never);
     }
 
     [Fact]
@@ -131,9 +136,9 @@ public class MedicalSpecialtiesManagementTests
         // Arrange
         var specialties = SpecialtyFactory.Create().ToList();
 
-        mockDataContext.Setup(m => m.ToListAsync<MedicalSpeciality>()).ReturnsAsync(specialties);
+        medicalSpecialityAdapterMock.Setup(m => m.ToListAsync()).ReturnsAsync(specialties);
 
-        var management = new MedicalSpecialtiesManagement(mockDataContext.Object, mockLogger.Object);
+        var management = new MedicalSpecialtiesManagement(medicalSpecialityAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act
         var result = await management.GetMedicalSpecialitiesAsync();
@@ -150,9 +155,9 @@ public class MedicalSpecialtiesManagementTests
         // Arrange
         var specialties = new List<MedicalSpeciality>();
 
-        mockDataContext.Setup(m => m.ToListAsync<MedicalSpeciality>()).ReturnsAsync(specialties);
+        medicalSpecialityAdapterMock.Setup(m => m.ToListAsync()).ReturnsAsync(specialties);
 
-        var management = new MedicalSpecialtiesManagement(mockDataContext.Object, mockLogger.Object);
+        var management = new MedicalSpecialtiesManagement(medicalSpecialityAdapterMock.Object, doctorAdapterMock.Object, loggerMock.Object);
 
         // Act
         var result = await management.GetMedicalSpecialitiesAsync();

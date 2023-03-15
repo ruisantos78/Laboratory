@@ -11,7 +11,7 @@ public interface IMedicalSpecialtiesManagement
     /// Creates a new medical specialty.
     /// </summary>
     /// <param name="description">The description of the specialty.</param>
-    Task CreateMedicalSpecialtiesAsync(IEnumerable<string> decriptions);
+    Task CreateMedicalSpecialtiesAsync(List<string> decriptions);
 
     /// <summary>
     /// Gets all the medical specialties.

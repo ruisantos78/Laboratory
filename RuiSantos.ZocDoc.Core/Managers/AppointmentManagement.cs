@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using RuiSantos.ZocDoc.Core.Data;
+using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Resources;
@@ -12,7 +12,8 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 /// </summary>
 internal class AppointmentManagement : IAppointmentManagement
 {
-    private readonly IDataContext context;
+    private readonly IDoctorAdapter doctorAdapter;
+    private readonly IPatientAdapter patientAdapter;
     private readonly ILogger logger;
 
     /// <summary>
@@ -20,9 +21,10 @@ internal class AppointmentManagement : IAppointmentManagement
     /// </summary>
     /// <param name="context">The <see cref="IDataContext"/> to use.</param>
     /// <param name="logger">The <see cref="ILogger"/> to use.</param>
-    public AppointmentManagement(IDataContext context, ILogger<AppointmentManagement> logger)
+    public AppointmentManagement(IDoctorAdapter doctorAdapter, IPatientAdapter patientAdapter, ILogger<AppointmentManagement> logger)
     {
-        this.context = context;
+        this.doctorAdapter = doctorAdapter;
+        this.patientAdapter = patientAdapter;
         this.logger = logger;
     }
 
@@ -38,14 +40,14 @@ internal class AppointmentManagement : IAppointmentManagement
     {
         try
         {
-            var patient = await context.FindAsync<Patient>(patient => patient.SocialSecurityNumber == socialNumber);
+            var patient = await patientAdapter.FindAsync(socialNumber);
             if (patient is null)
                 throw new ValidationFailException(MessageResources.PatientSocialNumberNotFound);
 
             if (patient.Appointments.Any(appointment => appointment.GetDateTime().Equals(dateTime)))
                 throw new ValidationFailException(MessageResources.RecordAlreadyExists);
 
-            var doctor = await context.FindAsync<Doctor>(doctor => doctor.License == medicalLicence);
+            var doctor = await doctorAdapter.FindAsync(medicalLicence);
             if (doctor is null)
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
@@ -58,14 +60,14 @@ internal class AppointmentManagement : IAppointmentManagement
             if (!IsValid(doctor, out var validationFailException))
                 throw validationFailException;
 
-            await context.StoreAsync(doctor);
+            await doctorAdapter.StoreAsync(doctor);
 
             patient.Appointments.Add(appointment);
             if (!IsValid(patient, out validationFailException))
                 throw validationFailException;
 
-            await context.StoreAsync(patient);
-        }
+            await patientAdapter.StoreAsync(patient);
+        }        
         catch (ValidationFailException)
         {
             throw;
@@ -89,7 +91,7 @@ internal class AppointmentManagement : IAppointmentManagement
     {
         try
         {
-            var patient = await context.FindAsync<Patient>(patient => patient.SocialSecurityNumber == socialNumber);
+            var patient = await patientAdapter.FindAsync(socialNumber);
             if (patient is null)
                 throw new ValidationFailException(MessageResources.PatientSocialNumberNotFound);
 
@@ -98,15 +100,15 @@ internal class AppointmentManagement : IAppointmentManagement
                 return;
 
             patient.Appointments.Remove(appointment);
-            await context.StoreAsync(patient);
+            await patientAdapter.StoreAsync(patient);
 
-            var doctor = await context.FindAsync<Doctor>(doctor => doctor.License == medicalLicence);
+            var doctor = await doctorAdapter.FindAsync(medicalLicence);
             if (doctor is null)
                 return;
 
-            if (doctor.Appointments.RemoveAll(app => app.Id == appointment.Id) > 0)
-                await context.StoreAsync(doctor);
-        }
+            doctor.Appointments.Remove(appointment);
+            await doctorAdapter.StoreAsync(doctor);
+        }         
         catch (ValidationFailException)
         {
             throw;
@@ -128,7 +130,7 @@ internal class AppointmentManagement : IAppointmentManagement
     {
         var date = DateOnly.FromDateTime(dateTime);
 
-        var doctors = await GetDoctorsBySpecialtyWithAvailabilityAsync(speciality, date);
+        var doctors = await doctorAdapter.FindBySpecialtyWithAvailabilityAsync(speciality, date);
         foreach (var doctor in doctors)
         {
             var officeHours = doctor.OfficeHours.Where(hour => hour.Week == date.DayOfWeek)
@@ -141,32 +143,6 @@ internal class AppointmentManagement : IAppointmentManagement
                 .Select(time => date.WithTime(time));
 
             yield return new(doctor, schedule);
-        }
-    }
-
-    /// <summary>
-    /// Gets the doctors with a specialty and a free agenda on a given date
-    /// </summary>
-    /// <param name="speciality">The specialty.</param>
-    /// <param name="date">The date and time of the appointment.</param>
-    /// <exception cref="ManagementFailException">Thrown when the doctors retrieval fails.</exception>
-    /// <returns>The doctors with a specialty and a free agenda on a given date</returns> 
-    private async Task<IEnumerable<Doctor>> GetDoctorsBySpecialtyWithAvailabilityAsync(string speciality, DateOnly date)
-    {
-        try
-        {
-            return await context.QueryAsync<Doctor>(dr =>
-                dr.Specialties.Any(ds => ds.Equals(speciality, StringComparison.OrdinalIgnoreCase)) &&
-                !dr.OfficeHours.All(oh =>
-                    oh.Week == date.DayOfWeek &&
-                    oh.Hours.Any(hour => dr.Appointments.Any(app => app.Date == date && app.Time == hour))
-                )
-            );
-        }
-        catch (Exception ex)
-        {
-            logger?.Fail(ex);
-            throw new ManagementFailException(MessageResources.DoctorsGetFail);
         }
     }
 }

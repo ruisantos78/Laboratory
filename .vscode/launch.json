@@ -17,7 +17,7 @@
             },
             "env": {
                 "ASPNETCORE_ENVIRONMENT": "Development",
-                "ConnectionStrings__Default": "mongodb://localhost:27017"
+                "ConnectionStrings__Default": "mongodb://localhost:27017/ZocDoc"
             },
             "sourceFileMap": {
                 "/Views": "${workspaceFolder}/Views"

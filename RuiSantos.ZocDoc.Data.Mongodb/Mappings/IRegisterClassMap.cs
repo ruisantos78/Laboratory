@@ -1,4 +1,4 @@
-﻿namespace RuiSantos.ZocDoc.Data.Mongodb.Core.Interfaces;
+﻿namespace RuiSantos.ZocDoc.Data.Mongodb.Mappings;
 
 internal interface IRegisterClassMap
 {

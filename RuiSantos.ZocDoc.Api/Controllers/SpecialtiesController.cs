@@ -31,7 +31,7 @@ public class SpecialtiesController : Controller
         try
         {
             var result = await management.GetMedicalSpecialitiesAsync();
-            return this.OkOrNotFound(result.Select(s => s.Description).OrderBy(s => s));
+            return this.OkOrNotFound<String>(result.Select(s => s.Description).OrderBy(s => s));
         }
         catch (Exception ex)
         {
@@ -48,7 +48,7 @@ public class SpecialtiesController : Controller
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostAsync([FromBody]string[] descriptions)
+    public async Task<IActionResult> PostAsync([FromBody]List<string> descriptions)
     {
         try
         {

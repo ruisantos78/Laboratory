@@ -23,7 +23,7 @@ public class Doctor : Person
     /// <summary>
     /// The specialties of the doctor.
     /// </summary>
-    public List<string> Specialties { get; init; }
+    public List<string> Specialities { get; init; }
 
     /// <summary>
     /// The office hours of the doctor.
@@ -43,7 +43,7 @@ public class Doctor : Person
     {
         Id = Guid.NewGuid();
         License = string.Empty;
-        Specialties = new List<string>();
+        Specialities = new List<string>();
         OfficeHours = new List<OfficeHour>();
         Appointments = new List<Appointment>();
     }
@@ -63,7 +63,7 @@ public class Doctor : Person
     {
         Id = Guid.NewGuid();
         License = license;
-        Specialties = specialities.ToList();
+        Specialities = specialities.ToList();
         OfficeHours = new List<OfficeHour>();
         Appointments = new List<Appointment>();
     }

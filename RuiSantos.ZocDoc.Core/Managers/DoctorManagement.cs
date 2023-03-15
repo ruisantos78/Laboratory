@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
@@ -13,19 +14,25 @@ namespace RuiSantos.ZocDoc.Core.Managers;
 internal class DoctorManagement : IDoctorManagement
 {
     private readonly IDomainContext domainContext;
-    private readonly IDataContext context;
+    private readonly IDoctorAdapter doctorAdapter;
+    private readonly IPatientAdapter patientAdapter;
     private readonly ILogger logger;
 
     /// <summary>
     /// Creates a new instance of the DoctorManagement class.
     /// </summary>
     /// <param name="domainContext">The domain context.</param>
-    /// <param name="context">The data context.</param>
+    /// <param name="doctorAdapter">The doctor adapter.</param>
+    /// <param name="patientAdapter">The patient adapter.</param>
     /// <param name="logger">The logger.</param>
-    public DoctorManagement(IDomainContext domainContext, IDataContext context, ILogger<DoctorManagement> logger)
+    public DoctorManagement(IDomainContext domainContext,
+                            IDoctorAdapter doctorAdapter,
+                            IPatientAdapter patientAdapter,
+                            ILogger<DoctorManagement> logger)
     {
         this.domainContext = domainContext;
-        this.context = context;
+        this.doctorAdapter = doctorAdapter;
+        this.patientAdapter = patientAdapter;
         this.logger = logger;
     }
 
@@ -47,7 +54,7 @@ internal class DoctorManagement : IDoctorManagement
         {
             var doctor = new Doctor(license, email, firstName, lastName, contactNumbers, specialties);
             await ValidateDoctorAsync(doctor);
-            await context.StoreAsync(doctor);
+            await doctorAdapter.StoreAsync(doctor);
         }
         catch (ValidationFailException)
         {
@@ -72,7 +79,7 @@ internal class DoctorManagement : IDoctorManagement
     {
         try
         {
-            var doctor = await context.FindAsync<Doctor>(i => i.License == license);
+            var doctor = await doctorAdapter.FindAsync(license);
             if (doctor is null)
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
@@ -81,7 +88,7 @@ internal class DoctorManagement : IDoctorManagement
                 doctor.OfficeHours.Add(new OfficeHour(dayOfWeek, hours));
 
             await CancelAppointmentsAsync(doctor, dayOfWeek, hours);
-            await context.StoreAsync(doctor);
+            await doctorAdapter.StoreAsync(doctor);
         }
         catch (ValidationFailException)
         {
@@ -104,7 +111,7 @@ internal class DoctorManagement : IDoctorManagement
     {
         try
         {
-            return await context.FindAsync<Doctor>(doctor => doctor.License == license);
+            return await doctorAdapter.FindAsync(license);
         }
         catch (Exception ex)
         {
@@ -123,13 +130,15 @@ internal class DoctorManagement : IDoctorManagement
     {
         var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
 
-        var doctor = await context.FindAsync<Doctor>(doctor => doctor.License == license && doctor.Appointments.Any(da => da.Date == date));
+        var doctor = await doctorAdapter.FindAsync(license);
         if (doctor is null)
             yield break;
 
         var appointments = doctor.Appointments.FindAll(a => a.Date == date);
+        if (appointments is null || !appointments.Any())
+            yield break;
 
-        var patients = await context.QueryAsync<Patient>(p => p.Appointments.Intersect(appointments).Any());
+        var patients = await patientAdapter.FindAllWithAppointmentsAsync(doctor.Appointments);
         foreach (var patient in patients)
         {
             var patientAppointments = patient.Appointments.Where(pa => appointments.Any(da => da.Id == pa.Id));
@@ -162,13 +171,13 @@ internal class DoctorManagement : IDoctorManagement
         if (appointments is null || !appointments.Any())
             return;
 
-        var patients = await context.QueryAsync<Patient>(patient => patient.Appointments.Any(item => appointments.Any(a => a.Id == item.Id)));
+        var patients = await patientAdapter.FindAllWithAppointmentsAsync(appointments);
         if (patients is not null && patients.Any())
         {
             patients.ForEach(async p =>
             {
                 p.Appointments.RemoveAll(pa => appointments.Any(da => da.Id == pa.Id));
-                await context.StoreAsync(p);
+                await patientAdapter.StoreAsync(p);
             });
         }
 

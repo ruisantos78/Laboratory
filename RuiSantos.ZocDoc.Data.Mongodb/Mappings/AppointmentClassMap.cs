@@ -1,6 +1,5 @@
 ﻿using MongoDB.Bson.Serialization;
 using RuiSantos.ZocDoc.Core.Models;
-using RuiSantos.ZocDoc.Data.Mongodb.Core.Interfaces;
 
 namespace RuiSantos.ZocDoc.Data.Mongodb.Mappings;
 

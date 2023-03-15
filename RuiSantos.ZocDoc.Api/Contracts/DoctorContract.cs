@@ -37,7 +37,7 @@ public class DoctorContract
     /// <summary>
     /// An array of medical specialties that the doctor is trained in.
     /// </summary>
-    public IReadOnlyList<string> Specialties { get; init; }
+    public IReadOnlyList<string> Specialities { get; init; }
 
     public DoctorContract() : this(Doctor.Empty) { }
 
@@ -48,6 +48,6 @@ public class DoctorContract
         FirstName = model.FirstName;
         LastName = model.LastName;
         ContactNumbers = model.ContactNumbers.ToArray();
-        Specialties = model.Specialties.ToArray();
+        Specialities = model.Specialities.ToArray();
     }
 }

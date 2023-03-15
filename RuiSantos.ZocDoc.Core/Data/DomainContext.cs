@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
+using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Models;
 
 namespace RuiSantos.ZocDoc.Core.Data;
@@ -16,7 +17,7 @@ internal class DomainContext : IDomainContext
     /// <summary>
     /// The data context.
     /// </summary>
-    private readonly IDataContext context;
+    private readonly IMedicalSpecialityAdapter specialityAdapter;
 
     /// <summary>
     /// The memory cache.
@@ -26,11 +27,11 @@ internal class DomainContext : IDomainContext
     /// <summary>
     /// Creates a new instance of the <see cref="DomainContext"/> class.
     /// </summary>
-    /// <param name="context">The data context.</param>
+    /// <param name="specialityAdapter">The data context.</param>
     /// <param name="cache">The memory cache.</param>
-    public DomainContext(IDataContext context, IMemoryCache cache)
+    public DomainContext(IMedicalSpecialityAdapter specialityAdapter, IMemoryCache cache)
     {
-        this.context = context;
+        this.specialityAdapter = specialityAdapter;
         this.cache = cache;
     }
 
@@ -40,9 +41,9 @@ internal class DomainContext : IDomainContext
     /// <returns>The list of medical specialties.</returns>
     public Task<List<MedicalSpeciality>?> GetMedicalSpecialtiesAsync()
     {
-        return cache.GetOrCreateAsync(nameof(MedicalSpeciality), entry =>
+        return cache.GetOrCreateAsync(nameof(MedicalSpeciality), async (entry) => 
         {
-            var values = context.ToListAsync<MedicalSpeciality>();
+            var values = await specialityAdapter.ToListAsync();
             entry.SetSlidingExpiration(CacheSlidingExpiration).SetValue(values);
             return values;
         });

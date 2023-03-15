@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using RuiSantos.ZocDoc.Core.Data;
+using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Resources;
@@ -15,7 +15,8 @@ internal class PatientManagement : IPatientManagement
     /// <summary>
     /// The data context.
     /// </summary>
-    private readonly IDataContext context;
+    private readonly IPatientAdapter patientAdapter;
+    private readonly IDoctorAdapter doctorAdapter;
 
     /// <summary>
     /// The logger.
@@ -25,11 +26,12 @@ internal class PatientManagement : IPatientManagement
     /// <summary>
     /// Creates a new instance of <see cref="PatientManagement"/>.
     /// </summary>
-    /// <param name="context">The data context.</param>
+    /// <param name="patientAdapter">The patient adapter.</param>
     /// <param name="logger">The logger.</param>
-    public PatientManagement(IDataContext context, ILogger<PatientManagement> logger)
+    public PatientManagement(IPatientAdapter patientAdapter, IDoctorAdapter doctorAdapter, ILogger<PatientManagement> logger)
     {
-        this.context = context;
+        this.patientAdapter = patientAdapter;
+        this.doctorAdapter = doctorAdapter;
         this.logger = logger;
     }
 
@@ -52,7 +54,7 @@ internal class PatientManagement : IPatientManagement
             if (!IsValid(patient, out var validationFailException))
                 throw validationFailException;
 
-            await context.StoreAsync(patient);
+            await patientAdapter.StoreAsync(patient);
         }
         catch (ValidationFailException)
         {
@@ -75,7 +77,7 @@ internal class PatientManagement : IPatientManagement
     {
         try
         {
-            return await context.FindAsync<Patient>(i => i.SocialSecurityNumber == socialNumber);
+            return await patientAdapter.FindAsync(socialNumber);
         }
         catch (Exception ex)
         {
@@ -91,11 +93,11 @@ internal class PatientManagement : IPatientManagement
     /// <returns>The appointments.</returns>
     public async IAsyncEnumerable<DoctorAppointment> GetAppointmentsAsync(string socialNumber)
     {
-        var patient = await context.FindAsync<Patient>(patient => patient.SocialSecurityNumber == socialNumber);
+        var patient = await patientAdapter.FindAsync(socialNumber);
         if (patient is null || !patient.Appointments.Any())
             yield break;
 
-        var doctors = await context.QueryAsync<Doctor>(d => d.Appointments.Any(da => patient.Appointments.Any(pa => pa.Id == da.Id)));
+        var doctors = await doctorAdapter.FindAllWithAppointmentsAsync(patient.Appointments);
         foreach (var doctor in doctors)
         {
             var dates = doctor.Appointments.Where(da => patient.Appointments.Any(pa => da.Id == pa.Id))

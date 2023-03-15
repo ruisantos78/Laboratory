@@ -20,6 +20,8 @@ public interface IDoctorManagement
     Task CreateDoctorAsync(string license, string email, string firstName, string lastName, IEnumerable<string> contactNumbers, IEnumerable<string> specialties);
     
     IAsyncEnumerable<PatientAppointment> GetAppointmentsAsync(string license, DateTime? dateTime);
+
     Task<Doctor?> GetDoctorByLicenseAsync(string license);
+    
     Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours);
 }

@@ -1,11 +1,10 @@
 ﻿using FluentAssertions;
 using Microsoft.Extensions.Logging;
 using Moq;
-using RuiSantos.ZocDoc.Core.Data;
+using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Managers;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Tests.Factories;
-using System.Linq.Expressions;
 
 namespace RuiSantos.ZocDoc.Core.Tests;
 
@@ -14,15 +13,13 @@ namespace RuiSantos.ZocDoc.Core.Tests;
 /// </summary>
 public class AppointmentManagementTests
 {
-    /// <summary>
-    /// Mocks the data context.
-    /// </summary>
-    private readonly Mock<IDataContext> mockDataContext = new();
+    private readonly Mock<IDoctorAdapter> doctorAdapterMock = new();
+    private readonly Mock<IPatientAdapter> patientAdapterMock = new();
 
     /// <summary>
     /// Mocks the logger.
     /// </summary>
-    private readonly Mock<ILogger<AppointmentManagement>> mockLogger = new();
+    private readonly Mock<ILogger<AppointmentManagement>> loggerMock = new();
 
     /// <summary>
     /// Tests that <see cref="AppointmentManagement.CreateAppointmentAsync(string, string, DateTime)"/>
@@ -41,13 +38,13 @@ public class AppointmentManagementTests
         var patient = PatientFactory.Create(socialNumber);
         var doctor = DoctorFactory.Create(medicalLicence).SetOfficeHours(officeHours);
 
-        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(patient);
-        mockDataContext.Setup(m => m.StoreAsync(patient)).Verifiable();
+        patientAdapterMock.Setup(m => m.FindAsync(patient.SocialSecurityNumber)).ReturnsAsync(patient);
+        patientAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Patient>())).Verifiable();
 
-        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(doctor);
-        mockDataContext.Setup(m => m.StoreAsync(doctor)).Verifiable();
+        doctorAdapterMock.Setup(m => m.FindAsync(doctor.License)).ReturnsAsync(doctor);
+        doctorAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Verifiable();
 
-        var appointmentManagement = new AppointmentManagement(mockDataContext.Object, mockLogger.Object);
+        var appointmentManagement = new AppointmentManagement(doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
 
         // Act
         await appointmentManagement.CreateAppointmentAsync(socialNumber, medicalLicence, dateTime);
@@ -56,8 +53,8 @@ public class AppointmentManagementTests
         patient.Appointments.Should().ContainSingle(appointment => appointment.GetDateTime() == dateTime);
         doctor.Appointments.Should().ContainSingle(appointment => appointment.GetDateTime() == dateTime);
 
-        mockDataContext.Verify(m => m.StoreAsync(patient), Times.Once);
-        mockDataContext.Verify(m => m.StoreAsync(doctor), Times.Once);
+        patientAdapterMock.Verify(m => m.StoreAsync(patient), Times.Once);
+        doctorAdapterMock.Verify(m => m.StoreAsync(doctor), Times.Once);
     }
 
     /// <summary>
@@ -79,13 +76,13 @@ public class AppointmentManagementTests
         patient.Appointments.Add(appointment);
         doctor.Appointments.Add(appointment);
 
-        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Patient, bool>>>())).ReturnsAsync(patient);
-        mockDataContext.Setup(m => m.StoreAsync(patient)).Verifiable();
+        patientAdapterMock.Setup(m => m.FindAsync(patient.SocialSecurityNumber)).ReturnsAsync(patient);
+        patientAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Patient>())).Verifiable();
 
-        mockDataContext.Setup(m => m.FindAsync(It.IsAny<Expression<Func<Doctor, bool>>>())).ReturnsAsync(doctor);
-        mockDataContext.Setup(m => m.StoreAsync(doctor)).Verifiable();
+        doctorAdapterMock.Setup(m => m.FindAsync(doctor.License)).ReturnsAsync(doctor);
+        doctorAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Verifiable();
 
-        var appointmentManagement = new AppointmentManagement(mockDataContext.Object, mockLogger.Object);
+        var appointmentManagement = new AppointmentManagement(doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
 
         // Act
         await appointmentManagement.DeleteAppointmentAsync(socialNumber, medicalLicence, dateTime);
@@ -94,8 +91,8 @@ public class AppointmentManagementTests
         patient.Appointments.Should().BeEmpty();
         doctor.Appointments.Should().BeEmpty();
 
-        mockDataContext.Verify(m => m.StoreAsync(patient), Times.AtMostOnce);
-        mockDataContext.Verify(m => m.StoreAsync(doctor), Times.AtMostOnce);
+        patientAdapterMock.Verify(m => m.StoreAsync(patient), Times.AtMostOnce);
+        doctorAdapterMock.Verify(m => m.StoreAsync(doctor), Times.AtMostOnce);
     }
 
     /// <summary>
@@ -125,17 +122,14 @@ public class AppointmentManagementTests
         {
             new Appointment(DateTime.Parse("2022-01-03 09:00"))
         };
+            
+        doctorAdapterMock.Setup(m => m.FindBySpecialtyWithAvailabilityAsync(speciality, DateOnly.FromDateTime(dateTime)))
+            .ReturnsAsync(new List<Doctor>()
+            {
+                DoctorFactory.Create("001").SetSpecialties(speciality).SetOfficeHours(officeHours).SetAppointments(appointments)
+            });
 
-        var doctors = new[]
-        {
-            DoctorFactory.Create("001").SetSpecialties(speciality).SetOfficeHours(officeHours).SetAppointments(appointments),
-            DoctorFactory.Create("002").SetSpecialties("another speciality").SetOfficeHours(officeHours).SetAppointments(appointments)
-        };
-
-        mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<Doctor, bool>>>()))
-            .ReturnsAsync((Expression<Func<Doctor, bool>> expression) => doctors.Where(expression.Compile()).ToList());
-
-        var appointmentManagement = new AppointmentManagement(mockDataContext.Object, mockLogger.Object);
+        var appointmentManagement = new AppointmentManagement(doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
 
         // Act
         var result = await appointmentManagement.GetAvailabilityAsync(speciality, dateTime).ToListAsync();
@@ -147,7 +141,7 @@ public class AppointmentManagementTests
         result.Should().ContainSingle().Which.Schedule.Should().HaveCount(3);
         result.Should().ContainSingle().Which.Schedule.Should().NotContain(dateTime);
 
-        mockDataContext.Verify();
+        doctorAdapterMock.Verify();
     }
 
     /// <summary>
@@ -164,10 +158,10 @@ public class AppointmentManagementTests
             new Appointment(DateTime.Parse("2022-01-04 09:00"))
         };
 
-        mockDataContext.Setup(m => m.QueryAsync(It.IsAny<Expression<Func<Doctor, bool>>>()))
+        doctorAdapterMock.Setup(m => m.FindBySpecialtyWithAvailabilityAsync(speciality, DateOnly.FromDateTime(dateTime)))
             .ReturnsAsync(new List<Doctor>());
 
-        var management = new AppointmentManagement(mockDataContext.Object, mockLogger.Object);       
+        var management = new AppointmentManagement(doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);       
         
         // Act
         var result = await management.GetAvailabilityAsync(speciality, dateTime).ToListAsync();
