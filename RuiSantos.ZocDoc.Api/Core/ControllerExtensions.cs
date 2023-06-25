@@ -27,46 +27,47 @@ internal static class ControllerExtensions
 
     /// <summary>
     /// Handles the successful result of the controller.
-    /// Returns a 200 OK if the result is not null, or 404 Not Found otherwise.
+    /// Returns a 200 OK if the result is not null, or 204 No Content otherwise.
     /// </summary>
     /// <param name="controller">The controller.</param>
     /// <param name="result">The result.</param>
     /// <param name="contractType">The contract type. (optional)</param>
     /// <returns>The result HTTP Status code and the result.</returns>
-    public static IActionResult OkOrNotFound<TModel>(this Controller controller, TModel? result, Type? contractType = null)
+    public static IActionResult OkOrNoContent<TModel>(this Controller controller, TModel? result, Type? contractType = null)
     {
         if (result is null)
-            return controller.NotFound();
+            return controller.NoContent();
 
         if (contractType is null)
             return controller.Ok(result);
 
         var contract = Activator.CreateInstance(contractType, result);
         if (contract is null)
-            return controller.NotFound();
+            return controller.NoContent();
 
         return controller.Ok(contract);
     }
 
     /// <summary>
     /// Handles the successful result collection of the controller.
-    /// Returns a 200 OK if the result collection is not null or empty, or 404 Not Found otherwise.
+    /// Returns a 200 OK if the result collection is not null or empty, or 204 No Content otherwise.
     /// </summary>
     /// <param name="controller">The controller.</param>
     /// <param name="model">The model.</param>
     /// <param name="contractType">The contract type. (optional)</param>
     /// <returns>The result HTTP Status code and the result.</returns>
-    public static IActionResult OkOrNotFound<TModel>(this Controller controller, IEnumerable<TModel> model, Type? contractType = null) 
+    public static IActionResult OkOrNoContent<TModel>(this Controller controller, IEnumerable<TModel> model, Type? contractType = null)
     {
-        if (model is null || !model.Any())
-            return controller.NotFound();
+        var response = model.ToArray();
+        if (!response.Any())
+            return controller.NoContent();
 
         if (contractType is null)
-            return controller.Ok(model);
+            return controller.Ok(response);
 
-        var result = Array.CreateInstance(contractType, model.Count());
+        var result = Array.CreateInstance(contractType, response.Length);
         var i = 0;
-        foreach (var item in model)
+        foreach (var item in response)
         {
             var contract = Activator.CreateInstance(contractType, item); 
             if (contract is not null)
@@ -78,23 +79,24 @@ internal static class ControllerExtensions
 
     /// <summary>
     /// Handles the successful result collection of the controller.
-    /// Returns a 200 OK if the result collection is not null or empty, or 404 Not Found otherwise.
+    /// Returns a 200 OK if the result collection is not null or empty, or 204 No Content otherwise.
     /// </summary>
     /// <param name="controller">The controller.</param>
     /// <param name="model">The model.</param>
     /// <param name="contractType">The contract type. (optional)</param>
     /// <returns>The result HTTP Status code and the result.</returns>    
-    public static async Task<IActionResult> OkOrNotFoundAsync<TModel>(this Controller controller, IAsyncEnumerable<TModel> model, Type? contractType = null) 
+    public static async Task<IActionResult> OkOrNoCotentAsync<TModel>(this Controller controller, IAsyncEnumerable<TModel> model, Type? contractType = null)
     {
-        if (model is null || !await model.AnyAsync())
+        var response = await model.ToArrayAsync();
+        if (!response.Any())
             return controller.NotFound();
 
         if (contractType is null)
-            return controller.Ok(await model.ToListAsync());
+            return controller.Ok(response);
 
         var i = 0;
-        var result = Array.CreateInstance(contractType, await model.CountAsync());        
-        await foreach (var item in model)
+        var result = Array.CreateInstance(contractType, response.Length);
+        foreach (var item in response)
         {
             var contract = Activator.CreateInstance(contractType, item);
             if (contract is not null)

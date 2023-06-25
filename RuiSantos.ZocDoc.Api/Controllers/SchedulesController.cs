@@ -23,18 +23,18 @@ public class SchedulesController : Controller
     /// <param name="date">The expected date for the appointment</param>
     /// <param name="specialty">The medical specialty</param>
     /// <response code="200">The doctors' schedules</response>
+    /// <response code="204">No records were found</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
-    /// <response code="404">No records were found</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorAvailabilityContract[]))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAsync([FromQuery] DateTime date, [FromQuery] string specialty)
     {
         try
         {
             var models = management.GetAvailabilityAsync(specialty, date);
-            return await this.OkOrNotFoundAsync(models, typeof(DoctorAvailabilityContract));
+            return await this.OkOrNoCotentAsync(models, typeof(DoctorAvailabilityContract));
         }
         catch (Exception ex)
         {
@@ -73,12 +73,12 @@ public class SchedulesController : Controller
     /// </summary>
     /// <param name="request">Appointment request</param>
     /// <response code="200">The appointment was successfully deleted.</response>
+    /// <response code="204">The appointment could not be found for deletion.</response>        
     /// <response code="400">If the request object contains invalid arguments.</response>
-    /// <response code="404">The appointment could not be found for deletion.</response>
     [HttpDelete]
     [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> DeleteAsync(AppointmentContract request)
     {
         try
