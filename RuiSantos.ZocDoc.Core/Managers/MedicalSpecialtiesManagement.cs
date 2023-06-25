@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using RuiSantos.ZocDoc.Core.Adapters;
-using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Resources;
@@ -9,26 +8,40 @@ using static RuiSantos.ZocDoc.Core.Resources.ManagementUtils;
 namespace RuiSantos.ZocDoc.Core.Managers;
 
 /// <summary>
-/// Manages the medical specialties.
+/// Interface for managing medical specialties.
 /// </summary>
-internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
+public interface IMedicalSpecialtiesManagement
 {
     /// <summary>
-    /// The data context.
+    /// Creates a new medical specialty.
     /// </summary>
+    /// <param name="decriptions">The description of the specialty.</param>
+    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
+    /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
+    Task CreateMedicalSpecialtiesAsync(List<string> decriptions);
+
+    /// <summary>
+    /// Gets all the medical specialties.
+    /// </summary>
+    /// <returns>A list of medical specialties.</returns>
+    /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
+    Task<List<MedicalSpeciality>> GetMedicalSpecialitiesAsync();
+
+    /// <summary>
+    /// Removes a medical specialty.
+    /// </summary>
+    /// <param name="description">The description of the specialty.</param>
+    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
+    /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
+    Task RemoveMedicalSpecialtiesAsync(string description);
+}
+
+internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
+{
     private readonly IMedicalSpecialityAdapter medicalSpecialityAdapter;
     private readonly IDoctorAdapter doctorAdapter;
-
-    /// <summary>
-    /// The logger.
-    /// </summary>
     private readonly ILogger logger;
 
-    /// <summary>
-    /// Creates a new instance of the medical specialties management.
-    /// </summary>
-    /// <param name="medicalSpecialityAdapter">The medical specialities adapter.</param>
-    /// <param name="logger">The logger.</param>
     public MedicalSpecialtiesManagement(IMedicalSpecialityAdapter medicalSpecialityAdapter,
                                         IDoctorAdapter doctorAdapter,
                                         ILogger<MedicalSpecialtiesManagement> logger)
@@ -38,12 +51,6 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
         this.logger = logger;
     }
 
-    /// <summary>
-    /// Creates one or more medical specialties.
-    /// </summary>
-    /// <param name="descriptions">The medical specialties descriptions.</param>
-    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
-    /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
     public async Task CreateMedicalSpecialtiesAsync(List<string> decriptions)
     {
         try
@@ -72,12 +79,6 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
         }
     }
 
-    /// <summary>
-    /// Removes one medical specialties.
-    /// </summary>
-    /// <param name="description">The medical specialties description.</param>
-    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
-    /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
     public async Task RemoveMedicalSpecialtiesAsync(string description)
     {
         try
@@ -90,7 +91,7 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
             var doctors = await doctorAdapter.FindBySpecialityAsync(description);
             foreach (var doctor in doctors)
             {
-                doctor.Specialities.Remove(description);
+                doctor.Specialties.Remove(description);
                 await doctorAdapter.StoreAsync(doctor);
             }            
         }
@@ -105,11 +106,6 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
         }
     }
 
-    /// <summary>
-    /// Gets all the medical specialties.
-    /// </summary>
-    /// <returns>The medical specialties.</returns>
-    /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
     public async Task<List<MedicalSpeciality>> GetMedicalSpecialitiesAsync()
     {
         try

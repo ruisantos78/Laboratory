@@ -24,17 +24,17 @@ internal sealed class DoctorValidator : AbstractValidator<Doctor>
         RuleFor(model => model.License)
             .NotEmpty();
 
-        RuleFor(model => model.Specialities)
+        RuleFor(model => model.Specialties)
             .NotEmpty();
 
-        RuleForEach(model => model.Specialities)
+        RuleForEach(model => model.Specialties)
             .NotEmpty();
     }
     public DoctorValidator(IEnumerable<MedicalSpeciality>? specialties) : this()
     {
         if (specialties is not null)
         {
-            RuleForEach(model => model.Specialities)
+            RuleForEach(model => model.Specialties)
                 .Must(item => specialties.Any(s => string.Equals(s.Description, item, StringComparison.OrdinalIgnoreCase)));
         }
     }

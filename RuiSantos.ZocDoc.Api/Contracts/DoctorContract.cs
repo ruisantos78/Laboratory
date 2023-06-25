@@ -48,6 +48,6 @@ public class DoctorContract
         FirstName = model.FirstName;
         LastName = model.LastName;
         ContactNumbers = model.ContactNumbers.ToArray();
-        Specialities = model.Specialities.ToArray();
+        Specialities = model.Specialties.ToArray();
     }
 }

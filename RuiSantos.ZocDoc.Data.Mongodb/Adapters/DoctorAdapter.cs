@@ -22,7 +22,7 @@ public class DoctorAdapter : IDoctorAdapter
             return Task.FromResult(new List<Doctor>());
 
         return collection.Find(d => 
-            d.Specialities.Contains(specialty) 
+            d.Specialties.Contains(specialty)
             && d.OfficeHours.Count != d.Appointments.Count
             && d.OfficeHours.Any(oh => oh.Week == date.DayOfWeek))
             .ToListAsync();
@@ -45,14 +45,14 @@ public class DoctorAdapter : IDoctorAdapter
     public Task<List<Doctor>> FindBySpecialityAsync(string specialty)
     {
         if (!string.IsNullOrEmpty(specialty))
-            return collection.Find(x => x.Specialities.Contains(specialty)).ToListAsync();
+            return collection.Find(x => x.Specialties.Contains(specialty)).ToListAsync();
 
         return Task.FromResult(new List<Doctor>());
     }
 
-    public Task<List<Doctor>> FindAllWithAppointmentsAsync(List<Appointment> appointments)
+    public Task<List<Doctor>> FindAllWithAppointmentsAsync(HashSet<Appointment> appointments)
     {
-        if (appointments is null || appointments.Count == 0)
+        if (!appointments.Any())
             return Task.FromResult(new List<Doctor>());
 
         return collection.Find(d => d.Appointments.Any(da => appointments.Any(pa => da.Id == pa.Id)))

@@ -8,32 +8,27 @@ public class Doctor : Person
     /// <summary>
     /// An empty doctor.
     /// </summary>
-    public static readonly Doctor Empty = new() { Id = Guid.Empty };
-
-    /// <summary>
-    /// The unique identifier of the doctor.
-    /// </summary>
-    public Guid Id { get; init; }
+    public static readonly Doctor Empty = new();
 
     /// <summary>
     /// The license number of the doctor.
     /// </summary>
-    public string License { get; init; }
+    public string License { get; set; }
 
     /// <summary>
     /// The specialties of the doctor.
     /// </summary>
-    public List<string> Specialities { get; init; }
+    public HashSet<string> Specialties { get; init; }
 
     /// <summary>
     /// The office hours of the doctor.
     /// </summary>
-    public List<OfficeHour> OfficeHours { get; init; }
+    public HashSet<OfficeHour> OfficeHours { get; init; }
 
     /// <summary>
     /// The appointments of the doctor.
     /// </summary>
-    public List<Appointment> Appointments { get; init; }
+    public HashSet<Appointment> Appointments { get; init; }
 
 
     /// <summary>
@@ -41,30 +36,9 @@ public class Doctor : Person
     /// </summary>
     public Doctor() : base()
     {
-        Id = Guid.NewGuid();
         License = string.Empty;
-        Specialities = new List<string>();
-        OfficeHours = new List<OfficeHour>();
-        Appointments = new List<Appointment>();
-    }
-
-    /// <summary>
-    /// Creates a new instance of the <see cref="Doctor"/> class.
-    /// </summary>
-    /// <param name="license">The license number of the doctor.</param>
-    /// <param name="email">The email of the doctor.</param>
-    /// <param name="firstName">The first name of the doctor.</param>
-    /// <param name="lastName">The last name of the doctor.</param>
-    /// <param name="contactNumbers">The contact numbers of the doctor.</param>
-    /// <param name="specialities">The specialities of the doctor.</param>
-    public Doctor(string license, string email,
-        string firstName, string lastName, IEnumerable<string> contactNumbers, IEnumerable<string> specialities)
-        : base(email, firstName, lastName, contactNumbers)
-    {
-        Id = Guid.NewGuid();
-        License = license;
-        Specialities = specialities.ToList();
-        OfficeHours = new List<OfficeHour>();
-        Appointments = new List<Appointment>();
+        Specialties = new HashSet<string>();
+        OfficeHours = new HashSet<OfficeHour>();
+        Appointments = new HashSet<Appointment>();
     }
 }

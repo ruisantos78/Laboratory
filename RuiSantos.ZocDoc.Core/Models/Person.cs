@@ -6,49 +6,40 @@
 public class Person
 {
     /// <summary>
+    /// The unique identifier of the persom.
+    /// </summary>
+    public Guid Id { get; init; }
+
+    /// <summary>
     /// The email address of the person.
     /// </summary>
-    public string Email { get; init; }
+    public string Email { get; set; }
 
     /// <summary>
     /// The first name of the person.
     /// </summary>
-    public string FirstName { get; init; }
+    public string FirstName { get; set; }
 
     /// <summary>
     /// The last name of the person.
     /// </summary>
-    public string LastName { get; init; }
+    public string LastName { get; set; }
 
     /// <summary>
     /// The contact numbers of the person.
     /// </summary>
-    public IEnumerable<string> ContactNumbers { get; init; }
+    public HashSet<string> ContactNumbers { get; init; }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="Person"/> class.
     /// </summary>
     public Person()
     {
+        Id = Guid.NewGuid();
+        Email = string.Empty;
         FirstName = string.Empty;
         LastName = string.Empty;
-        Email = string.Empty;
-        ContactNumbers = Enumerable.Empty<string>();
-    }
-
-    /// <summary>
-    /// Initializes a new instance of the <see cref="Person"/> class.
-    /// </summary>
-    /// <param name="email">The email address of the person.</param>
-    /// <param name="firstName">The first name of the person.</param>
-    /// <param name="lastName">The last name of the person.</param>    
-    /// <param name="contactNumbers">The contact numbers of the person.</param>
-    public Person(string email, string firstName, string lastName, IEnumerable<string> contactNumbers)
-    {
-        Email = email;
-        FirstName = firstName;
-        LastName = lastName;
-        ContactNumbers = contactNumbers;
+        ContactNumbers = new HashSet<string>();
     }
 }
 
