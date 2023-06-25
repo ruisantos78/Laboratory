@@ -8,26 +8,10 @@ using static RuiSantos.ZocDoc.Core.Resources.ManagementUtils;
 namespace RuiSantos.ZocDoc.Core.Managers;
 
 /// <summary>
-/// Manages the creation and deletion of appointments.
+/// Appointment management interface.
 /// </summary>
-internal class AppointmentManagement : IAppointmentManagement
+public interface IAppointmentManagement
 {
-    private readonly IDoctorAdapter doctorAdapter;
-    private readonly IPatientAdapter patientAdapter;
-    private readonly ILogger logger;
-
-    /// <summary>
-    /// Creates a new instance of <see cref="AppointmentManagement"/>.
-    /// </summary>
-    /// <param name="context">The <see cref="IDataContext"/> to use.</param>
-    /// <param name="logger">The <see cref="ILogger"/> to use.</param>
-    public AppointmentManagement(IDoctorAdapter doctorAdapter, IPatientAdapter patientAdapter, ILogger<AppointmentManagement> logger)
-    {
-        this.doctorAdapter = doctorAdapter;
-        this.patientAdapter = patientAdapter;
-        this.logger = logger;
-    }
-
     /// <summary>
     /// Gets the appointments for a given patient.
     /// </summary>
@@ -36,6 +20,40 @@ internal class AppointmentManagement : IAppointmentManagement
     /// <param name="dateTime">The date and time of the appointment.</param>
     /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
     /// <exception cref="ManagementFailException">Thrown when the appointment creation fails.</exception>
+    Task CreateAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime);
+
+    /// <sumary>
+    /// Deletes an appointment for a given patient.
+    /// </sumary>
+    /// <param name="socialNumber">The social number of the patient.</param>
+    /// <param name="medicalLicence">The medical licence of the doctor.</param>
+    /// <param name="dateTime">The date and time of the appointment.</param>
+    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
+    /// <exception cref="ManagementFailException">Thrown when the appointment deletion fails.</exception>
+    Task DeleteAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime);
+
+    /// <summary>
+    /// Gets the availability of a doctor.
+    /// </summary>
+    /// <param name="speciality">Speciality of the doctor.</param>
+    /// <param name="dateTime">Date and time of the availability.</param>
+    /// <returns>An asynchronous list of DoctorSchedule.</returns>
+    IAsyncEnumerable<DoctorSchedule> GetAvailabilityAsync(string speciality, DateTime dateTime);
+}
+
+internal class AppointmentManagement : IAppointmentManagement
+{
+    private readonly IDoctorAdapter doctorAdapter;
+    private readonly IPatientAdapter patientAdapter;
+    private readonly ILogger logger;
+
+    public AppointmentManagement(IDoctorAdapter doctorAdapter, IPatientAdapter patientAdapter, ILogger<AppointmentManagement> logger)
+    {
+        this.doctorAdapter = doctorAdapter;
+        this.patientAdapter = patientAdapter;
+        this.logger = logger;
+    }
+
     public async Task CreateAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime)
     {
         try
@@ -79,14 +97,6 @@ internal class AppointmentManagement : IAppointmentManagement
         }
     }
 
-    /// <sumary>
-    /// Deletes an appointment for a given patient.
-    /// </sumary>
-    /// <param name="socialNumber">The social number of the patient.</param>
-    /// <param name="medicalLicence">The medical licence of the doctor.</param>
-    /// <param name="dateTime">The date and time of the appointment.</param>
-    /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
-    /// <exception cref="ManagementFailException">Thrown when the appointment deletion fails.</exception>
     public async Task DeleteAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime)
     {
         try
@@ -120,12 +130,6 @@ internal class AppointmentManagement : IAppointmentManagement
         }
     }
 
-    /// <summary>
-    /// Gets the availability for doctors with a specialty on a given date.
-    /// </summary>
-    /// <param name="speciality">The specialty.</param>
-    /// <param name="dateTime">The date and time of the appointment.</param>   
-    /// <returns>The availability for doctors with a specialty on a given date</returns> 
     public async IAsyncEnumerable<DoctorSchedule> GetAvailabilityAsync(string speciality, DateTime dateTime)
     {
         var date = DateOnly.FromDateTime(dateTime);

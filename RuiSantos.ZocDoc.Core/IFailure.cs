@@ -1,4 +1,4 @@
-﻿namespace RuiSantos.ZocDoc.Core.Managers.Exceptions;
+﻿namespace RuiSantos.ZocDoc.Core;
 
 /// <summary>
 /// Represents a failure.

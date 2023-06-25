@@ -16,9 +16,9 @@ public class PatientAdapter : IPatientAdapter
         this.collection = context.GetCollection<Patient>(PatientClassMap.Discriminator);
     }
 
-    public Task<List<Patient>> FindAllWithAppointmentsAsync(List<Appointment> appointments)
+    public Task<List<Patient>> FindAllWithAppointmentsAsync(IEnumerable<Appointment> appointments)
     {
-        if (appointments is null || appointments.Count == 0)
+        if (appointments?.Any() is not true)
             return Task.FromResult(new List<Patient>());
 
         return collection.Find(p => p.Appointments.Any(a => appointments.Any(ap => ap.Id == a.Id))).ToListAsync(); 

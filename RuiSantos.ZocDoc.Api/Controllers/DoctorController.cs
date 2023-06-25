@@ -23,18 +23,18 @@ public class DoctorController : Controller
     /// </summary>
     /// <param name="license">The doctor's license number.</param>
     /// <response code="200">Returns the doctor's information.</response>
+    /// <response code="204">If no records are found for the given license.</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
-    /// <response code="404">If no records are found for the given license.</response>
     [HttpGet("{license}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorContract))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAsync(string license)
     {
         try
         {
             var model = await management.GetDoctorByLicenseAsync(license);
-            return this.OkOrNotFound(model, typeof(DoctorContract));
+            return this.OkOrNoContent(model, typeof(DoctorContract));
         }
         catch (Exception ex)
         {
@@ -48,12 +48,12 @@ public class DoctorController : Controller
     /// <param name="license">The doctor's medical license.</param>
     /// <param name="dateTime">The date of the appointments (optional).</param>
     /// <response code="200">Returns a list of the doctor's appointments.</response>
+    /// <response code="204">If no records are found for the given doctor and date.</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
-    /// <response code="404">If no records are found for the given doctor and date.</response>
     [HttpGet("{license}/Appointments/{dateTime?}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorAppointmentsContract[]))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAppointmentsAsync(string license, DateTime? dateTime)
     {
         try
@@ -62,7 +62,7 @@ public class DoctorController : Controller
                 license, 
                 dateTime);
 
-            return await this.OkOrNotFoundAsync(models, typeof(DoctorAppointmentsContract));
+            return await this.OkOrNoCotentAsync(models, typeof(DoctorAppointmentsContract));
         }
         catch (Exception ex)
         {
@@ -89,7 +89,7 @@ public class DoctorController : Controller
                 request.FirstName,
                 request.LastName,
                 request.ContactNumbers,
-                request.Specialities);
+                request.Specialties);
 
             return Ok();
         }

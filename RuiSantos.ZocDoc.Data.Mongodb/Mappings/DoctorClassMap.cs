@@ -18,7 +18,7 @@ internal sealed class DoctorClassMap : IRegisterClassMap
             map.MapIdProperty(e => e.Id).SetIdGenerator(CombGuidGenerator.Instance);
 
             map.MapMember(e => e.License);
-            map.MapMember(e => e.Specialities);
+            map.MapMember(e => e.Specialties);
             map.MapMember(e => e.OfficeHours);
             map.MapMember(e => e.Appointments);
         });

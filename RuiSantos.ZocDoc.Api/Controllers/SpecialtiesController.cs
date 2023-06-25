@@ -20,18 +20,18 @@ public class SpecialtiesController : Controller
     /// Get all available medical specialties.
     /// </summary>
     /// <response code="200">An array of medical specialty descriptions.</response>
+    /// <response code="204">No medical specialties found.</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
-    /// <response code="404">No medical specialties found.</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string[]))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]    
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAsync()
     {
         try
         {
             var result = await management.GetMedicalSpecialitiesAsync();
-            return this.OkOrNotFound<String>(result.Select(s => s.Description).OrderBy(s => s));
+            return this.OkOrNoContent<String>(result.Select(s => s.Description).OrderBy(s => s));
         }
         catch (Exception ex)
         {

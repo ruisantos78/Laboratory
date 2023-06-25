@@ -22,18 +22,18 @@ public class PatientController : Controller
     /// </summary>
     /// <param name="socialNumber">Social security number of the patient</param>
     /// <response code="200">Patient information retrieved successfully</response>
+    /// <response code="204">No patient record found for the given social security number</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
-    /// <response code="404">No patient record found for the given social security number</response>
     [HttpGet("{socialNumber}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PatientContract))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAsync(string socialNumber)
     {
         try
         {
             var model = await management.GetPatientBySocialNumberAsync(socialNumber);
-            return this.OkOrNotFound(model, typeof(PatientContract));
+            return this.OkOrNoContent(model, typeof(PatientContract));
         }
         catch (Exception ex)
         {
@@ -45,18 +45,18 @@ public class PatientController : Controller
     /// </summary>
     /// <param name="socialNumber">The patient's social security number.</param>
     /// <response code="200">The patient's appointments.</response>
+    /// <response code="204">No records were found.</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
-    /// <response code="404">No records were found.</response>
     [HttpGet("{socialNumber}/Appointments")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(PatientAppointmentsContract[]))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    [ProducesResponseType(StatusCodes.Status404NotFound)]
     public async Task<IActionResult> GetAppointmentsAsync(string socialNumber)
     {
         try
         {
             var models = management.GetAppointmentsAsync(socialNumber);
-            return await this.OkOrNotFoundAsync(models, typeof(PatientAppointmentsContract));
+            return await this.OkOrNoCotentAsync(models, typeof(PatientAppointmentsContract));
         }
         catch (Exception ex)
         {

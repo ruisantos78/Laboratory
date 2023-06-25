@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a medical speciality
 /// </summary>
-public class MedicalSpeciality
+public class MedicalSpecialty
 {
     /// <summary>
     /// The id of the medical speciality
@@ -18,7 +18,7 @@ public class MedicalSpeciality
     /// <summary>
     /// Create a new instance of the medical speciality
     /// </summary>
-    public MedicalSpeciality()
+    public MedicalSpecialty()
     {
         Id = Guid.NewGuid();
         Description = String.Empty;
@@ -28,7 +28,7 @@ public class MedicalSpeciality
     /// Create a new instance of the medical speciality
     /// </summary>
     /// <param name="description">The description of the medical speciality</param>
-    public MedicalSpeciality(string description)
+    public MedicalSpecialty(string description)
     {
         Id = Guid.NewGuid();
         Description = description;
