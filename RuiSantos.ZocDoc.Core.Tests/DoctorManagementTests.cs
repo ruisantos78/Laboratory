@@ -1,130 +1,113 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using RuiSantos.ZocDoc.Core.Adapters;
+﻿using Microsoft.Extensions.Logging;
 using RuiSantos.ZocDoc.Core.Data;
-using RuiSantos.ZocDoc.Core.Managers;
-using RuiSantos.ZocDoc.Core.Models;
+using RuiSantos.ZocDoc.Core.Tests.Adapters;
 using RuiSantos.ZocDoc.Core.Tests.Factories;
 
 namespace RuiSantos.ZocDoc.Core.Tests;
 
 public class DoctorManagementTests
 {
-    private readonly Mock<IDoctorAdapter> doctorAdapterMock = new();
-    private readonly Mock<IPatientAdapter> patientAdapterMock = new();
+    private readonly DoctorAdapterMock doctorAdapterMock = new();
+    private readonly PatientAdapterMock patientAdapterMock = new();
     private readonly Mock<IDomainContext> domainContextMock = new();
     private readonly Mock<ILogger<DoctorManagement>> loggerMock = new();
+
+    private IDoctorManagement Management => new DoctorManagement(domainContextMock.Object, doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
 
     [Fact]
     public async Task CreateDoctorAsync_WithValidInput_ShouldStoreDoctor()
     {
         // Arrange
-        var specialty = "Neurology";
-        var args = DoctorFactory.Create().SetSpecialties(specialty);
+        var doctors = new List<Doctor>();
+        doctorAdapterMock.SetStoreAsyncCallback(doctors.Add);
 
-        var doctor = DoctorFactory.Empty();
-
-        domainContextMock.Setup(m => m.GetMedicalSpecialtiesAsync()).ReturnsAsync(SpecialtyFactory.Create(specialty));
-        doctorAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Callback<Doctor>(value => doctor = value);
-
-        var management = new DoctorManagement(domainContextMock.Object, doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
+        domainContextMock.Setup(m => m.GetMedicalSpecialtiesAsync())
+            .ReturnsAsync(SpecialtiesBuilder.With("Neurology").Build());
 
         // Act
-        await management.CreateDoctorAsync(args.License, args.Email, args.FirstName, args.LastName, args.ContactNumbers, args.Specialities);
+        var doctor = DoctorBuilder.Dummy(specialty: "Neurology")
+            .Build();
+
+        await Management.CreateDoctorAsync(doctor.License, doctor.Email, doctor.FirstName,
+            doctor.LastName, doctor.ContactNumbers, doctor.Specialties);
 
         // Assert
-        doctorAdapterMock.Verify(m => m.StoreAsync(It.IsAny<Doctor>()), Times.Once);
-
-        doctor.Should().NotBeNull();
-        doctor.Id.Should().NotBe(args.Id).And.NotBeEmpty();
-        doctor.License.Should().Be(args.License);
-        doctor.Email.Should().Be(args.Email);
-        doctor.FirstName.Should().Be(args.FirstName);
-        doctor.LastName.Should().Be(args.LastName);
-        doctor.ContactNumbers.Should().BeEquivalentTo(args.ContactNumbers);
-        doctor.Specialities.Should().BeEquivalentTo(args.Specialities);
+        doctorAdapterMock.ShouldStoreAsync();
+        doctors.Should().NotBeNullOrEmpty()
+            .And.ContainSingle(d =>
+                d.License == doctor.License &&
+                d.Email == doctor.Email &&
+                d.FirstName == doctor.FirstName &&
+                d.LastName == doctor.LastName)
+            .Which.Specialties.Should().BeEquivalentTo(doctor.Specialties);
     }
 
     [Fact]
     public async Task SetOfficeHoursAsync_WithValidInput_ShouldUpdateDoctor()
     {
         // Arrange
-        var license = "ABC123";
-        var dayOfWeek = DayOfWeek.Monday;
-        var hours = new[] {
-            new TimeSpan(8,0,0),
-            new TimeSpan(8,3,0),
-            new TimeSpan(9,0,0),
-            new TimeSpan(9,3,0)
-        };
-
-        var doctor = DoctorFactory.Empty();
-
-        doctorAdapterMock.Setup(m => m.FindAsync(license)).ReturnsAsync(DoctorFactory.Create(license));
-        doctorAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Callback<Doctor>(value => doctor = value);
-
-        var management = new DoctorManagement(domainContextMock.Object, doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
+        var doctors = new List<Doctor>();
+        doctorAdapterMock.SetStoreAsyncCallback(doctors.Add);
+        doctorAdapterMock.SetFindAsyncReturns(license => DoctorBuilder.Dummy(license).Build());
 
         // Act
-        await management.SetOfficeHoursAsync(license, dayOfWeek, hours);
+        var hours = Enumerable.Range(8, 4).SelectMany(hour => new List<TimeSpan> {
+            new(hour, 0, 0),
+            new(hour, 30, 0)
+        });
+
+        await Management.SetOfficeHoursAsync("ABC123", DayOfWeek.Monday, hours);
 
         // Assert
-        doctorAdapterMock.Verify(m => m.StoreAsync(It.IsAny<Doctor>()), Times.Once);
+        doctorAdapterMock.ShouldStoreAsync();
 
-        doctor.Should().NotBeNull();
-        doctor.Id.Should().NotBeEmpty();
-        doctor.License.Should().Be(license);
-        doctor.OfficeHours.Should().NotBeNullOrEmpty();
-        doctor.OfficeHours.Should().ContainSingle().Subject.Week.Should().Be(dayOfWeek);
-        doctor.OfficeHours.Should().ContainSingle().Subject.Hours.Should().BeSameAs(hours);
+        doctors.Should().NotBeNullOrEmpty()
+            .And.ContainSingle(doctor => doctor.License == "ABC123")
+            .Which.OfficeHours.Should().ContainSingle(oh => oh.Week == DayOfWeek.Monday)
+            .Which.Hours.Should().BeSameAs(hours);
     }
 
     [Fact]
     public async Task GetDoctorByLicenseAsync_WithValidInput_ReturnsExpectedResult()
     {
         // Arrange
-        var license = "ABC123";
-
-        doctorAdapterMock.Setup(m => m.FindAsync(license)).ReturnsAsync(DoctorFactory.Create(license));
-
-        var management = new DoctorManagement(domainContextMock.Object, doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
-
+        doctorAdapterMock.SetFindAsyncReturns(license => DoctorBuilder.Dummy(license).Build());
+        
         // Act
-        var result = await management.GetDoctorByLicenseAsync(license);
+        var result = await Management.GetDoctorByLicenseAsync("ABC123");
 
         // Assert
-        result.Should().NotBeNull();
-        result?.Id.Should().NotBeEmpty();
-        result?.License.Should().Be(license);
+        result.Should().BeOfType<Doctor>()
+            .Subject.License.Should().Be("ABC123");
     }
 
     [Fact]
     public async Task GetAppointmentsAsync_WithValidInput_ReturnsExpectedResult()
     {
         // Arrange
-        var license = "ABC123";
         var dateTime = DateTime.Parse("2022-01-04 08:00");
 
-        var appointment = new Appointment(dateTime);
-        var doctor = DoctorFactory.Create(license).SetAppointments(appointment);
-        var patient = PatientFactory.Create().SetAppointments(appointment);
+        doctorAdapterMock.SetFindAsyncReturns(license => DoctorBuilder.Dummy(license)
+            .AddAppointments(Enumerable.Range(0, 5)
+                .Select(hour => dateTime.AddHours(hour))
+                .ToArray())
+            .Build());
 
-        var appointments = AppointmentsFactory.Create(5);
-        var patients = appointments.Select(a => PatientFactory.Create().SetAppointments(a)).ToList();
-        patients.Add(patient);
-
-        doctorAdapterMock.Setup(m => m.FindAsync(doctor.License)).ReturnsAsync(doctor);
-        patientAdapterMock.Setup(m => m.FindAllWithAppointmentsAsync(It.IsAny<List<Appointment>>())).ReturnsAsync(new List<Patient>() { patient });
-
-        var management = new DoctorManagement(domainContextMock.Object, doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
-
+        patientAdapterMock.SetFindAllWithAppointmentsAsyncReturns(appointments =>
+        {
+            var i = 0;
+            return appointments.Select(
+                app => PatientBuilder.Dummy($"000-{i++:00}-0000").AddAppointments(app).Build())
+            .ToList();
+        });
+       
         // Act
-        var result = await management.GetAppointmentsAsync(license, dateTime).ToListAsync();
+        var result = await Management.GetAppointmentsAsync("ABC123", dateTime).ToListAsync();
 
         // Assert
-        result.Should().NotBeNullOrEmpty();
-        result.Should().ContainSingle().Subject.Patient.Should().Be(patient);
-        result.Should().ContainSingle().Subject.Date.Should().Be(dateTime);
+        result.Should().NotBeNullOrEmpty().And.HaveCount(5);
+
+        result.Should().AllSatisfy(pa =>
+            pa.Patient.SocialSecurityNumber.Should().MatchRegex("000-0[0-4]-0000"));
     }
 }

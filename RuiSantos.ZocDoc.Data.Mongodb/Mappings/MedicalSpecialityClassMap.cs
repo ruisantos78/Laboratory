@@ -10,7 +10,7 @@ internal sealed class MedicalSpecialityClassMap : IRegisterClassMap
 
     public void Register()
     {
-        BsonClassMap.RegisterClassMap<MedicalSpeciality>(map =>
+        BsonClassMap.RegisterClassMap<MedicalSpecialty>(map =>
         {
             map.AutoMap();
             map.SetDiscriminator(Discriminator);

@@ -50,7 +50,7 @@ public class DoctorAdapter : IDoctorAdapter
         return Task.FromResult(new List<Doctor>());
     }
 
-    public Task<List<Doctor>> FindAllWithAppointmentsAsync(HashSet<Appointment> appointments)
+    public Task<List<Doctor>> FindAllWithAppointmentsAsync(IEnumerable<Appointment> appointments)
     {
         if (!appointments.Any())
             return Task.FromResult(new List<Doctor>());

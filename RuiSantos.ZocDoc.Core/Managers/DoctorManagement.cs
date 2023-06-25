@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Microsoft.Extensions.Logging;
+﻿using Microsoft.Extensions.Logging;
 using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Managers.Exceptions;
@@ -100,7 +99,7 @@ internal class DoctorManagement : IDoctorManagement
         }
     }
 
-    public async Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IReadOnlySet<TimeSpan> hours)
+    public async Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
     {
         try
         {
@@ -137,11 +136,6 @@ internal class DoctorManagement : IDoctorManagement
             logger?.Fail(ex);
             throw new ManagementFailException(MessageResources.DoctorsGetFail);
         }
-    }
-
-    public Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
-    {
-        throw new NotImplementedException();
     }
 
     public async IAsyncEnumerable<PatientAppointment> GetAppointmentsAsync(string license, DateTime? dateTime)

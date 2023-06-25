@@ -4,11 +4,11 @@ namespace RuiSantos.ZocDoc.Core.Adapters;
 
 public interface IMedicalSpecialityAdapter 
 {
-    Task<List<MedicalSpeciality>> ToListAsync();
+    Task<List<MedicalSpecialty>> ToListAsync();
 
     Task<bool> ContainsAsync(string speciality);
 
-    Task AddAsync(MedicalSpeciality speciality);
+    Task AddAsync(MedicalSpecialty speciality);
 
     Task RemoveAsync(string speciality);
 }

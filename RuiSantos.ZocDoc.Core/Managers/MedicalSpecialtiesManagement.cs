@@ -25,7 +25,7 @@ public interface IMedicalSpecialtiesManagement
     /// </summary>
     /// <returns>A list of medical specialties.</returns>
     /// <exception cref="ManagementFailException">Thrown when the management fails.</exception>
-    Task<List<MedicalSpeciality>> GetMedicalSpecialitiesAsync();
+    Task<List<MedicalSpecialty>> GetMedicalSpecialitiesAsync();
 
     /// <summary>
     /// Removes a medical specialty.
@@ -60,7 +60,7 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
                 if (await medicalSpecialityAdapter.ContainsAsync(description))
                     continue;
 
-                var model = new MedicalSpeciality(description);
+                var model = new MedicalSpecialty(description);
                 if (!IsValid(model, out var validationException))
                     throw validationException;
 
@@ -106,7 +106,7 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
         }
     }
 
-    public async Task<List<MedicalSpeciality>> GetMedicalSpecialitiesAsync()
+    public async Task<List<MedicalSpecialty>> GetMedicalSpecialitiesAsync()
     {
         try
         {

@@ -7,7 +7,7 @@ public interface IDoctorAdapter
     Task<Doctor?> FindAsync(string license);    
     Task<List<Doctor>> FindBySpecialityAsync(string specialty);
     Task<List<Doctor>> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date);
-    Task<List<Doctor>> FindAllWithAppointmentsAsync(HashSet<Appointment> appointments);
+    Task<List<Doctor>> FindAllWithAppointmentsAsync(IEnumerable<Appointment> appointments);
 
     Task StoreAsync(Doctor doctor);
 }

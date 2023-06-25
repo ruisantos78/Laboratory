@@ -8,15 +8,15 @@ namespace RuiSantos.ZocDoc.Data.Mongodb.Adapters;
 public class MedicalSpecialityAdapter : IMedicalSpecialityAdapter
 {
     private readonly IMongoDatabase context;
-    private readonly IMongoCollection<MedicalSpeciality> collection;
+    private readonly IMongoCollection<MedicalSpecialty> collection;
 
     public MedicalSpecialityAdapter(IMongoDatabase context)
     {
         this.context = context;
-        this.collection = context.GetCollection<MedicalSpeciality>(MedicalSpecialityClassMap.Discriminator);
+        this.collection = context.GetCollection<MedicalSpecialty>(MedicalSpecialityClassMap.Discriminator);
     }
 
-    public Task AddAsync(MedicalSpeciality speciality)
+    public Task AddAsync(MedicalSpecialty speciality)
     {
         if (speciality is not null)
             return collection.InsertOneAsync(speciality);
@@ -37,7 +37,7 @@ public class MedicalSpecialityAdapter : IMedicalSpecialityAdapter
         return Task.CompletedTask;
     }
 
-    public Task<List<MedicalSpeciality>> ToListAsync()
+    public Task<List<MedicalSpecialty>> ToListAsync()
     {
         return collection.Find(_ => true).ToListAsync();
     }

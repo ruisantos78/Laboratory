@@ -30,7 +30,7 @@ internal sealed class DoctorValidator : AbstractValidator<Doctor>
         RuleForEach(model => model.Specialties)
             .NotEmpty();
     }
-    public DoctorValidator(IEnumerable<MedicalSpeciality>? specialties) : this()
+    public DoctorValidator(IEnumerable<MedicalSpecialty>? specialties) : this()
     {
         if (specialties is not null)
         {

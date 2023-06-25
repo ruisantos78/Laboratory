@@ -13,7 +13,7 @@ public interface IDomainContext
     /// Gets all the medical specialties.
     /// </summary>
     /// <returns>A list of medical specialties.</returns>
-    Task<List<MedicalSpeciality>?> GetMedicalSpecialtiesAsync();
+    Task<List<MedicalSpecialty>?> GetMedicalSpecialtiesAsync();
 }
 
 /// <summary>
@@ -51,9 +51,9 @@ internal class DomainContext : IDomainContext
     /// Gets the list of medical specialties.
     /// </summary>
     /// <returns>The list of medical specialties.</returns>
-    public Task<List<MedicalSpeciality>?> GetMedicalSpecialtiesAsync()
+    public Task<List<MedicalSpecialty>?> GetMedicalSpecialtiesAsync()
     {
-        return cache.GetOrCreateAsync(nameof(MedicalSpeciality), async (entry) => 
+        return cache.GetOrCreateAsync(nameof(MedicalSpecialty), async (entry) => 
         {
             var values = await specialityAdapter.ToListAsync();
             entry.SetSlidingExpiration(CacheSlidingExpiration).SetValue(values);

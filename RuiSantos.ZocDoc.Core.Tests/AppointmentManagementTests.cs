@@ -1,25 +1,20 @@
-﻿using FluentAssertions;
-using Microsoft.Extensions.Logging;
-using Moq;
-using RuiSantos.ZocDoc.Core.Adapters;
-using RuiSantos.ZocDoc.Core.Managers;
-using RuiSantos.ZocDoc.Core.Models;
+﻿using Microsoft.Extensions.Logging;
+using RuiSantos.ZocDoc.Core.Tests.Adapters;
 using RuiSantos.ZocDoc.Core.Tests.Factories;
 
 namespace RuiSantos.ZocDoc.Core.Tests;
 
 /// <summary>
-/// Tests for <see cref="AppointmentManagement"/>
+/// Tests for <see cref="Managers.AppointmentManagement"/>
 /// </summary>
 public class AppointmentManagementTests
 {
-    private readonly Mock<IDoctorAdapter> doctorAdapterMock = new();
-    private readonly Mock<IPatientAdapter> patientAdapterMock = new();
-
-    /// <summary>
-    /// Mocks the logger.
-    /// </summary>
+    private readonly DoctorAdapterMock doctorAdapterMock = new();
+    private readonly PatientAdapterMock patientAdapterMock = new();
     private readonly Mock<ILogger<AppointmentManagement>> loggerMock = new();
+
+    private IAppointmentManagement Management =>
+        new AppointmentManagement(doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
 
     /// <summary>
     /// Tests that <see cref="AppointmentManagement.CreateAppointmentAsync(string, string, DateTime)"/>
@@ -29,32 +24,21 @@ public class AppointmentManagementTests
     public async Task CreateAppointmentAsync_WithValidInput_ShouldStoreAppointment()
     {
         // Arrange
-        var socialNumber = "123-45-6789";
-        var medicalLicence = "ABC123";
-        var dateTime = DateTime.Parse("2022-01-01 08:00");
+        patientAdapterMock.SetFindAsyncReturns(socialNumber => PatientBuilder.Dummy(socialNumber)
+            .Build());
 
-        var officeHours = new[] { new OfficeHour(dateTime.DayOfWeek, new[] { dateTime.TimeOfDay }) };
-
-        var patient = PatientFactory.Create(socialNumber);
-        var doctor = DoctorFactory.Create(medicalLicence).SetOfficeHours(officeHours);
-
-        patientAdapterMock.Setup(m => m.FindAsync(patient.SocialSecurityNumber)).ReturnsAsync(patient);
-        patientAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Patient>())).Verifiable();
-
-        doctorAdapterMock.Setup(m => m.FindAsync(doctor.License)).ReturnsAsync(doctor);
-        doctorAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Verifiable();
-
-        var appointmentManagement = new AppointmentManagement(doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
+        doctorAdapterMock.SetFindAsyncReturns(license => DoctorBuilder.Dummy(license)
+            .AddOfficeHours(DayOfWeek.Saturday, TimeSpan.FromHours(8))
+            .Build());
 
         // Act
-        await appointmentManagement.CreateAppointmentAsync(socialNumber, medicalLicence, dateTime);
+        var dateTime = DateTime.Parse("2022-01-01 08:00");
+        await Management.CreateAppointmentAsync("123-45-6789", "ABC123", dateTime);
 
         // Assert
-        patient.Appointments.Should().ContainSingle(appointment => appointment.GetDateTime() == dateTime);
-        doctor.Appointments.Should().ContainSingle(appointment => appointment.GetDateTime() == dateTime);
-
-        patientAdapterMock.Verify(m => m.StoreAsync(patient), Times.Once);
-        doctorAdapterMock.Verify(m => m.StoreAsync(doctor), Times.Once);
+        doctorAdapterMock.ShouldStoreAsync(doctor => doctor.Appointments.Any(app => app.GetDateTime() == dateTime));
+        patientAdapterMock.ShouldStoreAsync(patient =>
+            patient.Appointments.Any(app => app.GetDateTime() == dateTime));
     }
 
     /// <summary>
@@ -65,34 +49,26 @@ public class AppointmentManagementTests
     public async Task DeleteAppointmentAsync_WithValidInput_ShouldRemoveAppointment()
     {
         // Arrange
-        var socialNumber = "123-45-6789";
-        var medicalLicence = "ABC123";
         var dateTime = DateTime.Parse("2022-01-01 08:00");
 
-        var patient = PatientFactory.Create(socialNumber);
-        var doctor = DoctorFactory.Create(medicalLicence);
+        patientAdapterMock.SetFindAsyncReturns(socialNumber => PatientBuilder.Dummy(socialNumber)
+            .AddAppointments(dateTime)
+            .Build());
 
-        var appointment = new Appointment(dateTime);
-        patient.Appointments.Add(appointment);
-        doctor.Appointments.Add(appointment);
-
-        patientAdapterMock.Setup(m => m.FindAsync(patient.SocialSecurityNumber)).ReturnsAsync(patient);
-        patientAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Patient>())).Verifiable();
-
-        doctorAdapterMock.Setup(m => m.FindAsync(doctor.License)).ReturnsAsync(doctor);
-        doctorAdapterMock.Setup(m => m.StoreAsync(It.IsAny<Doctor>())).Verifiable();
-
-        var appointmentManagement = new AppointmentManagement(doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
+        doctorAdapterMock.SetFindAsyncReturns(license => DoctorBuilder.Dummy(license)
+            .AddOfficeHours(dateTime.DayOfWeek, dateTime.TimeOfDay)
+            .AddAppointments(dateTime)
+            .Build());
 
         // Act
-        await appointmentManagement.DeleteAppointmentAsync(socialNumber, medicalLicence, dateTime);
+        await Management.DeleteAppointmentAsync("123-45-6789", "ABC123", dateTime);
 
         // Assert
-        patient.Appointments.Should().BeEmpty();
-        doctor.Appointments.Should().BeEmpty();
+        doctorAdapterMock.ShouldStoreAsync(doctor => !doctor.Appointments.Any(),
+            Times.AtMostOnce);
 
-        patientAdapterMock.Verify(m => m.StoreAsync(patient), Times.AtMostOnce);
-        doctorAdapterMock.Verify(m => m.StoreAsync(doctor), Times.AtMostOnce);
+        patientAdapterMock.ShouldStoreAsync(patient => !patient.Appointments.Any(),
+            Times.AtMostOnce);
     }
 
     /// <summary>
@@ -103,45 +79,22 @@ public class AppointmentManagementTests
     public async Task GetAvailabilityAsync_WithValidInput_ReturnsExpectedResult()
     {
         // Arrange
-        var speciality = "cardiology";
         var dateTime = DateTime.Parse("2022-01-03 09:00");
 
-        var hours = new[] {
-            new TimeSpan(9, 0, 0),
-            new TimeSpan(10, 0, 0),
-            new TimeSpan(11, 0, 0),
-            new TimeSpan(12, 0, 0)
-        };
+        var hours = Enumerable.Range(8, 4).Select(hour => TimeSpan.FromHours(hour)).ToArray();
+        doctorAdapterMock.SetFindBySpecialtyWithAvailabilityAsyncReturns((speciality, _) => DoctorBuilder.Dummy()
+            .AddSpecialties(speciality)
+            .AddOfficeHours(DayOfWeek.Monday, hours)
+            .AddOfficeHours(DayOfWeek.Tuesday, hours)
+            .AddAppointments(dateTime)
+            .BuildList());
 
-        var officeHours = new[] {
-            new OfficeHour(DayOfWeek.Monday, hours),
-            new OfficeHour(DayOfWeek.Tuesday, hours)
-        };
-
-        var appointments = new[]
-        {
-            new Appointment(DateTime.Parse("2022-01-03 09:00"))
-        };
-            
-        doctorAdapterMock.Setup(m => m.FindBySpecialtyWithAvailabilityAsync(speciality, DateOnly.FromDateTime(dateTime)))
-            .ReturnsAsync(new List<Doctor>()
-            {
-                DoctorFactory.Create("001").SetSpecialties(speciality).SetOfficeHours(officeHours).SetAppointments(appointments)
-            });
-
-        var appointmentManagement = new AppointmentManagement(doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);
-
-        // Act
-        var result = await appointmentManagement.GetAvailabilityAsync(speciality, dateTime).ToListAsync();
+        // Act       
+        var result = await Management.GetAvailabilityAsync("Cardiology", dateTime).ToListAsync();
 
         // Assert
-        result.Should().NotBeNull();
-        result.Should().NotBeEmpty();
-        result.Should().ContainSingle().Which.Doctor.License.Should().Be("001");
-        result.Should().ContainSingle().Which.Schedule.Should().HaveCount(3);
-        result.Should().ContainSingle().Which.Schedule.Should().NotContain(dateTime);
-
-        doctorAdapterMock.Verify();
+        result.Should().NotBeNullOrEmpty().And
+            .ContainSingle(ds => ds.Schedule.Count == 3 && !ds.Schedule.Contains(dateTime));
     }
 
     /// <summary>
@@ -149,25 +102,16 @@ public class AppointmentManagementTests
     /// the result is empty.
     /// </summary>
     [Fact]
-    public async Task GetAvailabilityAsync_WithInvalidInput_ReturnsExpectedResult() {
-        /// Arrange
-        var speciality = "cardiology";
-        var dateTime = DateTime.Parse("2022-01-03 09:00");
+    public async Task GetAvailabilityAsync_WithInvalidInput_ReturnsEmptyResult()
+    {
+        // Arrange
+        doctorAdapterMock.SetFindBySpecialtyWithAvailabilityAsyncReturns((_, _) => new List<Doctor>());
 
-        var appointments = new[] {
-            new Appointment(DateTime.Parse("2022-01-04 09:00"))
-        };
-
-        doctorAdapterMock.Setup(m => m.FindBySpecialtyWithAvailabilityAsync(speciality, DateOnly.FromDateTime(dateTime)))
-            .ReturnsAsync(new List<Doctor>());
-
-        var management = new AppointmentManagement(doctorAdapterMock.Object, patientAdapterMock.Object, loggerMock.Object);       
-        
         // Act
-        var result = await management.GetAvailabilityAsync(speciality, dateTime).ToListAsync();
+        var dateTime = DateTime.Parse("2022-01-03 09:00");
+        var result = await Management.GetAvailabilityAsync("cardiology", dateTime).ToListAsync();
 
         // Assert
-        result.Should().NotBeNull();    
-        result.Should().BeEmpty();
+        result.Should().NotBeNull().And.BeEmpty();
     }
 }
