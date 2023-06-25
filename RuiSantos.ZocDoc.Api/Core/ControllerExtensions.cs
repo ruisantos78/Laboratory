@@ -89,7 +89,7 @@ internal static class ControllerExtensions
     {
         var response = await model.ToArrayAsync();
         if (!response.Any())
-            return controller.NotFound();
+            return controller.NoContent();
 
         if (contractType is null)
             return controller.Ok(response);

@@ -89,7 +89,7 @@ public class DoctorController : Controller
                 request.FirstName,
                 request.LastName,
                 request.ContactNumbers,
-                request.Specialities);
+                request.Specialties);
 
             return Ok();
         }
