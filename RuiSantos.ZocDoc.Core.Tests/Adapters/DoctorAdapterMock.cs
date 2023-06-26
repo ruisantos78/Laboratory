@@ -38,6 +38,12 @@ public class DoctorAdapterMock {
             .ReturnsAsync(returns);
     }
     
+    public void SetFindBySpecialtyWithAvailabilityAsyncReturns(List<Doctor> returns)
+    {
+        adapter.Setup(m => m.FindBySpecialtyWithAvailabilityAsync(It.IsAny<string>(), It.IsAny<DateOnly>()))
+            .ReturnsAsync(returns);
+    }
+
     public void SetFindBySpecialtyWithAvailabilityAsyncReturns(Func<string, DateOnly, List<Doctor>> returns)
     {
         adapter.Setup(m => m.FindBySpecialtyWithAvailabilityAsync(It.IsAny<string>(), It.IsAny<DateOnly>()))
