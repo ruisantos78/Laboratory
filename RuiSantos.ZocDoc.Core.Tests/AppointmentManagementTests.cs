@@ -105,7 +105,7 @@ public class AppointmentManagementTests
     public async Task GetAvailabilityAsync_WithInvalidInput_ReturnsEmptyResult()
     {
         // Arrange
-        doctorAdapterMock.SetFindBySpecialtyWithAvailabilityAsyncReturns((_, _) => new List<Doctor>());
+        doctorAdapterMock.SetFindBySpecialtyWithAvailabilityAsyncReturns(new List<Doctor>());
 
         // Act
         var dateTime = DateTime.Parse("2022-01-03 09:00");
