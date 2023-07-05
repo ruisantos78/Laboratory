@@ -10,6 +10,7 @@ services:
     depends_on:
       - ruisantos.zocdoc.db
     environment:
+      - ASPNETCORE_ENVIRONMENT=Development
       - ConnectionStrings__Default=mongodb://ruisantos.zocdoc.db:27017/zocdoc
     ports:
       - 8001:80
