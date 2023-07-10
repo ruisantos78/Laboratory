@@ -13,6 +13,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.ZocDoc.Core.Tests
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{D7D83827-0041-41A4-9CF8-F7C54A706DCD}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.ZocDoc.Data.Dynamodb", "RuiSantos.ZocDoc.Data.Dynamodb\RuiSantos.ZocDoc.Data.Dynamodb.csproj", "{81675617-7395-4D59-8954-00D279B8C23A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -39,6 +41,10 @@ Global
 		{D7D83827-0041-41A4-9CF8-F7C54A706DCD}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{D7D83827-0041-41A4-9CF8-F7C54A706DCD}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{D7D83827-0041-41A4-9CF8-F7C54A706DCD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{81675617-7395-4D59-8954-00D279B8C23A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{81675617-7395-4D59-8954-00D279B8C23A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{81675617-7395-4D59-8954-00D279B8C23A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{81675617-7395-4D59-8954-00D279B8C23A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

@@ -11,7 +11,7 @@ namespace RuiSantos.ZocDoc.Data.Mongodb;
 
 public static class MongoExtensions
 {
-    private static Lazy<IMongoDatabase> database = new Lazy<IMongoDatabase>(() =>
+    private static readonly Lazy<IMongoDatabase> database = new(() =>
     {
         var connectionString = Environment.GetEnvironmentVariable("ConnectionStrings__Default") ?? "mongodb://localhost:27017/ZocDoc";
         var mongoUrl = MongoUrl.Create(connectionString);

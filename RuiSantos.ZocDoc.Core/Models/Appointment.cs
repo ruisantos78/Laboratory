@@ -40,13 +40,22 @@ public class Appointment
     /// <summary>
     /// Creates a new instance of the appointment.
     /// </summary>
+    /// <param name="id"></param>
     /// <param name="date">The date of the appointment.</param>
-    public Appointment(DateTime date)
+    public Appointment(Guid id, DateTime date)
     {
-        Id = Guid.NewGuid();
+        Id = id;
         Week = date.DayOfWeek;
         Date = DateOnly.FromDateTime(date);
         Time = date.TimeOfDay;
+    }
+
+    /// <summary>
+    /// Creates a new instance of the appointment.
+    /// </summary>
+    /// <param name="date">The date of the appointment.</param>
+    public Appointment(DateTime date): this(Guid.NewGuid(), date)
+    {
     }
 
     /// <summary>
