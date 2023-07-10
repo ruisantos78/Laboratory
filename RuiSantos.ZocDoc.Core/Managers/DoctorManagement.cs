@@ -162,8 +162,7 @@ internal class DoctorManagement : IDoctorManagement
     private async Task ValidateDoctorAsync(Doctor model)
     {
         var medicalSpecialties = await domainContext.GetMedicalSpecialtiesAsync();
-        if (!IsValid(model, out var validationFailException, medicalSpecialties))
-            throw validationFailException;
+        ThrowExceptionIfIsNotValid(model, medicalSpecialties);
     }
 
     private async Task CancelAppointmentsAsync(Doctor doctor, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)

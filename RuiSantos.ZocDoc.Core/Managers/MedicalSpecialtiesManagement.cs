@@ -61,9 +61,8 @@ internal class MedicalSpecialtiesManagement : IMedicalSpecialtiesManagement
                     continue;
 
                 var model = new MedicalSpecialty(description);
-                if (!IsValid(model, out var validationException))
-                    throw validationException;
 
+                ThrowExceptionIfIsNotValid(model);
                 await medicalSpecialityAdapter.AddAsync(model);
             }
             

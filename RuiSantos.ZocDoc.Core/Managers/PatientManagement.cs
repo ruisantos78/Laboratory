@@ -66,9 +66,7 @@ internal class PatientManagement : IPatientManagement
                 ContactNumbers = contactNumbers.ToHashSet()
             };
 
-            if (!IsValid(patient, out var validationFailException))
-                throw validationFailException;
-
+            ThrowExceptionIfIsNotValid(patient);
             await patientAdapter.StoreAsync(patient);
         }
         catch (ValidationFailException)

@@ -75,15 +75,13 @@ internal class AppointmentManagement : IAppointmentManagement
             var appointment = new Appointment(dateTime);
 
             doctor.Appointments.Add(appointment);
-            if (!IsValid(doctor, out var validationFailException))
-                throw validationFailException;
-
+            
+            ThrowExceptionIfIsNotValid(doctor);
             await doctorAdapter.StoreAsync(doctor);
 
             patient.Appointments.Add(appointment);
-            if (!IsValid(patient, out validationFailException))
-                throw validationFailException;
-
+            
+            ThrowExceptionIfIsNotValid(patient);
             await patientAdapter.StoreAsync(patient);
         }        
         catch (ValidationFailException)
