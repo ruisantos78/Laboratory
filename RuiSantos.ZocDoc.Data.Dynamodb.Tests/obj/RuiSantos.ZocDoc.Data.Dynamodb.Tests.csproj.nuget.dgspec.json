@@ -1,0 +1,240 @@
+{
+  "format": 1,
+  "restore": {
+    "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/RuiSantos.ZocDoc.Data.Dynamodb.Tests.csproj": {}
+  },
+  "projects": {
+    "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj",
+        "projectName": "RuiSantos.ZocDoc.Core",
+        "projectPath": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj",
+        "packagesPath": "/Users/ruisantos/.nuget/packages/",
+        "outputPath": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Core/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ruisantos/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {}
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "Autofac": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            },
+            "Autofac.Extensions.DependencyInjection": {
+              "target": "Package",
+              "version": "[8.0.0, )"
+            },
+            "FluentValidation": {
+              "target": "Package",
+              "version": "[11.6.0, )"
+            },
+            "Microsoft.Extensions.Caching.Abstractions": {
+              "target": "Package",
+              "version": "[7.0.0, )"
+            },
+            "Microsoft.Extensions.Logging.Abstractions": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.304/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/RuiSantos.ZocDoc.Data.Dynamodb.Tests.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/RuiSantos.ZocDoc.Data.Dynamodb.Tests.csproj",
+        "projectName": "RuiSantos.ZocDoc.Data.Dynamodb.Tests",
+        "projectPath": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/RuiSantos.ZocDoc.Data.Dynamodb.Tests.csproj",
+        "packagesPath": "/Users/ruisantos/.nuget/packages/",
+        "outputPath": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ruisantos/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb/RuiSantos.ZocDoc.Data.Dynamodb.csproj": {
+                "projectPath": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb/RuiSantos.ZocDoc.Data.Dynamodb.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "FluentAssertions": {
+              "target": "Package",
+              "version": "[6.11.0, )"
+            },
+            "Microsoft.NET.Test.Sdk": {
+              "target": "Package",
+              "version": "[17.6.3, )"
+            },
+            "coverlet.collector": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[6.0.0, )"
+            },
+            "xunit": {
+              "target": "Package",
+              "version": "[2.5.0, )"
+            },
+            "xunit.runner.visualstudio": {
+              "include": "Runtime, Build, Native, ContentFiles, Analyzers, BuildTransitive",
+              "suppressParent": "All",
+              "target": "Package",
+              "version": "[2.5.0, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.304/RuntimeIdentifierGraph.json"
+        }
+      }
+    },
+    "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb/RuiSantos.ZocDoc.Data.Dynamodb.csproj": {
+      "version": "1.0.0",
+      "restore": {
+        "projectUniqueName": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb/RuiSantos.ZocDoc.Data.Dynamodb.csproj",
+        "projectName": "RuiSantos.ZocDoc.Data.Dynamodb",
+        "projectPath": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb/RuiSantos.ZocDoc.Data.Dynamodb.csproj",
+        "packagesPath": "/Users/ruisantos/.nuget/packages/",
+        "outputPath": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb/obj/",
+        "projectStyle": "PackageReference",
+        "configFilePaths": [
+          "/Users/ruisantos/.nuget/NuGet/NuGet.Config"
+        ],
+        "originalTargetFrameworks": [
+          "net7.0"
+        ],
+        "sources": {
+          "/usr/local/share/dotnet/library-packs": {},
+          "https://api.nuget.org/v3/index.json": {}
+        },
+        "frameworks": {
+          "net7.0": {
+            "targetAlias": "net7.0",
+            "projectReferences": {
+              "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj": {
+                "projectPath": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj"
+              }
+            }
+          }
+        },
+        "warningProperties": {
+          "warnAsError": [
+            "NU1605"
+          ]
+        }
+      },
+      "frameworks": {
+        "net7.0": {
+          "targetAlias": "net7.0",
+          "dependencies": {
+            "AWSSDK.DynamoDBv2": {
+              "target": "Package",
+              "version": "[3.7.105.5, )"
+            },
+            "Autofac": {
+              "target": "Package",
+              "version": "[7.0.1, )"
+            },
+            "System.Linq.Async": {
+              "target": "Package",
+              "version": "[6.0.1, )"
+            }
+          },
+          "imports": [
+            "net461",
+            "net462",
+            "net47",
+            "net471",
+            "net472",
+            "net48",
+            "net481"
+          ],
+          "assetTargetFallback": true,
+          "warn": true,
+          "frameworkReferences": {
+            "Microsoft.NETCore.App": {
+              "privateAssets": "all"
+            }
+          },
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.304/RuntimeIdentifierGraph.json"
+        }
+      }
+    }
+  }
+}

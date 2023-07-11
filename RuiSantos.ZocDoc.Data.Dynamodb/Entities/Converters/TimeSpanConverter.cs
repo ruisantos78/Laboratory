@@ -8,16 +8,19 @@ public class TimeSpanConverter: IPropertyConverter {
     public DynamoDBEntry ToEntry(object value)
     {
         if (value is not TimeSpan timeSpan)
-            throw new ArgumentException($"Invalid TimeSpan: {value}");
+            return new DynamoDBNull();
         
         return new Primitive(timeSpan.ToString("g"));
     }
 
     public object FromEntry(DynamoDBEntry entry)
     {
-        var value = entry.AsString();
+        if (entry is not Primitive primitive)
+            return default(TimeSpan);
+        
+        var value = primitive.AsString();
         if (!TimeSpan.TryParseExact(value, "g", CultureInfo.InvariantCulture, out var timeSpan))
-            throw new ArgumentException($"Invalid TimeSpan: {value}");
+            return default(TimeSpan);
         
         return timeSpan;
     }

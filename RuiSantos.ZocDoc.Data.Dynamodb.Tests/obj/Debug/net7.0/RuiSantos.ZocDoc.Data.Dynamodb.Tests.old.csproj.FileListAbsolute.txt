@@ -1,0 +1,6 @@
+/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/bin/Debug/net7.0/CoverletSourceRootsMapping_RuiSantos.ZocDoc.Data.Dynamodb.Tests.old
+/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/obj/Debug/net7.0/RuiSantos.ZocDoc.Data.Dynamodb.Tests.old.csproj.AssemblyReference.cache
+/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/obj/Debug/net7.0/RuiSantos.ZocDoc.Data.Dynamodb.Tests.old.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/obj/Debug/net7.0/RuiSantos.ZocDoc.Data.Dynamodb.Tests.old.AssemblyInfoInputs.cache
+/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/obj/Debug/net7.0/RuiSantos.ZocDoc.Data.Dynamodb.Tests.old.AssemblyInfo.cs
+/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/obj/Debug/net7.0/RuiSantos.ZocDoc.Data.Dynamodb.Tests.old.csproj.CoreCompileInputs.cache

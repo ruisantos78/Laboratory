@@ -7,16 +7,19 @@ public class GuidConverter: IPropertyConverter {
     public DynamoDBEntry ToEntry(object value)
     {
         if (value is not Guid guid)
-            throw new ArgumentException($"Invalid Guid: {value}");
-        
-        return new Primitive(guid.ToString("D"));
+            return new DynamoDBNull();
+                    
+        return new Primitive(guid.ToString());
     }
 
     public object FromEntry(DynamoDBEntry entry)
     {
-        var value = entry.AsString();
-        if (!Guid.TryParseExact(value, "D", out var guid))
-            throw new ArgumentException($"Invalid Guid: {value}");
+        if (entry is not Primitive primitive)
+            return default(Guid);
+
+        var value = primitive.AsString();
+        if (!Guid.TryParse(value, out var guid))
+            return default(Guid);
         
         return guid;
     }

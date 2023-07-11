@@ -8,16 +8,19 @@ public class DateTimeConverter: IPropertyConverter {
     public DynamoDBEntry ToEntry(object value)
     {
         if (value is not DateTime dateTime)
-            throw new ArgumentException($"Invalid DateTime: {value}");
+            return new DynamoDBNull();
         
         return new Primitive(dateTime.ToUniversalTime().ToString("u"));
     }
 
     public object FromEntry(DynamoDBEntry entry)
     {
+        if (entry is not Primitive)
+            return default(DateTime);    
+            
         var value = entry.AsString();
         if (!DateTime.TryParseExact(value, "u", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out var dateTime))
-            throw new ArgumentException($"Invalid DateTime: {value}");
+            return default(DateTime);
         
         return dateTime;
     }

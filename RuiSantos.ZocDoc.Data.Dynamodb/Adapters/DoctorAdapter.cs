@@ -23,9 +23,12 @@ public class DoctorAdapter : IDoctorAdapter
     public async Task<List<Doctor>> FindBySpecialityAsync(string specialty)
     {
         var doctors = await DoctorSpecialtyDto.GetDoctorsBySpecialtyAsync(context, specialty);
-        var doctorTasks = doctors.Select(id => DoctorDto.GetDoctorByIdAsync(context, id));
-        var doctorResults = await Task.WhenAll(doctorTasks);
-        return doctorResults.OfType<Doctor>().ToList();
+
+        var reader = context.CreateBatchGet<DoctorDto>();
+        doctors.ToList().ForEach(id => reader.AddKey(id));
+        await reader.ExecuteAsync();
+
+        return await DoctorDto.GetDoctorsAsync(context, reader.Results).ToListAsync();
     }
 
     public async Task<List<Doctor>> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date)
@@ -39,14 +42,15 @@ public class DoctorAdapter : IDoctorAdapter
 
     public async Task<List<Doctor>> FindAllWithAppointmentsAsync(IEnumerable<Appointment> appointments)
     {
-        var appointmentsTasks = appointments.Select(a => AppointmentsDto.GetDoctorIdsByAppointmentAsync(context, a.Id));
-        var appointmentsResults = await Task.WhenAll(appointmentsTasks);
-      
-        var doctorTasks = appointmentsResults.SelectMany(id => id).Distinct()
-            .Select(id => DoctorDto.GetDoctorByIdAsync(context, id));
+        var appointmentReader = context.CreateBatchGet<AppointmentsDto>();
+        appointments.ToList().ForEach(a => appointmentReader.AddKey(a.Id));
+        await appointmentReader.ExecuteAsync();
 
-        var doctorResults = await Task.WhenAll(doctorTasks);
-        return doctorResults.OfType<Doctor>().ToList();
+        var doctorsReader = context.CreateBatchGet<DoctorDto>();
+        appointmentReader.Results.ForEach(a => doctorsReader.AddKey(a.DoctorId));
+        await doctorsReader.ExecuteAsync();
+
+        return await DoctorDto.GetDoctorsAsync(context, doctorsReader.Results).ToListAsync();
     }
 
     public async Task StoreAsync(Doctor doctor)

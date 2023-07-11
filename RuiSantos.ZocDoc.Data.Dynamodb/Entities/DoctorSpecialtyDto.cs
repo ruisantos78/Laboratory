@@ -30,17 +30,17 @@ internal class DoctorSpecialtyDto
         return specialties.Select(x => x.Specialty).ToList();
     }
 
-    internal static async Task SetSpecialtiesByDoctorIdAsync(IDynamoDBContext context, Guid id, HashSet<string> specialties)
+    internal static async Task<BatchWrite> CreateDoctorSpecialtiesBatchWriteAsync(IDynamoDBContext context, Guid id, HashSet<string> specialties)
     {
-        var currentSpecialties = await GetSpecialtiesByDoctorIdAsync(context, id);
+        var current = await context.QueryAsync<DoctorSpecialtyDto>(id).GetRemainingAsync();
         
-        var tasks = new List<Task>();
-        tasks.AddRange(currentSpecialties.Where(x => !specialties.Contains(x)).Select(s => context.DeleteAsync<DoctorSpecialtyDto>(id, s)));
-        tasks.AddRange(specialties.Where(x => !currentSpecialties.Contains(x)).Select(s => context.SaveAsync(new DoctorSpecialtyDto {
+        var batch = context.CreateBatchWrite<DoctorSpecialtyDto>();
+        batch.AddDeleteItems(current.Where(x => !specialties.Contains(x.Specialty)));
+        batch.AddPutItems(specialties.Where(x => !current.Any(a => a.Specialty == x)).Select(s => new DoctorSpecialtyDto {
             DoctorId = id,
             Specialty = s
-        })));       
+        }));       
 
-        await Task.WhenAll(tasks.ToArray());
+        return batch;
     }    
 }

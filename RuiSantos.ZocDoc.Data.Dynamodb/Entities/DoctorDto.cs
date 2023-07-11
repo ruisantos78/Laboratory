@@ -9,7 +9,7 @@ internal class DoctorDto {
     private const string DoctorLicenseIndex = "DoctorLicenseIndex";
 
     [DynamoDBHashKey(typeof(GuidConverter))]
-    public Guid Id { get; init; } = Guid.NewGuid();
+    public Guid Id { get; set; } = Guid.NewGuid();
     
     [DynamoDBGlobalSecondaryIndexHashKey(DoctorLicenseIndex)]
     public string License { get; set; } = string.Empty;
@@ -26,7 +26,7 @@ internal class DoctorDto {
     [DynamoDBProperty]
     public List<string> ContactNumbers { get; set; } = new();
 
-    [DynamoDBProperty(typeof(JsonConverter<OfficeHour>))]
+    [DynamoDBProperty(typeof(ListConverter<OfficeHour>))]
     public List<OfficeHour> Availability { get; set; } = new();
 
     public static async Task SetDoctorAsync(IDynamoDBContext context, Doctor doctor) 
@@ -34,7 +34,8 @@ internal class DoctorDto {
         if (doctor is null)
             return;
 
-        var doctorTask = context.SaveAsync(new DoctorDto()
+        var doctorWriter = context.CreateBatchWrite<DoctorDto>();
+        doctorWriter.AddPutItem(new DoctorDto()
         {
             Id = doctor.Id,
             License = doctor.License,
@@ -45,9 +46,9 @@ internal class DoctorDto {
             Availability = doctor.OfficeHours.ToList()
         });
 
-        var specialtiesTask = DoctorSpecialtyDto.SetSpecialtiesByDoctorIdAsync(context, doctor.Id, doctor.Specialties);
+        var specialtiesWriter = await DoctorSpecialtyDto.CreateDoctorSpecialtiesBatchWriteAsync(context, doctor.Id, doctor.Specialties);
 
-        await Task.WhenAll(doctorTask, specialtiesTask);        
+        await context.ExecuteBatchWriteAsync(new BatchWrite[] { doctorWriter, specialtiesWriter });
     }        
 
     public static async Task<Doctor?> GetDoctorByIdAsync(IDynamoDBContext context, Guid id) {
@@ -66,7 +67,16 @@ internal class DoctorDto {
         return await GetDoctorAsync(context, doctors.FirstOrDefault());
     }
 
-    private static async Task<Doctor?> GetDoctorAsync(IDynamoDBContext context, DoctorDto? doctor)
+    public static async IAsyncEnumerable<Doctor> GetDoctorsAsync(IDynamoDBContext context, IEnumerable<DoctorDto> doctors) {
+        foreach (var doctor in doctors.DistinctBy(d => d.Id))
+        {
+            var result = await GetDoctorAsync(context, doctor);
+            if (result is not null)
+                yield return result;
+        }
+    }
+
+    public static async Task<Doctor?> GetDoctorAsync(IDynamoDBContext context, DoctorDto? doctor)
     {
         if (doctor is null)
             return default;

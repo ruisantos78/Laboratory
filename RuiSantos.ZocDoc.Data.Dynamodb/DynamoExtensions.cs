@@ -3,6 +3,7 @@ using Autofac;
 using Microsoft.Extensions.DependencyInjection;
 using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Data.Dynamodb.Adapters;
+using RuiSantos.ZocDoc.Data.Dynamodb.Mappings;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb;
 
@@ -15,9 +16,11 @@ public static class DynamoExtensions
         };
         return new AmazonDynamoDBClient(config);            
     });
-    
+
     public static IServiceCollection AddDataContext(this IServiceCollection services)
     {
+        RegisterClassMaps.InitializeDatabase(Database.Value);
+
        // services.AddTransient<IMedicalSpecialityAdapter>(x => new MedicalSpecialityAdapter(database.Value));
        // services.AddTransient<IPatientAdapter>(x => new PatientAdapter(database.Value));
         services.AddTransient<IDoctorAdapter>(x => new DoctorAdapter(Database.Value));
@@ -27,8 +30,10 @@ public static class DynamoExtensions
 
     public static ContainerBuilder RegisterDataContext(this ContainerBuilder builder)
     {
-       // builder.Register(x => new MedicalSpecialityAdapter(database.Value)).As<IMedicalSpecialityAdapter>();
-       // builder.Register(x => new PatientAdapter(database.Value)).As<IPatientAdapter>();
+        RegisterClassMaps.InitializeDatabase(Database.Value);
+
+        // builder.Register(x => new MedicalSpecialityAdapter(database.Value)).As<IMedicalSpecialityAdapter>();
+        // builder.Register(x => new PatientAdapter(database.Value)).As<IPatientAdapter>();
         builder.Register(x => new DoctorAdapter(Database.Value)).As<IDoctorAdapter>();
 
         return builder;

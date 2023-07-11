@@ -1,10 +1,10 @@
-﻿using Autofac;
+﻿using System.Reflection;
+using Autofac;
 using Autofac.Extensions.DependencyInjection;
 using Microsoft.OpenApi.Models;
 using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core;
 using RuiSantos.ZocDoc.Data.Mongodb;
-using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -7,9 +7,12 @@ public class DayOfWeekConverter : IPropertyConverter
 {
     public object FromEntry(DynamoDBEntry entry)
     {
-        var value = entry.AsString();
+        if (entry is not Primitive primitive)
+            return default(DayOfWeek);
+
+        var value = primitive.AsString();
         if (!Enum.TryParse(value, out DayOfWeek dayOfWeek))
-            throw new ArgumentException($"Invalid DayOfWeek: {value}");
+            return default(DayOfWeek);
 
         return dayOfWeek;
     }   
@@ -17,8 +20,8 @@ public class DayOfWeekConverter : IPropertyConverter
     public DynamoDBEntry ToEntry(object value)
     {
         if (value is not DayOfWeek dayOfWeek)
-            throw new ArgumentException($"Invalid DayOfWeek: {value}");
-            
-        return dayOfWeek.ToString();
+            return new DynamoDBNull();
+        
+        return new Primitive(dayOfWeek.ToString());
     }
 }
