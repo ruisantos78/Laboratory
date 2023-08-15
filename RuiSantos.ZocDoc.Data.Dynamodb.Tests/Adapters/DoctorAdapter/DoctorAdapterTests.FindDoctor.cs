@@ -1,22 +1,9 @@
-﻿using RuiSantos.ZocDoc.Core.Models;
-using RuiSantos.ZocDoc.Data.Dynamodb.Adapters;
-using RuiSantos.ZocDoc.Data.Dynamodb.Tests.Fixtures;
+﻿namespace RuiSantos.ZocDoc.Data.Dynamodb.Tests.Adapters;
 
-namespace RuiSantos.ZocDoc.Data.Dynamodb.Tests;
-
-public class DoctorAdapterTests: IClassFixture<DatabaseFixture>
+partial class DoctorAdapterTests
 {
-    private readonly DoctorAdapter doctorAdapter;
-    private readonly List<Doctor> doctors;
-
-    public DoctorAdapterTests(DatabaseFixture database)
-    {
-        this.doctorAdapter = new(database.Client);
-        this.doctors = database.Doctors;
-    }
-
     [Fact]
-    public async Task ShouldFindDoctor_WithLicenseNumber()
+    public async Task FindDoctor_WithValidLicenseNumber_ShouldReturnDoctor()
     {
         // Arrange
         var doctor = doctors.Find(d => d.License == "ABC001");
@@ -30,7 +17,7 @@ public class DoctorAdapterTests: IClassFixture<DatabaseFixture>
     }
 
     [Fact]
-    public async Task ShouldFindDoctor_WithSpecialty()
+    public async Task FindDoctor_WithValidSpecialty_ShouldReturnDoctors()
     {
         // Arrange
         var expected = doctors.FindAll(d => d.Specialties.Contains("Cardiology"));
@@ -42,5 +29,15 @@ public class DoctorAdapterTests: IClassFixture<DatabaseFixture>
         response.Should().NotBeNullOrEmpty();
         response.Should().BeEquivalentTo(expected);
     }
+
+    [Fact]
+    public async Task FindDoctor_WithInvalidLicenseNumber_ShouldReturnNull()
+    {
+        // Act
+        var response = await doctorAdapter.FindAsync("XXX0000");
+
+        // Assert
+        response.Should().BeNull();
+    }       
 }
 

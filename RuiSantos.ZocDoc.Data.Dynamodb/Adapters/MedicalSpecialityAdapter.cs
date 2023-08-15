@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using Amazon.DynamoDBv2;
+﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.ZocDoc.Core.Adapters;
 using RuiSantos.ZocDoc.Core.Models;
@@ -21,9 +20,10 @@ public class MedicalSpecialityAdapter : IMedicalSpecialityAdapter
         await DomainListsDto.SetSpecialtyAsync(context, speciality.Description);
     }
 
-    public Task<bool> ContainsAsync(string speciality)
+    public async Task<bool> ContainsAsync(string speciality)
     {
-        throw new NotImplementedException();
+        var result = await DomainListsDto.GetSpecialtiesAsync(context);
+        return result.Values.Contains(speciality);
     }
 
     public async Task RemoveAsync(string speciality)
@@ -41,4 +41,3 @@ public class MedicalSpecialityAdapter : IMedicalSpecialityAdapter
         }).ToList();
     }
 }
-

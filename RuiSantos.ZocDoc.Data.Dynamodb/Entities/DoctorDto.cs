@@ -5,8 +5,8 @@ using RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities;
 
 [DynamoDBTable("Doctors")]
-internal class DoctorDto {
-    private const string DoctorLicenseIndex = "DoctorLicenseIndex";
+internal class DoctorDto: DynamoDataObject<Doctor> {
+    const string DoctorLicenseIndex = "DoctorLicenseIndex";
 
     [DynamoDBHashKey(typeof(GuidConverter))]
     public Guid Id { get; set; } = Guid.NewGuid();
@@ -29,72 +29,98 @@ internal class DoctorDto {
     [DynamoDBProperty(typeof(ListConverter<OfficeHour>))]
     public List<OfficeHour> Availability { get; set; } = new();
 
-    public static async Task SetDoctorAsync(IDynamoDBContext context, Doctor doctor) 
+    protected override async Task<Doctor> ToEntityAsync(IDynamoDBContext context)
     {
-        if (doctor is null)
-            return;
-
-        var doctorWriter = context.CreateBatchWrite<DoctorDto>();
-        doctorWriter.AddPutItem(new DoctorDto()
-        {
-            Id = doctor.Id,
-            License = doctor.License,
-            FirstName = doctor.FirstName,
-            LastName = doctor.LastName,
-            Email = doctor.Email,
-            ContactNumbers = doctor.ContactNumbers.ToList(),
-            Availability = doctor.OfficeHours.ToList()
-        });
-
-        var specialtiesWriter = await DoctorSpecialtyDto.CreateDoctorSpecialtiesBatchWriteAsync(context, doctor.Id, doctor.Specialties);
-
-        await context.ExecuteBatchWriteAsync(new BatchWrite[] { doctorWriter, specialtiesWriter });
-    }        
-
-    public static async Task<Doctor?> GetDoctorByIdAsync(IDynamoDBContext context, Guid id) {
-        var doctor = await context.LoadAsync<DoctorDto>(id);
-        return await GetDoctorAsync(context, doctor);
-    }
-
-    public static async Task<Doctor?> GetDoctorByLicenseAsync(IDynamoDBContext context, string license)
-    {
-        var config = new DynamoDBOperationConfig
-        {
-            IndexName = DoctorLicenseIndex
-        };
-
-        var doctors = await context.QueryAsync<DoctorDto>(license, config).GetRemainingAsync();
-        return await GetDoctorAsync(context, doctors.FirstOrDefault());
-    }
-
-    public static async IAsyncEnumerable<Doctor> GetDoctorsAsync(IDynamoDBContext context, IEnumerable<DoctorDto> doctors) {
-        foreach (var doctor in doctors.DistinctBy(d => d.Id))
-        {
-            var result = await GetDoctorAsync(context, doctor);
-            if (result is not null)
-                yield return result;
-        }
-    }
-
-    public static async Task<Doctor?> GetDoctorAsync(IDynamoDBContext context, DoctorDto? doctor)
-    {
-        if (doctor is null)
-            return default;
-
-        var specialties = await DoctorSpecialtyDto.GetSpecialtiesByDoctorIdAsync(context, doctor.Id);
-        var appointments = await AppointmentsDto.GetAppointmentsByDoctorIdAsync(context, doctor.Id);
+        var specialties = await this.GetSpecialtiesAsync(context);
+        var appointments = await this.GetAppointementsAsync(context);
 
         return new Doctor()
         {
-            Id = doctor.Id,
-            License = doctor.License,
-            FirstName = doctor.FirstName,
-            LastName = doctor.LastName,
-            Email = doctor.Email,
-            ContactNumbers = doctor.ContactNumbers.ToHashSet(),
-            OfficeHours = doctor.Availability.ToHashSet(),
-            Specialties = specialties.ToHashSet(),
-            Appointments = appointments.Select(a => new Appointment(a.Id, a.Date)).ToHashSet()
+            Id = this.Id,
+            License = this.License,
+            FirstName = this.FirstName,
+            LastName = this.LastName,
+            Email = this.Email,
+            ContactNumbers = this.ContactNumbers.ToHashSet(),
+            OfficeHours = this.Availability.ToHashSet(),
+            Specialties = specialties,
+            Appointments = appointments.Select(a => new Appointment(a.Key, a.Value)).ToHashSet()
         };
+    }
+
+    protected override Task<object> FromEntityAsync(IDynamoDBContext context, Doctor entity)
+    {
+        return Task.FromResult<object>(new DoctorDto()
+        {
+            Id = entity.Id,
+            License = entity.License,
+            FirstName = entity.FirstName,
+            LastName = entity.LastName,
+            Email = entity.Email,
+            ContactNumbers = entity.ContactNumbers.ToList(),
+            Availability = entity.OfficeHours.ToList()
+        });
+    }
+
+    public async Task<HashSet<string>> GetSpecialtiesAsync(IDynamoDBContext context)
+    {
+        var specialties = await context.QueryAsync<DoctorSpecialtyDto>(Id).GetRemainingAsync();
+        return specialties.Select(x => x.Specialty).Distinct().ToHashSet();
+    } 
+
+    public async Task<IReadOnlyDictionary<Guid, DateTime>> GetAppointementsAsync(IDynamoDBContext context)
+    {
+        var appointments = await context.QueryAsync<AppointmentsDto>(Id, new DynamoDBOperationConfig
+        {
+            IndexName = AppointmentsDto.DoctorAppointmentIndex
+        }).GetRemainingAsync();
+
+        return appointments.ToDictionary(k => k.AppointmentId, v => v.AppointmentTime);
+    }
+
+    public static async Task SetDoctorAsync(IDynamoDBContext context, Doctor doctor) 
+    {
+        await StoreAsync<DoctorDto>(context, doctor);
+    }
+
+    public static async Task SetDoctorAsync(IDynamoDBContext context, Doctor doctor, HashSet<string> specialties) 
+    {
+        var doctorSpecialties = await context.QueryAsync<DoctorSpecialtyDto>(doctor.Id).GetRemainingAsync();
+        
+        var batch = context.CreateBatchWrite<DoctorSpecialtyDto>();
+        batch.AddDeleteItems(doctorSpecialties.Where(x => !specialties.Contains(x.Specialty)));
+        batch.AddPutItems(specialties.Where(x => doctorSpecialties.All(a => a.Specialty != x))
+            .Select(s => new DoctorSpecialtyDto {
+                DoctorId = doctor.Id,
+                Specialty = s
+            }
+        ));       
+
+        await StoreAsync<DoctorDto>(context, doctor, batch);
+    }
+        
+    public static async Task<Doctor?> GetDoctorByIdAsync(IDynamoDBContext context, Guid id)
+        => await FindAsync<DoctorDto>(context, id);
+
+    public static async Task<Doctor?> GetDoctorByLicenseAsync(IDynamoDBContext context, string license)
+    {
+        var result =  await SearchAsync<DoctorDto>(context, DoctorLicenseIndex, license);
+        return result.FirstOrDefault();   
+    }
+
+    public static async Task<Doctor?> GetDoctorByAppointmentIdAsync(IDynamoDBContext context, Guid appointmentId)
+    {
+        var appointment = await context.LoadAsync<AppointmentsDto>(appointmentId);
+        return await GetDoctorByIdAsync(context, appointment.DoctorId);    
+    }
+
+    public static async Task<List<Doctor>> GetDoctorsBySpecialtyAsync(IDynamoDBContext context, string specialty)
+    {
+        var specialties = await context.QueryAsync<DoctorSpecialtyDto>(specialty, new DynamoDBOperationConfig {
+            IndexName = DoctorSpecialtyDto.DoctorSpecialtyIndex
+        }).GetRemainingAsync();
+
+        var ids = specialties.Select(x => (object)x.DoctorId).ToList();
+        return await FindListAsync<DoctorDto>(context, ids);
     }
 }

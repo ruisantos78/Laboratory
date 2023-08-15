@@ -3,7 +3,7 @@ using Amazon.DynamoDBv2.Model;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Mappings;
 
-public class AppointmentsClassMap: IRegisterClassMap
+internal class AppointmentsClassMap: IRegisterClassMap
 {
     public CreateTableRequest GetCreateTableRequest() => new()
     {

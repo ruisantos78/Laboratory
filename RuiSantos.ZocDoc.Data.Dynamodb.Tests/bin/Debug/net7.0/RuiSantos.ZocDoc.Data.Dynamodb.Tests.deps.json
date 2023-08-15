@@ -42,22 +42,22 @@
           }
         }
       },
-      "AWSSDK.Core/3.7.108.1": {
+      "AWSSDK.Core/3.7.200.5": {
         "runtime": {
           "lib/netcoreapp3.1/AWSSDK.Core.dll": {
             "assemblyVersion": "3.3.0.0",
-            "fileVersion": "3.7.108.1"
+            "fileVersion": "3.7.200.5"
           }
         }
       },
-      "AWSSDK.DynamoDBv2/3.7.105.5": {
+      "AWSSDK.DynamoDBv2/3.7.200.6": {
         "dependencies": {
-          "AWSSDK.Core": "3.7.108.1"
+          "AWSSDK.Core": "3.7.200.5"
         },
         "runtime": {
           "lib/netcoreapp3.1/AWSSDK.DynamoDBv2.dll": {
             "assemblyVersion": "3.3.0.0",
-            "fileVersion": "3.7.105.5"
+            "fileVersion": "3.7.200.6"
           }
         }
       },
@@ -1170,7 +1170,7 @@
       },
       "RuiSantos.ZocDoc.Data.Dynamodb/1.0.0": {
         "dependencies": {
-          "AWSSDK.DynamoDBv2": "3.7.105.5",
+          "AWSSDK.DynamoDBv2": "3.7.200.6",
           "Autofac": "7.0.1",
           "RuiSantos.ZocDoc.Core": "1.0.0",
           "System.Linq.Async": "6.0.1"
@@ -1201,19 +1201,19 @@
       "path": "autofac.extensions.dependencyinjection/8.0.0",
       "hashPath": "autofac.extensions.dependencyinjection.8.0.0.nupkg.sha512"
     },
-    "AWSSDK.Core/3.7.108.1": {
+    "AWSSDK.Core/3.7.200.5": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-kG+tKeJbhblvokQpM3tCy5J6iqNcIQ2tycMNn5C/ZCJCyDpPHgk3QGFxEVGrKrZqMxGlfifvz+fUy79pmlpkfw==",
-      "path": "awssdk.core/3.7.108.1",
-      "hashPath": "awssdk.core.3.7.108.1.nupkg.sha512"
+      "sha512": "sha512-LuNBHgs8f5VBgHxHSQelFHWrIDnEkWgMrTunVvHN7ONO9fEIwzTwspXUQGLmEk/OiMSYt36ug0IQJOJ8oGwzJA==",
+      "path": "awssdk.core/3.7.200.5",
+      "hashPath": "awssdk.core.3.7.200.5.nupkg.sha512"
     },
-    "AWSSDK.DynamoDBv2/3.7.105.5": {
+    "AWSSDK.DynamoDBv2/3.7.200.6": {
       "type": "package",
       "serviceable": true,
-      "sha512": "sha512-OUfGbRjfU9PBGcneGVDW+Zbs/5iOBmzihKFcN/rCGYC3Knr1gdlbTg7FN4ptMttMz0VVkPSG93nFmVyuNmN1FQ==",
-      "path": "awssdk.dynamodbv2/3.7.105.5",
-      "hashPath": "awssdk.dynamodbv2.3.7.105.5.nupkg.sha512"
+      "sha512": "sha512-5zho6fLc1i6lxSWvO/wtsBdhr7bXdzzh+eOnFFEQybMO40NWGEfZqOn7tae6WATduOxs1XgpjxHsNue5zGTc9w==",
+      "path": "awssdk.dynamodbv2/3.7.200.6",
+      "hashPath": "awssdk.dynamodbv2.3.7.200.6.nupkg.sha512"
     },
     "coverlet.collector/6.0.0": {
       "type": "package",

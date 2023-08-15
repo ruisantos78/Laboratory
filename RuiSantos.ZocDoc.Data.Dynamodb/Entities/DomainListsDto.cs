@@ -24,12 +24,16 @@ public class DomainListsDto
     private static async Task<IReadOnlyDictionary<Guid, String>> GetAsync(IDynamoDBContext context, string source)
     {
         var specialties = await context.LoadAsync<DomainListsDto>(source);
-        return specialties.Values;
+        return specialties?.Values ?? new Dictionary<Guid, String>();
     }
 
     private static async Task SetAsync(IDynamoDBContext context, string source, string value)
     {
-        var specialties = await context.LoadAsync<DomainListsDto>(source);
+        var specialties = await context.LoadAsync<DomainListsDto>(source) 
+            ?? new DomainListsDto() {
+                Source = source,
+                Values = new Dictionary<Guid, String>()            
+            };
 
         if (!specialties.Values.ContainsValue(value))
         {
@@ -41,6 +45,8 @@ public class DomainListsDto
     private static async Task RemoveAsync(IDynamoDBContext context, string source, string value)
     {
         var specialties = await context.LoadAsync<DomainListsDto>(source);
+        if (specialties is null)
+            return;
 
         if (specialties.Values.FirstOrDefault(entry => entry.Value == value) is { } entry)
         {

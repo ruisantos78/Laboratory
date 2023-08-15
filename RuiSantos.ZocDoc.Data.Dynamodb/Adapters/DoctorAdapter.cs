@@ -16,21 +16,11 @@ public class DoctorAdapter : IDoctorAdapter
     }
 
     public async Task<Doctor?> FindAsync(string license)
-    {
-        return await DoctorDto.GetDoctorByLicenseAsync(context, license);
-    }
-
+        => await DoctorDto.GetDoctorByLicenseAsync(context, license);
+    
     public async Task<List<Doctor>> FindBySpecialityAsync(string specialty)
-    {
-        var doctors = await DoctorSpecialtyDto.GetDoctorsBySpecialtyAsync(context, specialty);
-
-        var reader = context.CreateBatchGet<DoctorDto>();
-        doctors.ToList().ForEach(id => reader.AddKey(id));
-        await reader.ExecuteAsync();
-
-        return await DoctorDto.GetDoctorsAsync(context, reader.Results).ToListAsync();
-    }
-
+        => await DoctorDto.GetDoctorsBySpecialtyAsync(context, specialty);
+    
     public async Task<List<Doctor>> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date)
     {
         var doctors = await FindBySpecialityAsync(specialty);
@@ -42,15 +32,12 @@ public class DoctorAdapter : IDoctorAdapter
 
     public async Task<List<Doctor>> FindAllWithAppointmentsAsync(IEnumerable<Appointment> appointments)
     {
-        var appointmentReader = context.CreateBatchGet<AppointmentsDto>();
-        appointments.ToList().ForEach(a => appointmentReader.AddKey(a.Id));
-        await appointmentReader.ExecuteAsync();
+        var tasks = appointments.Select(async appoint => await DoctorDto.GetDoctorByAppointmentIdAsync(context, appoint.Id));
+        var result = await Task.WhenAll(tasks);
+        if (result is null)
+            return new List<Doctor>();
 
-        var doctorsReader = context.CreateBatchGet<DoctorDto>();
-        appointmentReader.Results.ForEach(a => doctorsReader.AddKey(a.DoctorId));
-        await doctorsReader.ExecuteAsync();
-
-        return await DoctorDto.GetDoctorsAsync(context, doctorsReader.Results).ToListAsync();
+        return result.Where(i => i is not null).Select(i => i!).ToList();
     }
 
     public async Task StoreAsync(Doctor doctor)

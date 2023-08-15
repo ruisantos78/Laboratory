@@ -1,13 +1,13 @@
 {
   "version": 2,
-  "dgSpecHash": "bWkzv52IvNyMI7EMekCcoaYSgyxsl6gul0Ome9+BEZnpVZyu3oKIurpJLErLNJgkpS5W0dcFYUS8pMcCqHdbGQ==",
+  "dgSpecHash": "Bkaa6SuhIUEUfQPrUD+6XobthDrQVkDqXPPm31oEFac+ybnVR+m2t1o2hiHsWpVycmmr2XSEVoQbIVRK3z2nCQ==",
   "success": true,
   "projectFilePath": "/Users/ruisantos/Projects/ZocDoc/RuiSantos.ZocDoc.Data.Dynamodb.Tests/RuiSantos.ZocDoc.Data.Dynamodb.Tests.csproj",
   "expectedPackageFiles": [
     "/Users/ruisantos/.nuget/packages/autofac/7.0.1/autofac.7.0.1.nupkg.sha512",
     "/Users/ruisantos/.nuget/packages/autofac.extensions.dependencyinjection/8.0.0/autofac.extensions.dependencyinjection.8.0.0.nupkg.sha512",
-    "/Users/ruisantos/.nuget/packages/awssdk.core/3.7.108.1/awssdk.core.3.7.108.1.nupkg.sha512",
-    "/Users/ruisantos/.nuget/packages/awssdk.dynamodbv2/3.7.105.5/awssdk.dynamodbv2.3.7.105.5.nupkg.sha512",
+    "/Users/ruisantos/.nuget/packages/awssdk.core/3.7.200.5/awssdk.core.3.7.200.5.nupkg.sha512",
+    "/Users/ruisantos/.nuget/packages/awssdk.dynamodbv2/3.7.200.6/awssdk.dynamodbv2.3.7.200.6.nupkg.sha512",
     "/Users/ruisantos/.nuget/packages/coverlet.collector/6.0.0/coverlet.collector.6.0.0.nupkg.sha512",
     "/Users/ruisantos/.nuget/packages/fluentassertions/6.11.0/fluentassertions.6.11.0.nupkg.sha512",
     "/Users/ruisantos/.nuget/packages/fluentvalidation/11.6.0/fluentvalidation.11.6.0.nupkg.sha512",

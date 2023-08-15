@@ -35,7 +35,7 @@
           }
         }
       },
-      "AWSSDK.Core/3.7.108.1": {
+      "AWSSDK.Core/3.7.200.5": {
         "type": "package",
         "compile": {
           "lib/netcoreapp3.1/AWSSDK.Core.dll": {
@@ -48,10 +48,10 @@
           }
         }
       },
-      "AWSSDK.DynamoDBv2/3.7.105.5": {
+      "AWSSDK.DynamoDBv2/3.7.200.6": {
         "type": "package",
         "dependencies": {
-          "AWSSDK.Core": "[3.7.108.1, 4.0.0)"
+          "AWSSDK.Core": "[3.7.200.5, 4.0.0)"
         },
         "compile": {
           "lib/netcoreapp3.1/AWSSDK.DynamoDBv2.dll": {
@@ -1941,7 +1941,7 @@
         "type": "project",
         "framework": ".NETCoreApp,Version=v7.0",
         "dependencies": {
-          "AWSSDK.DynamoDBv2": "3.7.105.5",
+          "AWSSDK.DynamoDBv2": "3.7.200.6",
           "Autofac": "7.0.1",
           "RuiSantos.ZocDoc.Core": "1.0.0",
           "System.Linq.Async": "6.0.1"
@@ -1997,15 +1997,15 @@
         "lib/netstandard2.1/Autofac.Extensions.DependencyInjection.xml"
       ]
     },
-    "AWSSDK.Core/3.7.108.1": {
-      "sha512": "kG+tKeJbhblvokQpM3tCy5J6iqNcIQ2tycMNn5C/ZCJCyDpPHgk3QGFxEVGrKrZqMxGlfifvz+fUy79pmlpkfw==",
+    "AWSSDK.Core/3.7.200.5": {
+      "sha512": "LuNBHgs8f5VBgHxHSQelFHWrIDnEkWgMrTunVvHN7ONO9fEIwzTwspXUQGLmEk/OiMSYt36ug0IQJOJ8oGwzJA==",
       "type": "package",
-      "path": "awssdk.core/3.7.108.1",
+      "path": "awssdk.core/3.7.200.5",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
-        "awssdk.core.3.7.108.1.nupkg.sha512",
+        "awssdk.core.3.7.200.5.nupkg.sha512",
         "awssdk.core.nuspec",
         "images/AWSLogo.png",
         "lib/net35/AWSSDK.Core.dll",
@@ -2023,16 +2023,17 @@
         "tools/account-management.ps1"
       ]
     },
-    "AWSSDK.DynamoDBv2/3.7.105.5": {
-      "sha512": "OUfGbRjfU9PBGcneGVDW+Zbs/5iOBmzihKFcN/rCGYC3Knr1gdlbTg7FN4ptMttMz0VVkPSG93nFmVyuNmN1FQ==",
+    "AWSSDK.DynamoDBv2/3.7.200.6": {
+      "sha512": "5zho6fLc1i6lxSWvO/wtsBdhr7bXdzzh+eOnFFEQybMO40NWGEfZqOn7tae6WATduOxs1XgpjxHsNue5zGTc9w==",
       "type": "package",
-      "path": "awssdk.dynamodbv2/3.7.105.5",
+      "path": "awssdk.dynamodbv2/3.7.200.6",
       "hasTools": true,
       "files": [
         ".nupkg.metadata",
         ".signature.p7s",
         "analyzers/dotnet/cs/AWSSDK.DynamoDBv2.CodeAnalysis.dll",
-        "awssdk.dynamodbv2.3.7.105.5.nupkg.sha512",
+        "analyzers/dotnet/cs/SharedAnalysisCode.dll",
+        "awssdk.dynamodbv2.3.7.200.6.nupkg.sha512",
         "awssdk.dynamodbv2.nuspec",
         "images/AWSLogo.png",
         "lib/net35/AWSSDK.DynamoDBv2.dll",
@@ -6260,7 +6261,7 @@
             "privateAssets": "all"
           }
         },
-        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.304/RuntimeIdentifierGraph.json"
+        "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/7.0.307/RuntimeIdentifierGraph.json"
       }
     }
   }
