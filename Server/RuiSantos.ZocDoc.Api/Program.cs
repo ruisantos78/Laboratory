@@ -5,6 +5,7 @@ using Microsoft.OpenApi.Models;
 using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core;
 using RuiSantos.ZocDoc.Data;
+using RuiSantos.ZocDoc.GraphQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -12,6 +13,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging(config => config.AddConsole());
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
+builder.Services.AddZocDocGraphQL();
 
 // Configure Autofac Dependency Injection container
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
@@ -44,6 +46,7 @@ var app = builder.Build();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGraphQL();
 
 if (app.Environment.IsDevelopment())
 {

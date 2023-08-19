@@ -7,6 +7,7 @@ FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
 COPY ["Server/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj", "Server/RuiSantos.ZocDoc.Api/"]
 COPY ["Server/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj", "Server/RuiSantos.ZocDoc.Core/"]
+COPY ["Server/RuiSantos.ZocDoc.GraphQL/RuiSantos.ZocDoc.GraphQL.csproj", "Server/RuiSantos.ZocDoc.GraphQL/"]
 COPY ["Modules/RuiSantos.ZocDoc.Data.Mongodb/RuiSantos.ZocDoc.Data.Mongodb.csproj", "Modules/RuiSantos.ZocDoc.Data.Mongodb/"]
 COPY ["Modules/RuiSantos.ZocDoc.Data.Dynamodb/RuiSantos.ZocDoc.Data.Dynamodb.csproj", "Modules/RuiSantos.ZocDoc.Data.Dynamodb/"]
 RUN dotnet restore "Server/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj"

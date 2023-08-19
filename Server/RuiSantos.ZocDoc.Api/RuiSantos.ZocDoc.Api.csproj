@@ -8,7 +8,7 @@
      <NoWarn>$(NoWarn);1591</NoWarn>
      <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
      <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
-     <Configurations>Debug;Release;Trace</Configurations>
+     <Configurations>Trace;Debug;Release</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
@@ -33,6 +33,9 @@
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
     <ProjectReference Include="..\..\Modules\RuiSantos.ZocDoc.Data.Mongodb\RuiSantos.ZocDoc.Data.Mongodb.csproj">
+      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
+    </ProjectReference>
+    <ProjectReference Include="..\RuiSantos.ZocDoc.GraphQL\RuiSantos.ZocDoc.GraphQL.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
   </ItemGroup>

@@ -28,12 +28,14 @@ internal abstract class DynamoDataObject<TEntity> where TEntity : class, new()
 
     protected abstract Task FromEntityAsync(IDynamoDBContext context, TEntity entity);
 
-    protected static async Task StoreAsync<TDto>(IDynamoDBContext context, TEntity entity)
+    protected static async Task<TDto> StoreAsync<TDto>(IDynamoDBContext context, TEntity entity)
         where TDto : DynamoDataObject<TEntity>, new()
     {
         var dto = new TDto();
         await dto.FromEntityAsync(context, entity);
         await context.SaveAsync(dto);
+
+        return dto;
     }
 
     protected static async Task StoreAsync<TDto>(IDynamoDBContext context, TEntity entity, params BatchWrite[] writes) 

@@ -1,84 +1,100 @@
 {
-  "Patients": [
-    {
-      "Id": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
-      "SocialSecurityNumber": "123-45-6789",
-      "FirstName": "John",
-      "LastName": "Doe",
-      "Email": "john.doe@example.com",
-      "ContactNumbers": ["123-456-7890"]      
-    }
-  ],
-  "Appointments": [
-    {
-      "AppointmentId": "4d9e7d20-4c0b-4a71-9a3c-5d662f5c9e8f",
-      "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
-      "PatientId": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
-      "AppointmentTime": "2023-08-21T09:00:00Z"
-    }
-  ],
-  "DomainLists": [
-    {
-      "Source": "specialties",
-      "Values": {
-        "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9": "Pediatrics",
-        "8a6151c7-9122-4f1b-a1e7-85e981c17a14": "Dermatology"
-      }
-    }
-  ],
-  "DoctorSpecialties": [
-    {
-      "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
-      "Specialty": "Pediatrics"
-    },
-    {
-      "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
-      "Specialty": "Dermatology"
-    },
-    {
-      "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
-      "Specialty": "Dermatology"
-    }
-  ],
-  "Doctors": [
-    {
-      "Id": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
-      "License": "XYZ002",
-      "FirstName": "Emily",
-      "LastName": "Parker",
-      "Email": "emily.parker@example.com",
-      "ContactNumbers": [
-        "1-123-456-7890"
-      ],
-      "Availability": [
+    "Patients": [
         {
-          "Week": "Monday",
-          "Hours": [
-            "8:00:00",
-            "9:00:00",
-            "10:00:00",
-            "11:00:00"
-          ]
+            "Id": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
+            "SocialSecurityNumber": "123-45-6789",
+            "FirstName": "John",
+            "LastName": "Doe",
+            "Email": "john.doe@example.com",
+            "ContactNumbers": [ "123-456-7890" ]
         }
-      ]
-    },
-    {
-      "Id": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
-      "License": "DEF003",
-      "FirstName": "Alex",
-      "LastName": "Carter",
-      "Email": "alex.carter@example.com",
-      "ContactNumbers": [
-        "1-987-654-3210"
-      ],
-      "Availability": [
+    ],
+    "Appointments": [
         {
-          "Week": "Monday",
-          "Hours": [
-            "9:00:00"
-          ]
+            "AppointmentId": "4d9e7d20-4c0b-4a71-9a3c-5d662f5c9e8f",
+            "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
+            "PatientId": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
+            "AppointmentTime": "2023-08-21T09:00:00Z"
         }
-      ]
-    }
-  ]
+    ],
+    "DomainLists": [
+        {
+            "Source": "specialties",
+            "Values": {
+                "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9": "Pediatrics",
+                "8a6151c7-9122-4f1b-a1e7-85e981c17a14": "Dermatology",
+                "28e21d2c-0b18-43a3-8a3e-3f4dabf315e5": "Cardiology"
+            }
+        }
+    ],
+    "DoctorSpecialties": [
+        {
+            "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
+            "Specialty": "Pediatrics"
+        },
+        {
+            "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
+            "Specialty": "Dermatology"
+        },
+        {
+            "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
+            "Specialty": "Dermatology"
+        },
+        {
+            "DoctorId": "fa626a8e-03a5-4fe1-a910-b3803bed256c",
+            "Specialty": "Pediatrics"
+        }
+    ],
+    "Doctors": [
+        {
+            "Id": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
+            "License": "XYZ002",
+            "FirstName": "Emily",
+            "LastName": "Parker",
+            "Email": "emily.parker@example.com",
+            "ContactNumbers": [
+                "1-123-456-7890"
+            ],
+            "Availability": [
+                {
+                    "Week": "Monday",
+                    "Hours": [
+                        "8:00:00",
+                        "9:00:00",
+                        "10:00:00",
+                        "11:00:00"
+                    ]
+                }
+            ]
+        },
+        {
+            "Id": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
+            "License": "DEF003",
+            "FirstName": "Alex",
+            "LastName": "Carter",
+            "Email": "alex.carter@example.com",
+            "ContactNumbers": [
+                "1-987-654-3210"
+            ],
+            "Availability": [
+                {
+                    "Week": "Monday",
+                    "Hours": [
+                        "9:00:00"
+                    ]
+                }
+            ]
+        },
+        {
+            "Id": "fa626a8e-03a5-4fe1-a910-b3803bed256c",
+            "License": "PED001",
+            "FirstName": "Michael",
+            "LastName": "Johnson",
+            "Email": "michael.johnson@example.com",
+            "ContactNumbers": [
+                "1-987-654-3210"
+            ],
+            "Availability": []
+        }
+    ]
 }

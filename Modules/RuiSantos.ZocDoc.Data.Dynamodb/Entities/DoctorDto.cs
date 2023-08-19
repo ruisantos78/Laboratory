@@ -1,3 +1,4 @@
+using System.Numerics;
 using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
@@ -65,7 +66,25 @@ internal class DoctorDto: DynamoDataObject<Doctor> {
     {
         var specialties = await context.QueryAsync<DoctorSpecialtyDto>(Id).GetRemainingAsync();
         return specialties.Select(x => x.Specialty).Distinct().ToHashSet();
-    } 
+    }
+
+    public async Task SetSpecialtiesAsync(IDynamoDBContext context, HashSet<string> specialties)
+    {
+        var current = await context.QueryAsync<DoctorSpecialtyDto>(Id).GetRemainingAsync();
+
+        var writer = context.CreateBatchWrite<DoctorSpecialtyDto>();
+
+        writer.AddPutItems(specialties.Where(s => current.All(dto => dto.Specialty != s))
+            .Select(s => new DoctorSpecialtyDto
+            {
+                DoctorId = this.Id,
+                Specialty = s
+            }));
+
+        writer.AddDeleteItems(current.Where(dto => !specialties.Contains(dto.Specialty)));
+
+        await writer.ExecuteAsync();
+    }
 
     public async Task<IReadOnlyDictionary<Guid, DateTime>> GetAppointementsAsync(IDynamoDBContext context)
     {
@@ -78,8 +97,9 @@ internal class DoctorDto: DynamoDataObject<Doctor> {
     }
 
     public static async Task SetDoctorAsync(IDynamoDBContext context, Doctor doctor) 
-    {
-        await StoreAsync<DoctorDto>(context, doctor);
+    {        
+        var dto = await StoreAsync<DoctorDto>(context, doctor);
+        await dto.SetSpecialtiesAsync(context, doctor.Specialties);
     }
 
     public static async Task SetDoctorAsync(IDynamoDBContext context, Doctor doctor, HashSet<string> specialties) 
