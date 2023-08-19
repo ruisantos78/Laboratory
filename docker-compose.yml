@@ -22,4 +22,4 @@ services:
       - 8001:80
     build:
       context: .
-      dockerfile: RuiSantos.ZocDoc.Api/Dockerfile
+      dockerfile: ./Dockerfile

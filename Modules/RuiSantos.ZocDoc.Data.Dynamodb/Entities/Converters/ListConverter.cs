@@ -1,6 +1,6 @@
-﻿using System.Text.Json;
-using Amazon.DynamoDBv2.DataModel;
+﻿using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Newtonsoft.Json;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
 
@@ -8,10 +8,10 @@ public class ListConverter<TModel>: IPropertyConverter
 {
     public object FromEntry(DynamoDBEntry entry)
     {
-        if (entry is Document document)
+        if (entry is DynamoDBList documentList)
         {
-            var json = document.ToJson();
-            return JsonSerializer.Deserialize<List<TModel>>(json) ?? new List<TModel>();
+            var models = documentList.AsListOfDocument().Select(x => JsonConvert.DeserializeObject<TModel>(x.ToJson())!);
+            return models?.ToList() ?? new List<TModel>();            
         }
 
         return new List<TModel>();
@@ -21,8 +21,9 @@ public class ListConverter<TModel>: IPropertyConverter
     {
         if (value is List<TModel> model && model.Any())
         {
-            var json = JsonSerializer.Serialize(model);
-            return (DynamoDBEntry)Document.FromJsonArray(json);
+            var json = JsonConvert.SerializeObject(model);
+            var documentList = Document.FromJsonArray(json);            
+            return new DynamoDBList(documentList.Cast<DynamoDBEntry>());
         }
 
         return new DynamoDBNull();

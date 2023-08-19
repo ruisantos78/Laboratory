@@ -1,4 +1,7 @@
-﻿namespace RuiSantos.ZocDoc.Core.Models;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Converters;
+
+namespace RuiSantos.ZocDoc.Core.Models;
 
 /// <summary>
 /// Represents an office hour.
@@ -8,11 +11,13 @@ public class OfficeHour
     /// <summary>
     /// The day of the week.
     /// </summary>
+    [JsonConverter(typeof(StringEnumConverter))]
     public DayOfWeek Week { get; init; }
 
     /// <summary>
     /// Array of working hours.
     /// </summary>
+    [JsonConverter(typeof(TimeSpanConverter))]
     public IEnumerable<TimeSpan> Hours { get; init; }
 
     /// <summary>

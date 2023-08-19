@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Newtonsoft.Json;
 using RuiSantos.ZocDoc.Core.Data;
 using RuiSantos.ZocDoc.Core.Tests.Adapters;
 using RuiSantos.ZocDoc.Core.Tests.Factories;
@@ -72,7 +73,7 @@ public class DoctorManagementTests
     {
         // Arrange
         doctorAdapterMock.SetFindAsyncReturns(license => DoctorBuilder.Dummy(license).Build());
-        
+
         // Act
         var result = await Management.GetDoctorByLicenseAsync("ABC123");
 
@@ -100,7 +101,7 @@ public class DoctorManagementTests
                 app => PatientBuilder.Dummy($"000-{i++:00}-0000").AddAppointments(app).Build())
             .ToList();
         });
-       
+
         // Act
         var result = await Management.GetAppointmentsAsync("ABC123", dateTime).ToListAsync();
 

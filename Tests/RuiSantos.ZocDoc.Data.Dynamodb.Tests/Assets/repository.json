@@ -1,157 +1,72 @@
 {
-    "DomainLists": [
+  "Appointments": [
+    
+  ],
+  "DomainLists": [
+    {
+      "Source": "specialties",
+      "Values": {
+        "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9": "Pediatrics",
+        "8a6151c7-9122-4f1b-a1e7-85e981c17a14": "Dermatology"
+      }
+    }
+  ],
+  "DoctorSpecialties": [
+    {
+      "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
+      "Specialty": "Pediatrics"
+    },
+    {
+      "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
+      "Specialty": "Dermatology"
+    },
+    {
+      "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
+      "Specialty": "Dermatology"
+    }
+  ],
+  "Doctors": [
+    {
+      "Id": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
+      "License": "XYZ002",
+      "FirstName": "Emily",
+      "LastName": "Parker",
+      "Email": "emily.parker@example.com",
+      "ContactNumbers": [
+        "1-123-456-7890"
+      ],
+      "Availability": [
         {
-            "Source": "specialties",
-            "Values": {
-                "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9": "Pediatrics",
-                "8a6151c7-9122-4f1b-a1e7-85e981c17a14": "Dermatology",
-                "b7b13b2c-1240-4f67-926d-5be78a9cf9d8": "Ophthalmology",
-                "e8a20489-841e-49b7-9686-9d828b510378": "Orthopedics",
-                "3fe3b51c-7989-4d2a-8c0b-26a8dd35bdf0": "Neurology",
-                "6d084c5f-951c-4d3c-8b1b-b3a4db524e71": "Gastroenterology",
-                "a7b3c0f1-607d-4c4e-9dbb-ef5992b01768": "Obstetrics and Gynecology",
-                "249a06b9-14eb-4d89-8ea4-6f7e961ff575": "Urology",
-                "f3d11d10-34a3-4b0c-a25b-0d0b0e669b4b": "Psychiatry"
-            }
+          "Week": "Monday",
+          "Hours": [
+            "8:00:00",
+            "9:00:00",
+            "10:00:00",
+            "11:00:00"
+          ]
         }
-    ],
-    "DoctorSpecialties": [
+      ]
+    },
+    {
+      "Id": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
+      "License": "DEF003",
+      "FirstName": "Alex",
+      "LastName": "Carter",
+      "Email": "alex.carter@example.com",
+      "ContactNumbers": [
+        "1-987-654-3210"
+      ],
+      "Availability": [
         {
-            "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
-            "Specialty": "Pediatrics"
-        },
-        {
-            "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
-            "Specialty": "Dermatology"
-        },
-        {
-            "DoctorId": "b7b13b2c-1240-4f67-926d-5be78a9cf9d8",
-            "Specialty": "Ophthalmology"
-        },
-        {
-            "DoctorId": "e8a20489-841e-49b7-9686-9d828b510378",
-            "Specialty": "Orthopedics"
-        },
-        {
-            "DoctorId": "3fe3b51c-7989-4d2a-8c0b-26a8dd35bdf0",
-            "Specialty": "Neurology"
-        },
-        {
-            "DoctorId": "6d084c5f-951c-4d3c-8b1b-b3a4db524e71",
-            "Specialty": "Gastroenterology"
-        },
-        {
-            "DoctorId": "a7b3c0f1-607d-4c4e-9dbb-ef5992b01768",
-            "Specialty": "Obstetrics and Gynecology"
-        },
-        {
-            "DoctorId": "249a06b9-14eb-4d89-8ea4-6f7e961ff575",
-            "Specialty": "Urology"
-        },
-        {
-            "DoctorId": "f3d11d10-34a3-4b0c-a25b-0d0b0e669b4b",
-            "Specialty": "Psychiatry"
+          "Week": "Monday",
+          "Hours": [
+            "8:00:00",
+            "9:00:00",
+            "10:00:00",
+            "11:00:00"
+          ]
         }
-    ],
-    "Doctors": [
-        {
-            "Id": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
-            "License": "XYZ002",
-            "FirstName": "Emily",
-            "LastName": "Parker",
-            "Email": "emily.parker@example.com",
-            "ContactNumbers": [
-                "1-123-456-7890"
-            ],
-            "Availability": []
-        },
-        {
-            "Id": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
-            "License": "DEF003",
-            "FirstName": "Alex",
-            "LastName": "Carter",
-            "Email": "alex.carter@example.com",
-            "ContactNumbers": [
-                "1-987-654-3210"
-            ],
-            "Availability": []
-        },
-        {
-            "Id": "b7b13b2c-1240-4f67-926d-5be78a9cf9d8",
-            "License": "OPH004",
-            "FirstName": "Olivia",
-            "LastName": "Johnson",
-            "Email": "olivia.johnson@example.com",
-            "ContactNumbers": [
-                "1-555-555-5555"
-            ],
-            "Availability": []
-        },
-        {
-            "Id": "e8a20489-841e-49b7-9686-9d828b510378",
-            "License": "ORT005",
-            "FirstName": "Ethan",
-            "LastName": "Miller",
-            "Email": "ethan.miller@example.com",
-            "ContactNumbers": [
-                "1-444-444-4444"
-            ],
-            "Availability": []
-        },
-        {
-            "Id": "3fe3b51c-7989-4d2a-8c0b-26a8dd35bdf0",
-            "License": "NEU006",
-            "FirstName": "Ava",
-            "LastName": "Wilson",
-            "Email": "ava.wilson@example.com",
-            "ContactNumbers": [
-                "1-999-999-9999"
-            ],
-            "Availability": []
-        },
-        {
-            "Id": "6d084c5f-951c-4d3c-8b1b-b3a4db524e71",
-            "License": "GAS007",
-            "FirstName": "Noah",
-            "LastName": "Davis",
-            "Email": "noah.davis@example.com",
-            "ContactNumbers": [
-                "1-777-777-7777"
-            ],
-            "Availability": []
-        },
-        {
-            "Id": "a7b3c0f1-607d-4c4e-9dbb-ef5992b01768",
-            "License": "OBS008",
-            "FirstName": "Sophia",
-            "LastName": "Smith",
-            "Email": "sophia.smith@example.com",
-            "ContactNumbers": [
-                "1-888-888-8888"
-            ],
-            "Availability": []
-        },
-        {
-            "Id": "249a06b9-14eb-4d89-8ea4-6f7e961ff575",
-            "License": "URG009",
-            "FirstName": "Liam",
-            "LastName": "Martin",
-            "Email": "liam.martin@example.com",
-            "ContactNumbers": [
-                "1-222-222-2222"
-            ],
-            "Availability": []
-        },
-        {
-            "Id": "f3d11d10-34a3-4b0c-a25b-0d0b0e669b4b",
-            "License": "PSY010",
-            "FirstName": "Mia",
-            "LastName": "Adams",
-            "Email": "mia.adams@example.com",
-            "ContactNumbers": [
-                "1-333-333-3333"
-            ],
-            "Availability": []
-        }
-    ]
+      ]
+    }
+  ]
 }

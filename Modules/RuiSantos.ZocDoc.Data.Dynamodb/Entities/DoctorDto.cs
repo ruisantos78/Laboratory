@@ -25,7 +25,7 @@ internal class DoctorDto: DynamoDataObject<Doctor> {
     
     [DynamoDBProperty]
     public List<string> ContactNumbers { get; set; } = new();
-
+    
     [DynamoDBProperty(typeof(ListConverter<OfficeHour>))]
     public List<OfficeHour> Availability { get; set; } = new();
 

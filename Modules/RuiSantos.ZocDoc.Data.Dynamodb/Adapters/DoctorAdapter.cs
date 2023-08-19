@@ -25,9 +25,16 @@ public class DoctorAdapter : IDoctorAdapter
     {
         var doctors = await FindBySpecialityAsync(specialty);
 
-        return doctors.FindAll(d =>
-            d.Appointments.Any(a => a.Date == date) &&
-            d.Appointments.Count(a => a.Date == date) < d.OfficeHours.FirstOrDefault(of => of.Week == date.DayOfWeek)?.Hours.Count());
+        return doctors
+            .Select(x => new
+            {
+                Doctor = x,
+                OfficeHours = x.OfficeHours.Where(h => h.Week == date.DayOfWeek).SelectMany(s => s.Hours),
+                Appointments = x.Appointments.Where(a => a.Date == date).Select(s => s.Time)
+            })
+            .Where(x => x.Appointments.Count() < x.OfficeHours.Count())
+            .Select(x => x.Doctor)
+            .ToList();
     }
 
     public async Task<List<Doctor>> FindAllWithAppointmentsAsync(IEnumerable<Appointment> appointments)
