@@ -1,6 +1,21 @@
 {
+  "Patients": [
+    {
+      "Id": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
+      "SocialSecurityNumber": "123-45-6789",
+      "FirstName": "John",
+      "LastName": "Doe",
+      "Email": "john.doe@example.com",
+      "ContactNumbers": ["123-456-7890"]      
+    }
+  ],
   "Appointments": [
-    
+    {
+      "AppointmentId": "4d9e7d20-4c0b-4a71-9a3c-5d662f5c9e8f",
+      "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
+      "PatientId": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
+      "AppointmentTime": "2023-08-21T09:00:00Z"
+    }
   ],
   "DomainLists": [
     {
@@ -60,10 +75,7 @@
         {
           "Week": "Monday",
           "Hours": [
-            "8:00:00",
-            "9:00:00",
-            "10:00:00",
-            "11:00:00"
+            "9:00:00"
           ]
         }
       ]

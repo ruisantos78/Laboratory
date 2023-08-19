@@ -1,15 +1,38 @@
+using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Data.Dynamodb.Adapters;
 using RuiSantos.ZocDoc.Data.Dynamodb.Tests.Fixtures;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Tests;
 
-public class DoctorAdapterTests: IClassFixture<DatabaseFixture>
+public class DoctorsTests: IClassFixture<DatabaseFixture>
 {
     private readonly DoctorAdapter doctorAdapter;
     
-    public DoctorAdapterTests(DatabaseFixture database)
+    public DoctorsTests(DatabaseFixture database)
     {
         this.doctorAdapter = new(database.Client);
+    }
+
+    [Fact(DisplayName = "Should create a new doctor.")]
+    public async Task ShouldCreateDoctor()
+    {
+        // Arrange
+        var doctor = new Doctor()
+        {
+            License = "XYZ001",
+            FirstName = "Jhon",
+            LastName = "Doe",
+            Email = "doe.jhon@doctor.com",
+            ContactNumbers = new() { "5555555555" }
+        };
+
+        // Act
+        await this.doctorAdapter.StoreAsync(doctor);
+
+        // Assert
+        var result = await this.doctorAdapter.FindAsync(doctor.License);
+        result.Should().NotBeNull();
+        result!.License.Should().Be(doctor.License);
     }
 
     [Fact(DisplayName = "Should find doctor by license.")]
@@ -48,16 +71,15 @@ public class DoctorAdapterTests: IClassFixture<DatabaseFixture>
     {
         // Arrange
         const string specialty = "Dermatology";
-        var desiredDate = new DateOnly(2023, 8, 21);
-        
-        var expectedIds = new[] { "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9", "8a6151c7-9122-4f1b-a1e7-85e981c17a14" };
+        var desiredDate = new DateOnly(2023, 8, 21);        
+        var expectedId = "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9";
 
         // Act
         var doctors = await this.doctorAdapter.FindBySpecialtyWithAvailabilityAsync(specialty, desiredDate);
 
         // Assert
-        doctors.Should().NotBeNull().And.HaveCount(2);
-        doctors.Should().OnlyContain(d => expectedIds.Contains(d.Id.ToString()));
+        doctors.Should().NotBeNull().And.HaveCount(1);
+        doctors.Should().ContainSingle(d => d.Id.ToString() == expectedId);;
         doctors.Should().OnlyContain(d => d.OfficeHours.Any(a => a.Week == DayOfWeek.Monday));
     }
 }

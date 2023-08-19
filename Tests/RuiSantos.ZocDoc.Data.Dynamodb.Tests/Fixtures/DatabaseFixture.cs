@@ -6,7 +6,6 @@ using DotNet.Testcontainers.Containers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RuiSantos.ZocDoc.Data.Dynamodb.Mappings;
-using Xunit.Abstractions;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Tests.Fixtures;
 
@@ -38,9 +37,14 @@ public sealed partial class DatabaseFixture : IAsyncLifetime
     {
         // Create a Docker container for DynamoDB Local
         this.container = new ContainerBuilder()
-            // .WithEntrypoint("java").WithCommand("-jar", "DynamoDBLocal.jar", "-sharedDb")
-            .WithImage("amazon/dynamodb-local:latest")
+#if SHARED_DB
+            .WithPortBinding(55111, 8000)
+            .WithEntrypoint("java")
+            .WithCommand("-jar", "DynamoDBLocal.jar", "-sharedDb")
+#else
             .WithPortBinding(8000, true)
+#endif
+            .WithImage("amazon/dynamodb-local:latest")            
             .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request =>
                 request.ForPath("/").ForPort(8000).ForStatusCode(HttpStatusCode.BadRequest)))
             .Build();        

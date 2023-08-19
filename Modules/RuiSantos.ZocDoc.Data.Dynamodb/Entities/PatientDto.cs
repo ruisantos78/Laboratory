@@ -26,9 +26,6 @@ internal class PatientDto: DynamoDataObject<Patient>
 
     [DynamoDBProperty]
     public List<string> ContactNumbers { get; set; } = new();
-
-    [DynamoDBProperty(typeof(ListConverter<Appointment>))]
-    public List<Appointment> Appointments { get; init; } = new();
        
     protected override async Task<Patient> ToEntityAsync(IDynamoDBContext context)
     {
@@ -46,17 +43,16 @@ internal class PatientDto: DynamoDataObject<Patient>
         };
     }
 
-    protected override Task<object> FromEntityAsync(IDynamoDBContext context, Patient entity)
+    protected override Task FromEntityAsync(IDynamoDBContext context, Patient entity)
     {
-        return Task.FromResult<object>(new PatientDto()
-        {
-            Id = entity.Id,
-            SocialSecurityNumber = entity.SocialSecurityNumber,
-            FirstName = entity.FirstName,
-            LastName = entity.LastName,
-            Email = entity.Email,
-            ContactNumbers = entity.ContactNumbers.ToList()            
-        });
+        Id = entity.Id;
+        SocialSecurityNumber = entity.SocialSecurityNumber;
+        FirstName = entity.FirstName;
+        LastName = entity.LastName;
+        Email = entity.Email;
+        ContactNumbers = entity.ContactNumbers.ToList();
+
+        return Task.CompletedTask;
     }
 
     public async Task<IReadOnlyDictionary<Guid, DateTime>> GetAppointementsAsync(IDynamoDBContext context)

@@ -8,9 +8,23 @@
      <NoWarn>$(NoWarn);1591</NoWarn>
      <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
      <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+     <Configurations>Debug;Release;Trace</Configurations>
   </PropertyGroup>
 
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Trace|AnyCPU' ">
+    <IntermediateOutputPath>obj\Trace</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Trace</OutputPath>
+    <DefineConstants></DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <DocumentationFile></DocumentationFile>
+    <NoWarn>CS1591</NoWarn>
+    <NoStdLib>false</NoStdLib>
+    <Nullable></Nullable>
+  </PropertyGroup>
   <ItemGroup>
     <ProjectReference Include="..\RuiSantos.ZocDoc.Core\RuiSantos.ZocDoc.Core.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>

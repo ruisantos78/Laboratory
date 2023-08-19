@@ -26,7 +26,7 @@ internal abstract class DynamoDataObject<TEntity> where TEntity : class, new()
 
     protected abstract Task<TEntity> ToEntityAsync(IDynamoDBContext context);
 
-    protected abstract Task<object> FromEntityAsync(IDynamoDBContext context, TEntity entity);
+    protected abstract Task FromEntityAsync(IDynamoDBContext context, TEntity entity);
 
     protected static async Task StoreAsync<TDto>(IDynamoDBContext context, TEntity entity)
         where TDto : DynamoDataObject<TEntity>, new()

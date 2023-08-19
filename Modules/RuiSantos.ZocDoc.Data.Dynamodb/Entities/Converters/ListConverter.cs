@@ -26,7 +26,7 @@ public class ListConverter<TModel>: IPropertyConverter
             return new DynamoDBList(documentList.Cast<DynamoDBEntry>());
         }
 
-        return new DynamoDBNull();
+        return new DynamoDBList();
     }
 }
 

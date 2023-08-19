@@ -5,8 +5,21 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <NeutralLanguage>en</NeutralLanguage>
+    <Configurations>Debug;Release;Trace</Configurations>
   </PropertyGroup>
 
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Trace|AnyCPU' ">
+    <IntermediateOutputPath>obj\Trace</IntermediateOutputPath>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Trace</OutputPath>
+    <DefineConstants></DefineConstants>
+    <WarningLevel>4</WarningLevel>
+    <NoWarn>CS1591</NoWarn>
+    <NoStdLib>false</NoStdLib>
+    <Nullable></Nullable>
+  </PropertyGroup>
   <ItemGroup>
     <None Remove="Models\" />
     <None Remove="Data\" />

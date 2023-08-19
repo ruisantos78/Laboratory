@@ -48,18 +48,17 @@ internal class DoctorDto: DynamoDataObject<Doctor> {
         };
     }
 
-    protected override Task<object> FromEntityAsync(IDynamoDBContext context, Doctor entity)
+    protected override Task FromEntityAsync(IDynamoDBContext context, Doctor entity)
     {
-        return Task.FromResult<object>(new DoctorDto()
-        {
-            Id = entity.Id,
-            License = entity.License,
-            FirstName = entity.FirstName,
-            LastName = entity.LastName,
-            Email = entity.Email,
-            ContactNumbers = entity.ContactNumbers.ToList(),
-            Availability = entity.OfficeHours.ToList()
-        });
+        this.Id = entity.Id;
+        this.License = entity.License;
+        this.FirstName = entity.FirstName;
+        this.LastName = entity.LastName;
+        this.Email = entity.Email;
+        this.ContactNumbers = entity.ContactNumbers.ToList();
+        this.Availability = entity.OfficeHours.ToList();
+
+        return Task.CompletedTask;
     }
 
     public async Task<HashSet<string>> GetSpecialtiesAsync(IDynamoDBContext context)
