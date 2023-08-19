@@ -12,10 +12,14 @@ This API allows patients to schedule medical appointments with doctors from diff
 ## Technologies Used
 This API was built using the following technologies:
 
-- [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
+- [ASP.NET](https://dotnet.microsoft.com/apps/aspnet)
 - [Mongodb](https://www.mongodb.com/)
+- [AWS Dynamodb](https://aws.amazon.com/en/pm/dynamodb/)
 - [Swagger](https://swagger.io/)
 - [Docker](https://www.docker.com/)
+- [Testcontainers](https://dotnet.testcontainers.org/)
+- [Autofac](https://autofac.org/)
+- [xUnit Tests](https://xunit.net/)
 
 ## Getting Started
 To get started with the Rui Santos - ZocDoc Backend Test, follow these steps:

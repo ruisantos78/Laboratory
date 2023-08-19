@@ -1,42 +1,25 @@
 version: '3.4'
 
 services:
-  ruisantos.zocdoc.premisses.db:
+  ruisantos.zocdoc.db.dynamo:
+    image: amazon/dynamodb-local:latest
+    restart: always
+
+  ruisantos.zocdoc.db.mongo:
     image: mongo:latest
     restart: always
 
-  ruisantos.zocdoc.premisses.api:
+  ruisantos.zocdoc.api:
     image: ${DOCKER_REGISTRY-}ruisantoszocdocapi
     depends_on:
-      - ruisantos.zocdoc.premisses.db
+      - ruisantos.zocdoc.db.mongo
+      - ruisantos.zocdoc.db.dynamo
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Default=mongodb://ruisantos.zocdoc.db:27017/zocdoc
+      - DATABASE_MONGO=mongodb://ruisantos.zocdoc.db.mongo:27017/zocdoc
+      - DATABASE_DYNAMO=http://ruisantos.zocdoc.db.dynamo:8000
     ports:
       - 8001:80
     build:
       context: .
       dockerfile: RuiSantos.ZocDoc.Api/Dockerfile
-
-  ruisantos.zocdoc.aws.db:
-    image: amazon/dynamodb-local:latest
-    restart: always
-
-  ruisantos.zocdoc.aws.api:
-    image: ${DOCKER_REGISTRY-}ruisantoszocdocapi
-    depends_on:
-      - ruisantos.zocdoc.aws.db
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Default=http://localhost:8000
-    ports:
-      - 8003:80
-    build:
-      context: .
-      dockerfile: RuiSantos.ZocDoc.Api/Dockerfile
-
-  ruisantos.zocdoc.aws.test:
-    image: amazon/dynamodb-local:latest
-    restart: always
-    ports:
-      - 8002:8000
