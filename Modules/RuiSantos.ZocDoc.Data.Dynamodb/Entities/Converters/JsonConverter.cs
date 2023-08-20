@@ -4,7 +4,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
 
-public class JsonConverter<TModel>: IPropertyConverter
+internal class JsonConverter<TModel>: IPropertyConverter
 {
     public object? FromEntry(DynamoDBEntry entry)
     {

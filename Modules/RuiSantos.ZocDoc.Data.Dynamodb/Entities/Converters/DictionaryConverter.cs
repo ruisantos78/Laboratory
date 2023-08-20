@@ -4,7 +4,7 @@ using System.Text.Json;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
 
-public class DictionaryConverter<TKey, TValue> : IPropertyConverter
+internal class DictionaryConverter<TKey, TValue> : IPropertyConverter
     where TKey : struct
 {
     public object FromEntry(DynamoDBEntry entry)

@@ -1,18 +1,19 @@
-using System.Numerics;
 using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
+using RuiSantos.ZocDoc.Data.Dynamodb.Entities.Data;
+
+using static RuiSantos.ZocDoc.Data.Dynamodb.Mappings.ClassMapConstants;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities;
 
-[DynamoDBTable("Doctors")]
+[DynamoDBTable(DoctorsTableName)]
 internal class DoctorDto: DynamoDataObject<Doctor> {
-    const string DoctorLicenseIndex = "DoctorLicenseIndex";
 
     [DynamoDBHashKey(typeof(GuidConverter))]
     public Guid Id { get; set; } = Guid.NewGuid();
     
-    [DynamoDBGlobalSecondaryIndexHashKey(DoctorLicenseIndex)]
+    [DynamoDBGlobalSecondaryIndexHashKey(DoctorLicenseIndexName)]
     public string License { get; set; } = string.Empty;
     
     [DynamoDBProperty]
@@ -62,13 +63,13 @@ internal class DoctorDto: DynamoDataObject<Doctor> {
         return Task.CompletedTask;
     }
 
-    public async Task<HashSet<string>> GetSpecialtiesAsync(IDynamoDBContext context)
+    private async Task<HashSet<string>> GetSpecialtiesAsync(IDynamoDBContext context)
     {
         var specialties = await context.QueryAsync<DoctorSpecialtyDto>(Id).GetRemainingAsync();
         return specialties.Select(x => x.Specialty).Distinct().ToHashSet();
     }
 
-    public async Task SetSpecialtiesAsync(IDynamoDBContext context, HashSet<string> specialties)
+    private async Task SetSpecialtiesAsync(IDynamoDBContext context, HashSet<string> specialties)
     {
         var current = await context.QueryAsync<DoctorSpecialtyDto>(Id).GetRemainingAsync();
 
@@ -86,44 +87,22 @@ internal class DoctorDto: DynamoDataObject<Doctor> {
         await writer.ExecuteAsync();
     }
 
-    public async Task<IReadOnlyDictionary<Guid, DateTime>> GetAppointementsAsync(IDynamoDBContext context)
+    private async Task<IReadOnlyDictionary<Guid, DateTime>> GetAppointementsAsync(IDynamoDBContext context)
     {
         var appointments = await context.QueryAsync<AppointmentsDto>(Id, new DynamoDBOperationConfig
         {
-            IndexName = AppointmentsDto.DoctorAppointmentIndex
+            IndexName = DoctorAppointmentIndexName
         }).GetRemainingAsync();
 
         return appointments.ToDictionary(k => k.AppointmentId, v => v.AppointmentTime);
     }
-
-    public static async Task SetDoctorAsync(IDynamoDBContext context, Doctor doctor) 
-    {        
-        var dto = await StoreAsync<DoctorDto>(context, doctor);
-        await dto.SetSpecialtiesAsync(context, doctor.Specialties);
-    }
-
-    public static async Task SetDoctorAsync(IDynamoDBContext context, Doctor doctor, HashSet<string> specialties) 
-    {
-        var doctorSpecialties = await context.QueryAsync<DoctorSpecialtyDto>(doctor.Id).GetRemainingAsync();
-        
-        var batch = context.CreateBatchWrite<DoctorSpecialtyDto>();
-        batch.AddDeleteItems(doctorSpecialties.Where(x => !specialties.Contains(x.Specialty)));
-        batch.AddPutItems(specialties.Where(x => doctorSpecialties.All(a => a.Specialty != x))
-            .Select(s => new DoctorSpecialtyDto {
-                DoctorId = doctor.Id,
-                Specialty = s
-            }
-        ));       
-
-        await StoreAsync<DoctorDto>(context, doctor, batch);
-    }
-        
-    public static async Task<Doctor?> GetDoctorByIdAsync(IDynamoDBContext context, Guid id)
+    
+    private static async Task<Doctor?> GetDoctorByIdAsync(IDynamoDBContext context, Guid id)
         => await FindAsync<DoctorDto>(context, id);
 
     public static async Task<Doctor?> GetDoctorByLicenseAsync(IDynamoDBContext context, string license)
     {
-        var result =  await SearchAsync<DoctorDto>(context, DoctorLicenseIndex, license);
+        var result =  await SearchAsync<DoctorDto>(context, DoctorLicenseIndexName, license);
         return result.FirstOrDefault();   
     }
 
@@ -136,10 +115,16 @@ internal class DoctorDto: DynamoDataObject<Doctor> {
     public static async Task<List<Doctor>> GetDoctorsBySpecialtyAsync(IDynamoDBContext context, string specialty)
     {
         var specialties = await context.QueryAsync<DoctorSpecialtyDto>(specialty, new DynamoDBOperationConfig {
-            IndexName = DoctorSpecialtyDto.DoctorSpecialtyIndex
+            IndexName = DoctorSpecialtyIndexName
         }).GetRemainingAsync();
 
-        var ids = specialties.Select(x => (object)x.DoctorId).ToList();
+        var ids = specialties.Select(x => x.DoctorId as object).ToList();
         return await FindListAsync<DoctorDto>(context, ids);
+    }
+
+    public static async Task SetDoctorAsync(IDynamoDBContext context, Doctor doctor) 
+    {        
+        var dto = await StoreAsync<DoctorDto>(context, doctor);
+        await dto.SetSpecialtiesAsync(context, doctor.Specialties);
     }
 }

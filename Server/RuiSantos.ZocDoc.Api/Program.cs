@@ -5,7 +5,6 @@ using Microsoft.OpenApi.Models;
 using RuiSantos.ZocDoc.Api.Core;
 using RuiSantos.ZocDoc.Core;
 using RuiSantos.ZocDoc.Data;
-using RuiSantos.ZocDoc.GraphQL;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -19,9 +18,8 @@ builder.Services.AddZocDocGraphQL();
 builder.Host.UseServiceProviderFactory(new AutofacServiceProviderFactory());
 builder.Host.ConfigureContainer<ContainerBuilder>(container => 
 {
-    container.RegisterZocDocServices();
-    container.UseMongoDb();
-    // container.UseDynamoDb(); 
+    container.UseZocDocServices();
+    container.UseZocDocDynamoDb();
 });
 
 builder.Services.AddSwaggerGen(options =>
@@ -47,6 +45,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapGraphQL();
+
 
 if (app.Environment.IsDevelopment())
 {

@@ -1,18 +1,19 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
+using RuiSantos.ZocDoc.Data.Dynamodb.Entities.Data;
+
+using static RuiSantos.ZocDoc.Data.Dynamodb.Mappings.ClassMapConstants;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities;
 
-[DynamoDBTable("Patients")]
+[DynamoDBTable(PatientsTableName)]
 internal class PatientDto: DynamoDataObject<Patient>
 {
-    private const string PatientSocialSecurityNumberIndex = "PatientSocialSecurityNumberIndex";
-
-    [DynamoDBHashKey(typeof(GuidConverter))]
+    [DynamoDBHashKey(AttributeName = IdAttributeName, Converter = typeof(GuidConverter))]
     public Guid Id { get; set; } = Guid.NewGuid();
     
-    [DynamoDBGlobalSecondaryIndexHashKey(PatientSocialSecurityNumberIndex)]
+    [DynamoDBGlobalSecondaryIndexHashKey(PatientSocialSecurityNumberIndexName, AttributeName = SocialSecurityNumberAttributeName)]
     public string SocialSecurityNumber { get; set; } = string.Empty;
 
     [DynamoDBProperty]
@@ -59,21 +60,28 @@ internal class PatientDto: DynamoDataObject<Patient>
     {
         var appointments = await context.QueryAsync<AppointmentsDto>(Id, new DynamoDBOperationConfig
         {
-            IndexName = AppointmentsDto.PatientAppointmentIndex
+            IndexName = PatientAppointmentIndexName
         }).GetRemainingAsync();
 
         return appointments.ToDictionary(k => k.AppointmentId, v => v.AppointmentTime);
     }
 
+    private static async Task<Patient?> GetPatientByIdAsync(IDynamoDBContext context, Guid id)
+        => await FindAsync<PatientDto>(context, id);
+
     public static async Task<Patient?> GetPatientBySocialSecurityNumberAsync(IDynamoDBContext context, string socialSecurityNumber)
     {
-        var result = await SearchAsync<PatientDto>(context, PatientSocialSecurityNumberIndex, socialSecurityNumber);
+        var result = await SearchAsync<PatientDto>(context, PatientSocialSecurityNumberIndexName, socialSecurityNumber);
         return result.FirstOrDefault();
     }
 
-    public static async Task SetPatientAsync(IDynamoDBContext context, Patient patient) 
-       => await StoreAsync<PatientDto>(context, patient);    
+    public static async Task<Patient?> GetPatientByAppointmentIdAsync(IDynamoDBContext context, Guid appointmentId)
+    {
+        var appointment = await context.LoadAsync<AppointmentsDto>(appointmentId);
+        return await GetPatientByIdAsync(context, appointment.PatientId);    
+    }
 
-    public static async Task<Patient?> GetPatientAsync(IDynamoDBContext context, Guid patientId)
-        => await FindAsync<PatientDto>(context, patientId);
+    public static async Task SetPatientAsync(IDynamoDBContext context, Patient patient) 
+       => await StoreAsync<PatientDto>(context, patient);  
 }
+

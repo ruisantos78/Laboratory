@@ -5,28 +5,19 @@ using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
-using RuiSantos.ZocDoc.Data.Dynamodb.Mappings;
+using RuiSantos.ZocDoc.Data.Dynamodb.Mediators;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Tests.Fixtures;
 
 public sealed partial class DatabaseFixture : IAsyncLifetime
 {
-    private static Lazy<IReadOnlyDictionary<string, Type>> TypeMappings => new(() =>
+    private static Lazy<IReadOnlyDictionary<string, Type>> TypeMappings => new(() =>    
         typeof(IRegisterClassMap).Assembly.GetTypes()
             .Where(t => t.GetCustomAttributes(false).OfType<DynamoDBTableAttribute>().Any())
             .ToDictionary(
                 k => k.GetCustomAttributes(false).OfType<DynamoDBTableAttribute>().First().TableName,
                 v => v
             )
-    );
-
-    private static Lazy<IReadOnlyList<CreateTableRequest>> TableRequests => new(() => 
-        typeof(IRegisterClassMap).Assembly.GetTypes()
-            .Where(t => t.GetInterfaces().Contains(typeof(IRegisterClassMap)))
-            .Select(Activator.CreateInstance)
-            .OfType<IRegisterClassMap>()
-            .Select(map => map.GetCreateTableRequest())
-            .ToArray()
     );
 
     public AmazonDynamoDBClient Client { get; private set; } = new AmazonDynamoDBClient();
@@ -80,8 +71,8 @@ public sealed partial class DatabaseFixture : IAsyncLifetime
         var context = new DynamoDBContext(Client);
         var repository = await JToken.ReadFromAsync(new JsonTextReader(new StreamReader("Assets/repository.json")));
 
-        var tasks = TableRequests.Value.Select(x => Client.CreateTableAsync(x));
-        var tables = await Task.WhenAll(tasks);
+        var requests = RegisterClassMaps.GetCreateTableRequests().Select(x => Client.CreateTableAsync(x));
+        var tables = await Task.WhenAll(requests);
         foreach (var table in tables)
         {
             var tableName = table.TableDescription.TableName;

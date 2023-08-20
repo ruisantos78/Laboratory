@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RuiSantos.ZocDoc.Api.Contracts;
 using RuiSantos.ZocDoc.Api.Core;
-using RuiSantos.ZocDoc.Core.Managers;
+using RuiSantos.ZocDoc.Core.Services;
 
 namespace RuiSantos.ZocDoc.Api.Controllers;
 
@@ -10,9 +10,9 @@ namespace RuiSantos.ZocDoc.Api.Controllers;
 [ApiController]
 public class SchedulesController : Controller
 {
-    private readonly IAppointmentManagement management;
+    private readonly IAppointmentService management;
 
-    public SchedulesController(IAppointmentManagement management)
+    public SchedulesController(IAppointmentService management)
     {
         this.management = management;
     }

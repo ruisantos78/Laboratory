@@ -1,4 +1,4 @@
-﻿using RuiSantos.ZocDoc.Core.Managers.Exceptions;
+﻿using RuiSantos.ZocDoc.Core.Services.Exceptions;
 
 namespace RuiSantos.ZocDoc.Api.Core;
 

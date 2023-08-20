@@ -32,12 +32,7 @@
     <ProjectReference Include="..\..\Modules\RuiSantos.ZocDoc.Data.Dynamodb\RuiSantos.ZocDoc.Data.Dynamodb.csproj">
       <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
     </ProjectReference>
-    <ProjectReference Include="..\..\Modules\RuiSantos.ZocDoc.Data.Mongodb\RuiSantos.ZocDoc.Data.Mongodb.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
-    <ProjectReference Include="..\RuiSantos.ZocDoc.GraphQL\RuiSantos.ZocDoc.GraphQL.csproj">
-      <GlobalPropertiesToRemove></GlobalPropertiesToRemove>
-    </ProjectReference>
+    <ProjectReference Include="..\..\Modules\RuiSantos.ZocDoc.GraphQL\RuiSantos.ZocDoc.GraphQL.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Remove="Contracts\" />

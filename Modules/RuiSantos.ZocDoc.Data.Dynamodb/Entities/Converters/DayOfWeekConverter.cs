@@ -3,7 +3,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb;
 
-public class DayOfWeekConverter : IPropertyConverter
+internal class DayOfWeekConverter : IPropertyConverter
 {
     public object FromEntry(DynamoDBEntry entry)
     {

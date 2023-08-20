@@ -1,7 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RuiSantos.ZocDoc.Api.Contracts;
 using RuiSantos.ZocDoc.Api.Core;
-using RuiSantos.ZocDoc.Core.Managers;
+using RuiSantos.ZocDoc.Core.Services;
 using static RuiSantos.ZocDoc.Api.Core.ControllerUtils;
 
 namespace RuiSantos.ZocDoc.Api.Controllers;
@@ -11,9 +11,9 @@ namespace RuiSantos.ZocDoc.Api.Controllers;
 [ApiController]
 public class DoctorController : Controller
 {
-    private readonly IDoctorManagement management;
+    private readonly IDoctorService management;
 
-    public DoctorController(IDoctorManagement management)
+    public DoctorController(IDoctorService management)
     {
         this.management = management;
     }

@@ -1,26 +1,29 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using RuiSantos.ZocDoc.Data.Dynamodb.Mappings;
+using RuiSantos.ZocDoc.Data.Dynamodb.Mediators;
+using RuiSantos.ZocDoc.Data.Dynamodb.Mappings.Core;
 
-namespace RuiSantos.ZocDoc.Data.Dynamodb;
+using static RuiSantos.ZocDoc.Data.Dynamodb.Mappings.ClassMapConstants;
+
+namespace RuiSantos.ZocDoc.Data.Dynamodb.Mappings;
 
 internal class PatientClassMap : IRegisterClassMap
 {
     public CreateTableRequest GetCreateTableRequest() => new()
     {
-        TableName = "Patients",
+        TableName = PatientsTableName,
         AttributeDefinitions = new List<AttributeDefinition>
         {
-            new("Id", ScalarAttributeType.S),
-            new("SocialSecurityNumber", ScalarAttributeType.S)
+            new(IdAttributeName, ScalarAttributeType.S),
+            new(SocialSecurityNumberAttributeName, ScalarAttributeType.S)
         },
         KeySchema = new List<KeySchemaElement>
         {
-            new("Id", KeyType.HASH)
+            new(IdAttributeName, KeyType.HASH)
         },
         GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>
         {
-            new GlobalSecondaryIndexHashKey("PatientSocialSecurityNumberIndex", "SocialSecurityNumber")            
+            new GlobalSecondaryIndexHashKey(PatientSocialSecurityNumberIndexName, SocialSecurityNumberAttributeName)            
         },
         ProvisionedThroughput = new(5, 5)
     };

@@ -4,7 +4,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
 
-public class DateTimeConverter: IPropertyConverter {
+internal class DateTimeConverter: IPropertyConverter {
     public DynamoDBEntry ToEntry(object value)
     {
         if (value is not DateTime dateTime)

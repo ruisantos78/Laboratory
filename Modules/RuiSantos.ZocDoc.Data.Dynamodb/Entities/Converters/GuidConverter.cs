@@ -3,7 +3,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
 
-public class GuidConverter: IPropertyConverter {
+internal class GuidConverter: IPropertyConverter {
     public DynamoDBEntry ToEntry(object value)
     {
         if (value is not Guid guid)

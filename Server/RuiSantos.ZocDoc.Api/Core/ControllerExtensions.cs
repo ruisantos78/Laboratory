@@ -1,5 +1,5 @@
 ﻿using Microsoft.AspNetCore.Mvc;
-using RuiSantos.ZocDoc.Core.Managers.Exceptions;
+using RuiSantos.ZocDoc.Core.Services.Exceptions;
 
 namespace RuiSantos.ZocDoc.Api.Core;
 
@@ -19,7 +19,7 @@ internal static class ControllerExtensions
     {
         return exception switch
         {
-            ManagementFailException managementFailException => controller.Problem(managementFailException.Message),
+            ServiceFailException managementFailException => controller.Problem(managementFailException.Message),
             ValidationFailException validationFailException => controller.BadRequest(validationFailException.Message),
             _ => controller.Problem(),
         };

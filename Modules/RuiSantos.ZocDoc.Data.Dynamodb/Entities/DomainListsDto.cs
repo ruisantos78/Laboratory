@@ -1,25 +1,29 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
 
+using static RuiSantos.ZocDoc.Data.Dynamodb.Mappings.ClassMapConstants;
+
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities;
 
-[DynamoDBTable("DomainLists")]
-public class DomainListsDto
+[DynamoDBTable(DomainListsTableName)]
+internal class DomainListsDto
 {
-    [DynamoDBHashKey]
+    private const string Specialties = "specialties";
+
+    [DynamoDBHashKey(AttributeName = SourceAttributeName)]
     public string Source { get; set; } = string.Empty;
 
-    [DynamoDBProperty(typeof(DictionaryConverter<Guid, String>))]
-    public Dictionary<Guid, String> Values { get; set; } = new();
+    [DynamoDBProperty(typeof(DictionaryConverter<Guid, string>))]
+    public Dictionary<Guid, string> Values { get; set; } = new();
 
-    public static Task<IReadOnlyDictionary<Guid, String>> GetSpecialtiesAsync(IDynamoDBContext context)
-        => GetAsync(context, "specialties");
+    public static Task<IReadOnlyDictionary<Guid, string>> GetSpecialtiesAsync(IDynamoDBContext context)
+        => GetAsync(context, Specialties);
 
     public static Task SetSpecialtyAsync(IDynamoDBContext context, string specialty)
-        => SetAsync(context, "specialties", specialty);
+        => SetAsync(context, Specialties, specialty);
 
     public static Task RemoveSpecialtyAsync(IDynamoDBContext context, string specialty)
-        => RemoveAsync(context, "specialties", specialty);
+        => RemoveAsync(context, Specialties, specialty);
 
     private static async Task<IReadOnlyDictionary<Guid, String>> GetAsync(IDynamoDBContext context, string source)
     {

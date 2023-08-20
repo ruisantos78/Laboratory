@@ -1,6 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using RuiSantos.ZocDoc.Api.Core;
-using RuiSantos.ZocDoc.Core.Managers;
+using RuiSantos.ZocDoc.Core.Services;
 
 namespace RuiSantos.ZocDoc.Api.Controllers;
 
@@ -9,9 +9,9 @@ namespace RuiSantos.ZocDoc.Api.Controllers;
 [ApiController]
 public class SpecialtiesController : Controller
 {
-    private readonly IMedicalSpecialtiesManagement management;
+    private readonly IMedicalSpecialtiesService management;
 
-    public SpecialtiesController(IMedicalSpecialtiesManagement management)
+    public SpecialtiesController(IMedicalSpecialtiesService management)
     {
         this.management = management;
     }

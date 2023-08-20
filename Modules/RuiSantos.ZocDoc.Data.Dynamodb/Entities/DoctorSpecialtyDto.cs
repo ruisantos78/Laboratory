@@ -1,18 +1,17 @@
 using Amazon.DynamoDBv2.DataModel;
-using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
+
+using static RuiSantos.ZocDoc.Data.Dynamodb.Mappings.ClassMapConstants;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities;
 
-[DynamoDBTable("DoctorSpecialties")]
+[DynamoDBTable(DoctorSpecialtiesTableName)]
 internal class DoctorSpecialtyDto
 {
-    internal const string DoctorSpecialtyIndex = "DoctorSpecialtyIndex";
-
-    [DynamoDBHashKey(typeof(GuidConverter))]
+    [DynamoDBHashKey(AttributeName = DoctorIdAttributeName, Converter = typeof(GuidConverter))]
     public Guid DoctorId { get; set; }
     
-    [DynamoDBRangeKey]
-    [DynamoDBGlobalSecondaryIndexHashKey(DoctorSpecialtyIndex)]
+    [DynamoDBRangeKey(AttributeName = SpecialtyAttributeName)]
+    [DynamoDBGlobalSecondaryIndexHashKey(DoctorSpecialtyIndexName, AttributeName = SpecialtyAttributeName)]
     public string Specialty { get; set; } = string.Empty; 
 }

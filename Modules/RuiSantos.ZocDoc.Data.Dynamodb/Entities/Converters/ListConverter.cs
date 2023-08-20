@@ -4,7 +4,7 @@ using Newtonsoft.Json;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Entities.Converters;
 
-public class ListConverter<TModel>: IPropertyConverter
+internal class ListConverter<TModel>: IPropertyConverter
 {
     public object FromEntry(DynamoDBEntry entry)
     {
