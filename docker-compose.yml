@@ -1,19 +1,22 @@
 version: '3.4'
 
 services:
-  ruisantos.zocdoc.db:
-    image: mongo:latest
-    restart: always
+  ruisantos.zocdoc.db.dynamo:
+   command: "-jar DynamoDBLocal.jar -sharedDb"
+   image: "amazon/dynamodb-local:latest"
+   restart: always
+   ports:
+     - "8000:8000"
 
   ruisantos.zocdoc.api:
     image: ${DOCKER_REGISTRY-}ruisantoszocdocapi
     depends_on:
-      - ruisantos.zocdoc.db
+      - ruisantos.zocdoc.db.dynamo
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Default=mongodb://ruisantos.zocdoc.db:27017/zocdoc
+      - DATABASE_DYNAMO=http://ruisantos.zocdoc.db.dynamo:8000
     ports:
       - 8001:80
     build:
       context: .
-      dockerfile: RuiSantos.ZocDoc.Api/Dockerfile
+      dockerfile: ./Dockerfile

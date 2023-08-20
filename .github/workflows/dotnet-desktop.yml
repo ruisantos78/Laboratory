@@ -13,7 +13,7 @@ jobs:
 
     env:
       Solution_Name: RuiSantos.ZocDoc.sln                       
-      Test_Project_Path: RuiSantos.ZocDoc.Core.Tests\RuiSantos.ZocDoc.Core.Tests.csproj
+      Test_Project_Path: Tests\RuiSantos.ZocDoc.Core.Tests\RuiSantos.ZocDoc.Core.Tests.csproj
       
     steps:
     

@@ -1,7 +1,6 @@
-# README - Rui Santos - ZocDoc Backend Test
+# ZocDoc Backend Test API
 
-This repository contains a C# API built using [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet). 
-This API allows patients to schedule medical appointments with doctors from different specialties based on their availability. Patients can view all of their appointments and make cancellations as necessary. Doctors can view all of their appointments for the day.
+This repository contains an ASP.NET Core API that facilitates medical appointments scheduling and management for patients and doctors.
 
 ## Features
 - Schedule medical appointments with doctors from different specialties
@@ -13,14 +12,17 @@ This API allows patients to schedule medical appointments with doctors from diff
 This API was built using the following technologies:
 
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
-- [Mongodb](https://www.mongodb.com/)
+- [AWS Dynamodb](https://aws.amazon.com/en/pm/dynamodb/)
 - [Swagger](https://swagger.io/)
 - [Docker](https://www.docker.com/)
+- [Testcontainers](https://dotnet.testcontainers.org/)
+- [Autofac](https://autofac.org/)
+- [xUnit Tests](https://xunit.net/)
 
 ## Getting Started
-To get started with the Rui Santos - ZocDoc Backend Test, follow these steps:
+To set up the ZocDoc Backend Test API on your local machine, follow these steps:
 
-1. Clone this repository to your local machine:
+1. Clone this repository:
 ```
 git clone https://github.com/ruisantos78/ZocDoc.git
 ```
@@ -40,6 +42,7 @@ docker-compose up --build
 ### API Documentation
 
 API documentation is available at `http://localhost:8001/swagger`.
+GraphQL documentation is available at `http://localhost:8001/graphql`.
 
 ## Contributing
 
