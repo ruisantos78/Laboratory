@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.Model;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
 using Newtonsoft.Json;
@@ -11,15 +10,6 @@ namespace RuiSantos.ZocDoc.Data.Dynamodb.Tests.Fixtures;
 
 public sealed partial class DatabaseFixture : IAsyncLifetime
 {
-    private static Lazy<IReadOnlyDictionary<string, Type>> TypeMappings => new(() =>    
-        typeof(IRegisterClassMap).Assembly.GetTypes()
-            .Where(t => t.GetCustomAttributes(false).OfType<DynamoDBTableAttribute>().Any())
-            .ToDictionary(
-                k => k.GetCustomAttributes(false).OfType<DynamoDBTableAttribute>().First().TableName,
-                v => v
-            )
-    );
-
     public AmazonDynamoDBClient Client { get; private set; } = new AmazonDynamoDBClient();
 
     private readonly IContainer container;
@@ -28,13 +18,9 @@ public sealed partial class DatabaseFixture : IAsyncLifetime
     {
         // Create a Docker container for DynamoDB Local
         this.container = new ContainerBuilder()
-#if SHARED_DB
-            .WithPortBinding(55111, 8000)
+            .WithPortBinding(8000, true)
             .WithEntrypoint("java")
             .WithCommand("-jar", "DynamoDBLocal.jar", "-sharedDb")
-#else
-            .WithPortBinding(8000, true)
-#endif
             .WithImage("amazon/dynamodb-local:latest")            
             .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request =>
                 request.ForPath("/").ForPort(8000).ForStatusCode(HttpStatusCode.BadRequest)))
@@ -71,12 +57,14 @@ public sealed partial class DatabaseFixture : IAsyncLifetime
         var context = new DynamoDBContext(Client);
         var repository = await JToken.ReadFromAsync(new JsonTextReader(new StreamReader("Assets/repository.json")));
 
+        var mappings = RegisterClassMaps.GetTypeMappings();
         var requests = RegisterClassMaps.GetCreateTableRequests().Select(x => Client.CreateTableAsync(x));
+
         var tables = await Task.WhenAll(requests);
         foreach (var table in tables)
         {
             var tableName = table.TableDescription.TableName;
-            if (repository[tableName] is not JToken token || !TypeMappings.Value.TryGetValue(tableName, out var entityType))
+            if (repository[tableName] is not JToken token || !mappings.TryGetValue(tableName, out var entityType))
             {
                 Console.WriteLine($"[ruisantos.zocdoc {DateTime.Now:HH:mm:ss}] # {tableName} - {table.TableDescription.TableStatus} - 0 records.");
                 continue;
