@@ -30,4 +30,4 @@ jobs:
       run: dotnet build --no-restore $Solution_Name
       
     - name: Test
-      run: dotnet test --no-build --verbosity normal $Solution_Name
+      run: dotnet test --no-build --verbosity normal $Test_Project_Path
