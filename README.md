@@ -42,6 +42,7 @@ docker-compose up --build
 ### API Documentation
 
 API documentation is available at `http://localhost:8001/swagger`.
+
 GraphQL documentation is available at `http://localhost:8001/graphql`.
 
 ## Contributing
