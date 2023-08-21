@@ -15,9 +15,8 @@ This API was built using the following technologies:
 - [AWS Dynamodb](https://aws.amazon.com/en/pm/dynamodb/)
 - [Swagger](https://swagger.io/)
 - [Docker](https://www.docker.com/)
-- [Testcontainers](https://dotnet.testcontainers.org/)
-- [Autofac](https://autofac.org/)
 - [xUnit Tests](https://xunit.net/)
+- [Testcontainers](https://dotnet.testcontainers.org/)
 
 ## Getting Started
 To set up the ZocDoc Backend Test API on your local machine, follow these steps:

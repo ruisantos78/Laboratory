@@ -2,7 +2,7 @@
 
 namespace Microsoft.Extensions.DependencyInjection;
 
-public static class GraphQLExtensions
+public static class ConfigureServices
 {
     public static IServiceCollection AddZocDocGraphQL(this IServiceCollection services)
     {
