@@ -10,11 +10,11 @@ namespace RuiSantos.ZocDoc.Api.Controllers;
 [ApiController]
 public class PatientController : Controller
 {
-    private readonly IPatientService management;
+    private readonly IPatientService service;
 
-    public PatientController(IPatientService management)
+    public PatientController(IPatientService service)
     {
-        this.management = management;
+        this.service = service;
     }
 
     /// <summary>
@@ -32,7 +32,7 @@ public class PatientController : Controller
     {
         try
         {
-            var model = await management.GetPatientBySocialNumberAsync(socialNumber);
+            var model = await service.GetPatientBySocialNumberAsync(socialNumber);
             return this.OkOrNoContent(model, typeof(PatientContract));
         }
         catch (Exception ex)
@@ -55,7 +55,7 @@ public class PatientController : Controller
     {
         try
         {
-            var models = management.GetAppointmentsAsync(socialNumber);
+            var models = service.GetAppointmentsAsync(socialNumber);
             return await this.OkOrNoCotentAsync(models, typeof(PatientAppointmentsContract));
         }
         catch (Exception ex)
@@ -77,7 +77,7 @@ public class PatientController : Controller
     {
         try
         {
-            await management.CreatePatientAsync(
+            await service.CreatePatientAsync(
                 request.SocialSecurityNumber, 
                 request.Email,
                 request.FirstName, 

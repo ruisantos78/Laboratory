@@ -7,14 +7,11 @@
     <DockerLaunchAction>LaunchBrowser</DockerLaunchAction>
     <DockerServiceUrl>{Scheme}://localhost:{ServicePort}/swagger</DockerServiceUrl>
     <DockerServiceName>ruisantos.zocdoc.api</DockerServiceName>
-    <Configurations>Trace;Debug;Release</Configurations>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Trace|AnyCPU' ">
-    <OutputPath>.\</OutputPath>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
   <ItemGroup>
     <None Include="docker-compose.yml" />
-    <None Include=".dockerignore" />
     <None Include="Dockerfile" />
+    <None Include="README.md" />
   </ItemGroup>
 </Project>

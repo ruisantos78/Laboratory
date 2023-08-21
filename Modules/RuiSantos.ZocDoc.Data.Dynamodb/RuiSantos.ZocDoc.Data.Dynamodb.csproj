@@ -6,35 +6,14 @@
     <PackageReference Include="System.Linq.Async" Version="6.0.1" />
   </ItemGroup>
 
-
-  <ItemGroup>
-    <None Remove="Mappings\" />
-    <None Remove="Mappings\Mediators\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Mappings\" />
-    <Folder Include="Mappings\Mediators\" />
-  </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\Server\RuiSantos.ZocDoc.Core\RuiSantos.ZocDoc.Core.csproj" />
   </ItemGroup>
+
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-    <Configurations>Trace;Debug;Release</Configurations>
-  </PropertyGroup>
-
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Trace|AnyCPU' ">
-    <IntermediateOutputPath>obj\Trace</IntermediateOutputPath>
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>bin\Trace</OutputPath>
-    <DefineConstants></DefineConstants>
-    <WarningLevel>4</WarningLevel>
-    <NoWarn>CS1591</NoWarn>
-    <NoStdLib>false</NoStdLib>
-    <Nullable></Nullable>
+    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 </Project>

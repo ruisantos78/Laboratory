@@ -1,24 +1,20 @@
-#See https://aka.ms/containerfastmode to understand how Visual Studio uses this Dockerfile to build your images for faster debugging.
-
+# Use a more recent version of the base image
 FROM mcr.microsoft.com/dotnet/aspnet:7.0 AS base
 WORKDIR /app
 
+# Copy the necessary project files and restore dependencies
 FROM mcr.microsoft.com/dotnet/sdk:7.0 AS build
 WORKDIR /src
-COPY ["Server/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj", "Server/RuiSantos.ZocDoc.Api/"]
-COPY ["Server/RuiSantos.ZocDoc.Core/RuiSantos.ZocDoc.Core.csproj", "Server/RuiSantos.ZocDoc.Core/"]
-COPY ["Modules/RuiSantos.ZocDoc.GraphQL/RuiSantos.ZocDoc.GraphQL.csproj", "Modules/RuiSantos.ZocDoc.GraphQL/"]
-COPY ["Modules/RuiSantos.ZocDoc.Data.Dynamodb/RuiSantos.ZocDoc.Data.Dynamodb.csproj", "Modules/RuiSantos.ZocDoc.Data.Dynamodb/"]
-RUN dotnet restore "Server/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj"
 COPY . .
-WORKDIR "/src/Server/RuiSantos.ZocDoc.Api"
-RUN dotnet build "RuiSantos.ZocDoc.Api.csproj" -c Release -o /app/build
+RUN dotnet restore "Server/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj"
 
-FROM build AS publish
+# Build and publish the application
+WORKDIR "/src/Server/RuiSantos.ZocDoc.Api"
 RUN dotnet publish "RuiSantos.ZocDoc.Api.csproj" -c Release -o /app/publish /p:UseAppHost=false
 
+# Final image with the published application
 FROM base AS final
 EXPOSE 80
 WORKDIR /app
-COPY --from=publish /app/publish .
+COPY --from=build /app/publish .
 ENTRYPOINT ["dotnet", "RuiSantos.ZocDoc.Api.dll"]

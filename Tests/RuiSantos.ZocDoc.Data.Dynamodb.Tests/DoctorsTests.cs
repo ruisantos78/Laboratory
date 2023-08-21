@@ -7,15 +7,15 @@ namespace RuiSantos.ZocDoc.Data.Dynamodb.Tests;
 [Collection("Doctor Management")]
 public class DoctorsTests: IClassFixture<DatabaseFixture>
 {
-    private readonly DoctorRepository doctorAdapter;
+    private readonly DoctorRepository doctorRepository;
     
     public DoctorsTests(DatabaseFixture database)
     {
-        this.doctorAdapter = new(database.Client);
+        this.doctorRepository = new(database.Client);
     }
 
     [Fact(DisplayName = "Should create a new doctor.")]
-    public async Task ShouldCreateDoctor()
+    public async Task StoreAsync_ShouldCreateANewDoctor()
     {
         // Arrange
         var doctor = new Doctor()
@@ -29,10 +29,10 @@ public class DoctorsTests: IClassFixture<DatabaseFixture>
         };
 
         // Act
-        await this.doctorAdapter.StoreAsync(doctor);
+        await this.doctorRepository.StoreAsync(doctor);
 
         // Assert
-        var result = await this.doctorAdapter.FindAsync(doctor.License);
+        var result = await this.doctorRepository.FindAsync(doctor.License);
         result.Should().NotBeNull();
         result!.License.Should().Be(doctor.License);
         result.Specialties.Should().BeEquivalentTo(doctor.Specialties);
@@ -42,10 +42,10 @@ public class DoctorsTests: IClassFixture<DatabaseFixture>
     }
 
     [Fact(DisplayName = "Should set the office hours to a doctor")]
-    public async Task ShouldSetDoctorOfficeHours()
+    public async Task StoreAsync_ShouldSetTheOfficeHoursToADoctor()
     {
         // Arrange
-        var doctor = await this.doctorAdapter.FindAsync("PED001");
+        var doctor = await this.doctorRepository.FindAsync("PED001");
         doctor!.OfficeHours.Clear();
         doctor.OfficeHours.Add(new()
         {
@@ -54,24 +54,24 @@ public class DoctorsTests: IClassFixture<DatabaseFixture>
         });
 
         // Act
-        await this.doctorAdapter.StoreAsync(doctor);
+        await this.doctorRepository.StoreAsync(doctor);
 
         // Assert
-        var result = await this.doctorAdapter.FindAsync(doctor.License);
+        var result = await this.doctorRepository.FindAsync(doctor.License);
         result.Should().NotBeNull();
         result!.License.Should().Be(doctor.License);
         result.OfficeHours.Should().BeEquivalentTo(doctor.OfficeHours);
     }
 
     [Fact(DisplayName = "Should find doctor by license.")]
-    public async Task ShouldFindDoctorByLicenseNumber()
+    public async Task FindAsync_ShouldFindDoctor_WithLicenseNumber()
     {
         // Arrange
         const string licenseNumber = "XYZ002";
         const string expectedId = "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9";
 
         // Act
-        var doctor = await this.doctorAdapter.FindAsync(licenseNumber);
+        var doctor = await this.doctorRepository.FindAsync(licenseNumber);
 
         // Assert
         doctor.Should().NotBeNull();
@@ -80,14 +80,14 @@ public class DoctorsTests: IClassFixture<DatabaseFixture>
     }
 
     [Fact(DisplayName = "Should find doctors by specialties.")]
-    public async Task ShouldFindDoctorBySpecialties()
+    public async Task FindBySpecialityAsync_ShouldFindDoctor_WithSpecialty()
     {
         // Arrange
         const string specialty = "Dermatology";
         var expectedIds = new[] { "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9", "8a6151c7-9122-4f1b-a1e7-85e981c17a14" };
 
         // Act
-        var doctors = await this.doctorAdapter.FindBySpecialityAsync(specialty);
+        var doctors = await this.doctorRepository.FindBySpecialityAsync(specialty);
 
         // Assert
         doctors.Should().NotBeNull().And.HaveCount(2);
@@ -95,7 +95,7 @@ public class DoctorsTests: IClassFixture<DatabaseFixture>
     }
 
     [Fact(DisplayName = "Should find doctors by specialties with availability on a date.")]
-    public async Task ShouldFindDoctorBySpecialtiesWithAvailability()
+    public async Task FindBySpecialtyWithAvailabilityAsync_ShouldFindDoctor_WithSpecialtyAndDate()    
     {
         // Arrange
         const string specialty = "Dermatology";
@@ -103,7 +103,7 @@ public class DoctorsTests: IClassFixture<DatabaseFixture>
         var expectedId = "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9";
 
         // Act
-        var doctors = await this.doctorAdapter.FindBySpecialtyWithAvailabilityAsync(specialty, desiredDate);
+        var doctors = await this.doctorRepository.FindBySpecialtyWithAvailabilityAsync(specialty, desiredDate);
 
         // Assert
         doctors.Should().NotBeNull().And.HaveCount(1);

@@ -12,6 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddLogging(config => config.AddConsole());
 builder.Services.AddMemoryCache();
 builder.Services.AddControllers();
+builder.Services.AddHealthChecks();
 builder.Services.AddZocDocGraphQL();
 
 // Configure Autofac Dependency Injection container
@@ -45,7 +46,7 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapGraphQL();
-
+app.MapHealthChecks("/health");
 
 if (app.Environment.IsDevelopment())
 {

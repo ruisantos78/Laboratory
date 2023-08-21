@@ -10,12 +10,7 @@
     <PackageReference Include="HotChocolate.AspNetCore" Version="13.4.0" />
     <PackageReference Include="HotChocolate.Data" Version="13.4.0" />
   </ItemGroup>
-  <ItemGroup>
-    <None Remove="Schemas\" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Schemas\" />
-  </ItemGroup>
+
   <ItemGroup>
     <ProjectReference Include="..\..\Server\RuiSantos.ZocDoc.Core\RuiSantos.ZocDoc.Core.csproj" />
   </ItemGroup>
