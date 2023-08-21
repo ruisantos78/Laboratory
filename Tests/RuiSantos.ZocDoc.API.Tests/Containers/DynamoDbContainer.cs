@@ -3,7 +3,6 @@ using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using DotNet.Testcontainers.Builders;
 using DotNet.Testcontainers.Containers;
-using DotNet.Testcontainers.Networks;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RuiSantos.ZocDoc.Data.Dynamodb.Mediators;
@@ -27,7 +26,7 @@ public sealed partial class DynamoDbContainer : IAsyncDisposable
         if (_container is null)
             throw new InvalidOperationException("Docker container is not ready for the database client.");
 
-        return $"http:/{_container.Name}:8000";
+        return $"http://{_container.Hostname}:{_container.GetMappedPublicPort(8000)}";
     }
 
     public IAmazonDynamoDB GetClient()
@@ -37,7 +36,7 @@ public sealed partial class DynamoDbContainer : IAsyncDisposable
 
         return new AmazonDynamoDBClient(new AmazonDynamoDBConfig
         {
-            ServiceURL = $"http://{_container.Hostname}:{_container.GetMappedPublicPort(8000)}"
+            ServiceURL = GetConnectionString()
         });
     }
 
@@ -50,16 +49,13 @@ public sealed partial class DynamoDbContainer : IAsyncDisposable
         }
     }
 
-    public async Task StartAsync(INetwork network)
+    public async Task StartAsync()
     {
         _container = new ContainerBuilder()
-            //.WithEntrypoint("java")
-            //.WithCommand("-jar", "DynamoDBLocal.jar", "-sharedDb")
-            .WithNetwork(network)
+            .WithEntrypoint("java")
+            .WithCommand("-jar", "DynamoDBLocal.jar", "-sharedDb")
             .WithImage("amazon/dynamodb-local:latest")
             .WithPortBinding(8000, true)
-            .WithEnvironment("AWS_ACCESS_KEY_ID", "api")
-            .WithEnvironment("AWS_SECRET_ACCESS_KEY", "secret")
             .WithWaitStrategy(
                 Wait.ForUnixContainer()
                     .UntilHttpRequestIsSucceeded(request =>
