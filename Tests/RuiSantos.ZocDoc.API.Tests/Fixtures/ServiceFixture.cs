@@ -6,13 +6,12 @@ namespace RuiSantos.ZocDoc.API.Tests.Fixtures;
 
 public class ServiceFixture : IAsyncLifetime
 {
+    private readonly INetwork network;
     private readonly DynamoDbContainer dynamoDbContainer;
     private readonly ZocDocAPIContainer zocDocAPIContainer;
 
     public HttpClient Client { get; private set; }
-
-    private readonly INetwork network;
-
+    
     public ServiceFixture()
     {
         this.dynamoDbContainer = new DynamoDbContainer();
