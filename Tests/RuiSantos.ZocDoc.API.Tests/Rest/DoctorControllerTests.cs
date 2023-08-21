@@ -1,6 +1,5 @@
 ﻿using System.Net;
 using FluentAssertions;
-using Microsoft.AspNetCore.TestHost;
 using Newtonsoft.Json.Linq;
 using RuiSantos.ZocDoc.API.Tests.Fixtures;
 
@@ -8,11 +7,11 @@ namespace RuiSantos.ZocDoc.API.Tests;
 
 public class DoctorControllerTests: IClassFixture<ServiceFixture>
 {
-    private readonly TestServer host;
+    private readonly HttpClient client;
 
-    public DoctorControllerTests(ServiceFixture serviceFixture)
+    public DoctorControllerTests(ServiceFixture service)
     {
-        this.host = serviceFixture.Server;
+        this.client = service.GetClient();
     }
 
     [Theory]
@@ -22,7 +21,7 @@ public class DoctorControllerTests: IClassFixture<ServiceFixture>
     public async Task GetAsync_ShouldReturnOk_WithValidLicenseNumber(string medicalLicense)    
     {
         // Act
-        var response = await host.CreateRequest($"/Doctor/{medicalLicense}").GetAsync();
+        var response = await client.GetAsync($"/Doctor/{medicalLicense}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert               

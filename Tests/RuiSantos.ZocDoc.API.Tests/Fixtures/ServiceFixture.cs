@@ -1,4 +1,4 @@
-using Microsoft.AspNetCore.TestHost;
+using Microsoft.AspNetCore.Mvc.Testing;
 using RuiSantos.ZocDoc.API.Tests.Containers;
 
 namespace RuiSantos.ZocDoc.API.Tests.Fixtures;
@@ -6,31 +6,33 @@ namespace RuiSantos.ZocDoc.API.Tests.Fixtures;
 public class ServiceFixture : IAsyncLifetime
 {
     private readonly DynamoDbContainer dynamoDbContainer;
-
-    private ZocDocWebHost? zocDocWebHost = null;
-
-    public TestServer Server => zocDocWebHost?.Server
-        ?? throw ArgumentNullException();
-
-    private Exception ArgumentNullException()
-    {
-        throw new NotImplementedException();
-    }
+    private readonly WebApplicationFactory<Program> factory;
 
     public ServiceFixture()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://+:80");
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
+
         this.dynamoDbContainer = new DynamoDbContainer();
+        this.factory = new WebApplicationFactory<Program>();        
+    }
+
+    internal HttpClient GetClient()
+    {
+        var client = factory.CreateClient();
+        client.BaseAddress = factory.Server.BaseAddress;
+        return client;
     }
 
     public async Task DisposeAsync()
     {
-        this.zocDocWebHost?.Dispose();
+        this.factory.Dispose();
         await this.dynamoDbContainer.DisposeAsync();
     }
 
     public async Task InitializeAsync()
     {
         await dynamoDbContainer.StartAsync();
-        this.zocDocWebHost = new ZocDocWebHost(dynamoDbContainer.GetConnectionString());
+        Environment.SetEnvironmentVariable("DATABASE_DYNAMO", dynamoDbContainer.GetConnectionString());
     }
 }
