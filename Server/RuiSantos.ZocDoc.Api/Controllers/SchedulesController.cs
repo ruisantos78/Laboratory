@@ -10,11 +10,11 @@ namespace RuiSantos.ZocDoc.Api.Controllers;
 [ApiController]
 public class SchedulesController : Controller
 {
-    private readonly IAppointmentService management;
+    private readonly IAppointmentService service;
 
-    public SchedulesController(IAppointmentService management)
+    public SchedulesController(IAppointmentService service)
     {
-        this.management = management;
+        this.service = service;
     }
 
     /// <summary>
@@ -33,7 +33,7 @@ public class SchedulesController : Controller
     {
         try
         {
-            var models = management.GetAvailabilityAsync(specialty, date);
+            var models = service.GetAvailabilityAsync(specialty, date);
             return await this.OkOrNoCotentAsync(models, typeof(DoctorAvailabilityContract));
         }
         catch (Exception ex)
@@ -55,7 +55,7 @@ public class SchedulesController : Controller
     {
         try
         {
-            await management.CreateAppointmentAsync(
+            await service.CreateAppointmentAsync(
                 request.PatientSecuritySocialNumber, 
                 request.MedicalLicense, 
                 request.Date);
@@ -83,7 +83,7 @@ public class SchedulesController : Controller
     {
         try
         {
-            await management.DeleteAppointmentAsync(
+            await service.DeleteAppointmentAsync(
                 request.PatientSecuritySocialNumber, 
                 request.MedicalLicense, 
                 request.Date);

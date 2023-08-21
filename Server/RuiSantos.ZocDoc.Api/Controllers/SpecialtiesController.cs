@@ -9,11 +9,11 @@ namespace RuiSantos.ZocDoc.Api.Controllers;
 [ApiController]
 public class SpecialtiesController : Controller
 {
-    private readonly IMedicalSpecialtiesService management;
+    private readonly IMedicalSpecialtiesService service;
 
-    public SpecialtiesController(IMedicalSpecialtiesService management)
+    public SpecialtiesController(IMedicalSpecialtiesService service)
     {
-        this.management = management;
+        this.service = service;
     }
 
     /// <summary>
@@ -30,7 +30,7 @@ public class SpecialtiesController : Controller
     {
         try
         {
-            var result = await management.GetMedicalSpecialitiesAsync();
+            var result = await service.GetMedicalSpecialitiesAsync();
             return this.OkOrNoContent<String>(result.Select(s => s.Description).OrderBy(s => s));
         }
         catch (Exception ex)
@@ -52,7 +52,7 @@ public class SpecialtiesController : Controller
     {
         try
         {
-            await management.CreateMedicalSpecialtiesAsync(descriptions);
+            await service.CreateMedicalSpecialtiesAsync(descriptions);
             return Ok();
         }
         catch (Exception ex)
@@ -74,7 +74,7 @@ public class SpecialtiesController : Controller
     {
         try
         {
-            await management.RemoveMedicalSpecialtiesAsync(description);
+            await service.RemoveMedicalSpecialtiesAsync(description);
             return Ok();
         }
         catch (Exception ex)

@@ -1,4 +1,5 @@
 ﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.Model;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Mediators;
@@ -16,6 +17,14 @@ internal static class RegisterClassMaps {
         .OfType<IRegisterClassMap>()
         .Select(i => i.GetCreateTableRequest());    
 
+    public static IReadOnlyDictionary<string, Type> GetTypeMappings() => typeof(IRegisterClassMap).Assembly
+        .GetTypes()
+        .Where(t => t.GetCustomAttributes(false).OfType<DynamoDBTableAttribute>().Any())
+        .ToDictionary(
+            k => k.GetCustomAttributes(false).OfType<DynamoDBTableAttribute>().First().TableName,
+            v => v            
+        );
+    
     public static void InitializeDatabase(IAmazonDynamoDB client)
     {
         Task.WaitAll(Task.CompletedTask, InitializeDatabaseAsync(client));

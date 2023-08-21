@@ -1,4 +1,5 @@
 <Project Sdk="Microsoft.NET.Sdk">
+
   <PropertyGroup>
     <TargetFramework>net7.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
@@ -6,15 +7,8 @@
 
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
-    <Configurations>Debug;Release</Configurations>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="6.11.0" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="17.7.1" />
@@ -31,12 +25,17 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Server\RuiSantos.ZocDoc.Api\RuiSantos.ZocDoc.Api.csproj" />
+    <ProjectReference Include="..\..\Modules\RuiSantos.ZocDoc.Data.Dynamodb\RuiSantos.ZocDoc.Data.Dynamodb.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
     <Content Include="Assets\*.*">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>  
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\Modules\RuiSantos.ZocDoc.Data.Dynamodb\RuiSantos.ZocDoc.Data.Dynamodb.csproj" />
+    <Folder Include="GraphQL/" />
   </ItemGroup>
 </Project>

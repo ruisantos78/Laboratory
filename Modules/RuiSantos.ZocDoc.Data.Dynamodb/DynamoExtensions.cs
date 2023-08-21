@@ -4,6 +4,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RuiSantos.ZocDoc.Core.Repositories;
 using RuiSantos.ZocDoc.Data.Dynamodb.Repositories;
 using RuiSantos.ZocDoc.Data.Dynamodb.Mediators;
+using Amazon.Runtime;
 
 namespace RuiSantos.ZocDoc.Data;
 
@@ -16,8 +17,9 @@ public static class DynamoExtensions
     {
         services.AddSingleton<IAmazonDynamoDB>(provider =>
         {
+            var credentials = new BasicAWSCredentials("api", "secret");
             var config = new AmazonDynamoDBConfig() { ServiceURL = ConnectionString };
-            var client = new AmazonDynamoDBClient(config);
+            var client = new AmazonDynamoDBClient(credentials, config);
             RegisterClassMaps.InitializeDatabase(client);
 
             return client;
