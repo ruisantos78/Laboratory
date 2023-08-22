@@ -43,7 +43,11 @@
         {
             "DoctorId": "fa626a8e-03a5-4fe1-a910-b3803bed256c",
             "Specialty": "Pediatrics"
-        }
+        },
+        {
+            "DoctorId": "4227a0f4-bf22-47d6-8137-d7a3e3f29054",
+            "Specialty": "Cardiology"
+        }        
     ],
     "Doctors": [
         {
@@ -91,6 +95,17 @@
             "FirstName": "Michael",
             "LastName": "Johnson",
             "Email": "michael.johnson@example.com",
+            "ContactNumbers": [
+                "1-987-654-3210"
+            ],
+            "Availability": []
+        },
+        {
+            "Id": "4227a0f4-bf22-47d6-8137-d7a3e3f29054",
+            "License": "CAR002",
+            "FirstName": "Pedro",
+            "LastName": "Pascal",
+            "Email": "pedro.pascal@example.com",
             "ContactNumbers": [
                 "1-987-654-3210"
             ],

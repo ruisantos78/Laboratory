@@ -1,3 +1,5 @@
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RuiSantos.ZocDoc.API.Tests.Containers;
 
@@ -17,12 +19,14 @@ public class ServiceFixture : IAsyncLifetime
         this.factory = new WebApplicationFactory<Program>();        
     }
 
+    internal IDynamoDBContext GetContext() => new DynamoDBContext(dynamoDbContainer.GetClient());
+
     internal HttpClient GetClient()
     {
         var client = factory.CreateClient();
         client.BaseAddress = factory.Server.BaseAddress;
         return client;
-    }
+    }    
 
     public async Task DisposeAsync()
     {
