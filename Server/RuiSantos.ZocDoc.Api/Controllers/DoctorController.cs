@@ -77,7 +77,7 @@ public class DoctorController : Controller
     /// <response code="200">Returns a success message if the doctor is successfully created.</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PostAsync(DoctorContract request)
     {
@@ -91,7 +91,7 @@ public class DoctorController : Controller
                 request.ContactNumbers,
                 request.Specialties);
 
-            return Ok();
+            return StatusCode(201);
         }
         catch (Exception ex)
         {

@@ -39,5 +39,9 @@
 
   <ItemGroup>
     <Folder Include="GraphQL/" />
+    <Folder Include="Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Remove="Extensions\" />
   </ItemGroup>
 </Project>
