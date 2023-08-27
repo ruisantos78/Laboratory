@@ -17,27 +17,22 @@ public class MedicalSpecialityRepository : IMedicalSpecialityRepository
 
     public async Task AddAsync(MedicalSpecialty speciality)
     {
-        await DomainListsDto.SetSpecialtyAsync(context, speciality.Description);
+        await DictionaryDto.SetSpecialtyAsync(context, speciality.Description);
     }
 
     public async Task<bool> ContainsAsync(string speciality)
     {
-        var result = await DomainListsDto.GetSpecialtiesAsync(context);
-        return result.Values.Contains(speciality);
+        var result = await DictionaryDto.GetSpecialtiesAsync(context);
+        return result.Any(x => x.Description == speciality);
     }
 
     public async Task RemoveAsync(string speciality)
     {
-        await DomainListsDto.RemoveSpecialtyAsync(context, speciality);
+        await DictionaryDto.RemoveSpecialtyAsync(context, speciality);
     }
 
     public async Task<List<MedicalSpecialty>> ToListAsync()
     {
-        var result = await DomainListsDto.GetSpecialtiesAsync(context);
-        return result.Select(s => new MedicalSpecialty
-        {
-            Id = s.Key,
-            Description = s.Value
-        }).ToList();
+        return await DictionaryDto.GetSpecialtiesAsync(context);
     }
 }

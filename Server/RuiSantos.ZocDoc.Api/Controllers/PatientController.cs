@@ -56,7 +56,7 @@ public class PatientController : Controller
         try
         {
             var models = service.GetAppointmentsAsync(socialNumber);
-            return await this.OkOrNoCotentAsync(models, typeof(PatientAppointmentsContract));
+            return await this.OkOrNoContentAsync(models, typeof(PatientAppointmentsContract));
         }
         catch (Exception ex)
         {

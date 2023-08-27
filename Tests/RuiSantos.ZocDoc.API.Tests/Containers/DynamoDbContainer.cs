@@ -12,44 +12,10 @@ namespace RuiSantos.ZocDoc.API.Tests.Containers;
 public sealed partial class DynamoDbContainer : IAsyncDisposable
 {
     private const string RepositoySourceFile = @"Assets/Repository.json";
-    
-    private IContainer? _container;
 
-    public IContainer GetContainer()
-    {
-        return _container ??
-            throw new InvalidOperationException("Docker container is not ready for the database client.");
-    }
+    private readonly IContainer _container;
 
-    public string GetConnectionString()
-    {
-        if (_container is null)
-            throw new InvalidOperationException("Docker container is not ready for the database client.");
-
-        return $"http://{_container.Hostname}:{_container.GetMappedPublicPort(8000)}";
-    }
-
-    public IAmazonDynamoDB GetClient()
-    {
-        if (_container is null)
-            throw new InvalidOperationException("Docker container is not ready for the database client.");
-
-        return new AmazonDynamoDBClient(new AmazonDynamoDBConfig
-        {
-            ServiceURL = GetConnectionString()
-        });
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_container is not null)
-        {
-            await _container.StopAsync();
-            await _container.DisposeAsync();
-        }
-    }
-
-    public async Task StartAsync()
+    public DynamoDbContainer()
     {
         _container = new ContainerBuilder()
             .WithEntrypoint("java")
@@ -65,7 +31,23 @@ public sealed partial class DynamoDbContainer : IAsyncDisposable
                     )
             )
             .Build();
+    }
 
+    public IContainer GetContainer() => _container;
+    public string GetConnectionString() => $"http://{_container.Hostname}:{_container.GetMappedPublicPort(8000)}";
+    public IAmazonDynamoDB GetClient() => new AmazonDynamoDBClient(new AmazonDynamoDBConfig
+    {
+        ServiceURL = GetConnectionString()
+    });
+
+    public async ValueTask DisposeAsync()
+    {
+        await _container.StopAsync();
+        await _container.DisposeAsync();
+    }
+
+    public async Task StartAsync()
+    {
         await _container.StartAsync();
         Console.WriteLine($"[ruisantos.zocdoc {DateTime.Now:HH:mm:ss}] Start Dynamodb Client at port: {_container.GetMappedPublicPort(8000)}");
 

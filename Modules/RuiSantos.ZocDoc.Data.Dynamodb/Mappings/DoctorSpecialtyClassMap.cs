@@ -1,7 +1,7 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using RuiSantos.ZocDoc.Data.Dynamodb.Mediators;
 using RuiSantos.ZocDoc.Data.Dynamodb.Mappings.Core;
+using RuiSantos.ZocDoc.Data.Dynamodb.Mediators;
 
 using static RuiSantos.ZocDoc.Data.Dynamodb.Mappings.ClassMapConstants;
 
@@ -20,8 +20,9 @@ internal class DoctorSpecialtyClassMap: IRegisterClassMap
             new(DoctorIdAttributeName, KeyType.HASH),
             new(SpecialtyAttributeName, KeyType.RANGE)
         },
-        GlobalSecondaryIndexes = new List<GlobalSecondaryIndex> {
-            new GlobalSecondaryIndexHashKey(DoctorSpecialtyIndexName, SpecialtyAttributeName)            
+        GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>
+        {
+            new GlobalSecondaryIndexHashKey(DoctorSpecialtyIndexName, SpecialtyAttributeName, DoctorIdAttributeName)            
         },
         ProvisionedThroughput = new(5, 5)
     };

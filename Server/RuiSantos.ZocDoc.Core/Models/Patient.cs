@@ -15,11 +15,6 @@ public class Patient : Person
     /// </summary>
     public string SocialSecurityNumber { get; set; }
 
-    /// <summary>
-    /// The patient's appointments. (Not persisted)
-    /// </summary>
-    public HashSet<Appointment> Appointments { get; init; }
-
 
     /// <summary>
     /// Creates an empty patient.
@@ -27,7 +22,6 @@ public class Patient : Person
     public Patient()
     {
         SocialSecurityNumber = string.Empty;
-        Appointments = new HashSet<Appointment>();
     }
 }
 

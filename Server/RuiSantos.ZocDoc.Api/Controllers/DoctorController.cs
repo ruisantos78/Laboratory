@@ -58,11 +58,11 @@ public class DoctorController : Controller
     {
         try
         {
-            var models = service.GetAppointmentsAsync(
+            var models = await service.GetAppointmentsAsync(
                 license, 
                 dateTime);
 
-            return await this.OkOrNoCotentAsync(models, typeof(DoctorAppointmentsContract));
+            return this.OkOrNoContent(models, typeof(DoctorAppointmentsContract));
         }
         catch (Exception ex)
         {
@@ -103,21 +103,27 @@ public class DoctorController : Controller
     /// Sets the office hours of a doctor.
     /// </summary>
     /// <param name="license">The doctor's license number.</param>
-    /// <param name="week">The day of the week to set the office hours for (0 = Sunday, 6 = Saturday).</param>
+    /// <param name="dayOfweek">The day of the week to set the office hours (Sunday, Monday, ...).</param>
     /// <param name="hours">An array of strings representing the office hours in HH:mm format.</param>
     /// <response code="200">Returns a success message if the office hours are successfully set.</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
-    [HttpPut("{license}/OfficeHours/{week}")]
+    [HttpPut("{license}/OfficeHours/{dayOfweek}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutOfficeHoursAsync(string license, DayOfWeek week, [FromBody] string[] hours)
+    public async Task<IActionResult> PutOfficeHoursAsync(string license, string dayOfweek, [FromBody] string[] hours)
     {
         try
         {
+            if (!Enum.TryParse<DayOfWeek>(dayOfweek, out var week))
+                return BadRequest($"Invalid value form dayOfWeek: {dayOfweek}");
+
+            if (!TryParseTimeSpanArray(hours, out var timeSpans))
+                return BadRequest("Invalid timespan format for hours");
+            
             await service.SetOfficeHoursAsync(
                 license,
                 week,
-                StringToTimeSpanArray(hours));
+                timeSpans);
 
             return Ok();
         }

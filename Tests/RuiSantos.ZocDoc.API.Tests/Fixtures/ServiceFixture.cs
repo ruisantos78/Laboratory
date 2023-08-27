@@ -1,4 +1,3 @@
-using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RuiSantos.ZocDoc.API.Tests.Containers;
@@ -37,6 +36,7 @@ public class ServiceFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await dynamoDbContainer.StartAsync();
+
         Environment.SetEnvironmentVariable("DATABASE_DYNAMO", dynamoDbContainer.GetConnectionString());
     }
 }

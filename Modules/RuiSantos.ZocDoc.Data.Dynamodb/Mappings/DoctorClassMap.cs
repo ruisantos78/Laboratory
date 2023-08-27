@@ -14,12 +14,12 @@ internal class DoctorClassMap : IRegisterClassMap
         TableName = DoctorsTableName,
         AttributeDefinitions = new List<AttributeDefinition>
         {
-            new(IdAttributeName, ScalarAttributeType.S),
+            new(DoctorIdAttributeName, ScalarAttributeType.S),
             new(LicenseAttributeName, ScalarAttributeType.S)
         },
         KeySchema = new List<KeySchemaElement>
         {
-            new(IdAttributeName, KeyType.HASH)
+            new(DoctorIdAttributeName, KeyType.HASH)
         },
         GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>
         {

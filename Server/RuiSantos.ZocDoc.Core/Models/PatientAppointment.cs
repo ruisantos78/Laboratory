@@ -12,12 +12,17 @@ public class PatientAppointment {
     /// <summary>
     /// The patient.
     /// </summary>
-    public Patient Patient { get; }
+    public Patient Patient { get; init; }
 
     /// <summary>
     /// The date.
     /// </summary>
-    public DateTime Date { get; }
+    public DateTime Date { get; init; }
+
+    public PatientAppointment(): this(Patient.Empty, DateTime.MinValue)
+    {
+
+    }
 
     /// <summary>
     /// Creates a new patient appointment.
