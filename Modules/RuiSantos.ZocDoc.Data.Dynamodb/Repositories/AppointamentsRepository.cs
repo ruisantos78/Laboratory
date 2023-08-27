@@ -1,48 +1,44 @@
 ﻿using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.DocumentModel;
 using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Repositories;
 using RuiSantos.ZocDoc.Data.Dynamodb.Entities;
 
-using static RuiSantos.ZocDoc.Data.Dynamodb.Mappings.ClassMapConstants;
-
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Repositories;
 
-public class AppointamentsRepository: IAppointamentsRepository
+public class AppointamentsRepository : IAppointamentsRepository
 {
     private readonly DynamoDBContext context;
 
     public AppointamentsRepository(IAmazonDynamoDB client)
-	{
+    {
         this.context = new DynamoDBContext(client);
     }
 
-    public async Task RemoveAsync(Doctor doctor, Patient patient, Appointment appointment)
+    public async Task<Appointment?> GetAsync(Patient patient, DateTime dateTime)
     {
-        var entities = await context.QueryAsync<AppointmentsDto>(patient.Id,
-            new DynamoDBOperationConfig
-            {
-                IndexName = PatientAppointmentIndexName
-            }).GetRemainingAsync();
-
-        var entity = entities.FirstOrDefault(x => x.DoctorId == doctor.Id && x.AppointmentTime == appointment.GetDateTime());
-        if (entity is null)
-            return;
-
-        await context.DeleteAsync(entity);
+        return await AppointmentsDto.GetAppointmentByPatientAsync(context, patient, dateTime);
     }
 
-    public async Task StoreAsync(Doctor doctor, Patient patient, Appointment appointment)
+    public async Task<Appointment?> GetAsync(Doctor doctor, DateTime dateTime)
     {
-        var entity = new AppointmentsDto()
-        {
-            AppointmentTime = appointment.GetDateTime(),
-            DoctorId = doctor.Id,
-            PatientId = patient.Id
-        };
+        return await AppointmentsDto.GetAppointmentByDoctorAsync(context, doctor, dateTime);
+    }
 
-        await context.SaveAsync(entity);
+    public async Task<IEnumerable<PatientAppointment>> GetPatientAppointmentsAsync(Doctor doctor, DateOnly date)
+    {
+        var appointments = await AppointmentsDto.GetAppointmentsByDoctorAsync(context, doctor, date);
+
+        return await PatientDto.GetPatientAppointmentsAsync(context, appointments);        
+    }
+
+    public async Task RemoveAsync(Appointment appointment)
+    {
+        await AppointmentsDto.RemoveAsync(context, appointment);
+    }
+
+    public async Task StoreAsync(Doctor doctor, Patient patient, DateTime dateTime)
+    {
+        await AppointmentsDto.StoreAsync(context, doctor, patient, dateTime);
     }
 }
-

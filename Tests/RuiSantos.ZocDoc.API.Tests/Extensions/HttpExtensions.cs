@@ -1,4 +1,5 @@
 ﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using Xunit.Abstractions;
 
 namespace RuiSantos.ZocDoc.API.Tests;
@@ -23,4 +24,15 @@ internal static class HttpExtensions
 
         return await client.PostAsync(url, stringContent);
 	}
+
+    public static async Task<HttpResponseMessage> PutAsync(this HttpClient client,
+    string url, object request, ITestOutputHelper? output = null)
+    {
+        var content = JsonConvert.SerializeObject(request);
+        output?.WriteLine(content);
+
+        var stringContent = new StringContent(content, System.Text.Encoding.UTF8, "application/json");
+
+        return await client.PutAsync(url, stringContent);
+    }
 }
