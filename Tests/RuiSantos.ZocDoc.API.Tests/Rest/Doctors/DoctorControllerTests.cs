@@ -4,6 +4,7 @@ using Xunit.Abstractions;
 
 namespace RuiSantos.ZocDoc.API.Tests.Rest;
 
+[Collection(nameof(ServiceCollectionFixture))]
 public partial class DoctorControllerTests: IClassFixture<ServiceFixture>
 {
     private readonly IDynamoDBContext context;

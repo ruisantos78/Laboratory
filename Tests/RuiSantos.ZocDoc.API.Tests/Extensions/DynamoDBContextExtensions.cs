@@ -13,7 +13,7 @@ internal static class DynamoDBContextExtensions
         });
     }
 
-    public static async Task<TEntity?> FindAsync<TEntity>(this IDynamoDBContext context,
+    public static async Task<TEntity> FirstAsync<TEntity>(this IDynamoDBContext context,
         string indexName, object hashKeyValue)
     {
         var query = context.QueryAsync<TEntity>(hashKeyValue, new DynamoDBOperationConfig {
@@ -21,7 +21,7 @@ internal static class DynamoDBContextExtensions
         });
 
         var entities = await query.GetNextSetAsync();
-        return entities.FirstOrDefault();
+        return entities.First();
     }
 }
 

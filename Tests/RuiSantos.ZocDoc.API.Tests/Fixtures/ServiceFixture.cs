@@ -4,6 +4,9 @@ using RuiSantos.ZocDoc.API.Tests.Containers;
 
 namespace RuiSantos.ZocDoc.API.Tests.Fixtures;
 
+[CollectionDefinition(nameof(ServiceCollectionFixture))]
+public class ServiceCollectionFixture: ICollectionFixture<ServiceFixture> { }
+
 public class ServiceFixture : IAsyncLifetime
 {
     private readonly DynamoDbContainer dynamoDbContainer;
