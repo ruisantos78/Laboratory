@@ -5,6 +5,7 @@ using RuiSantos.ZocDoc.GraphQL.Schemas;
 namespace RuiSantos.ZocDoc.GraphQL;
 
 public interface IDoctorSchemaAdapter {
+    Task<DoctorSchema> CreateOrUpdateDoctorAsync(DoctorSchema doctor);
     Task<DoctorSchema> GetDoctorAsync(string license);
 }
 
@@ -17,18 +18,41 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
         this.management = management;
     }
 
+    private static DoctorSchema GetSchema(Doctor model) => new()
+    {
+        License = model.License,
+        FirstName = model.FirstName,
+        LastName = model.LastName,
+        Email = model.Email,
+        Contacts = model.ContactNumbers.ToList(),
+        Specialties = model.Specialties.ToList()
+    };
+
+    private static Doctor GetModel(DoctorSchema schema) => new()
+    {
+        License = schema.License,
+        FirstName = schema.FirstName,
+        LastName = schema.LastName,
+        Email = schema.Email,
+        ContactNumbers = schema.Contacts.ToHashSet(),
+        Specialties = schema.Specialties.ToHashSet()
+    };
+
     public async Task<DoctorSchema> GetDoctorAsync(string license) {
         var doctor = await management.GetDoctorByLicenseAsync(license);     
         return GetSchema(doctor ?? new Doctor());
     }    
 
-    private static DoctorSchema GetSchema(Doctor doctor) => new()
+    public async Task<DoctorSchema> CreateOrUpdateDoctorAsync(DoctorSchema schema)
     {
-        License = doctor.License,
-        FirstName = doctor.FirstName,
-        LastName = doctor.LastName,
-        Email = doctor.Email,
-        Contacts = doctor.ContactNumbers.ToList(),
-        Specialties = doctor.Specialties.ToList()
-    };
+        await management.CreateDoctorAsync(
+            license: schema.License,
+            firstName: schema.FirstName,
+            lastName: schema.LastName,
+            email: schema.Email,
+            contactNumbers: schema.Contacts,
+            specialties: schema.Specialties
+        );
+        return schema;
+    }    
 }

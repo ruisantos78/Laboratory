@@ -28,7 +28,7 @@ partial class DoctorControllerTests
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
         // Assert
-        var doctor = await context.FirstAsync<DoctorDto>(DoctorLicenseIndexName, "ZZZ123");
+        var doctor = await context.FindAsync<DoctorDto>(DoctorLicenseIndexName, "ZZZ123");
         doctor.FirstName.Should().Be("Joe");
         doctor.LastName.Should().Be("Doe");
         doctor.Email.Should().Be("joe.doe@email.net");

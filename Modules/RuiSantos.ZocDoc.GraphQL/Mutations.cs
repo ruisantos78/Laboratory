@@ -9,4 +9,10 @@ public class Mutations
       [GraphQLDescription("A list of medical specialties.")] List<string> descriptions,
       [Service] IMedicalSpecialtySchemaAdapter adapter)
       => await adapter.CreateMedicalSpecialtiesAsync(descriptions);
+
+    [GraphQLDescription("Create/update a doctor.")]
+    public async Task<DoctorSchema> SetDoctor(
+      [GraphQLDescription("The doctor.")] DoctorSchema doctor,
+      [Service] IDoctorSchemaAdapter adapter)
+      => await adapter.CreateOrUpdateDoctorAsync(doctor);
 }

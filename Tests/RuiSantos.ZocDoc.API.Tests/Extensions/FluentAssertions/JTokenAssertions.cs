@@ -26,7 +26,7 @@ public class JTokenAssertions: ReferenceTypeAssertions<JToken?, JTokenAssertions
         return new AndConstraint<JTokenAssertions>(this);
     }
 
-    public AndConstraint<JTokenAssertions> ContainsAll<TValue>(IEnumerable<TValue> expected)
+    public AndConstraint<JTokenAssertions> BeEquivalentTo<TValue>(IEnumerable<TValue> expected)
     {
         Execute.Assertion
                 .ForCondition(Subject is not null)
