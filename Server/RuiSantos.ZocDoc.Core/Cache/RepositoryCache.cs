@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Caching.Memory;
 using RuiSantos.ZocDoc.Core.Repositories;
-using RuiSantos.ZocDoc.Core.Models;
 
 namespace RuiSantos.ZocDoc.Core.Cache;
 
@@ -13,7 +12,9 @@ public interface IRepositoryCache
     /// Gets all the medical specialties.
     /// </summary>
     /// <returns>A list of medical specialties.</returns>
-    Task<List<MedicalSpecialty>?> GetMedicalSpecialtiesAsync();
+    Task<IReadOnlySet<string>?> GetMedicalSpecialtiesAsync();
+
+    void ClearMedicalSpecialties();
 }
 
 /// <summary>
@@ -47,15 +48,20 @@ internal class RepositoryCache : IRepositoryCache
         this.cache = cache;
     }
 
+    public void ClearMedicalSpecialties()
+    {
+        cache.Remove("MedicalSpecialty");
+    }
+
     /// <summary>
     /// Gets the list of medical specialties.
     /// </summary>
     /// <returns>The list of medical specialties.</returns>
-    public Task<List<MedicalSpecialty>?> GetMedicalSpecialtiesAsync()
+    public Task<IReadOnlySet<string>?> GetMedicalSpecialtiesAsync()
     {
-        return cache.GetOrCreateAsync(nameof(MedicalSpecialty), async (entry) => 
+        return cache.GetOrCreateAsync("MedicalSpecialty", async (entry) => 
         {
-            var values = await specialityAdapter.ToListAsync();
+            var values = await specialityAdapter.GetAsync();
             entry.SetSlidingExpiration(CacheSlidingExpiration).SetValue(values);
             return values;
         });

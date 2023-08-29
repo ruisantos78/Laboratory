@@ -14,7 +14,25 @@ internal static class HttpExtensions
 		return JsonConvert.DeserializeObject<TContract>(stringContent)!;
 	}
 
-	public static async Task<HttpResponseMessage> PostAsync(this HttpClient client,
+    public static async Task<TSchema> GetSchema<TSchema>(this HttpContent content, string root = "data", ITestOutputHelper? output = null)
+        where TSchema: class
+    {
+        var stringContent = await content.ReadAsStringAsync();
+        output?.WriteLine(stringContent);
+
+        var token = JToken.Parse(stringContent);
+        return token[root]?.ToObject<TSchema>() ?? Activator.CreateInstance<TSchema>();
+    }
+
+    public static async Task<JToken> GetTokenAsync(this HttpContent content, ITestOutputHelper? output = null)
+    {
+        var stringContent = await content.ReadAsStringAsync();
+        output?.WriteLine(stringContent);
+
+        return JToken.Parse(stringContent);
+    }
+
+    public static async Task<HttpResponseMessage> PostAsync(this HttpClient client,
 		string url, object request, ITestOutputHelper? output = null)
 	{
 		var content = JsonConvert.SerializeObject(request);

@@ -31,7 +31,7 @@ public class SpecialtiesController : Controller
         try
         {
             var result = await service.GetMedicalSpecialitiesAsync();
-            return this.OkOrNoContent<String>(result.Select(s => s.Description).OrderBy(s => s));
+            return this.OkOrNoContent<String>(result.OrderBy(s => s));
         }
         catch (Exception ex)
         {

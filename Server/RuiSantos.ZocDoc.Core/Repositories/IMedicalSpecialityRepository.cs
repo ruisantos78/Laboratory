@@ -4,11 +4,7 @@ namespace RuiSantos.ZocDoc.Core.Repositories;
 
 public interface IMedicalSpecialityRepository 
 {
-    Task<List<MedicalSpecialty>> ToListAsync();
-
-    Task<bool> ContainsAsync(string speciality);
-
-    Task AddAsync(MedicalSpecialty speciality);
-
+    Task<IReadOnlySet<string>> GetAsync();
     Task RemoveAsync(string speciality);
+    Task AddAsync(IEnumerable<string> specialties);
 }

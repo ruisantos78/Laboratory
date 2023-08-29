@@ -20,10 +20,10 @@ public class ServiceFixture : IAsyncLifetime
 
     internal IDynamoDBContext GetContext() => new DynamoDBContext(dynamoDbContainer.GetClient());
 
-    internal HttpClient GetClient()
+    internal HttpClient GetClient(string root = "/")
     {
         var client = factory.CreateClient();
-        client.BaseAddress = factory.Server.BaseAddress;
+        client.BaseAddress = new Uri(factory.Server.BaseAddress, root);
         return client;
     }    
 
