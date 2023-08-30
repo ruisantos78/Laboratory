@@ -23,11 +23,11 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         this.output = output;
     }
 
-    [Theory(DisplayName = "Should returns the doctor's information.")]
+    [Theory(DisplayName = "Get doctor information by license")]
     [InlineData("XYZ002")]
     [InlineData("DEF003")]
     [InlineData("PED001")]
-    public async Task ShouldReturnDoctorInformation(string license)
+    public async Task GetDoctorInformationByLicense(string license)
     {
         // Arrange
         var expected = await context.FindAsync<DoctorDto>(DoctorLicenseIndexName, license);
@@ -69,8 +69,8 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         doctor["specialties"].Should().BeEquivalentTo(expectedSpecialties.Select(ds => ds.Specialty));
     }
 
-    [Fact(DisplayName = "Should create a new doctor.")]
-    public async Task ShouldCreateNewDoctor()
+    [Fact(DisplayName = "Create a new doctor")]
+    public async Task CreateNewDoctor()
     {
         // Arrange
         var request = new
@@ -123,8 +123,8 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         specialties.Select(ds => ds.Specialty).Should().BeEquivalentTo(new[] { "Cardiology", "Pediatrics" });
     }
 
-    [Fact(DisplayName = "Should returns all medical specialties")]
-    public async Task ShouldReturnAllMedicalSpecialties()
+    [Fact(DisplayName = "Get all medical specialties")]
+    public async Task GetAllMedicalSpecialties()
     {
         // Arrange
         var expected = await context.LoadAsync<DictionaryDto>("specialties");
@@ -150,8 +150,8 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         specialties.Values<string>("description").Should().BeEquivalentTo(expected.Values);
     }
 
-    [Fact(DisplayName = "Should update the medical specialties list")]
-    public async Task ShouldUpdateMedicalSpecialtiesList()
+    [Fact(DisplayName = "Update medical specialties list")]
+    public async Task UpdateMedicalSpecialtiesList()
     {
         // Arrange
         var request = new
@@ -169,7 +169,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
             {
                 input = new
                 {
-                    descriptions = new[] 
+                    descriptions = new[]
                     {
                         "Gastroenterology",
                         "Endocrinology",

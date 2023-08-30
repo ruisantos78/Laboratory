@@ -14,11 +14,11 @@ public class ServiceFixture : IAsyncLifetime
 
     public ServiceFixture()
     {
-        Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://+:80");
+        Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://+:55555");
         Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
 
         this.dynamoDbContainer = new DynamoDbContainer();
-        this.factory = new WebApplicationFactory<Program>();        
+        this.factory = new WebApplicationFactory<Program>();
     }
 
     internal IDynamoDBContext GetContext() => new DynamoDBContext(dynamoDbContainer.GetClient());
