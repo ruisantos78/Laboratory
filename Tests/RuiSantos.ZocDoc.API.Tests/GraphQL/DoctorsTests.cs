@@ -1,6 +1,7 @@
 ﻿using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using FluentAssertions;
+using Newtonsoft.Json.Linq;
 using RuiSantos.ZocDoc.API.Tests.Fixtures;
 using RuiSantos.ZocDoc.Data.Dynamodb.Entities;
 using Xunit.Abstractions;
@@ -30,6 +31,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
     {
         // Arrange
         var expected = await context.FindAsync<DoctorDto>(DoctorLicenseIndexName, license);
+        var expectedSpecialties = await context.QueryAsync<DoctorSpecialtyDto>(expected.Id).GetRemainingAsync();
 
         var request = new
         {
@@ -41,6 +43,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
                             lastName
                             email
                             contacts
+                            specialties
                         }
                     }
                     """,
@@ -63,6 +66,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         doctor["lastName"].Should().Be(expected.LastName);
         doctor["email"].Should().Be(expected.Email);
         doctor["contacts"].Should().BeEquivalentTo(expected.ContactNumbers);
+        doctor["specialties"].Should().BeEquivalentTo(expectedSpecialties.Select(ds => ds.Specialty));
     }
 
     [Fact(DisplayName = "Should create a new doctor.")]
@@ -101,7 +105,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
                 }
             }
         };
-    
+
         // Act
         var response = await client.PostAsync("graphql", request);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
@@ -117,5 +121,79 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         var specialties = await context.QueryAsync<DoctorSpecialtyDto>(doctor.Id).GetRemainingAsync();
         specialties.Should().HaveCount(2);
         specialties.Select(ds => ds.Specialty).Should().BeEquivalentTo(new[] { "Cardiology", "Pediatrics" });
+    }
+
+    [Fact(DisplayName = "Should returns all medical specialties")]
+    public async Task ShouldReturnAllMedicalSpecialties()
+    {
+        // Arrange
+        var expected = await context.LoadAsync<DictionaryDto>("specialties");
+
+        var request = new
+        {
+            query = """
+                    query GetSpecialties {
+                        specialties {
+                            description 
+                        }
+                    }
+                    """
+        };
+
+        // Act
+        var response = await client.PostAsync("graphql", request);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        // Assert
+        var result = await response.Content.GetTokenAsync();
+        var specialties = result["data"].Should().HaveChild("specialties").AsJEnumerable();
+        specialties.Values<string>("description").Should().BeEquivalentTo(expected.Values);
+    }
+
+    [Fact(DisplayName = "Should update the medical specialties list")]
+    public async Task ShouldUpdateMedicalSpecialtiesList()
+    {
+        // Arrange
+        var request = new
+        {
+            query = """
+                    mutation AddSpecialties($input: AddSpecialtiesInput!) {
+                        addSpecialties(input: $input) {
+                            specialties {
+                                description 
+                            }
+                        }
+                    }
+                    """,
+            variables = new
+            {
+                input = new
+                {
+                    descriptions = new[] 
+                    {
+                        "Gastroenterology",
+                        "Endocrinology",
+                        "Nephrology",
+                        "Rheumatology",
+                        "Oncology"
+                    }
+                }
+            }
+        };
+
+        // Act
+        var response = await client.PostAsync("graphql", request);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        // Assert
+        var specialties = await context.LoadAsync<DictionaryDto>("specialties");
+        specialties.Values.Should().OnlyHaveUniqueItems().And.Contain(new[]
+         {
+            "Gastroenterology",
+            "Endocrinology",
+            "Nephrology",
+            "Rheumatology",
+            "Oncology"
+        });
     }
 }
