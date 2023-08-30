@@ -6,11 +6,11 @@ using static RuiSantos.ZocDoc.Data.Dynamodb.Mappings.ClassMapConstants;
 
 namespace RuiSantos.ZocDoc.Data.Dynamodb.Mappings;
 
-internal class DomainListsClassMap : IRegisterClassMap
+internal class DictionaryClassMap : IRegisterClassMap
 {
     public CreateTableRequest GetCreateTableRequest() => new()
     {
-        TableName = DomainListsTableName,
+        TableName = DictionaryTableName,
         AttributeDefinitions = new List<AttributeDefinition>
         {
             new(SourceAttributeName, ScalarAttributeType.S)

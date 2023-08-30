@@ -15,4 +15,18 @@ internal static class ControllerUtils
 			throw new ValidationFailException("Cannot convert the strings to a TimeSpan value.");
         }
     }
+
+	public static bool TryParseTimeSpanArray(string[] values, out IEnumerable<TimeSpan> result)
+	{
+        try
+        {
+            result = values.Select(TimeSpan.Parse);
+            return true;
+        }
+        catch
+        {
+            result = Array.Empty<TimeSpan>();
+            return false;
+        }
+    }
 }

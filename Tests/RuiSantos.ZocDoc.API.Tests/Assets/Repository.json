@@ -11,20 +11,20 @@
     ],
     "Appointments": [
         {
-            "AppointmentId": "4d9e7d20-4c0b-4a71-9a3c-5d662f5c9e8f",
+            "AppointmentId": "8a6151c7-9122-4a98-90bb-6f2289c726d0",
             "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
             "PatientId": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
-            "AppointmentTime": "2023-08-21T09:00:00Z"
+            "AppointmentDateTime": "2023-08-21T09:00:00Z"
         }
     ],
-    "DomainLists": [
+    "Dictionary": [
         {
             "Source": "specialties",
-            "Values": {
-                "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9": "Pediatrics",
-                "8a6151c7-9122-4f1b-a1e7-85e981c17a14": "Dermatology",
-                "28e21d2c-0b18-43a3-8a3e-3f4dabf315e5": "Cardiology"
-            }
+            "Values": [
+                "Pediatrics",
+                "Dermatology",
+                "Cardiology"
+            ]
         }
     ],
     "DoctorSpecialties": [

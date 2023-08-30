@@ -25,11 +25,6 @@ public class Doctor : Person
     /// </summary>
     public HashSet<OfficeHour> OfficeHours { get; init; }
 
-    /// <summary>
-    /// The appointments of the doctor.
-    /// </summary>
-    public HashSet<Appointment> Appointments { get; init; }
-
 
     /// <summary>
     /// Creates a new instance of the <see cref="Doctor"/> class.
@@ -39,6 +34,5 @@ public class Doctor : Person
         License = string.Empty;
         Specialties = new HashSet<string>();
         OfficeHours = new HashSet<OfficeHour>();
-        Appointments = new HashSet<Appointment>();
     }
 }

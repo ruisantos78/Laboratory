@@ -53,29 +53,21 @@ internal static class ControllerExtensions
     /// Returns a 200 OK if the result collection is not null or empty, or 204 No Content otherwise.
     /// </summary>
     /// <param name="controller">The controller.</param>
-    /// <param name="model">The model.</param>
+    /// <param name="models">The model list.</param>
     /// <param name="contractType">The contract type. (optional)</param>
     /// <returns>The result HTTP Status code and the result.</returns>
-    public static IActionResult OkOrNoContent<TModel>(this Controller controller, IEnumerable<TModel> model, Type? contractType = null)
+    public static IActionResult OkOrNoContent<TModel>(this Controller controller, IEnumerable<TModel>? models, Type? contractType = null)
     {
-        var response = model.ToArray();
-        if (!response.Any())
+        if (!models?.Any() ?? false)
             return controller.NoContent();
 
         if (contractType is null)
-            return controller.Ok(response);
+            return controller.Ok(models);
 
-        var result = Array.CreateInstance(contractType, response.Length);
-        var i = 0;
-        foreach (var item in response)
-        {
-            var contract = Activator.CreateInstance(contractType, item); 
-            if (contract is not null)
-                result.SetValue(contract, i++);
-        }
-        
+        var result = models!.Select(model => Activator.CreateInstance(contractType, model));
+
         return controller.Ok(result);
-    }
+    } 
 
     /// <summary>
     /// Handles the successful result collection of the controller.
@@ -85,7 +77,7 @@ internal static class ControllerExtensions
     /// <param name="model">The model.</param>
     /// <param name="contractType">The contract type. (optional)</param>
     /// <returns>The result HTTP Status code and the result.</returns>    
-    public static async Task<IActionResult> OkOrNoCotentAsync<TModel>(this Controller controller, IAsyncEnumerable<TModel> model, Type? contractType = null)
+    public static async Task<IActionResult> OkOrNoContentAsync<TModel>(this Controller controller, IAsyncEnumerable<TModel> model, Type? contractType = null)
     {
         var response = await model.ToArrayAsync();
         if (!response.Any())
@@ -94,14 +86,7 @@ internal static class ControllerExtensions
         if (contractType is null)
             return controller.Ok(response);
 
-        var i = 0;
-        var result = Array.CreateInstance(contractType, response.Length);
-        foreach (var item in response)
-        {
-            var contract = Activator.CreateInstance(contractType, item);
-            if (contract is not null)
-                result.SetValue(contract, i++);
-        }
+        var result = response.Select(item => Activator.CreateInstance(contractType, item));
 
         return controller.Ok(result);
     }

@@ -32,7 +32,7 @@ public interface IDoctorService
     /// <param name="license">The doctor's license number.</param>
     /// <param name="dateTime">The date.</param>
     /// <returns>The doctor's appointments on the given date.</returns>
-    IAsyncEnumerable<PatientAppointment> GetAppointmentsAsync(string license, DateTime? dateTime);
+    Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(string license, DateTime? dateTime);
 
     /// <summary>
     /// Get the doctor's informations by a given license number.
@@ -58,16 +58,19 @@ internal class DoctorService : IDoctorService
     private readonly IRepositoryCache repositoryCache;
     private readonly IDoctorRepository doctorRepository;
     private readonly IPatientRepository patientRepository;
+    private readonly IAppointamentsRepository appointamentsRepository;
     private readonly ILogger logger;
 
     public DoctorService(IRepositoryCache repositoryCache,
-                            IDoctorRepository doctorRepository,
-                            IPatientRepository patientRepository,
-                            ILogger<DoctorService> logger)
+                        IDoctorRepository doctorRepository,
+                        IPatientRepository patientRepository,
+                        IAppointamentsRepository appointamentsRepository,
+                        ILogger<DoctorService> logger)
     {
         this.repositoryCache = repositoryCache;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
+        this.appointamentsRepository = appointamentsRepository;
         this.logger = logger;
     }
 
@@ -76,7 +79,8 @@ internal class DoctorService : IDoctorService
     {
         try
         {
-            var doctor = new Doctor() {
+            var doctor = new Doctor()
+            {
                 License = license,
                 Email = email,
                 FirstName = firstName,
@@ -103,10 +107,10 @@ internal class DoctorService : IDoctorService
     {
         try
         {
-            var doctor = await doctorRepository.FindAsync(license);
-            if (doctor is null)
+            var doctor = await doctorRepository.FindAsync(license) ??
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
+            // TODO: Only cancel appointment when the hour is excluded.
             doctor.OfficeHours.RemoveWhere(hour => hour.Week == dayOfWeek);
             if (hours.Any())
                 doctor.OfficeHours.Add(new OfficeHour(dayOfWeek, hours));
@@ -138,25 +142,15 @@ internal class DoctorService : IDoctorService
         }
     }
 
-    public async IAsyncEnumerable<PatientAppointment> GetAppointmentsAsync(string license, DateTime? dateTime)
+    public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(string license, DateTime? dateTime)
     {
         var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
 
         var doctor = await doctorRepository.FindAsync(license);
         if (doctor is null)
-            yield break;
+            return Array.Empty<PatientAppointment>();
 
-        var appointments = doctor.Appointments.Where(a => a.Date == date).ToHashSet();
-        if (!appointments.Any())
-            yield break;
-
-        var patients = await patientRepository.FindAllWithAppointmentsAsync(doctor.Appointments);
-        foreach (var patient in patients)
-        {
-            var patientAppointments = patient.Appointments.Where(pa => appointments.Any(da => da.Id == pa.Id));
-            foreach (var pa in patientAppointments)
-                yield return new(patient, pa.GetDateTime());
-        }
+        return await appointamentsRepository.GetPatientAppointmentsAsync(doctor, date);
     }
 
     private async Task ValidateDoctorAsync(Doctor model)
@@ -165,25 +159,27 @@ internal class DoctorService : IDoctorService
         Validator.ThrowExceptionIfIsNotValid(model, medicalSpecialties);
     }
 
-    private async Task CancelAppointmentsAsync(Doctor doctor, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
+    private Task CancelAppointmentsAsync(Doctor doctor, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
     {
-        var appointments = doctor.Appointments
-            .Where(appointment => appointment.Week == dayOfWeek && !hours.Contains(appointment.Time))
-            .ToHashSet();
+        // var appointments = doctor.Appointments
+        //     .Where(appointment => appointment.Week == dayOfWeek && !hours.Contains(appointment.Time))
+        //     .ToHashSet();
 
-        if (!appointments.Any())
-            return;
+        // if (!appointments.Any())
+        //     return;
 
-        var patients = await patientRepository.FindAllWithAppointmentsAsync(appointments);
-        if (patients.Any())
-        {
-            await Task.WhenAll(patients.Select(p =>
-            {
-                p.Appointments.RemoveWhere(pa => appointments.Any(da => da.Id == pa.Id));
-                return patientRepository.StoreAsync(p);
-            }).ToArray());
-        }
+        // var patients = await patientRepository.FindAllWithAppointmentsAsync(appointments);
+        // if (patients.Any())
+        // {
+        //     await Task.WhenAll(patients.Select(p =>
+        //     {
+        //         p.Appointments.RemoveWhere(pa => appointments.Any(da => da.Id == pa.Id));
+        //         return patientRepository.StoreAsync(p);
+        //     }).ToArray());
+        // }
 
-        doctor.Appointments.RemoveWhere(item => appointments.Any(a => a.Id == item.Id));
+        // doctor.Appointments.RemoveWhere(item => appointments.Any(a => a.Id == item.Id));
+
+        return Task.CompletedTask;
     }
 }

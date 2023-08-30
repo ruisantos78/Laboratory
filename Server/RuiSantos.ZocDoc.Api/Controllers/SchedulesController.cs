@@ -34,7 +34,7 @@ public class SchedulesController : Controller
         try
         {
             var models = service.GetAvailabilityAsync(specialty, date);
-            return await this.OkOrNoCotentAsync(models, typeof(DoctorAvailabilityContract));
+            return await this.OkOrNoContentAsync(models, typeof(DoctorAvailabilityContract));
         }
         catch (Exception ex)
         {

@@ -93,19 +93,20 @@ internal class PatientService : IPatientService
         }
     }
     
-    public async IAsyncEnumerable<DoctorAppointment> GetAppointmentsAsync(string socialNumber)
+    public IAsyncEnumerable<DoctorAppointment> GetAppointmentsAsync(string socialNumber)
     {
-        var patient = await patientRepository.FindAsync(socialNumber);
-        if (patient is null || !patient.Appointments.Any())
-            yield break;
+        // var patient = await patientRepository.FindAsync(socialNumber);
+        // if (patient is null)
+        //     yield break;
 
-        var doctors = await doctorRepository.FindAllWithAppointmentsAsync(patient.Appointments);
-        foreach (var doctor in doctors)
-        {
-            var dates = doctor.Appointments.Where(da => patient.Appointments.Any(pa => da.Id == pa.Id))
-                .Select(da => da.GetDateTime());
+        // var doctors = await doctorRepository.FindByAppointmentsAsync(patient.Appointments);
+        // foreach (var doctor in doctors)
+        // {
+        //     var dates = doctor.Appointments.Where(da => patient.Appointments.Any(pa => da.Id == pa.Id))
+        //         .Select(da => da.GetDateTime());
 
-            foreach (var date in dates) yield return new(doctor, date);
-        }
+        //     foreach (var date in dates) yield return new(doctor, date);
+        // }
+        throw new NotImplementedException();
     }
 }

@@ -1,9 +1,11 @@
-using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RuiSantos.ZocDoc.API.Tests.Containers;
 
 namespace RuiSantos.ZocDoc.API.Tests.Fixtures;
+
+[CollectionDefinition(nameof(ServiceCollectionFixture))]
+public class ServiceCollectionFixture: ICollectionFixture<ServiceFixture> { }
 
 public class ServiceFixture : IAsyncLifetime
 {
@@ -21,10 +23,10 @@ public class ServiceFixture : IAsyncLifetime
 
     internal IDynamoDBContext GetContext() => new DynamoDBContext(dynamoDbContainer.GetClient());
 
-    internal HttpClient GetClient()
+    internal HttpClient GetClient(string root = "/")
     {
         var client = factory.CreateClient();
-        client.BaseAddress = factory.Server.BaseAddress;
+        client.BaseAddress = new Uri(factory.Server.BaseAddress, root);
         return client;
     }    
 
@@ -37,6 +39,7 @@ public class ServiceFixture : IAsyncLifetime
     public async Task InitializeAsync()
     {
         await dynamoDbContainer.StartAsync();
+
         Environment.SetEnvironmentVariable("DATABASE_DYNAMO", dynamoDbContainer.GetConnectionString());
     }
 }

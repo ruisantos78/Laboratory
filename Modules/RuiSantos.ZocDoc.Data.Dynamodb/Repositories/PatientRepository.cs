@@ -16,17 +16,12 @@ public class PatientRepository : IPatientRepository
     }
 
     public async Task StoreAsync(Patient patient)
-        => await PatientDto.SetPatientAsync(context, patient);
+    {
+        await PatientDto.SetPatientAsync(context, patient);
+    }
 
     public async Task<Patient?> FindAsync(string socialSecurityNumber)
-        => await PatientDto.GetPatientBySocialSecurityNumberAsync(context, socialSecurityNumber);
-
-    public async Task<List<Patient>> FindAllWithAppointmentsAsync(IEnumerable<Appointment> appointments)
     {
-        var query = appointments.Select(async appoint => await PatientDto.GetPatientByAppointmentIdAsync(context, appoint.Id));
-        var queryResult = await Task.WhenAll(query);
-        
-        var patients = queryResult?.Where(patient => patient is not null).Select(patient => patient!);
-        return patients?.ToList() ?? new List<Patient>();    
+        return await PatientDto.GetPatientBySocialSecurityNumberAsync(context, socialSecurityNumber);
     }
 }

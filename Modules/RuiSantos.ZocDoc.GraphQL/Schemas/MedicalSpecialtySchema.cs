@@ -1,9 +1,9 @@
 ﻿namespace RuiSantos.ZocDoc.GraphQL.Schemas;
 
-[GraphQLName("Medical Specialty")]
-[GraphQLDescription("Represents a medical specialty.")]
+[GraphQLName("Specialties")]
+[GraphQLDescription("Medical Specialties")]
 public class MedicalSpecialtySchema
 {
-    [GraphQLDescription("Medical specialty description")]
+    [GraphQLDescription("Description")]
     public required string Description { get; init; }
 }

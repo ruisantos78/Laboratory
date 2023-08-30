@@ -1,9 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
 using RuiSantos.ZocDoc.Core.Repositories;
 using RuiSantos.ZocDoc.Core.Services.Exceptions;
-using RuiSantos.ZocDoc.Core.Models;
 using RuiSantos.ZocDoc.Core.Resources;
-using RuiSantos.ZocDoc.Core.Validators;
+using RuiSantos.ZocDoc.Core.Cache;
 
 namespace RuiSantos.ZocDoc.Core.Services;
 
@@ -18,14 +17,14 @@ public interface IMedicalSpecialtiesService
     /// <param name="decriptions">The description of the specialty.</param>
     /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
     /// <exception cref="ServiceFailException">Thrown when the management fails.</exception>
-    Task CreateMedicalSpecialtiesAsync(List<string> decriptions);
+    Task CreateMedicalSpecialtiesAsync(List<string> descriptions);
 
     /// <summary>
     /// Gets all the medical specialties.
     /// </summary>
     /// <returns>A list of medical specialties.</returns>
     /// <exception cref="ServiceFailException">Thrown when the management fails.</exception>
-    Task<List<MedicalSpecialty>> GetMedicalSpecialitiesAsync();
+    Task<IReadOnlySet<string>> GetMedicalSpecialitiesAsync();
 
     /// <summary>
     /// Removes a medical specialty.
@@ -39,33 +38,25 @@ public interface IMedicalSpecialtiesService
 internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
 {
     private readonly IMedicalSpecialityRepository medicalSpecialityRepository;
-    private readonly IDoctorRepository doctorRepository;
+    private readonly IRepositoryCache cache;
     private readonly ILogger logger;
 
-    public MedicalSpecialtiesService(IMedicalSpecialityRepository medicalSpecialityRepository,
-                                        IDoctorRepository doctorRepository,
-                                        ILogger<MedicalSpecialtiesService> logger)
+    public MedicalSpecialtiesService(
+        IMedicalSpecialityRepository medicalSpecialityRepository,   
+        IRepositoryCache cache,                                     
+        ILogger<MedicalSpecialtiesService> logger)
     {
         this.medicalSpecialityRepository = medicalSpecialityRepository;
-        this.doctorRepository = doctorRepository;
+        this.cache = cache;
         this.logger = logger;
     }
 
-    public async Task CreateMedicalSpecialtiesAsync(List<string> decriptions)
+    public async Task CreateMedicalSpecialtiesAsync(List<string> descriptions)
     {
         try
         {
-            foreach (var description in decriptions)
-            {
-                if (await medicalSpecialityRepository.ContainsAsync(description))
-                    continue;
-
-                var model = new MedicalSpecialty(description);
-
-                Validator.ThrowExceptionIfIsNotValid(model);
-                await medicalSpecialityRepository.AddAsync(model);
-            }
-            
+            await medicalSpecialityRepository.AddAsync(descriptions); 
+            cache.ClearMedicalSpecialties();
         }
         catch (ValidationFailException)
         {
@@ -82,17 +73,8 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
     {
         try
         {
-            if (await medicalSpecialityRepository.ContainsAsync(description) == false) 
-                throw new ValidationFailException(MessageResources.MedicalSpecialitiesDescriptionNotFound);
-
-            await medicalSpecialityRepository.RemoveAsync(description);
-
-            var doctors = await doctorRepository.FindBySpecialityAsync(description);
-            foreach (var doctor in doctors)
-            {
-                doctor.Specialties.Remove(description);
-                await doctorRepository.StoreAsync(doctor);
-            }            
+            await medicalSpecialityRepository.RemoveAsync(description); 
+            cache.ClearMedicalSpecialties();         
         }
         catch (ValidationFailException)
         {
@@ -105,11 +87,12 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
         }
     }
 
-    public async Task<List<MedicalSpecialty>> GetMedicalSpecialitiesAsync()
+    public async Task<IReadOnlySet<string>> GetMedicalSpecialitiesAsync()
     {
         try
         {
-            return await medicalSpecialityRepository.ToListAsync();
+            return await cache.GetMedicalSpecialtiesAsync() 
+                ?? await medicalSpecialityRepository.GetAsync();        
         }
         catch (Exception ex)
         {

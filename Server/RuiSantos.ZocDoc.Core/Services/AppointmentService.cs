@@ -63,22 +63,24 @@ internal class AppointmentService : IAppointmentService
     {
         try
         {
-            var patient = await patientRepository.FindAsync(socialNumber);
-            if (patient is null)
-                throw new ValidationFailException(MessageResources.PatientSocialNumberNotFound);
-
-            if (patient.Appointments.Any(appointment => appointment.GetDateTime().Equals(dateTime)))
-                throw new ValidationFailException(MessageResources.RecordAlreadyExists);
-
             var doctor = await doctorRepository.FindAsync(medicalLicence);
             if (doctor is null)
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
-            if (doctor.Appointments.Any(appointment => appointment.GetDateTime().Equals(dateTime)))
+            var doctorAppointment = await appointamentsRepository.GetAsync(doctor, dateTime);
+            if (doctorAppointment is not null)
+                throw new ValidationFailException(MessageResources.RecordAlreadyExists);
+
+            var patient = await patientRepository.FindAsync(socialNumber);
+            if (patient is null)
+                throw new ValidationFailException(MessageResources.PatientSocialNumberNotFound);
+
+            var patientAppointment = await appointamentsRepository.GetAsync(patient, dateTime);
+            if (patientAppointment is not null)
                 throw new ValidationFailException(MessageResources.RecordAlreadyExists);
 
             var appointment = new Appointment(dateTime);
-            await appointamentsRepository.StoreAsync(doctor, patient, appointment);
+            await appointamentsRepository.StoreAsync(doctor, patient, dateTime);        
         }        
         catch (ValidationFailException)
         {
@@ -99,15 +101,22 @@ internal class AppointmentService : IAppointmentService
             if (patient is null)
                 throw new ValidationFailException(MessageResources.PatientSocialNumberNotFound);
 
-            var appointment = patient.Appointments.FirstOrDefault(app => app.GetDateTime() == dateTime);
-            if (appointment is null)
+            var patientAppointment = await appointamentsRepository.GetAsync(patient, dateTime);
+            if (patientAppointment is null)
                 return;
 
             var doctor = await doctorRepository.FindAsync(medicalLicence);
             if (doctor is null)
                 return;
 
-            await appointamentsRepository.RemoveAsync(doctor, patient, appointment);
+            var doctorAppointment = await appointamentsRepository.GetAsync(doctor, dateTime);
+            if (doctorAppointment is null)
+                return;
+
+            if (patientAppointment.Id != doctorAppointment.Id)
+                return;
+
+            await appointamentsRepository.RemoveAsync(patientAppointment);
         }         
         catch (ValidationFailException)
         {
@@ -120,23 +129,9 @@ internal class AppointmentService : IAppointmentService
         }
     }
 
-    public async IAsyncEnumerable<DoctorSchedule> GetAvailabilityAsync(string speciality, DateTime dateTime)
+    public IAsyncEnumerable<DoctorSchedule> GetAvailabilityAsync(string speciality, DateTime dateTime)
     {
         var date = DateOnly.FromDateTime(dateTime);
-
-        var doctors = await doctorRepository.FindBySpecialtyWithAvailabilityAsync(speciality, date);
-        foreach (var doctor in doctors)
-        {
-            var officeHours = doctor.OfficeHours.Where(hour => hour.Week == date.DayOfWeek)
-                .SelectMany(hour => hour.Hours);
-
-            var appointments = doctor.Appointments.Where(appointment => appointment.Date == date)
-                .Select(appointment => appointment.Time);
-
-            var schedule = officeHours.Except(appointments)
-                .Select(time => date.WithTime(time));
-
-            yield return new(doctor, schedule);
-        }
+        return doctorRepository.FindBySpecialtyWithAvailabilityAsync(speciality, date);
     }
 }
