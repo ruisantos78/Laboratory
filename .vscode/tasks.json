@@ -7,7 +7,7 @@
             "type": "process",
             "args": [
                 "build",
-                "${workspaceFolder}/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj",
+                "${workspaceFolder}/RuiSantos.Labs.Api/RuiSantos.Labs.Api.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -19,7 +19,7 @@
             "type": "process",
             "args": [
                 "publish",
-                "${workspaceFolder}/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj",
+                "${workspaceFolder}/RuiSantos.Labs.Api/RuiSantos.Labs.Api.csproj",
                 "/property:GenerateFullPaths=true",
                 "/consoleloggerparameters:NoSummary"
             ],
@@ -33,7 +33,7 @@
                 "watch",
                 "run",
                 "--project",
-                "${workspaceFolder}/RuiSantos.ZocDoc.Api/RuiSantos.ZocDoc.Api.csproj"
+                "${workspaceFolder}/RuiSantos.Labs.Api/RuiSantos.Labs.Api.csproj"
             ],
             "problemMatcher": "$msCompile"
         },
@@ -43,7 +43,7 @@
             "type": "process",
             "args": [
                 "test",
-                "${workspaceFolder}/RuiSantos.ZocDoc.Core.Tests/RuiSantos.ZocDoc.Core.Tests.csproj"
+                "${workspaceFolder}/RuiSantos.Labs.Core.Tests/RuiSantos.Labs.Core.Tests.csproj"
             ]
         }
     ]

@@ -1,20 +1,20 @@
 version: '3.4'
 
 services:
-  ruisantos.zocdoc.db.dynamo:
+  ruisantos.labs.db.dynamo:
    command: "-jar DynamoDBLocal.jar -sharedDb"
    image: "amazon/dynamodb-local:latest"
    restart: always
    ports:
      - "8000:8000"
 
-  ruisantos.zocdoc.api:
-    image: ${DOCKER_REGISTRY-}ruisantoszocdocapi
+  ruisantos.lab.api:
+    image: ${DOCKER_REGISTRY-}ruisantoslabapi
     depends_on:
-      - ruisantos.zocdoc.db.dynamo
+      - ruisantos.labs.db.dynamo
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - DATABASE_DYNAMO=http://ruisantos.zocdoc.db.dynamo:8000
+      - DATABASE_DYNAMO=http://ruisantos.labs.db.dynamo:8000
     ports:
       - 8001:80
     build:

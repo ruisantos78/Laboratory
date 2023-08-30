@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);1591</NoWarn>
+    <Configurations>Debug;Release</Configurations>
+  </PropertyGroup>
+
+  <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' " />
+
+  <ItemGroup>
+    <PackageReference Include="Swashbuckle.AspNetCore" Version="6.5.0" />
+    <PackageReference Include="System.Linq.Async" Version="6.0.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\RuiSantos.Labs.Core\RuiSantos.Labs.Core.csproj" />
+    <ProjectReference Include="..\..\Modules\RuiSantos.Labs.Data.Dynamodb\RuiSantos.Labs.Data.Dynamodb.csproj" />
+    <ProjectReference Include="..\..\Modules\RuiSantos.Labs.GraphQL\RuiSantos.Labs.GraphQL.csproj" />
+  </ItemGroup>
+</Project>

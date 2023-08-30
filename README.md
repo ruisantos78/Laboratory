@@ -1,4 +1,4 @@
-# ZocDoc Backend Test API
+# Rui Santos Laboratory
 
 This repository contains an ASP.NET Core API that facilitates medical appointments scheduling and management for patients and doctors.
 
@@ -19,16 +19,16 @@ This API was built using the following technologies:
 - [Testcontainers](https://dotnet.testcontainers.org/)
 
 ## Getting Started
-To set up the ZocDoc Backend Test API on your local machine, follow these steps:
+To set up the Rui Santos Laboratory on your local machine, follow these steps:
 
 1. Clone this repository:
 ```
-git clone https://github.com/ruisantos78/ZocDoc.git
+git clone https://github.com/ruisantos78/Laboratory.git
 ```
 
 2. Navigate to the root directory of the project:
 ```
-cd ZocDoc
+cd Laboratory
 ```
 
 3. Build and start the API using Docker Compose:

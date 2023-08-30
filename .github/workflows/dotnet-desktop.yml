@@ -12,8 +12,7 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      Solution_Name: RuiSantos.ZocDoc.sln                       
-#      Test_Project_Path: Tests\RuiSantos.ZocDoc.Core.Tests\RuiSantos.ZocDoc.Core.Tests.csproj
+      Solution_Name: RuiSantos.Labs.sln                       
       
     steps:
     
@@ -28,6 +27,3 @@ jobs:
           
     - name: Build
       run: dotnet build --no-restore $Solution_Name
-
-#    - name: Test
-#      run: dotnet test --no-build --verbosity normal $Test_Project_Path
