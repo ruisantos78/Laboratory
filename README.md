@@ -17,6 +17,7 @@ This API was built using the following technologies:
 - [Docker](https://www.docker.com/)
 - [xUnit Tests](https://xunit.net/)
 - [Testcontainers](https://dotnet.testcontainers.org/)
+- [NSubstitute](https://nsubstitute.github.io/)
 
 ## Getting Started
 To set up the Rui Santos Laboratory on your local machine, follow these steps:

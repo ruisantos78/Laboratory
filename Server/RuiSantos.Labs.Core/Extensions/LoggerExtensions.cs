@@ -13,8 +13,11 @@ internal static class LoggerExtensions
     /// </summary>
     /// <param name="logger">The logger.</param>
     /// <param name="ex">The exception.</param>
-    public static void Fail(this ILogger logger, Exception ex)
+    public static void Fail(this ILogger logger, Exception? ex)
     {
+        if (ex is null)
+            return;
+        
         var stackTrace = new StackTrace(ex, true);
         var frame = stackTrace.GetFrame(0);
         var method = frame!.GetMethod();
