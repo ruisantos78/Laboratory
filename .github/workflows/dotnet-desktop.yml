@@ -12,7 +12,8 @@ jobs:
     runs-on: ubuntu-latest
 
     env:
-      Solution_Name: RuiSantos.Labs.sln                       
+      Solution_Name: RuiSantos.Labs.sln
+      Test_Project_Name: Tests/RuiSantos.Labs.Tests/RuiSantos.Labs.Tests.csproj
       
     steps:
     
@@ -27,3 +28,6 @@ jobs:
           
     - name: Build
       run: dotnet build --no-restore $Solution_Name
+
+    - name: Unit Tests
+      run: dotnet test --no-build --nologo --verbosity normal $Test_Project_Name

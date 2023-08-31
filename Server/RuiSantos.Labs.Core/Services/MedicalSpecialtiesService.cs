@@ -14,7 +14,7 @@ public interface IMedicalSpecialtiesService
     /// <summary>
     /// Creates a new medical specialty.
     /// </summary>
-    /// <param name="decriptions">The description of the specialty.</param>
+    /// <param name="descriptions">The description of the specialty.</param>
     /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
     /// <exception cref="ServiceFailException">Thrown when the management fails.</exception>
     Task CreateMedicalSpecialtiesAsync(List<string> descriptions);
