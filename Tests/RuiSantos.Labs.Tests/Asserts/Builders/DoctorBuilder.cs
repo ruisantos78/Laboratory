@@ -1,6 +1,6 @@
 using RuiSantos.Labs.Core.Models;
 
-namespace RuiSantos.Labs.Tests.Builders;
+namespace RuiSantos.Labs.Tests.Asserts.Builders;
 
 internal class DoctorBuilder
 {

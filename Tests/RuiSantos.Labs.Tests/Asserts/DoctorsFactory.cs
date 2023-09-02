@@ -4,7 +4,7 @@ using RuiSantos.Labs.Core.Cache;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services;
 
-namespace RuiSantos.Labs.Tests.Factories;
+namespace RuiSantos.Labs.Tests.Asserts;
 
 internal class DoctorsFactory {
     public IRepositoryCache Cache { get; }

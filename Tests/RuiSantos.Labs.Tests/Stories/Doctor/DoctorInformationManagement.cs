@@ -2,7 +2,7 @@ using FluentAssertions;
 using NSubstitute;
 using RuiSantos.Labs.Core;
 using RuiSantos.Labs.Core.Services.Exceptions;
-using RuiSantos.Labs.Tests.Factories;
+using RuiSantos.Labs.Tests.Asserts;
 
 namespace RuiSantos.Labs.Tests.Stories.Doctor;
 

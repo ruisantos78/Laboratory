@@ -58,10 +58,6 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
             await medicalSpecialityRepository.AddAsync(descriptions); 
             cache.ClearMedicalSpecialties();
         }
-        catch (ValidationFailException)
-        {
-            throw;
-        }
         catch (Exception ex)
         {
             logger?.Fail(ex);
@@ -75,10 +71,6 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
         {
             await medicalSpecialityRepository.RemoveAsync(description); 
             cache.ClearMedicalSpecialties();         
-        }
-        catch (ValidationFailException)
-        {
-            throw;
         }
         catch (Exception ex)
         {
