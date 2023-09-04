@@ -6,6 +6,11 @@ internal class DoctorBuilder
 {
     private readonly Doctor model = new();
     
+    public Doctor Build()
+    {
+        return model;
+    }
+
     public DoctorBuilder With(string? license = null, string? email = null, string? firstName = null, string? lastName = null)
     {
         model.License = license ?? model.License;
@@ -15,21 +20,14 @@ internal class DoctorBuilder
         
         return this;
     }
-    
-    public DoctorBuilder AddSpecialties(IEnumerable<string> specialties)
+
+    public DoctorBuilder WithOfficeHours(DayOfWeek week, params string[] hours)
     {
-        specialties.ToList().ForEach(x => model.Specialties.Add(x));
+        var timespans = hours.Select(x => TimeSpan.Parse(x));
+
+        model.OfficeHours.RemoveWhere(x => x.Week == week);
+        model.OfficeHours.Add(new OfficeHour(week, timespans));
+
         return this;
-    }
-    
-    public DoctorBuilder AddContacNumbers(IEnumerable<string> contactNumbers)
-    {
-        contactNumbers.ToList().ForEach(x => model.ContactNumbers.Add(x));
-        return this;
-    }
-    
-    public Doctor Build()
-    {
-        return model;
     }
 }
