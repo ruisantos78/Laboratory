@@ -14,6 +14,7 @@ This API was built using the following technologies:
 - [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
 - [AWS Dynamodb](https://aws.amazon.com/en/pm/dynamodb/)
 - [Swagger](https://swagger.io/)
+- [GraphQL](https://graphql.org/)
 - [Docker](https://www.docker.com/)
 - [xUnit Tests](https://xunit.net/)
 - [Testcontainers](https://dotnet.testcontainers.org/)
