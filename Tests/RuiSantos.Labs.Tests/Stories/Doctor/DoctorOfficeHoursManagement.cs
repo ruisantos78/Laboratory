@@ -1,5 +1,6 @@
 ﻿using FluentAssertions;
 using NSubstitute;
+using NSubstitute.ReturnsExtensions;
 using RuiSantos.Labs.Core;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
@@ -11,22 +12,13 @@ namespace RuiSantos.Labs.Tests.Stories.Doctor;
 // As a doctor, I want to be able to define and manage my work hours.
 public class DoctorOfficeHoursManagement
 {
+    private static readonly string[] MorningHours = new[] { "09:00", "09:30", "10:00", "10:30", "11:00", "11:30" };
+    private static readonly string[] AfternoonHours = new[] { "13:00", "13:30", "14:00", "14:30", "15:00", "15:30" };
+
     public static IEnumerable<object[]> OfficeHours => new List<object[]> {
-        new object[] {
-            "ABC123",
-            DayOfWeek.Monday,
-            new[] { "09:00", "09:30", "10:00", "10:30", "11:00", "11:30" }
-        },
-        new object[] {
-            "ABC123",
-            DayOfWeek.Wednesday,
-            new[] { "09:00", "09:30", "10:00", "10:30", "11:00", "11:30" }
-        },
-        new object[] {
-            "ABC123",
-            DayOfWeek.Friday,
-            new[] { "09:00", "09:30", "10:00", "10:30", "11:00", "11:30" }
-        }
+        new object[] { "ABC123", DayOfWeek.Monday, MorningHours },
+        new object[] { "ABC123", DayOfWeek.Wednesday, MorningHours },
+        new object[] { "ABC123", DayOfWeek.Friday, MorningHours },
     };
 
     [Theory(DisplayName = "The doctor should be able the set with hours they attend by week days")]
@@ -34,7 +26,7 @@ public class DoctorOfficeHoursManagement
     public async Task SetOfficeHoursAsync_WithSuccess(string license, DayOfWeek dayOfWeek, string[] hours)
     {
         // Arrange    
-        var timespans = hours.Select(x => TimeSpan.Parse(x));
+        var timespans = hours.Select(TimeSpan.Parse).ToArray();
 
         var asserts = new DoctorsAsserts();
 
@@ -66,13 +58,14 @@ public class DoctorOfficeHoursManagement
 
         asserts.DoctorRepository.FindAsync(license).Returns(new DoctorBuilder()
             .With(license)
-            .WithOfficeHours(DayOfWeek.Monday, "13:00", "13:30", "14:00", "14:30", "15:00", "15:30")
-            .WithOfficeHours(DayOfWeek.Wednesday, "13:00", "13:30", "14:00", "14:30", "15:00", "15:30")
-            .WithOfficeHours(DayOfWeek.Friday,  "13:00", "13:30", "14:00", "14:30", "15:00", "15:30")
+            .WithOfficeHours(DayOfWeek.Monday, AfternoonHours)
+            .WithOfficeHours(DayOfWeek.Wednesday, AfternoonHours)
+            .WithOfficeHours(DayOfWeek.Friday, AfternoonHours)
             .Build()
         );
         
-        var timespans = hours.Select(x => TimeSpan.Parse(x));
+        var timespans = hours.Select(TimeSpan.Parse).ToArray();
+        var afternoon = AfternoonHours.Select(TimeSpan.Parse).ToArray();
 
         // Act
         var service = asserts.GetService();
@@ -84,7 +77,7 @@ public class DoctorOfficeHoursManagement
                 x.License == license && 
                 x.OfficeHours.All(y => 
                     (y.Week == dayOfWeek && y.Hours.SequenceEqual(timespans)) ||
-                    (y.Week != dayOfWeek && y.Hours.Min().Hours == 13 && y.Hours.Max().Hours == 15)
+                    (y.Week != dayOfWeek && y.Hours.SequenceEqual(afternoon))
                 ))
             );
 
@@ -98,8 +91,8 @@ public class DoctorOfficeHoursManagement
         // Arrange    
         var asserts = new DoctorsAsserts();
 
-        asserts.DoctorRepository.FindAsync(license).Returns(default(Core.Models.Doctor));
-        var timespans = hours.Select(x => TimeSpan.Parse(x));
+        asserts.DoctorRepository.FindAsync(license).ReturnsNull();
+        var timespans = hours.Select(TimeSpan.Parse).ToArray();
 
         // Act & Assert
         var service = asserts.GetService();

@@ -1,6 +1,7 @@
 ﻿using FluentAssertions;
 using NSubstitute;
 using RuiSantos.Labs.Core;
+using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;
 
@@ -50,7 +51,7 @@ public class MedicalSpecialtiesManagement
         await service.Awaiting(x => x.CreateMedicalSpecialtiesAsync(specialties))
             .Should()
             .ThrowAsync<ServiceFailException>()
-            .WithMessage("Failed to store a medical speciality.");
+            .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
 
         // Assert 
         await asserts.Repository.Received().AddAsync(specialties);
@@ -62,7 +63,7 @@ public class MedicalSpecialtiesManagement
     public async Task RemoveMedicalSpecialtiesAsync_WithSuccess()
     {
         // Arrange
-        var specialty = "Orthopedics";
+        const string specialty = "Orthopedics";
 
         var asserts = new MedicalSpecialtiesAsserts();
 
@@ -93,7 +94,7 @@ public class MedicalSpecialtiesManagement
         await service.Awaiting(x => x.RemoveMedicalSpecialtiesAsync(specialty))
             .Should()
             .ThrowAsync<ServiceFailException>()
-            .WithMessage("Failed to store a medical speciality.");
+            .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
         
         // Assert 
         await asserts.Repository.Received().RemoveAsync(specialty);

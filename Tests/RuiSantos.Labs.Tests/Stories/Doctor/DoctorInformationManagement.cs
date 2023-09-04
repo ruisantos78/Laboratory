@@ -50,7 +50,7 @@ public class DoctorInformationManagement
         asserts.Cache.GetMedicalSpecialtiesAsync().Returns(Task.FromResult(cachedSpecialties));
 
         asserts.DoctorRepository.StoreAsync(Arg.Any<Core.Models.Doctor>())
-            .ThrowsAsync(new Exception("Some error"));
+            .ThrowsAsync(new InvalidOperationException());
 
         // Act
         var service = asserts.GetService();
@@ -81,8 +81,7 @@ public class DoctorInformationManagement
 
         // Act
         var service = asserts.GetService();
-        await service.Awaiting(x =>
-                x.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties))
+        await service.Awaiting(x => x.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties))
             .Should()
             .ThrowAsync<ValidationFailException>()
             .Where(ex => ex.Errors.Single().PropertyName == propertyName);
