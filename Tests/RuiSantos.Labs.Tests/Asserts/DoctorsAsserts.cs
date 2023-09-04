@@ -6,14 +6,14 @@ using RuiSantos.Labs.Core.Services;
 
 namespace RuiSantos.Labs.Tests.Asserts;
 
-internal class DoctorsFactory {
+internal class DoctorsAsserts {
     public IRepositoryCache Cache { get; }
     public IDoctorRepository DoctorRepository { get; }
     public IPatientRepository PatientRepository { get; }
     public IAppointamentsRepository AppointamentsRepository { get; }
     public ILogger<DoctorService> Logger { get; }
 
-    public DoctorsFactory()
+    public DoctorsAsserts()
     {
         Cache = Substitute.For<IRepositoryCache>();
         DoctorRepository = Substitute.For<IDoctorRepository>();
@@ -22,7 +22,7 @@ internal class DoctorsFactory {
         Logger = Substitute.For<ILogger<DoctorService>>();
     }
     
-    public IDoctorService CreateService()
+    public IDoctorService GetService()
     {
         return new DoctorService(
             Cache,

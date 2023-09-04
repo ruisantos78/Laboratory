@@ -14,7 +14,7 @@ public class DoctorInformationManagement
         "Cardiologist"
     };
     
-    [Theory(DisplayName = "Register the doctor personal informations")]
+    [Theory(DisplayName = "The doctor should be able to create a new record with your personal information.")]
     [InlineData("ABC123", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     public async Task RegisterDoctorPersonalInformations_WithSuccess(
         string license, string email, string firstName, string lastName,
@@ -33,7 +33,7 @@ public class DoctorInformationManagement
         asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
     }
     
-    [Theory(DisplayName = "Do not register the doctor personal invalid informations")]
+    [Theory(DisplayName = "The doctor should not be able to create a record with invalid or missing information.")]
     [InlineData("License", null, "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("Email", "ABC123", "<invalid email>", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("Email", "ABC123", null, "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]

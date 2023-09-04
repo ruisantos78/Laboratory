@@ -16,7 +16,7 @@ partial class DoctorControllerTests
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var content = await response.Content.As<DoctorAppointmentsContract[]>(output);
+        var content = await response.Content.GetModelAsync<DoctorAppointmentsContract[]>(output);
         content.Should().HaveCount(1);
 
         var element = content.First();
@@ -41,7 +41,7 @@ partial class DoctorControllerTests
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var content = await response.Content.As<DoctorAppointmentsContract[]>(output);
+        var content = await response.Content.GetModelAsync<DoctorAppointmentsContract[]>(output);
         content.Should().HaveCount(1);
 
         var element = content.First();

@@ -30,8 +30,8 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
     public async Task GetDoctorInformationByLicense(string license)
     {
         // Arrange
-        var expected = await context.FindAsync<DoctorDto>(DoctorLicenseIndexName, license);
-        var expectedSpecialties = await context.QueryAsync<DoctorSpecialtyDto>(expected.Id).GetRemainingAsync();
+        var expected = await context.FindAsync<DoctorDto>(license, DoctorLicenseIndexName);
+        var expectedSpecialties = await context.FindAllAsync<DoctorSpecialtyDto>(expected.Id);
 
         var request = new
         {
@@ -111,14 +111,14 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var doctor = await context.FindAsync<DoctorDto>(DoctorLicenseIndexName, "ABC456");
+        var doctor = await context.FindAsync<DoctorDto>("ABC456", DoctorLicenseIndexName);
         doctor.License.Should().Be("ABC456");
         doctor.FirstName.Should().Be("John");
         doctor.LastName.Should().Be("Doe");
         doctor.Email.Should().Be("john.doe@example.com");
         doctor.ContactNumbers.Should().AllBe("123-456-7890");
 
-        var specialties = await context.QueryAsync<DoctorSpecialtyDto>(doctor.Id).GetRemainingAsync();
+        var specialties = await context.FindAllAsync<DoctorSpecialtyDto>(doctor.Id);
         specialties.Should().HaveCount(2);
         specialties.Select(ds => ds.Specialty).Should().BeEquivalentTo(new[] { "Cardiology", "Pediatrics" });
     }
@@ -186,7 +186,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var specialties = await context.LoadAsync<DictionaryDto>("specialties");
+        var specialties = await context.FindAsync<DictionaryDto>("specialties");
         specialties.Values.Should().OnlyHaveUniqueItems().And.Contain(new[]
          {
             "Gastroenterology",
