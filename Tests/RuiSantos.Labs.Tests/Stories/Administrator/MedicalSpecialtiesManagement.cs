@@ -10,7 +10,7 @@ namespace RuiSantos.Labs.Tests.Stories.Administrator;
 public class MedicalSpecialtiesManagement
 {    
     [Fact(DisplayName = "The medical specialties should be available in the system")]
-    public async Task AddMedicalSpecialties_WithSuccess()
+    public async Task CreateMedicalSpecialtiesAsync_WithSuccess()
     {
         // Arrange
         var specialties = new List<string> {
@@ -34,7 +34,7 @@ public class MedicalSpecialtiesManagement
     }
 
     [Fact(DisplayName = "A log should be written when failling to add medical specialties")]
-    public async Task AddMedicalSpecialties_ShouldWriteLog_WhenThrowsExceptions()
+    public async Task CreateMedicalSpecialtiesAsync_WhenThrowsExceptions_ShouldWriteLog()
     {
         // Arrange
         var specialties = new List<string>();
@@ -59,7 +59,7 @@ public class MedicalSpecialtiesManagement
     }
     
     [Fact(DisplayName = "The specialties should be removed from the system")]
-    public async Task RemoveMedicalSpecialty_WithSuccess()
+    public async Task RemoveMedicalSpecialtiesAsync_WithSuccess()
     {
         // Arrange
         var specialty = "Orthopedics";
@@ -77,7 +77,7 @@ public class MedicalSpecialtiesManagement
     }
     
     [Fact(DisplayName = "A log should be written when fail to remove medical specialties")]
-    public async Task RemoveMedicalSpecialty_ShouldWriteLog_WhenThrowsExceptions()
+    public async Task RemoveMedicalSpecialtiesAsync_WhenThrowsExceptions_ShouldWriteLog()
     {
         // Arrange
         var specialty = string.Empty;

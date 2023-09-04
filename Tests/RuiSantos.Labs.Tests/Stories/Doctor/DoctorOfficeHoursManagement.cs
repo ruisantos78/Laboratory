@@ -6,8 +6,6 @@ using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;
 using RuiSantos.Labs.Tests.Asserts.Builders;
 
-using TDoctor = RuiSantos.Labs.Core.Models.Doctor;
-
 namespace RuiSantos.Labs.Tests.Stories.Doctor;
 
 // As a doctor, I want to be able to define and manage my work hours.
@@ -33,7 +31,7 @@ public class DoctorOfficeHoursManagement
 
     [Theory(DisplayName = "The doctor should be able the set with hours they attend by week days")]
     [MemberData(nameof(OfficeHours))]
-    public async Task ShouldBeAbleToSetHoursByWeekDays_WithSuccess(string license, DayOfWeek dayOfWeek, string[] hours)
+    public async Task SetOfficeHoursAsync_WithSuccess(string license, DayOfWeek dayOfWeek, string[] hours)
     {
         // Arrange    
         var timespans = hours.Select(x => TimeSpan.Parse(x));
@@ -51,7 +49,7 @@ public class DoctorOfficeHoursManagement
 
         // Assert
         await asserts.DoctorRepository.Received(1)
-            .StoreAsync(Arg.Is<TDoctor>(x => 
+            .StoreAsync(Arg.Is<Core.Models.Doctor>(x => 
                 x.License == license && 
                 x.OfficeHours.All(y => y.Week == dayOfWeek && y.Hours.SequenceEqual(timespans))
             ));
@@ -59,9 +57,9 @@ public class DoctorOfficeHoursManagement
         asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
     }
 
-    [Theory(DisplayName = "The doctor should be able to replace the office hours by week days")]
+    [Theory(DisplayName = "The doctor should be able to modify their weekly schedule by changing the office hours.")]
     [MemberData(nameof(OfficeHours))]
-    public async Task ShouldBeAbleToReplaceOfficeHoursByWeekDays_WithSuccess(string license, DayOfWeek dayOfWeek, string[] hours)
+    public async Task SetOfficeHoursAsync_WhenHasOfficeHours_ShouldReplace_WithSuccess(string license, DayOfWeek dayOfWeek, string[] hours)
     {
         // Arrange    
         var asserts = new DoctorsAsserts();
@@ -82,7 +80,7 @@ public class DoctorOfficeHoursManagement
 
         // Assert
         await asserts.DoctorRepository.Received(1)
-            .StoreAsync(Arg.Is<TDoctor>(x => 
+            .StoreAsync(Arg.Is<Core.Models.Doctor>(x => 
                 x.License == license && 
                 x.OfficeHours.All(y => 
                     (y.Week == dayOfWeek && y.Hours.SequenceEqual(timespans)) ||
@@ -93,14 +91,14 @@ public class DoctorOfficeHoursManagement
         asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
     }
 
-    [Theory(DisplayName = "The doctor should not be able to set office hours by week days if the doctor does not exist")]    
+    [Theory(DisplayName = "It should not be possible to establish office hours for a doctor who is not registered.")]    
     [MemberData(nameof(OfficeHours))]
-    public async Task ShouldNotBeAbleToSetOfficeHoursByWeekDays_IfDoctorDoesNotExist_WithSuccess(string license, DayOfWeek dayOfWeek, string[] hours)
+    public async Task SetOfficeHoursAsync_WhenDoctorDoesNotExist_ThrownValidationFailException(string license, DayOfWeek dayOfWeek, string[] hours)
     {
         // Arrange    
         var asserts = new DoctorsAsserts();
 
-        asserts.DoctorRepository.FindAsync(license).Returns(default(TDoctor));
+        asserts.DoctorRepository.FindAsync(license).Returns(default(Core.Models.Doctor));
         var timespans = hours.Select(x => TimeSpan.Parse(x));
 
         // Act & Assert
@@ -112,7 +110,7 @@ public class DoctorOfficeHoursManagement
             .WithMessage(MessageResources.DoctorLicenseNotFound); 
 
         await asserts.DoctorRepository.DidNotReceiveWithAnyArgs()
-            .StoreAsync(Arg.Any<TDoctor>());
+            .StoreAsync(Arg.Any<Core.Models.Doctor>());
 
         asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
     }    
