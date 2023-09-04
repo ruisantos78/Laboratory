@@ -21,19 +21,19 @@ public class DoctorInformationManagement
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var factory = new DoctorsFactory();
-        factory.Cache.GetMedicalSpecialtiesAsync().Returns(Task.FromResult(cachedSpecialties));
+        var asserts = new DoctorsAsserts();
+        asserts.Cache.GetMedicalSpecialtiesAsync().Returns(Task.FromResult(cachedSpecialties));
         
         // Act
-        var service = factory.CreateService();
+        var service = asserts.GetService();
         await service.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties);
         
         // Assert
-        await factory.DoctorRepository.Received().StoreAsync(Arg.Any<Core.Models.Doctor>());
-        factory.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+        await asserts.DoctorRepository.Received().StoreAsync(Arg.Any<Core.Models.Doctor>());
+        asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
     }
     
-    [Theory(DisplayName = "Register the doctor personal informations")]
+    [Theory(DisplayName = "Do not register the doctor personal invalid informations")]
     [InlineData("License", null, "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("Email", "ABC123", "<invalid email>", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("Email", "ABC123", null, "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
@@ -46,11 +46,11 @@ public class DoctorInformationManagement
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var factory = new DoctorsFactory();
-        factory.Cache.GetMedicalSpecialtiesAsync().Returns(Task.FromResult(cachedSpecialties));
+        var asserts = new DoctorsAsserts();
+        asserts.Cache.GetMedicalSpecialtiesAsync().Returns(Task.FromResult(cachedSpecialties));
         
         // Act
-        var service = factory.CreateService();
+        var service = asserts.GetService();
         await service.Awaiting(x =>
                 x.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties))
             .Should()
@@ -58,6 +58,6 @@ public class DoctorInformationManagement
             .Where(ex => ex.Errors.Single().PropertyName == propertyName);
         
         // Assert
-        factory.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+        asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
     }
 }

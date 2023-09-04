@@ -9,7 +9,7 @@ namespace RuiSantos.Labs.Tests.Stories.Administrator;
 // As an administrator, I want to be able to add or remove medical specialties
 public class MedicalSpecialtiesManagement
 {    
-    [Fact(DisplayName = "Add medical specialties")]
+    [Fact(DisplayName = "The medical specialties should be available in the system")]
     public async Task AddMedicalSpecialties_WithSuccess()
     {
         // Arrange
@@ -33,7 +33,7 @@ public class MedicalSpecialtiesManagement
         asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
     }
 
-    [Fact(DisplayName = "Log when fail to add medical specialties")]
+    [Fact(DisplayName = "A log should be written when failling to add medical specialties")]
     public async Task AddMedicalSpecialties_ShouldWriteLog_WhenThrowsExceptions()
     {
         // Arrange
@@ -58,7 +58,7 @@ public class MedicalSpecialtiesManagement
         asserts.Logger.ReceivedWithAnyArgs().Fail(default);
     }
     
-    [Fact(DisplayName = "Remove a medical specialty")]
+    [Fact(DisplayName = "The specialties should be removed from the system")]
     public async Task RemoveMedicalSpecialty_WithSuccess()
     {
         // Arrange
@@ -76,7 +76,7 @@ public class MedicalSpecialtiesManagement
         asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
     }
     
-    [Fact(DisplayName = "Log when fail to remove a medical specialty")]
+    [Fact(DisplayName = "A log should be written when fail to remove medical specialties")]
     public async Task RemoveMedicalSpecialty_ShouldWriteLog_WhenThrowsExceptions()
     {
         // Arrange
