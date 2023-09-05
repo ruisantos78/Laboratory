@@ -7,8 +7,7 @@ namespace RuiSantos.Labs.Tests.Asserts;
 
 internal class MedicalSpecialtiesAsserts: ServiceAsserts<MedicalSpecialtiesService>
 {
-    public IMedicalSpecialityRepository Repository { get; }
-
+    private IMedicalSpecialityRepository Repository { get; }
     private IRepositoryCache Cache { get; }
 
     public MedicalSpecialtiesAsserts(): base()
@@ -26,11 +25,37 @@ internal class MedicalSpecialtiesAsserts: ServiceAsserts<MedicalSpecialtiesServi
         );
     }
 
-    public void ShouldClearCache() {
-        Cache.Received().ClearMedicalSpecialties(); 
+    public void ThrowsWhenRepositoryAddAsync(IEnumerable<string> specialties)
+    {
+        Repository.When(x => x.AddAsync(specialties))
+            .Throw<Exception>();
     }
 
-    public void ShouldNotClearCache() {
-        Cache.DidNotReceive().ClearMedicalSpecialties(); 
+    public void ThrowsWhenRepositoryRemoveAsync(string specialty)
+    {
+        Repository.When(x => x.RemoveAsync(specialty))
+            .Throw<Exception>();
+    }
+
+    public void CacheShouldClear() {
+        Cache.Received()
+            .ClearMedicalSpecialties(); 
+    }
+
+    public void CacheShouldNotClear() {
+        Cache.DidNotReceive()
+            .ClearMedicalSpecialties(); 
+    }
+
+    public async Task RepositoryShouldAddAsync(IEnumerable<string> specialties)
+    {
+        await Repository.Received()
+            .AddAsync(specialties);
+    }
+
+    public async Task RepositoryShouldRemoveAsync(string specialty)
+    {
+        await Repository.Received()
+            .RemoveAsync(specialty);
     }
 }
