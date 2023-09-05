@@ -1,6 +1,4 @@
 ﻿using FluentAssertions;
-using NSubstitute;
-using RuiSantos.Labs.Core;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;
@@ -29,7 +27,7 @@ public class DoctorOfficeHoursManagement
 
         var asserts = new DoctorsAsserts();
 
-        asserts.DoctorRepository.FindAsync(license).Returns(new DoctorBuilder()
+        asserts.ReturnsOnFindAsync(license, new DoctorBuilder()
             .With(license)
             .Build()
         );
@@ -41,11 +39,9 @@ public class DoctorOfficeHoursManagement
         // Assert
         asserts.ShouldNotLogError();
 
-        await asserts.DoctorRepository.Received(1)
-            .StoreAsync(Arg.Is<Core.Models.Doctor>(x => 
-                x.License == license && 
-                x.OfficeHours.All(y => y.Week == dayOfWeek && y.Hours.SequenceEqual(timespans))
-            ));        
+        await asserts.ShouldStoreAsync(x =>
+            x.License == license &&
+            x.OfficeHours.All(y => y.Week == dayOfWeek && y.Hours.SequenceEqual(timespans))); 
     }
 
     [Theory(DisplayName = "The doctor should be able to modify their weekly schedule by changing the office hours.")]
@@ -55,7 +51,7 @@ public class DoctorOfficeHoursManagement
         // Arrange    
         var asserts = new DoctorsAsserts();
 
-        asserts.DoctorRepository.FindAsync(license).Returns(new DoctorBuilder()
+        asserts.ReturnsOnFindAsync(license, new DoctorBuilder()
             .With(license)
             .WithOfficeHours(DayOfWeek.Monday, AfternoonHours)
             .WithOfficeHours(DayOfWeek.Wednesday, AfternoonHours)
@@ -73,14 +69,12 @@ public class DoctorOfficeHoursManagement
         // Assert
         asserts.ShouldNotLogError();
 
-        await asserts.DoctorRepository.Received(1)
-            .StoreAsync(Arg.Is<Core.Models.Doctor>(x => 
-                x.License == license && 
-                x.OfficeHours.All(y => 
-                    (y.Week == dayOfWeek && y.Hours.SequenceEqual(timespans)) ||
-                    (y.Week != dayOfWeek && y.Hours.SequenceEqual(afternoon))
-                ))
-            );
+        await asserts.ShouldStoreAsync(x => 
+            x.License == license && 
+            x.OfficeHours.All(y => 
+                (y.Week == dayOfWeek && y.Hours.SequenceEqual(timespans)) ||
+                (y.Week != dayOfWeek && y.Hours.SequenceEqual(afternoon))
+            ));
     }
 
     [Theory(DisplayName = "It should not be possible to establish office hours for a doctor who is not registered.")]    
@@ -90,8 +84,7 @@ public class DoctorOfficeHoursManagement
         // Arrange    
         var asserts = new DoctorsAsserts();
 
-        asserts.DoctorRepository.FindAsync(license)
-            .Returns(default(Core.Models.Doctor));
+        asserts.ReturnsOnFindAsync(license, default);
 
         var timespans = hours.Select(TimeSpan.Parse).ToArray();
 
@@ -104,7 +97,6 @@ public class DoctorOfficeHoursManagement
 
         asserts.ShouldNotLogError();
 
-        await asserts.DoctorRepository.DidNotReceiveWithAnyArgs()
-            .StoreAsync(Arg.Any<Core.Models.Doctor>());       
+        await asserts.ShouldNotStoreAsync(x => x.License == license);       
     }    
 }

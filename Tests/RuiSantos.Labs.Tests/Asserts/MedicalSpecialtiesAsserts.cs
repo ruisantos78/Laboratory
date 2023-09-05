@@ -25,35 +25,37 @@ internal class MedicalSpecialtiesAsserts: ServiceAsserts<MedicalSpecialtiesServi
         );
     }
 
-    public void ThrowsWhenRepositoryAddAsync(IEnumerable<string> specialties)
+    public void ShouldClearCache()
+    {
+        Cache.Received()
+            .ClearMedicalSpecialties();
+    }
+
+    public void ShouldNotClearCache()
+    {
+        Cache.DidNotReceive()
+            .ClearMedicalSpecialties();
+    }
+
+    public void ThrowsOnAddAsync(IEnumerable<string> specialties)
     {
         Repository.When(x => x.AddAsync(specialties))
             .Throw<Exception>();
     }
 
-    public void ThrowsWhenRepositoryRemoveAsync(string specialty)
+    public void ThrowsOnRemoveAsync(string specialty)
     {
         Repository.When(x => x.RemoveAsync(specialty))
             .Throw<Exception>();
     }
 
-    public void CacheShouldClear() {
-        Cache.Received()
-            .ClearMedicalSpecialties(); 
-    }
-
-    public void CacheShouldNotClear() {
-        Cache.DidNotReceive()
-            .ClearMedicalSpecialties(); 
-    }
-
-    public async Task RepositoryShouldAddAsync(IEnumerable<string> specialties)
+    public async Task ShouldAddAsync(IEnumerable<string> specialties)
     {
         await Repository.Received()
             .AddAsync(specialties);
     }
 
-    public async Task RepositoryShouldRemoveAsync(string specialty)
+    public async Task ShouldRemoveAsync(string specialty)
     {
         await Repository.Received()
             .RemoveAsync(specialty);

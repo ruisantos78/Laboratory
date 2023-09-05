@@ -1,9 +1,7 @@
 using FluentAssertions;
-using NSubstitute;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;
-using TDoctor = RuiSantos.Labs.Core.Models.Doctor;
 
 namespace RuiSantos.Labs.Tests.Stories.Doctor;
 
@@ -33,21 +31,17 @@ public class DoctorInformationManagement
         // Assert
         asserts.ShouldNotLogError();
 
-        await asserts.DoctorRepository.Received()
-            .StoreAsync(Arg.Any<TDoctor>());        
+        await asserts.ShouldAddAsync(x => x.License == license);
     }
 
     [Theory(DisplayName = "A log shoud be writen when an unhandled exception occurs.")]
     [MemberData(nameof(GetDoctors))]
     public async Task CreateDoctorAsync_WithUnhandledException_ShouldLogsError(string license, string email, string firstName, string lastName,
-    string[] contactNumbers, string[] specialties)
+        string[] contactNumbers, string[] specialties)
     {
         // Arrange
         var asserts = new DoctorsAsserts(Specialties);
-
-        asserts.DoctorRepository
-            .When(x => x.StoreAsync(Arg.Any<Core.Models.Doctor>()))
-            .Throw<Exception>();
+        asserts.ThrowOnAddAsync(license);
 
         // Act
         var service = asserts.GetService();

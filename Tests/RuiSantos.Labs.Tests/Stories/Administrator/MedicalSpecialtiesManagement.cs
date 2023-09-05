@@ -27,10 +27,10 @@ public class MedicalSpecialtiesManagement
         await service.CreateMedicalSpecialtiesAsync(specialties);
         
         // Assert 
-        asserts.CacheShouldClear();
+        asserts.ShouldClearCache();
         asserts.ShouldNotLogError();
 
-        await asserts.RepositoryShouldAddAsync(specialties);        
+        await asserts.ShouldAddAsync(specialties);        
     }
 
     [Fact(DisplayName = "A log should be written when failling to add medical specialties")]
@@ -40,7 +40,7 @@ public class MedicalSpecialtiesManagement
         var specialties = new List<string>();
         
         var asserts = new MedicalSpecialtiesAsserts();
-        asserts.ThrowsWhenRepositoryAddAsync(specialties);
+        asserts.ThrowsOnAddAsync(specialties);
 
         // Act
         var service = asserts.GetService();
@@ -50,7 +50,7 @@ public class MedicalSpecialtiesManagement
             .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
 
         // Assert 
-        asserts.CacheShouldNotClear();
+        asserts.ShouldNotClearCache();
         asserts.ShouldLogError();
     }
     
@@ -67,10 +67,10 @@ public class MedicalSpecialtiesManagement
         await service.RemoveMedicalSpecialtiesAsync(specialty);
 
         // Assert 
-        asserts.CacheShouldClear();
+        asserts.ShouldClearCache();
         asserts.ShouldNotLogError();
 
-        await asserts.RepositoryShouldRemoveAsync(specialty);        
+        await asserts.ShouldRemoveAsync(specialty);        
     }
     
     [Fact(DisplayName = "A log should be written when fail to remove medical specialties")]
@@ -80,7 +80,7 @@ public class MedicalSpecialtiesManagement
         var specialty = string.Empty;
         
         var asserts = new MedicalSpecialtiesAsserts();
-        asserts.ThrowsWhenRepositoryRemoveAsync(specialty);
+        asserts.ThrowsOnRemoveAsync(specialty);
 
         // Act
         var service = asserts.GetService();
@@ -90,7 +90,7 @@ public class MedicalSpecialtiesManagement
             .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
         
         // Assert 
-        asserts.CacheShouldNotClear();
+        asserts.ShouldNotClearCache();
         asserts.ShouldLogError();
     }
 }
