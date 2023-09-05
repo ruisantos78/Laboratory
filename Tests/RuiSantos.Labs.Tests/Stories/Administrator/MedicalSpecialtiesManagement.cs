@@ -1,16 +1,15 @@
 ﻿using FluentAssertions;
-using NSubstitute;
-using RuiSantos.Labs.Core;
+using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
-using RuiSantos.Labs.Tests.Factories;
+using RuiSantos.Labs.Tests.Asserts;
 
 namespace RuiSantos.Labs.Tests.Stories.Administrator;
 
 // As an administrator, I want to be able to add or remove medical specialties
 public class MedicalSpecialtiesManagement
-{
-    [Fact(DisplayName = "Add medical specialties")]
-    public async Task AddMedicalSpecialties_WithSuccess()
+{    
+    [Fact(DisplayName = "The medical specialties should be available in the system")]
+    public async Task CreateMedicalSpecialtiesAsync_WithSuccess()
     {
         // Arrange
         var specialties = new List<string> {
@@ -21,83 +20,77 @@ public class MedicalSpecialtiesManagement
             "Pediatrics"
         };
 
-        var factory = new MedicalSpecialtiesFactory();
+        var asserts = new MedicalSpecialtiesAsserts();
 
         // Act
-        var service = factory.CreateService();
+        var service = asserts.GetService();
         await service.CreateMedicalSpecialtiesAsync(specialties);
         
         // Assert 
-        await factory.Repository.Received().AddAsync(specialties);
-        factory.Cache.Received().ClearMedicalSpecialties();
-        factory.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+        asserts.ShouldClearCache();
+        asserts.ShouldNotLogError();
+
+        await asserts.ShouldAddAsync(specialties);        
     }
-    
-    [Fact(DisplayName = "Log when fail to add medical specialties")]
-    public async Task AddMedicalSpecialties_ShouldWriteLog_WhenThrowsExceptions()
+
+    [Fact(DisplayName = "A log should be written when failling to add medical specialties")]
+    public async Task CreateMedicalSpecialtiesAsync_WhenThrowsExceptions_ShouldWriteLog()
     {
         // Arrange
         var specialties = new List<string>();
         
-        var factory = new MedicalSpecialtiesFactory();
+        var asserts = new MedicalSpecialtiesAsserts();
+        asserts.ThrowsOnAddAsync(specialties);
 
-        factory.Repository
-            .When(x => x.AddAsync(specialties))
-            .Throw<Exception>();
-        
         // Act
-        var service = factory.CreateService();
+        var service = asserts.GetService();
         await service.Awaiting(x => x.CreateMedicalSpecialtiesAsync(specialties))
             .Should()
             .ThrowAsync<ServiceFailException>()
-            .WithMessage("Failed to store a medical speciality.");
+            .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
 
         // Assert 
-        await factory.Repository.Received().AddAsync(specialties);
-        factory.Cache.DidNotReceive().ClearMedicalSpecialties();
-        factory.Logger.ReceivedWithAnyArgs().Fail(default);
+        asserts.ShouldNotClearCache();
+        asserts.ShouldLogError();
     }
     
-    [Fact(DisplayName = "Remove a medical specialty")]
-    public async Task RemoveMedicalSpecialty_WithSuccess()
+    [Fact(DisplayName = "The specialties should be removed from the system")]
+    public async Task RemoveMedicalSpecialtiesAsync_WithSuccess()
     {
         // Arrange
-        var specialty = "Orthopedics";
+        const string specialty = "Orthopedics";
 
-        var factory = new MedicalSpecialtiesFactory();
+        var asserts = new MedicalSpecialtiesAsserts();
 
         // Act
-        var service = factory.CreateService();
+        var service = asserts.GetService();
         await service.RemoveMedicalSpecialtiesAsync(specialty);
 
         // Assert 
-        await factory.Repository.Received().RemoveAsync(specialty);
-        factory.Cache.Received().ClearMedicalSpecialties();
-        factory.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+        asserts.ShouldClearCache();
+        asserts.ShouldNotLogError();
+
+        await asserts.ShouldRemoveAsync(specialty);        
     }
     
-    [Fact(DisplayName = "Log when fail to remove a medical specialty")]
-    public async Task RemoveMedicalSpecialty_ShouldWriteLog_WhenThrowsExceptions()
+    [Fact(DisplayName = "A log should be written when fail to remove medical specialties")]
+    public async Task RemoveMedicalSpecialtiesAsync_WhenThrowsExceptions_ShouldWriteLog()
     {
         // Arrange
         var specialty = string.Empty;
         
-        var factory = new MedicalSpecialtiesFactory();
-        
-        factory.Repository
-            .When(x => x.RemoveAsync(specialty))
-            .Throw<Exception>();
-        
+        var asserts = new MedicalSpecialtiesAsserts();
+        asserts.ThrowsOnRemoveAsync(specialty);
+
         // Act
-        var service = factory.CreateService();
+        var service = asserts.GetService();
         await service.Awaiting(x => x.RemoveMedicalSpecialtiesAsync(specialty))
             .Should()
             .ThrowAsync<ServiceFailException>()
-            .WithMessage("Failed to store a medical speciality.");
+            .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
         
         // Assert 
-        await factory.Repository.Received().RemoveAsync(specialty);
-        factory.Cache.DidNotReceive().ClearMedicalSpecialties();
-        factory.Logger.ReceivedWithAnyArgs().Fail(default);
+        asserts.ShouldNotClearCache();
+        asserts.ShouldLogError();
     }
 }

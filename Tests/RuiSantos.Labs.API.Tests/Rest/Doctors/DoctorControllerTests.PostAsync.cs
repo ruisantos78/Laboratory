@@ -29,14 +29,13 @@ partial class DoctorControllerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var doctor = await context.FindAsync<DoctorDto>(DoctorLicenseIndexName, "ZZZ123");
+        var doctor = await context.FindAsync<DoctorDto>("ZZZ123", DoctorLicenseIndexName);
         doctor.FirstName.Should().Be("Joe");
         doctor.LastName.Should().Be("Doe");
         doctor.Email.Should().Be("joe.doe@email.net");
         doctor.ContactNumbers.Should().ContainSingle("1-555-5555");
 
-        var specialties = await context.QueryAsync<DoctorSpecialtyDto>(doctor.Id)
-            .GetRemainingAsync();
+        var specialties = await context.FindAllAsync<DoctorSpecialtyDto>(doctor.Id);
 
         specialties.Should().HaveCount(1).And.ContainSingle(ds => ds.Specialty == "Cardiology");
 

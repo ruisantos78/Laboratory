@@ -17,7 +17,7 @@ partial class DoctorControllerTests
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var content = await response.Content.As<DoctorContract>(output);
+        var content = await response.Content.GetModelAsync<DoctorContract>(output);
         content.License.Should().Be(license);
     }
 

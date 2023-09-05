@@ -6,7 +6,7 @@ namespace RuiSantos.Labs.API.Tests;
 
 internal static class HttpExtensions
 {
-	public static async Task<TContract> As<TContract>(this HttpContent content, ITestOutputHelper? output = null)
+	public static async Task<TContract> GetModelAsync<TContract>(this HttpContent content, ITestOutputHelper? output = null)
 	{
 		var stringContent = await content.ReadAsStringAsync();
 		output?.WriteLine(stringContent);
@@ -14,7 +14,7 @@ internal static class HttpExtensions
 		return JsonConvert.DeserializeObject<TContract>(stringContent)!;
 	}
 
-    public static async Task<TSchema> GetSchema<TSchema>(this HttpContent content, string root = "data", ITestOutputHelper? output = null)
+    public static async Task<TSchema> GetSchemaAsync<TSchema>(this HttpContent content, string root = "data", ITestOutputHelper? output = null)
         where TSchema: class
     {
         var stringContent = await content.ReadAsStringAsync();
