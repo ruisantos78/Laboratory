@@ -1,24 +1,20 @@
 using FluentAssertions;
 using NSubstitute;
-using NSubstitute.ExceptionExtensions;
-using RuiSantos.Labs.Core;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;
+using TDoctor = RuiSantos.Labs.Core.Models.Doctor;
 
 namespace RuiSantos.Labs.Tests.Stories.Doctor;
 
 // As a doctor, I want to register and update my personal information as my contact numbers and email.
 public class DoctorInformationManagement
 {
-    public static IEnumerable<object[]> GetDoctors() => new List<object[]>
-    {
-        new object[] { "ABC123", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" }}
-    };
+    private static readonly string[] Specialties = { "Cardiologist" };
 
-    private readonly IReadOnlySet<string>? cachedSpecialties = new HashSet<string>()
+    public static IEnumerable<object[]> GetDoctors() => new List<object[]>()
     {
-        "Cardiologist"
+        new object[] { "ABC123", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" } }
     };
 
     [Theory(DisplayName = "The doctor should be able to create a new record with your personal information.")]
@@ -28,16 +24,17 @@ public class DoctorInformationManagement
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var asserts = new DoctorsAsserts();
-        asserts.Cache.GetMedicalSpecialtiesAsync().Returns(Task.FromResult(cachedSpecialties));
-
+        var asserts = new DoctorsAsserts(Specialties);
+        
         // Act
         var service = asserts.GetService();
         await service.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties);
 
         // Assert
-        await asserts.DoctorRepository.Received().StoreAsync(Arg.Any<Core.Models.Doctor>());
-        asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+        asserts.ShouldNotLogError();
+
+        await asserts.DoctorRepository.Received()
+            .StoreAsync(Arg.Any<TDoctor>());        
     }
 
     [Theory(DisplayName = "A log shoud be writen when an unhandled exception occurs.")]
@@ -46,11 +43,11 @@ public class DoctorInformationManagement
     string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var asserts = new DoctorsAsserts();
-        asserts.Cache.GetMedicalSpecialtiesAsync().Returns(Task.FromResult(cachedSpecialties));
+        var asserts = new DoctorsAsserts(Specialties);
 
-        asserts.DoctorRepository.StoreAsync(Arg.Any<Core.Models.Doctor>())
-            .ThrowsAsync(new InvalidOperationException());
+        asserts.DoctorRepository
+            .When(x => x.StoreAsync(Arg.Any<Core.Models.Doctor>()))
+            .Throw<Exception>();
 
         // Act
         var service = asserts.GetService();
@@ -60,7 +57,7 @@ public class DoctorInformationManagement
             .WithMessage(MessageResources.DoctorSetFail);
 
         // Assert
-        asserts.Logger.Received().Fail(Arg.Any<Exception>());
+        asserts.ShouldLogError();
     }
 
     [Theory(DisplayName = "The doctor should not be able to create a record with invalid or missing information.")]
@@ -76,8 +73,7 @@ public class DoctorInformationManagement
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var asserts = new DoctorsAsserts();
-        asserts.Cache.GetMedicalSpecialtiesAsync().Returns(Task.FromResult(cachedSpecialties));
+        var asserts = new DoctorsAsserts(Specialties);
 
         // Act
         var service = asserts.GetService();
@@ -87,6 +83,6 @@ public class DoctorInformationManagement
             .Where(ex => ex.Errors.Single().PropertyName == propertyName);
 
         // Assert
-        asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+        asserts.ShouldNotLogError();
     }
 }

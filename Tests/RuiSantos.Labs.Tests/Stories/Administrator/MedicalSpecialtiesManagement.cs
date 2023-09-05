@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NSubstitute;
-using RuiSantos.Labs.Core;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;
@@ -29,9 +28,10 @@ public class MedicalSpecialtiesManagement
         await service.CreateMedicalSpecialtiesAsync(specialties);
         
         // Assert 
-        await asserts.Repository.Received().AddAsync(specialties);
-        asserts.Cache.Received().ClearMedicalSpecialties();        
-        asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+        asserts.ShouldClearCache();
+        asserts.ShouldNotLogError();
+        
+        await asserts.Repository.Received().AddAsync(specialties);        
     }
 
     [Fact(DisplayName = "A log should be written when failling to add medical specialties")]
@@ -54,9 +54,8 @@ public class MedicalSpecialtiesManagement
             .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
 
         // Assert 
-        await asserts.Repository.Received().AddAsync(specialties);
-        asserts.Cache.DidNotReceive().ClearMedicalSpecialties();
-        asserts.Logger.ReceivedWithAnyArgs().Fail(default);
+        asserts.ShouldNotClearCache();
+        asserts.ShouldLogError();
     }
     
     [Fact(DisplayName = "The specialties should be removed from the system")]
@@ -72,9 +71,10 @@ public class MedicalSpecialtiesManagement
         await service.RemoveMedicalSpecialtiesAsync(specialty);
 
         // Assert 
-        await asserts.Repository.Received().RemoveAsync(specialty);
-        asserts.Cache.Received().ClearMedicalSpecialties();
-        asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+        asserts.ShouldClearCache();
+        asserts.ShouldNotLogError();
+
+        await asserts.Repository.Received().RemoveAsync(specialty);        
     }
     
     [Fact(DisplayName = "A log should be written when fail to remove medical specialties")]
@@ -84,11 +84,11 @@ public class MedicalSpecialtiesManagement
         var specialty = string.Empty;
         
         var asserts = new MedicalSpecialtiesAsserts();
-        
+
         asserts.Repository
             .When(x => x.RemoveAsync(specialty))
             .Throw<Exception>();
-        
+
         // Act
         var service = asserts.GetService();
         await service.Awaiting(x => x.RemoveMedicalSpecialtiesAsync(specialty))
@@ -97,8 +97,7 @@ public class MedicalSpecialtiesManagement
             .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
         
         // Assert 
-        await asserts.Repository.Received().RemoveAsync(specialty);
-        asserts.Cache.DidNotReceive().ClearMedicalSpecialties();
-        asserts.Logger.ReceivedWithAnyArgs().Fail(default);
+        asserts.ShouldNotClearCache();
+        asserts.ShouldLogError();
     }
 }

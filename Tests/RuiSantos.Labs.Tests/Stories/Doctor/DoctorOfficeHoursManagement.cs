@@ -1,6 +1,5 @@
 ﻿using FluentAssertions;
 using NSubstitute;
-using NSubstitute.ReturnsExtensions;
 using RuiSantos.Labs.Core;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
@@ -40,13 +39,13 @@ public class DoctorOfficeHoursManagement
         await service.SetOfficeHoursAsync(license, dayOfWeek, timespans);
 
         // Assert
+        asserts.ShouldNotLogError();
+
         await asserts.DoctorRepository.Received(1)
             .StoreAsync(Arg.Is<Core.Models.Doctor>(x => 
                 x.License == license && 
                 x.OfficeHours.All(y => y.Week == dayOfWeek && y.Hours.SequenceEqual(timespans))
-            ));
-
-        asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+            ));        
     }
 
     [Theory(DisplayName = "The doctor should be able to modify their weekly schedule by changing the office hours.")]
@@ -72,6 +71,8 @@ public class DoctorOfficeHoursManagement
         await service.SetOfficeHoursAsync(license, dayOfWeek, timespans);
 
         // Assert
+        asserts.ShouldNotLogError();
+
         await asserts.DoctorRepository.Received(1)
             .StoreAsync(Arg.Is<Core.Models.Doctor>(x => 
                 x.License == license && 
@@ -80,8 +81,6 @@ public class DoctorOfficeHoursManagement
                     (y.Week != dayOfWeek && y.Hours.SequenceEqual(afternoon))
                 ))
             );
-
-        asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
     }
 
     [Theory(DisplayName = "It should not be possible to establish office hours for a doctor who is not registered.")]    
@@ -91,20 +90,21 @@ public class DoctorOfficeHoursManagement
         // Arrange    
         var asserts = new DoctorsAsserts();
 
-        asserts.DoctorRepository.FindAsync(license).ReturnsNull();
+        asserts.DoctorRepository.FindAsync(license)
+            .Returns(default(Core.Models.Doctor));
+
         var timespans = hours.Select(TimeSpan.Parse).ToArray();
 
         // Act & Assert
         var service = asserts.GetService();
-
         await service.Awaiting(x => x.SetOfficeHoursAsync(license, dayOfWeek, timespans))
             .Should()
             .ThrowAsync<ValidationFailException>()
-            .WithMessage(MessageResources.DoctorLicenseNotFound); 
+            .WithMessage(MessageResources.DoctorLicenseNotFound);  
+
+        asserts.ShouldNotLogError();
 
         await asserts.DoctorRepository.DidNotReceiveWithAnyArgs()
-            .StoreAsync(Arg.Any<Core.Models.Doctor>());
-
-        asserts.Logger.DidNotReceiveWithAnyArgs().Fail(default);
+            .StoreAsync(Arg.Any<Core.Models.Doctor>());       
     }    
 }
