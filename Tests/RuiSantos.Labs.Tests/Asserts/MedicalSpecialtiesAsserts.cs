@@ -1,4 +1,4 @@
-﻿using NSubstitute;
+using NSubstitute;
 using RuiSantos.Labs.Core.Cache;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services;

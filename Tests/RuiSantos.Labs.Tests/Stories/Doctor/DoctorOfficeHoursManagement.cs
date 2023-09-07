@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;

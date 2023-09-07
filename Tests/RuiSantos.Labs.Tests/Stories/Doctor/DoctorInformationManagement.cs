@@ -57,6 +57,26 @@ public class DoctorInformationManagement
         asserts.ShouldLogError();
     }
 
+    [Theory(DisplayName = "A log shoud be writen when an unhandled exception occurs.")]
+    [MemberData(nameof(GetDoctors))]
+    public async Task CreateDoctorAsync_WithUnhandledException_ShouldLogsError(string license, string email, string firstName, string lastName,
+        string[] contactNumbers, string[] specialties)
+    {
+        // Arrange
+        var asserts = new DoctorsAsserts(Specialties);
+        asserts.ThrowOnAddAsync(license);
+
+        // Act
+        var service = asserts.GetService();
+        await service.Awaiting(x => x.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties))
+            .Should()
+            .ThrowAsync<ServiceFailException>()
+            .WithMessage(MessageResources.DoctorSetFail);
+
+        // Assert
+        asserts.ShouldLogError();
+    }
+
     [Theory(DisplayName = "The doctor should not be able to create a record with invalid or missing information.")]
     [InlineData("License", null, "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("Email", "ABC123", "<invalid email>", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
