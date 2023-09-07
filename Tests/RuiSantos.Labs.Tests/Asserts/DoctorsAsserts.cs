@@ -37,13 +37,6 @@ internal class DoctorsAsserts: ServiceAsserts<DoctorService>
             Logger);
     }
 
-    public void ThrowOnAddAsync(string licence)
-    {
-        DoctorRepository
-            .When(x => x.StoreAsync(Arg.Is<Doctor>(x => x.License == licence)))
-            .Throw<Exception>();
-    }
-
     public async Task ShouldAddAsync(Expression<Predicate<Doctor>> expression)
     {
         await DoctorRepository.Received()
@@ -62,9 +55,38 @@ internal class DoctorsAsserts: ServiceAsserts<DoctorService>
             .StoreAsync(Arg.Is(expression));
     }
 
-    public void ReturnsOnFindAsync(string license, Doctor? result)
+    public void ReturnsOnFindAsync(string license, 
+        Doctor? result)
     {
         DoctorRepository.FindAsync(license)
             .Returns(result);
+    }
+
+    public void ReturnsOnGetPatientAppointmentsAsync(Doctor doctor, DateOnly date, 
+        IEnumerable<PatientAppointment> result)
+    {
+        AppointamentsRepository.GetPatientAppointmentsAsync(doctor, date)
+            .Returns(result);
+    }
+
+    public void ThrowOnAddAsync(string licence)
+    {
+        DoctorRepository
+            .When(x => x.StoreAsync(Arg.Is<Doctor>(x => x.License == licence)))
+            .Throw<Exception>();
+    }
+
+    public void ThrowOnFindAsync(string licence)
+    {
+        DoctorRepository
+            .When(x => x.FindAsync(licence))
+            .Throw<Exception>();
+    }
+
+    public void ThrowsOnGetPatientAppointmentsAsync(Doctor doctor, DateOnly date)
+    {
+        AppointamentsRepository
+            .When(x => x.GetPatientAppointmentsAsync(doctor, date))
+            .Throw<Exception>();
     }
 }

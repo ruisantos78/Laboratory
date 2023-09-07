@@ -48,6 +48,9 @@ internal class RepositoryCache : IRepositoryCache
         this.cache = cache;
     }
 
+    /// <summary>
+    /// Clears medical specialties from cache. Does not clear data that is stored
+    /// </summary>
     public void ClearMedicalSpecialties()
     {
         cache.Remove("MedicalSpecialty");

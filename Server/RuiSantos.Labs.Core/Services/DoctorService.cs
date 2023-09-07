@@ -144,13 +144,20 @@ internal class DoctorService : IDoctorService
 
     public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(string license, DateTime? dateTime)
     {
-        var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
+        try {
+            var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
 
-        var doctor = await doctorRepository.FindAsync(license);
-        if (doctor is null)
-            return Array.Empty<PatientAppointment>();
+            var doctor = await doctorRepository.FindAsync(license);
+            if (doctor is null)
+                return Array.Empty<PatientAppointment>();
 
-        return await appointamentsRepository.GetPatientAppointmentsAsync(doctor, date);
+            return await appointamentsRepository.GetPatientAppointmentsAsync(doctor, date);
+        } 
+        catch(Exception ex) 
+        {
+            logger?.Fail(ex);
+            throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
+        }
     }
 
     private async Task ValidateDoctorAsync(Doctor model)

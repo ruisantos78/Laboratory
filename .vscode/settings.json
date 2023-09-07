@@ -1,4 +1,4 @@
 {
     "dotnet-test-explorer.testProjectPath": "**/*.Tests.csproj",
-    "dotnet.defaultSolution": "RuiSantos.Labs.sln"
+    "dotnet.defaultSolution": "RuiSantos.Labs.sln",
 }
