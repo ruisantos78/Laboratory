@@ -34,7 +34,7 @@ public class MedicalSpecialtiesManagement
     }
 
     [Fact(DisplayName = "A log should be written when failling to add medical specialties")]
-    public async Task CreateMedicalSpecialtiesAsync_WhenThrowsExceptions_ShouldWriteLog()
+    public async Task CreateMedicalSpecialtiesAsync_WhenFailsToAdd_ThenThrowsException_AndLogsError()
     {
         // Arrange
         var specialties = new List<string>();
@@ -74,7 +74,7 @@ public class MedicalSpecialtiesManagement
     }
     
     [Fact(DisplayName = "A log should be written when fail to remove medical specialties")]
-    public async Task RemoveMedicalSpecialtiesAsync_WhenThrowsExceptions_ShouldWriteLog()
+    public async Task RemoveMedicalSpecialtiesAsync_WhenFailsToRemove_ThenThrowsException_AndLogsError()
     {
         // Arrange
         var specialty = string.Empty;

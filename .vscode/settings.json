@@ -1,11 +1,4 @@
 {
     "dotnet-test-explorer.testProjectPath": "**/*.Tests.csproj",
     "dotnet.defaultSolution": "RuiSantos.Labs.sln",
-    "docwriter.style": "XML",
-    "docify.commentService.programmingLanguage": "c_sharp",
-    "docify.commentService.docstringFormat": "XML",
-    "docify.commentService.autoTranslationService": "English",
-    "docify.commentService.sidePanelReviewMode": true,
-    "docify.translateService.programmingLanguage": "c_sharp",
-    "docify.translateService.docstringFormat": "XML"
 }

@@ -6,7 +6,9 @@ using RuiSantos.Labs.Tests.Asserts.Builders;
 
 namespace RuiSantos.Labs.Tests.Stories.Doctor;
 
-// As a doctor, I want to be able to define and manage my work hours.
+/// <UserStory>
+/// As a doctor, I want to be able to define and manage my work hours.
+/// </UserStory>
 public class DoctorOfficeHoursManagement
 {
     private static readonly string[] MorningHours = new[] { "09:00", "09:30", "10:00", "10:30", "11:00", "11:30" };
@@ -98,5 +100,27 @@ public class DoctorOfficeHoursManagement
         asserts.ShouldNotLogError();
 
         await asserts.ShouldNotStoreAsync(x => x.License == license);       
-    }    
+    }   
+
+    [Fact(DisplayName = "A log should be written when fails to find a doctor")]
+    public async Task SetOfficeHoursAsync_WhenFailsToFindDoctor_ThenThrowsException_AndLogsError() 
+    {
+        // Arrange    
+        var license = "ABC123";
+        var timespans = MorningHours.Select(TimeSpan.Parse).ToArray();
+
+        var asserts = new DoctorsAsserts();
+        asserts.ThrowOnFindAsync(license);
+        
+        // Act & Assert
+        var service = asserts.GetService();
+        await service.Awaiting(x => x.SetOfficeHoursAsync(license, DayOfWeek.Monday, timespans))
+            .Should()
+            .ThrowAsync<ServiceFailException>()
+            .WithMessage(MessageResources.DoctorSetFail);  
+
+        asserts.ShouldLogError();
+
+        await asserts.ShouldNotStoreAsync(x => x.License == license);       
+    }
 }

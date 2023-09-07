@@ -129,6 +129,9 @@
   <data name="DoctorsGetFail" xml:space="preserve">
     <value>Failed to get the doctor.</value>
   </data>
+  <data name="DoctorsGetAppointmentsFail" xml:space="preserve">
+    <value>Failed to get the doctor appointments.</value>
+  </data>
   <data name="DoctorLicenseNotFound" xml:space="preserve">
     <value>Cannot find a doctor with this medical license.</value>
   </data>

@@ -37,18 +37,6 @@ internal class MedicalSpecialtiesAsserts: ServiceAsserts<MedicalSpecialtiesServi
             .ClearMedicalSpecialties();
     }
 
-    public void ThrowsOnAddAsync(IEnumerable<string> specialties)
-    {
-        Repository.When(x => x.AddAsync(specialties))
-            .Throw<Exception>();
-    }
-
-    public void ThrowsOnRemoveAsync(string specialty)
-    {
-        Repository.When(x => x.RemoveAsync(specialty))
-            .Throw<Exception>();
-    }
-
     public async Task ShouldAddAsync(IEnumerable<string> specialties)
     {
         await Repository.Received()
@@ -59,5 +47,17 @@ internal class MedicalSpecialtiesAsserts: ServiceAsserts<MedicalSpecialtiesServi
     {
         await Repository.Received()
             .RemoveAsync(specialty);
+    }
+
+    public void ThrowsOnAddAsync(IEnumerable<string> specialties)
+    {
+        Repository.When(x => x.AddAsync(specialties))
+            .Throw<Exception>();
+    }
+
+    public void ThrowsOnRemoveAsync(string specialty)
+    {
+        Repository.When(x => x.RemoveAsync(specialty))
+            .Throw<Exception>();
     }
 }

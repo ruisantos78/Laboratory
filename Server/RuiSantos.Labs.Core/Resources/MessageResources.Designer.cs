@@ -31,7 +31,7 @@ namespace RuiSantos.Labs.Core.Resources {
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal MessageResources() {
         }
-        
+
         /// <summary>
         ///   Retorna a instância de ResourceManager armazenada em cache usada por essa classe.
         /// </summary>
@@ -147,6 +147,12 @@ namespace RuiSantos.Labs.Core.Resources {
         internal static string RecordAlreadyExists {
             get {
                 return ResourceManager.GetString("RecordAlreadyExists", resourceCulture);
+            }
+        }
+
+        internal static string DoctorsGetAppointmentsFail {
+            get {
+                return ResourceManager.GetString("DoctorsGetAppointmentsFail", resourceCulture);
             }
         }
     }

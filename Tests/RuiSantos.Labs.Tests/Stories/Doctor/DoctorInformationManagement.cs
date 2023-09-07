@@ -5,7 +5,9 @@ using RuiSantos.Labs.Tests.Asserts;
 
 namespace RuiSantos.Labs.Tests.Stories.Doctor;
 
-// As a doctor, I want to register and update my personal information as my contact numbers and email.
+/// <UserStory>
+/// As a doctor, I want to register and update my personal information as my contact numbers and email.
+/// </UserStory>
 public class DoctorInformationManagement
 {
     private static readonly string[] Specialties = { "Cardiologist" };
@@ -34,9 +36,10 @@ public class DoctorInformationManagement
         await asserts.ShouldAddAsync(x => x.License == license);
     }
 
-    [Theory(DisplayName = "A log shoud be writen when an unhandled exception occurs.")]
+    [Theory(DisplayName = "A log should be writen when an unhandled exception occurs.")]
     [MemberData(nameof(GetDoctors))]
-    public async Task CreateDoctorAsync_WithUnhandledException_ShouldLogsError(string license, string email, string firstName, string lastName,
+    public async Task CreateDoctorAsync_WhenFailsToAdd_ThenThrowsException_AndLogsError(
+        string license, string email, string firstName, string lastName,
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
