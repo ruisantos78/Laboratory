@@ -120,7 +120,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
 
         var specialties = await context.FindAllAsync<DoctorSpecialtyDto>(doctor.Id);
         specialties.Should().HaveCount(2);
-        specialties.Select(ds => ds.Specialty).Should().BeEquivalentTo(new[] { "Cardiology", "Pediatrics" });
+        specialties.Select(ds => ds.Specialty).Should().BeEquivalentTo("Cardiology", "Pediatrics");
     }
 
     [Fact(DisplayName = "Get all medical specialties")]
