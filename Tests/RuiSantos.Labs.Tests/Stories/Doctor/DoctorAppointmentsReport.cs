@@ -15,32 +15,34 @@ public class DoctorAppointmentsReport
     [Theory(DisplayName = "The doctor should be able to query all of his appointments for a given date.")]
     [InlineData("ABC123", default)]
     [InlineData("ABC123", "2023-01-01")]
-    public async void GetAppointmentsAsync_WithSuccess(string license, string? date)
+    public async void GetAppointmentsAsync_WithSuccess(string license, string? dateString)
     {
         // Arrange
-        DateTime? dateTime = date is null ? null : DateTime.Parse(date);
-        var day = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
-
+        DateTime? dateTime = dateString is null ? null : DateTime.Parse(dateString);
+         
         var doctor =  new DoctorBuilder()
             .With(license)            
             .Build();
 
-        var appointements = new PatientAppointmentBuilder()
-            .AddAppointment(day.ToDateTime(new TimeOnly(10, 0, 0)), "111-11-1111")
-            .AddAppointment(day.ToDateTime(new TimeOnly(11, 30, 0)), "222-22-2222")
-            .AddAppointment(day.ToDateTime(new TimeOnly(13, 0, 0)), "333-33-3333")            
+        var apptDate = dateTime?.Date ?? DateTime.Today;
+        var appointments = new PatientAppointmentBuilder()
+            .AddAppointment(apptDate.AddHours(10), "111-11-1111")
+            .AddAppointment(apptDate.AddHours(11), "222-22-2222")
+            .AddAppointment(apptDate.AddHours(12), "333-33-3333")            
             .Build();
 
         var asserts = new DoctorsAsserts();
         asserts.ReturnsOnFindAsync(license, doctor);
-        asserts.ReturnsOnGetPatientAppointmentsAsync(doctor, day, appointements);
+
+        var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
+        asserts.ReturnsOnGetPatientAppointmentsAsync(doctor, date, appointments);
 
         // Act
         var service = asserts.GetService();
         var result = await service.GetAppointmentsAsync(license, dateTime);
 
         // Assert        
-        result.Should().BeEquivalentTo(appointements);        
+        result.Should().BeEquivalentTo(appointments);        
 
         asserts.ShouldNotLogError();    
     }
