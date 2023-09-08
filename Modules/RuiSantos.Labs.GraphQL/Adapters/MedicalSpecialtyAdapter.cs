@@ -11,22 +11,22 @@ public interface IMedicalSpecialtySchemaAdapter
 
 internal class MedicalSpecialtySchemaAdapter : IMedicalSpecialtySchemaAdapter
 {
-    private readonly IMedicalSpecialtiesService management;
+    private readonly IMedicalSpecialtiesService service;
 
-    public MedicalSpecialtySchemaAdapter(IMedicalSpecialtiesService management)
+    public MedicalSpecialtySchemaAdapter(IMedicalSpecialtiesService service)
     {
-        this.management = management;
+        this.service = service;
     }
 
     public async Task<IEnumerable<MedicalSpecialtySchema>> CreateMedicalSpecialtiesAsync(IEnumerable<string> descriptions)
     {
-        await management.CreateMedicalSpecialtiesAsync(descriptions.ToList()); 
+        await service.CreateMedicalSpecialtiesAsync(descriptions.ToList()); 
         return descriptions.Select(GetSchema);
     }
 
     public async Task<IQueryable<MedicalSpecialtySchema>> GetMedicalSpecialtiesAsync()
     {
-        var result = await management.GetMedicalSpecialitiesAsync();
+        var result = await service.GetMedicalSpecialitiesAsync();
         return result.Select(GetSchema).AsQueryable();
     }
 

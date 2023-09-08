@@ -11,11 +11,11 @@ public interface IDoctorSchemaAdapter {
 
 internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
 {
-    private readonly IDoctorService management;
+    private readonly IDoctorService service;
 
-    public DoctorSchemaAdapter(IDoctorService management)
+    public DoctorSchemaAdapter(IDoctorService service)
     {
-        this.management = management;
+        this.service = service;
     }
 
     private static DoctorSchema GetSchema(Doctor model) => new()
@@ -39,13 +39,13 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
     };
 
     public async Task<DoctorSchema> GetDoctorAsync(string license) {
-        var doctor = await management.GetDoctorByLicenseAsync(license);     
+        var doctor = await service.GetDoctorByLicenseAsync(license);     
         return GetSchema(doctor ?? new Doctor());
     }    
 
     public async Task<DoctorSchema> CreateOrUpdateDoctorAsync(DoctorSchema schema)
     {
-        await management.CreateDoctorAsync(
+        await service.CreateDoctorAsync(
             license: schema.License,
             firstName: schema.FirstName,
             lastName: schema.LastName,
