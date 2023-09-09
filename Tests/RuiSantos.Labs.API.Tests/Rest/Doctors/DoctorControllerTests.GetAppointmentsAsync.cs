@@ -32,9 +32,12 @@ partial class DoctorControllerTests
         var dateTime = DateTime.Today.AddHours(9).ToUniversalTime();
 
         var doctor = await DoctorDto.GetDoctorByLicenseAsync(context, license);
-        var patient = await PatientDto.GetPatientBySocialSecurityNumberAsync(context, "123-45-6789");
+        if (doctor is null) Assert.Fail("Error GetDoctorByLicenseAsync");
 
-        var appointment = await CreateTestAppointmentAsync(doctor!.Id, patient!.Id, dateTime);
+        var patient = await PatientDto.GetPatientBySocialSecurityNumberAsync(context, "123-45-6789");
+        if (patient is null) Assert.Fail("Error GetPatientBySocialSecurityNumberAsync");
+
+        var appointment = await CreateTestAppointmentAsync(doctor.Id, patient.Id, dateTime);
 
         // Act
         var response = await client.GetAsync($"/Doctor/{license}/Appointments/");
@@ -45,7 +48,7 @@ partial class DoctorControllerTests
         content.Should().HaveCount(1);
 
         var element = content.First();
-        element.Patient.SocialSecurityNumber.Should().Be(patient!.SocialSecurityNumber);
+        element.Patient.SocialSecurityNumber.Should().Be(patient.SocialSecurityNumber);
         element.Date.Should().Be(dateTime);
 
         // Teardown
