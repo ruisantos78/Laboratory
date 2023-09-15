@@ -1,8 +1,8 @@
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RuiSantos.Labs.API.Tests.Containers;
+using RuiSantos.Labs.Api.Tests.Containers;
 
-namespace RuiSantos.Labs.API.Tests.Fixtures;
+namespace RuiSantos.Labs.Api.Tests.Fixtures;
 
 [CollectionDefinition(nameof(ServiceCollectionFixture))]
 public class ServiceCollectionFixture: ICollectionFixture<ServiceFixture> { }

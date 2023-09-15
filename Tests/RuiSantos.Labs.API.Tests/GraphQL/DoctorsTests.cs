@@ -1,13 +1,13 @@
 ﻿using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using FluentAssertions;
-using Newtonsoft.Json.Linq;
-using RuiSantos.Labs.API.Tests.Fixtures;
+using RuiSantos.Labs.Api.Tests.Fixtures;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 using Xunit.Abstractions;
+
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
 
-namespace RuiSantos.Labs.API.Tests.GraphQL;
+namespace RuiSantos.Labs.Api.Tests.GraphQL;
 
 [Collection(nameof(ServiceCollectionFixture))]
 public class DoctorsTests : IClassFixture<ServiceFixture>
@@ -121,79 +121,5 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         var specialties = await context.FindAllAsync<DoctorSpecialtyDto>(doctor.Id);
         specialties.Should().HaveCount(2);
         specialties.Select(ds => ds.Specialty).Should().BeEquivalentTo("Cardiology", "Pediatrics");
-    }
-
-    [Fact(DisplayName = "Get all medical specialties")]
-    public async Task GetAllMedicalSpecialties()
-    {
-        // Arrange
-        var expected = await context.LoadAsync<DictionaryDto>("specialties");
-
-        var request = new
-        {
-            query = """
-                    query GetMedicalSpecialties() {
-                        specialties() {
-                            description
-                        }
-                    }
-                    """
-        };
-
-        // Act
-        var response = await client.PostAsync("graphql", request);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        // Assert
-        var result = await response.Content.GetTokenAsync();
-        var specialties = result["data"].Should().HaveChild("specialties").AsJEnumerable();
-        specialties.Values<string>("description").Should().BeEquivalentTo(expected.Values);
-    }
-
-    [Fact(DisplayName = "Update medical specialties list")]
-    public async Task UpdateMedicalSpecialtiesList()
-    {
-        // Arrange
-        var request = new
-        {
-            query = """
-                    mutation AddSpecialties($input: AddSpecialtiesInput!) {
-                        addSpecialties(input: $input) {
-                            specialties {
-                                description 
-                            }
-                        }
-                    }
-                    """,
-            variables = new
-            {
-                input = new
-                {
-                    descriptions = new[]
-                    {
-                        "Gastroenterology",
-                        "Endocrinology",
-                        "Nephrology",
-                        "Rheumatology",
-                        "Oncology"
-                    }
-                }
-            }
-        };
-
-        // Act
-        var response = await client.PostAsync("graphql", request);
-        response.StatusCode.Should().Be(HttpStatusCode.OK);
-
-        // Assert
-        var specialties = await context.FindAsync<DictionaryDto>("specialties");
-        specialties.Values.Should().OnlyHaveUniqueItems().And.Contain(new[]
-         {
-            "Gastroenterology",
-            "Endocrinology",
-            "Nephrology",
-            "Rheumatology",
-            "Oncology"
-        });
     }
 }

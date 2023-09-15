@@ -6,30 +6,22 @@ partial class DictionaryDto
 {    
     private static async Task<HashSet<string>> GetAsync(IDynamoDBContext context, string source)
     {
-        var items = await context.LoadAsync<DictionaryDto>(source);
-        if (items?.Values is null)
-            return new();
-
-        return items.Values;
+        var entities = await context.QueryAsync<DictionaryDto>(source).GetRemainingAsync();
+        return entities?.Select(s => s.Value).ToHashSet() ?? new();
     }
 
     private static async Task SetAsync(IDynamoDBContext context, string source, IEnumerable<string> values)
     {
-        var items = await context.LoadAsync<DictionaryDto>(source);
-        if (items?.Values is null)
-            items = new DictionaryDto(source);
+        if (!values.Any())
+            return;
 
-        values.ToList().ForEach(x => items.Values.Add(x));
-        await context.SaveAsync(items);
+        var writer = context.CreateBatchWrite<DictionaryDto>();
+        writer.AddPutItems(values.Select(value => new DictionaryDto { Source = source, Value = value }));
+        await writer.ExecuteAsync();        
     }        
 
     private static async Task RemoveAsync(IDynamoDBContext context, string source, string value)
     {
-        var items = await context.LoadAsync<DictionaryDto>(source);
-        if (items?.Values.Any() ?? true)
-            return;
-
-        items.Values.Remove(value);
-        await context.SaveAsync(items);
+        await context.DeleteAsync<DictionaryDto>(hashKey: source, rangeKey: value);        
     }
 }

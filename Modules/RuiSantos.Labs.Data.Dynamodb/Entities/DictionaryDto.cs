@@ -10,16 +10,12 @@ internal partial class DictionaryDto
     [DynamoDBHashKey(AttributeName = SourceAttributeName)]
     public string Source { get; init; }
 
-    [DynamoDBProperty]
-    public HashSet<string> Values { get; init; }
+    [DynamoDBRangeKey(AttributeName = ValueAttributeName)]
+    public string Value { get; init; }
 
-    public DictionaryDto(): this(string.Empty)
-    { 
-    }
-
-    public DictionaryDto(string source)
+    public DictionaryDto()
     {
-        this.Source = source;
-        this.Values = new();
+        this.Source = string.Empty;
+        this.Value = string.Empty;
     }
 }

@@ -30,14 +30,5 @@ internal sealed class DoctorValidator : AbstractValidator<Doctor>
         RuleForEach(model => model.Specialties)
             .NotEmpty();
     }
-
-    public DoctorValidator(IEnumerable<string>? specialties) : this()
-    {
-        if (specialties is not null)
-        {
-            RuleForEach(model => model.Specialties)
-                .Must(item => specialties.Any(s => string.Equals(s, item, StringComparison.OrdinalIgnoreCase)));
-        }
-    }
 }
 

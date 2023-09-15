@@ -3,7 +3,7 @@ using FluentAssertions;
 using RuiSantos.Labs.Api.Contracts;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
-namespace RuiSantos.Labs.API.Tests.Rest;
+namespace RuiSantos.Labs.Api.Tests.Rest;
 
 partial class DoctorControllerTests
 {

@@ -1,6 +1,5 @@
 using System.Linq.Expressions;
 using NSubstitute;
-using RuiSantos.Labs.Core.Cache;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services;
@@ -12,25 +11,17 @@ internal class DoctorsAsserts: ServiceAsserts<DoctorService>
     private IDoctorRepository DoctorRepository { get; }
     private IPatientRepository PatientRepository { get; }
     private IAppointamentsRepository AppointamentsRepository { get; }    
-    private IRepositoryCache Cache { get; }
 
     public DoctorsAsserts(): base()
     {
-        Cache = Substitute.For<IRepositoryCache>();
         DoctorRepository = Substitute.For<IDoctorRepository>();
         PatientRepository = Substitute.For<IPatientRepository>();
         AppointamentsRepository = Substitute.For<IAppointamentsRepository>();
-    }
-
-    public DoctorsAsserts(IEnumerable<string> specialties) : this()
-    {
-        Cache.GetMedicalSpecialtiesAsync().Returns(specialties.ToHashSet());
     }
     
     public IDoctorService GetService()
     {
         return new DoctorService(
-            Cache,
             DoctorRepository,
             PatientRepository,
             AppointamentsRepository,

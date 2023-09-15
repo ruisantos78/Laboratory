@@ -1,5 +1,4 @@
-﻿using RuiSantos.Labs.Core.Cache;
-using RuiSantos.Labs.Core.Services;
+﻿using RuiSantos.Labs.Core.Services;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -10,8 +9,6 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddLabsServices(this IServiceCollection services)
     {
-        services.AddSingleton<IRepositoryCache, RepositoryCache>();
-
         services.AddTransient<IMedicalSpecialtiesService, MedicalSpecialtiesService>();
         services.AddTransient<IDoctorService, DoctorService>();
         services.AddTransient<IPatientService, PatientService>();

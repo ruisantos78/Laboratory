@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Core", "Serv
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.GraphQL", "Modules\RuiSantos.Labs.GraphQL\RuiSantos.Labs.GraphQL.csproj", "{6A6DB3C4-530B-4AB2-891F-4BAF3777251A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.API.Tests", "Tests\RuiSantos.Labs.API.Tests\RuiSantos.Labs.API.Tests.csproj", "{1FAC6845-DEEB-44E3-AC2C-37D3C8D0822F}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Api.Tests", "Tests\RuiSantos.Labs.API.Tests\RuiSantos.Labs.Api.Tests.csproj", "{1FAC6845-DEEB-44E3-AC2C-37D3C8D0822F}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Tests", "Tests\RuiSantos.Labs.Tests\RuiSantos.Labs.Tests.csproj", "{C31C76FE-6EDE-4D96-945F-1E11C1FA75ED}"
 EndProject

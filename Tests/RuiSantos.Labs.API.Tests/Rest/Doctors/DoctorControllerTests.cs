@@ -1,8 +1,8 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
-using RuiSantos.Labs.API.Tests.Fixtures;
+using RuiSantos.Labs.Api.Tests.Fixtures;
 using Xunit.Abstractions;
 
-namespace RuiSantos.Labs.API.Tests.Rest;
+namespace RuiSantos.Labs.Api.Tests.Rest;
 
 [Collection(nameof(ServiceCollectionFixture))]
 public partial class DoctorControllerTests: IClassFixture<ServiceFixture>

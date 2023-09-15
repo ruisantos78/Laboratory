@@ -27,7 +27,6 @@ public class MedicalSpecialtiesManagement
         await service.CreateMedicalSpecialtiesAsync(specialties);
         
         // Assert 
-        asserts.ShouldClearCache();
         asserts.ShouldNotLogError();
 
         await asserts.ShouldAddAsync(specialties);        
@@ -50,7 +49,6 @@ public class MedicalSpecialtiesManagement
             .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
 
         // Assert 
-        asserts.ShouldNotClearCache();
         asserts.ShouldLogError();
     }
     
@@ -67,7 +65,6 @@ public class MedicalSpecialtiesManagement
         await service.RemoveMedicalSpecialtiesAsync(specialty);
 
         // Assert 
-        asserts.ShouldClearCache();
         asserts.ShouldNotLogError();
 
         await asserts.ShouldRemoveAsync(specialty);        
@@ -90,7 +87,6 @@ public class MedicalSpecialtiesManagement
             .WithMessage(MessageResources.MedicalSpecialitiesSetFail);
         
         // Assert 
-        asserts.ShouldNotClearCache();
         asserts.ShouldLogError();
     }
 }

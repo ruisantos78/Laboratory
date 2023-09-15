@@ -1,39 +1,54 @@
 ﻿@page "/admin/specialties"
-@inject AdminMedicalSpecialtiesViewModel Model
+@inherits MvvmComponentBase<AdminMedicalSpecialtiesViewModel>
 
-@code
-{
-    protected override Task OnInitializedAsync() => Model.LoadAsync();
-}
+<Column ColumnSize="ColumnSize.IsHalf" Margin="Margin.IsAuto.OnX.Is4.OnY">
+    <Card>
+        <CardHeader>Medical Specialties</CardHeader>
+        <CardBody>
+            <Table Striped Narrow>
+                <TableHeader>
+                    <TableRow>
+                        <TableHeaderCell class="col-1">
+                            <Button Color="Color.Primary" Size="Size.ExtraSmall" @onclick="ViewModel!.AddNew">Add</Button>
+                        </TableHeaderCell>
+                        <TableHeaderCell  class="col">
+                            Medical Specialty
+                        </TableHeaderCell>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    @foreach (var specialty in ViewModel!.Specialties)
+                    {
+                        <TableRow>
+                            <TableRowCell>
+                                <Button Color="Color.Link" Size="Size.ExtraSmall" CommandParameter="specialty" Command="ViewModel.RemoveCommand">Remove</Button>
+                            </TableRowCell>
+                            <TableRowCell>
+                                @specialty
+                            </TableRowCell>
+                        </TableRow>
+                    }
+                </TableBody>
+            </Table>
+        </CardBody>
+    </Card>
+</Column>
 
-<header>
-    Medical Specialties
-</header>
-
-<article>
-    <table>
-        <thead>
-            <tr>
-                <th style="width: 100%;" colspan="2">Medical Specialty</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var specialty in Model.Specialties)
-            {
-                <tr>
-                    <td style="white-space: nowrap">
-                        <button type="link" @onclick="() => Model.Remove(specialty)">Remove</button>
-                    </td>
-                    <td style="width: 100%;">@specialty</td>
-                </tr>
-            }
-        </tbody>
-        <tfoot>
-            <tr>
-                <td colspan="2">
-                    <button type="link" @onclick="Model.Add">Add</button>
-                </td>
-            </tr>
-        </tfoot>
-    </table>
-</article>
+<Modal @bind-Visible="ViewModel!.ModalVisible" Closing="ViewModel.OnModalClosing">
+    <ModalContent>
+        <ModalHeader>
+            <ModalTitle>Add Medical Specialty</ModalTitle>
+            <CloseButton />
+        </ModalHeader>
+        <ModalBody>
+            <Field>
+                <FieldLabel>Description</FieldLabel>
+                <TextEdit Autofocus @bind-Text="ViewModel.Specialty"/>
+            </Field>
+        </ModalBody>
+        <ModalFooter>
+            <Button Color="Color.Secondary" Clicked="ViewModel.CloseModal">Close</Button>
+            <Button Color="Color.Primary" Clicked="ViewModel.Save">Save Changes</Button>
+        </ModalFooter>
+    </ModalContent>
+</Modal>

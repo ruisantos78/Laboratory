@@ -1,6 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
 using RuiSantos.Labs.Core.Repositories;
-using RuiSantos.Labs.Core.Cache;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Resources;
@@ -55,19 +54,17 @@ public interface IDoctorService
 
 internal class DoctorService : IDoctorService
 {
-    private readonly IRepositoryCache repositoryCache;
     private readonly IDoctorRepository doctorRepository;
     private readonly IPatientRepository patientRepository;
     private readonly IAppointamentsRepository appointamentsRepository;
     private readonly ILogger logger;
 
-    public DoctorService(IRepositoryCache repositoryCache,
-                        IDoctorRepository doctorRepository,
-                        IPatientRepository patientRepository,
-                        IAppointamentsRepository appointamentsRepository,
-                        ILogger<DoctorService> logger)
+    public DoctorService(
+        IDoctorRepository doctorRepository,
+        IPatientRepository patientRepository,
+        IAppointamentsRepository appointamentsRepository,
+        ILogger<DoctorService> logger)
     {
-        this.repositoryCache = repositoryCache;
         this.doctorRepository = doctorRepository;
         this.patientRepository = patientRepository;
         this.appointamentsRepository = appointamentsRepository;
@@ -89,7 +86,7 @@ internal class DoctorService : IDoctorService
                 Specialties = specialties.ToHashSet()
             };
 
-            await ValidateDoctorAsync(doctor);
+            Validator.ThrowExceptionIfIsNotValid(doctor);
             await doctorRepository.StoreAsync(doctor);
         }
         catch (ValidationFailException)
@@ -110,12 +107,10 @@ internal class DoctorService : IDoctorService
             var doctor = await doctorRepository.FindAsync(license) ??
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
-            // TODO: Only cancel appointment when the hour is excluded.
             doctor.OfficeHours.RemoveWhere(hour => hour.Week == dayOfWeek);
             if (hours.Any())
                 doctor.OfficeHours.Add(new OfficeHour(dayOfWeek, hours));
 
-            await CancelAppointmentsAsync(doctor, dayOfWeek, hours);
             await doctorRepository.StoreAsync(doctor);
         }
         catch (ValidationFailException)
@@ -158,35 +153,5 @@ internal class DoctorService : IDoctorService
             logger?.Fail(ex);
             throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
         }
-    }
-
-    private async Task ValidateDoctorAsync(Doctor model)
-    {
-        var medicalSpecialties = await repositoryCache.GetMedicalSpecialtiesAsync();
-        Validator.ThrowExceptionIfIsNotValid(model, medicalSpecialties);
-    }
-
-    private Task CancelAppointmentsAsync(Doctor doctor, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
-    {
-        // var appointments = doctor.Appointments
-        //     .Where(appointment => appointment.Week == dayOfWeek && !hours.Contains(appointment.Time))
-        //     .ToHashSet();
-
-        // if (!appointments.Any())
-        //     return;
-
-        // var patients = await patientRepository.FindAllWithAppointmentsAsync(appointments);
-        // if (patients.Any())
-        // {
-        //     await Task.WhenAll(patients.Select(p =>
-        //     {
-        //         p.Appointments.RemoveWhere(pa => appointments.Any(da => da.Id == pa.Id));
-        //         return patientRepository.StoreAsync(p);
-        //     }).ToArray());
-        // }
-
-        // doctor.Appointments.RemoveWhere(item => appointments.Any(a => a.Id == item.Id));
-
-        return Task.CompletedTask;
-    }
+    }    
 }

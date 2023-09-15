@@ -1,0 +1,7 @@
+mutation AddSpecialties($input: AddSpecialtiesInput!) {
+  addSpecialties(input: $input) {
+    specialties {
+      description
+    }
+  }
+}

@@ -4,23 +4,19 @@
 }
 
 type Mutations {
-  "Add medical specialties."
-  addSpecialties(input: AddSpecialtiesInput!): AddSpecialtiesPayload!
   "Create\/update a doctor."
   setDoctor(input: SetDoctorInput!): SetDoctorPayload!
+  "Add medical specialties."
+  addSpecialties(input: AddSpecialtiesInput!): AddSpecialtiesPayload!
+  "Add medical specialties."
+  removeSpecialties(input: RemoveSpecialtiesInput!): RemoveSpecialtiesPayload!
 }
 
 type Queries {
-  "Get all medical specialties."
-  specialties(order: [SpecialtiesSortInput!]): [Specialties!]!
   "Get information about a doctor."
   doctor("License number" license: String! where: DoctorFilterInput order: [DoctorSortInput!]): Doctor!
-}
-
-"Medical Specialties"
-input SpecialtiesSortInput {
-  "Description"
-  description: SortEnumType
+  "Get all medical specialties."
+  specialties(where: SpecialtiesFilterInput order: [SpecialtiesSortInput!]): [Specialties!]!
 }
 
 "Represents a doctor."
@@ -53,9 +49,18 @@ input DoctorSortInput {
   email: SortEnumType
 }
 
-enum SortEnumType {
-  ASC
-  DESC
+"Medical Specialties"
+input SpecialtiesFilterInput {
+  and: [SpecialtiesFilterInput!]
+  or: [SpecialtiesFilterInput!]
+  "Description"
+  description: StringOperationFilterInput
+}
+
+"Medical Specialties"
+input SpecialtiesSortInput {
+  "Description"
+  description: SortEnumType
 }
 
 input StringOperationFilterInput {
@@ -80,6 +85,27 @@ input ListStringOperationFilterInput {
   any: Boolean
 }
 
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+"Represents a doctor."
+input DoctorInput {
+  "Doctor license number."
+  license: String!
+  "First name."
+  firstName: String!
+  "Last name."
+  lastName: String!
+  "Email."
+  email: String!
+  "Contact numbers."
+  contacts: [String!]!
+  "Medical specialties."
+  specialties: [String!]!
+}
+
 "Represents a doctor."
 type Doctor {
   "Doctor license number."
@@ -102,20 +128,13 @@ type Specialties {
   description: String!
 }
 
-"Represents a doctor."
-input DoctorInput {
-  "Doctor license number."
-  license: String!
-  "First name."
-  firstName: String!
-  "Last name."
-  lastName: String!
-  "Email."
-  email: String!
-  "Contact numbers."
-  contacts: [String!]!
-  "Medical specialties."
-  specialties: [String!]!
+input SetDoctorInput {
+  "The doctor."
+  doctor: DoctorInput!
+}
+
+type SetDoctorPayload {
+  doctor: Doctor
 }
 
 input AddSpecialtiesInput {
@@ -127,11 +146,11 @@ type AddSpecialtiesPayload {
   specialties: [Specialties!]
 }
 
-input SetDoctorInput {
-  "The doctor."
-  doctor: DoctorInput!
+input RemoveSpecialtiesInput {
+  "A medical specialty."
+  description: String!
 }
 
-type SetDoctorPayload {
-  doctor: Doctor
+type RemoveSpecialtiesPayload {
+  specialties: [Specialties!]
 }

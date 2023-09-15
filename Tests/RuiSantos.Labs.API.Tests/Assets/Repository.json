@@ -1,115 +1,119 @@
 {
-    "Patients": [
+  "Patients": [
+    {
+      "Id": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
+      "SocialSecurityNumber": "123-45-6789",
+      "FirstName": "John",
+      "LastName": "Doe",
+      "Email": "john.doe@example.com",
+      "ContactNumbers": [ "123-456-7890" ]
+    }
+  ],
+  "Appointments": [
+    {
+      "AppointmentId": "8a6151c7-9122-4a98-90bb-6f2289c726d0",
+      "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
+      "PatientId": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
+      "AppointmentDateTime": "2023-08-21T09:00:00Z"
+    }
+  ],
+  "Dictionary": [
+    {
+      "Source": "specialties",
+      "Value": "Pediatrics"
+    },
+    {
+      "Source": "specialties",
+      "Value": "Dermatology"
+    },
+    {
+      "Source": "specialties",
+      "Value": "Cardiology"
+    }
+  ],
+  "DoctorSpecialties": [
+    {
+      "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
+      "Specialty": "Pediatrics"
+    },
+    {
+      "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
+      "Specialty": "Dermatology"
+    },
+    {
+      "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
+      "Specialty": "Dermatology"
+    },
+    {
+      "DoctorId": "fa626a8e-03a5-4fe1-a910-b3803bed256c",
+      "Specialty": "Pediatrics"
+    },
+    {
+      "DoctorId": "4227a0f4-bf22-47d6-8137-d7a3e3f29054",
+      "Specialty": "Cardiology"
+    }
+  ],
+  "Doctors": [
+    {
+      "Id": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
+      "License": "XYZ002",
+      "FirstName": "Emily",
+      "LastName": "Parker",
+      "Email": "emily.parker@example.com",
+      "ContactNumbers": [
+        "1-123-456-7890"
+      ],
+      "Availability": [
         {
-            "Id": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
-            "SocialSecurityNumber": "123-45-6789",
-            "FirstName": "John",
-            "LastName": "Doe",
-            "Email": "john.doe@example.com",
-            "ContactNumbers": [ "123-456-7890" ]
+          "Week": "Monday",
+          "Hours": [
+            "8:00:00",
+            "9:00:00",
+            "10:00:00",
+            "11:00:00"
+          ]
         }
-    ],
-    "Appointments": [
+      ]
+    },
+    {
+      "Id": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
+      "License": "DEF003",
+      "FirstName": "Alex",
+      "LastName": "Carter",
+      "Email": "alex.carter@example.com",
+      "ContactNumbers": [
+        "1-987-654-3210"
+      ],
+      "Availability": [
         {
-            "AppointmentId": "8a6151c7-9122-4a98-90bb-6f2289c726d0",
-            "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
-            "PatientId": "d4d94a6c-6a7f-4a98-90bb-6f2289c726d0",
-            "AppointmentDateTime": "2023-08-21T09:00:00Z"
+          "Week": "Monday",
+          "Hours": [
+            "9:00:00"
+          ]
         }
-    ],
-    "Dictionary": [
-        {
-            "Source": "specialties",
-            "Values": [
-                "Pediatrics",
-                "Dermatology",
-                "Cardiology"
-            ]
-        }
-    ],
-    "DoctorSpecialties": [
-        {
-            "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
-            "Specialty": "Pediatrics"
-        },
-        {
-            "DoctorId": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
-            "Specialty": "Dermatology"
-        },
-        {
-            "DoctorId": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
-            "Specialty": "Dermatology"
-        },
-        {
-            "DoctorId": "fa626a8e-03a5-4fe1-a910-b3803bed256c",
-            "Specialty": "Pediatrics"
-        },
-        {
-            "DoctorId": "4227a0f4-bf22-47d6-8137-d7a3e3f29054",
-            "Specialty": "Cardiology"
-        }        
-    ],
-    "Doctors": [
-        {
-            "Id": "d6c9f315-0e35-4d5b-b25e-61a61c92d9c9",
-            "License": "XYZ002",
-            "FirstName": "Emily",
-            "LastName": "Parker",
-            "Email": "emily.parker@example.com",
-            "ContactNumbers": [
-                "1-123-456-7890"
-            ],
-            "Availability": [
-                {
-                    "Week": "Monday",
-                    "Hours": [
-                        "8:00:00",
-                        "9:00:00",
-                        "10:00:00",
-                        "11:00:00"
-                    ]
-                }
-            ]
-        },
-        {
-            "Id": "8a6151c7-9122-4f1b-a1e7-85e981c17a14",
-            "License": "DEF003",
-            "FirstName": "Alex",
-            "LastName": "Carter",
-            "Email": "alex.carter@example.com",
-            "ContactNumbers": [
-                "1-987-654-3210"
-            ],
-            "Availability": [
-                {
-                    "Week": "Monday",
-                    "Hours": [
-                        "9:00:00"
-                    ]
-                }
-            ]
-        },
-        {
-            "Id": "fa626a8e-03a5-4fe1-a910-b3803bed256c",
-            "License": "PED001",
-            "FirstName": "Michael",
-            "LastName": "Johnson",
-            "Email": "michael.johnson@example.com",
-            "ContactNumbers": [
-                "1-987-654-3210"
-            ],
-            "Availability": []
-        },
-        {
-            "Id": "4227a0f4-bf22-47d6-8137-d7a3e3f29054",
-            "License": "CAR002",
-            "FirstName": "Pedro",
-            "LastName": "Pascal",
-            "Email": "pedro.pascal@example.com",
-            "ContactNumbers": [
-                "1-987-654-3210"
-            ],
-            "Availability": []
-        }
-    ]
+      ]
+    },
+    {
+      "Id": "fa626a8e-03a5-4fe1-a910-b3803bed256c",
+      "License": "PED001",
+      "FirstName": "Michael",
+      "LastName": "Johnson",
+      "Email": "michael.johnson@example.com",
+      "ContactNumbers": [
+        "1-987-654-3210"
+      ],
+      "Availability": []
+    },
+    {
+      "Id": "4227a0f4-bf22-47d6-8137-d7a3e3f29054",
+      "License": "CAR002",
+      "FirstName": "Pedro",
+      "LastName": "Pascal",
+      "Email": "pedro.pascal@example.com",
+      "ContactNumbers": [
+        "1-987-654-3210"
+      ],
+      "Availability": []
+    }
+  ]
 }

@@ -11,7 +11,7 @@ internal static class DynamoOperations
 
         await reader.ExecuteAsync();
         return reader.Results.ToList();
-    }    
+    }
 }
 
 internal static class DynamoOperations<TModel> where TModel : class, new()

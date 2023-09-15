@@ -1,6 +1,6 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 
-namespace RuiSantos.Labs.API.Tests;
+namespace RuiSantos.Labs.Api.Tests;
 
 internal static class DynamoDBContextExtensions
 {
