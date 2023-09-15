@@ -7,6 +7,7 @@ public interface IMedicalSpecialtySchemaAdapter
 {
     Task<IQueryable<MedicalSpecialtySchema>> GetMedicalSpecialtiesAsync();
     Task<IEnumerable<MedicalSpecialtySchema>> CreateMedicalSpecialtiesAsync(IEnumerable<string> descriptions);
+    Task<IEnumerable<MedicalSpecialtySchema>> RemoveMedicalSpecialtiesAsync(string description);
 }
 
 internal class MedicalSpecialtySchemaAdapter : IMedicalSpecialtySchemaAdapter
@@ -22,6 +23,12 @@ internal class MedicalSpecialtySchemaAdapter : IMedicalSpecialtySchemaAdapter
     {
         await service.CreateMedicalSpecialtiesAsync(descriptions.ToList()); 
         return descriptions.Select(GetSchema);
+    }
+
+    public async Task<IEnumerable<MedicalSpecialtySchema>> RemoveMedicalSpecialtiesAsync(string description)
+    {
+        await service.RemoveMedicalSpecialtiesAsync(description); 
+        return new List<MedicalSpecialtySchema> {GetSchema(description)};
     }
 
     public async Task<IQueryable<MedicalSpecialtySchema>> GetMedicalSpecialtiesAsync()

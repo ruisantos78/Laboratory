@@ -1,0 +1,25 @@
+﻿@page "/"
+@inject IndexViewModel Model
+
+<div class="login" style="text-align: center">
+    <h1>Rui Santos Laboratory</h1>
+
+    <div>
+        <select class="form-control" @bind="Model.Profile">
+            <option value="">- Select your profile -</option>
+            @foreach(var profile in Model.Profiles) {
+                    <option value="@profile">@profile</option>
+            }
+        </select>
+    </div>
+    <div>
+        <select class="form-control" @bind="Model.Operation">
+            <option value="">- Select an operation -</option>
+            @foreach(var operation in Model.Operations) {
+                    <option value="@operation.Id">@operation.DisplayName</option>
+            }
+        </select>
+    </div>
+
+    <button class="btn btn-primary" disabled="@Model.DisableConfirmButton" @onclick="Model.Confirm" >Confirm</button>
+</div>

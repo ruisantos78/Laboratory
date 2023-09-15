@@ -39,6 +39,15 @@ public class Startup
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
+
+        services.AddCors(options =>
+        {
+            options.AddDefaultPolicy(builder => {
+                builder.WithOrigins("http://localhost:5051") // Add the origin of your Blazor WebAssembly app
+                   .AllowAnyHeader()
+                   .AllowAnyMethod();
+            });
+        });
     }
 
     public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
@@ -49,8 +58,8 @@ public class Startup
             app.UseSwaggerUI(x => x.SwaggerEndpoint("/swagger/v1/swagger.yaml", "Rui Santos Laboratory v1"));
         }
 
-        app.UseRouting();
-        
+        app.UseCors();
+        app.UseRouting();        
         app.UseAuthorization();
         
         app.UseEndpoints(endpoints =>

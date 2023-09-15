@@ -1,0 +1,137 @@
+﻿schema {
+  query: Queries
+  mutation: Mutations
+}
+
+type Mutations {
+  "Add medical specialties."
+  addSpecialties(input: AddSpecialtiesInput!): AddSpecialtiesPayload!
+  "Create\/update a doctor."
+  setDoctor(input: SetDoctorInput!): SetDoctorPayload!
+}
+
+type Queries {
+  "Get all medical specialties."
+  specialties(order: [SpecialtiesSortInput!]): [Specialties!]!
+  "Get information about a doctor."
+  doctor("License number" license: String! where: DoctorFilterInput order: [DoctorSortInput!]): Doctor!
+}
+
+"Medical Specialties"
+input SpecialtiesSortInput {
+  "Description"
+  description: SortEnumType
+}
+
+"Represents a doctor."
+input DoctorFilterInput {
+  and: [DoctorFilterInput!]
+  or: [DoctorFilterInput!]
+  "Doctor license number."
+  license: StringOperationFilterInput
+  "First name."
+  firstName: StringOperationFilterInput
+  "Last name."
+  lastName: StringOperationFilterInput
+  "Email."
+  email: StringOperationFilterInput
+  "Contact numbers."
+  contacts: ListStringOperationFilterInput
+  "Medical specialties."
+  specialties: ListStringOperationFilterInput
+}
+
+"Represents a doctor."
+input DoctorSortInput {
+  "Doctor license number."
+  license: SortEnumType
+  "First name."
+  firstName: SortEnumType
+  "Last name."
+  lastName: SortEnumType
+  "Email."
+  email: SortEnumType
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+input ListStringOperationFilterInput {
+  all: StringOperationFilterInput
+  none: StringOperationFilterInput
+  some: StringOperationFilterInput
+  any: Boolean
+}
+
+"Represents a doctor."
+type Doctor {
+  "Doctor license number."
+  license: String!
+  "First name."
+  firstName: String!
+  "Last name."
+  lastName: String!
+  "Email."
+  email: String!
+  "Contact numbers."
+  contacts: [String!]!
+  "Medical specialties."
+  specialties: [String!]!
+}
+
+"Medical Specialties"
+type Specialties {
+  "Description"
+  description: String!
+}
+
+"Represents a doctor."
+input DoctorInput {
+  "Doctor license number."
+  license: String!
+  "First name."
+  firstName: String!
+  "Last name."
+  lastName: String!
+  "Email."
+  email: String!
+  "Contact numbers."
+  contacts: [String!]!
+  "Medical specialties."
+  specialties: [String!]!
+}
+
+input AddSpecialtiesInput {
+  "A list of medical specialties."
+  descriptions: [String!]!
+}
+
+type AddSpecialtiesPayload {
+  specialties: [Specialties!]
+}
+
+input SetDoctorInput {
+  "The doctor."
+  doctor: DoctorInput!
+}
+
+type SetDoctorPayload {
+  doctor: Doctor
+}

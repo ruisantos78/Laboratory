@@ -1,0 +1,7 @@
+query GetMedicalSpecialties() {
+  specialties(
+    order: { description:ASC }
+  ) {
+    description
+  }
+}

@@ -1,0 +1,39 @@
+﻿@page "/admin/specialties"
+@inject AdminMedicalSpecialtiesViewModel Model
+
+@code
+{
+    protected override Task OnInitializedAsync() => Model.LoadAsync();
+}
+
+<header>
+    Medical Specialties
+</header>
+
+<article>
+    <table>
+        <thead>
+            <tr>
+                <th style="width: 100%;" colspan="2">Medical Specialty</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var specialty in Model.Specialties)
+            {
+                <tr>
+                    <td style="white-space: nowrap">
+                        <button type="link" @onclick="() => Model.Remove(specialty)">Remove</button>
+                    </td>
+                    <td style="width: 100%;">@specialty</td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2">
+                    <button type="link" @onclick="Model.Add">Add</button>
+                </td>
+            </tr>
+        </tfoot>
+    </table>
+</article>

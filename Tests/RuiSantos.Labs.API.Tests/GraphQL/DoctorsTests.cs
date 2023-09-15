@@ -132,9 +132,9 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         var request = new
         {
             query = """
-                    query GetSpecialties {
-                        specialties {
-                            description 
+                    query GetMedicalSpecialties() {
+                        specialties() {
+                            description
                         }
                     }
                     """

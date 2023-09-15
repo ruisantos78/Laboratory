@@ -21,6 +21,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.API.Tests", 
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Tests", "Tests\RuiSantos.Labs.Tests\RuiSantos.Labs.Tests.csproj", "{C31C76FE-6EDE-4D96-945F-1E11C1FA75ED}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Client", "Server\RuiSantos.Labs.Client\RuiSantos.Labs.Client.csproj", "{11D06CE5-CD99-4C40-9313-C7AEC09CA82F}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -51,6 +53,10 @@ Global
 		{C31C76FE-6EDE-4D96-945F-1E11C1FA75ED}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{C31C76FE-6EDE-4D96-945F-1E11C1FA75ED}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{C31C76FE-6EDE-4D96-945F-1E11C1FA75ED}.Release|Any CPU.Build.0 = Release|Any CPU
+		{11D06CE5-CD99-4C40-9313-C7AEC09CA82F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{11D06CE5-CD99-4C40-9313-C7AEC09CA82F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{11D06CE5-CD99-4C40-9313-C7AEC09CA82F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{11D06CE5-CD99-4C40-9313-C7AEC09CA82F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -62,6 +68,7 @@ Global
 		{6A6DB3C4-530B-4AB2-891F-4BAF3777251A} = {E29DA8F3-D859-49D5-85C4-7DFE848DDE27}
 		{1FAC6845-DEEB-44E3-AC2C-37D3C8D0822F} = {A5A84AA0-0B34-4BA3-B8F0-3AB3DDF9DB40}
 		{C31C76FE-6EDE-4D96-945F-1E11C1FA75ED} = {A5A84AA0-0B34-4BA3-B8F0-3AB3DDF9DB40}
+		{11D06CE5-CD99-4C40-9313-C7AEC09CA82F} = {DB45FB4E-957C-4A14-8821-35418EEB474D}
 	EndGlobalSection
 	GlobalSection(MonoDevelopProperties) = preSolution
 		Policies = $0

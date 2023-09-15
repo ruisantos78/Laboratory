@@ -1,0 +1,35 @@
+header {
+    font-size: large;
+    background-color: silver;
+    padding: 20px;
+}
+
+article {
+    padding: 50px;
+    display: flex;
+}
+
+table {
+    flex: 1;
+    border: thin solid black;
+    padding: 0;
+    border-collapse: collapse;     
+}
+
+table a {
+    color: black;
+    font-weight: bold;
+    text-decoration: none;
+}
+
+table td, table th {
+    padding: 3px 5px;
+}
+
+table thead {    
+    background-color: lightblue;
+}
+
+table tfoot {
+    background-color: gainsboro;
+}

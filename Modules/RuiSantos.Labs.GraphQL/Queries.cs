@@ -4,7 +4,7 @@ namespace RuiSantos.Labs.GraphQL;
 
 public class Queries
 {
-    [UseSorting]
+    [UseFiltering, UseSorting]
     [GraphQLDescription("Get all medical specialties.")]
     public async Task<IQueryable<MedicalSpecialtySchema>> GetSpecialties(
         [Service] IMedicalSpecialtySchemaAdapter adapter)
