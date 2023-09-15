@@ -12,14 +12,15 @@ internal static class ClassMapConstants
     public const string DoctorAppointmentsIndexName = "DoctorAppointmentsIndex";
     public const string PatientAppointmentsIndexName = "PatientAppointmentsIndex";
     public const string PatientSocialSecurityNumberIndexName = "PatientSocialSecurityNumberIndex";
-    public const string DoctorSpecialtyIndexName = "DoctorSpecialtyIndexNameIndex";
-
+    public const string DoctorSpecialtyIndexName = "DoctorSpecialtyIndex";
+   
     public const string AppointmentIdAttributeName = "AppointmentId";    
     public const string DoctorIdAttributeName = "DoctorId";
     public const string PatientIdAttributeName = "PatientId";    
     public const string LicenseAttributeName = "License";
     public const string SpecialtyAttributeName = "Specialty";        
-    public const string SourceAttributeName = "Source";        
+    public const string SourceAttributeName = "Source";
+    public const string ValueAttributeName = "Value";
     public const string SocialSecurityNumberAttributeName = "SocialSecurityNumber";    
     public const string AppointmentDateTimeAttributeName  = "AppointmentDateTime";
 }

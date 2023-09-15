@@ -2,7 +2,6 @@
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Core.Resources;
-using RuiSantos.Labs.Core.Cache;
 
 namespace RuiSantos.Labs.Core.Services;
 
@@ -38,16 +37,13 @@ public interface IMedicalSpecialtiesService
 internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
 {
     private readonly IMedicalSpecialityRepository medicalSpecialityRepository;
-    private readonly IRepositoryCache cache;
     private readonly ILogger logger;
 
     public MedicalSpecialtiesService(
         IMedicalSpecialityRepository medicalSpecialityRepository,   
-        IRepositoryCache cache,                                     
         ILogger<MedicalSpecialtiesService> logger)
     {
         this.medicalSpecialityRepository = medicalSpecialityRepository;
-        this.cache = cache;
         this.logger = logger;
     }
 
@@ -56,7 +52,6 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
         try
         {
             await medicalSpecialityRepository.AddAsync(descriptions); 
-            cache.ClearMedicalSpecialties();
         }
         catch (Exception ex)
         {
@@ -70,7 +65,6 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
         try
         {
             await medicalSpecialityRepository.RemoveAsync(description); 
-            cache.ClearMedicalSpecialties();         
         }
         catch (Exception ex)
         {
@@ -83,8 +77,7 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
     {
         try
         {
-            return await cache.GetMedicalSpecialtiesAsync() 
-                ?? await medicalSpecialityRepository.GetAsync();        
+            return await medicalSpecialityRepository.GetAsync();        
         }
         catch (Exception ex)
         {

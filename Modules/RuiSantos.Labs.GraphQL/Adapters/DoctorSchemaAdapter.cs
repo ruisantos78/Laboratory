@@ -4,9 +4,10 @@ using RuiSantos.Labs.GraphQL.Schemas;
 
 namespace RuiSantos.Labs.GraphQL;
 
+[Adapter(typeof(DoctorSchemaAdapter))]
 public interface IDoctorSchemaAdapter {
-    Task<DoctorSchema> CreateOrUpdateDoctorAsync(DoctorSchema doctor);
-    Task<DoctorSchema> GetDoctorAsync(string license);
+    Task<DoctorSchema> StoreAsync(DoctorSchema doctor);
+    Task<DoctorSchema> FindAsync(string license);
 }
 
 internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
@@ -38,12 +39,12 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
         Specialties = schema.Specialties.ToHashSet()
     };
 
-    public async Task<DoctorSchema> GetDoctorAsync(string license) {
+    public async Task<DoctorSchema> FindAsync(string license) {
         var doctor = await service.GetDoctorByLicenseAsync(license);     
         return GetSchema(doctor ?? new Doctor());
     }    
 
-    public async Task<DoctorSchema> CreateOrUpdateDoctorAsync(DoctorSchema schema)
+    public async Task<DoctorSchema> StoreAsync(DoctorSchema schema)
     {
         await service.CreateDoctorAsync(
             license: schema.License,

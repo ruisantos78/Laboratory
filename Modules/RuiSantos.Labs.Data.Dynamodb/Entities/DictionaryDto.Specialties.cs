@@ -20,13 +20,14 @@ partial class DictionaryDto
             IndexName = DoctorSpecialtyIndexName
         })
         .GetRemainingAsync();
-        
-        var writer = context.CreateBatchWrite<DoctorSpecialtyDto>();
-        writer.AddDeleteItems(doctorSpecialties);
 
-        var doctorSpecialtiesTask = writer.ExecuteAsync();
-        var specialtyTask = RemoveAsync(context, Specialties, speciality);
-        
-        await Task.WhenAll(doctorSpecialtiesTask, specialtyTask);
+        if (doctorSpecialties?.Any() is true)
+        {
+            var writer = context.CreateBatchWrite<DoctorSpecialtyDto>();
+            writer.AddDeleteItems(doctorSpecialties);
+            await writer.ExecuteAsync();
+        }
+
+        await RemoveAsync(context, Specialties, speciality);
     }
 }

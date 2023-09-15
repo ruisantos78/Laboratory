@@ -10,8 +10,6 @@ namespace RuiSantos.Labs.Tests.Stories.Doctor;
 /// </UserStory>
 public class DoctorInformationManagement
 {
-    private static readonly string[] Specialties = { "Cardiologist" };
-
     public static IEnumerable<object[]> GetDoctors() => new List<object[]>()
     {
         new object[] { "ABC123", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" } }
@@ -24,7 +22,7 @@ public class DoctorInformationManagement
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var asserts = new DoctorsAsserts(Specialties);
+        var asserts = new DoctorsAsserts();
         
         // Act
         var service = asserts.GetService();
@@ -43,7 +41,7 @@ public class DoctorInformationManagement
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var asserts = new DoctorsAsserts(Specialties);
+        var asserts = new DoctorsAsserts();
         asserts.ThrowOnAddAsync(license);
 
         // Act
@@ -62,15 +60,14 @@ public class DoctorInformationManagement
     [InlineData("Email", "ABC123", "<invalid email>", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("Email", "ABC123", null, "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("FirstName", "ABC123", "joe.doe@mail.com", null, "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
-    [InlineData("LastName", "ABC123", "joe.doe@mail.com", "Joe", null, new[] { "555-5555" }, new[] { "Cardiologist" })]
-    [InlineData("Specialties[0]", "ABC123", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "<invalid specialty>" })]
+    [InlineData("LastName", "ABC123", "joe.doe@mail.com", "Joe", null, new[] { "555-5555" }, new[] { "Cardiologist" })]    
     public async Task CreateDoctorAsync_WithInvalidInformation_ThrowsValidationFailException(
         string propertyName,
         string license, string email, string firstName, string lastName,
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var asserts = new DoctorsAsserts(Specialties);
+        var asserts = new DoctorsAsserts();
 
         // Act
         var service = asserts.GetService();

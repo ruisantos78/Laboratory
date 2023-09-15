@@ -2,7 +2,7 @@
 using FluentAssertions;
 using RuiSantos.Labs.Api.Contracts;
 
-namespace RuiSantos.Labs.API.Tests.Rest;
+namespace RuiSantos.Labs.Api.Tests.Rest;
 
 partial class DoctorControllerTests
 {

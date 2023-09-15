@@ -7,7 +7,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RuiSantos.Labs.Data.Dynamodb.Mediators;
 
-namespace RuiSantos.Labs.API.Tests.Containers;
+namespace RuiSantos.Labs.Api.Tests.Containers;
 
 public sealed partial class DynamoDbContainer : IAsyncDisposable
 {

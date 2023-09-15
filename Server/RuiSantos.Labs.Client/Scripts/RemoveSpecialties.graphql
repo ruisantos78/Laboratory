@@ -1,0 +1,7 @@
+mutation RemoveSpecialties($input: RemoveSpecialtiesInput!) {
+  removeSpecialties(input: $input) {
+    specialties {
+      description
+    }
+  }
+}

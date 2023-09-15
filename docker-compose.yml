@@ -8,8 +8,8 @@ services:
    ports:
      - "8000:8000"
 
-  ruisantos.lab.api:
-    image: ${DOCKER_REGISTRY-}ruisantoslabapi
+  ruisantos.labs.api:
+    image: ${DOCKER_REGISTRY-}ruisantos.labs.api
     depends_on:
       - ruisantos.labs.db.dynamo
     environment:
@@ -20,3 +20,16 @@ services:
     build:
       context: .
       dockerfile: ./Dockerfile
+  
+  ruisantos.labs.client:
+    image: ${DOCKER_REGISTRY-}ruisantos.labs.client
+    depends_on:
+      - ruisantos.labs.api
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - RUISANTOS_LABS_API_URL=http://localhost:8001/graphql/
+    ports:
+      - 8002:80
+    build:
+      context: ./Server/RuiSantos.Labs.Client
+      dockerfile: ./Dockerfile 

@@ -1,0 +1,156 @@
+﻿schema {
+  query: Queries
+  mutation: Mutations
+}
+
+type Mutations {
+  "Create\/update a doctor."
+  setDoctor(input: SetDoctorInput!): SetDoctorPayload!
+  "Add medical specialties."
+  addSpecialties(input: AddSpecialtiesInput!): AddSpecialtiesPayload!
+  "Add medical specialties."
+  removeSpecialties(input: RemoveSpecialtiesInput!): RemoveSpecialtiesPayload!
+}
+
+type Queries {
+  "Get information about a doctor."
+  doctor("License number" license: String! where: DoctorFilterInput order: [DoctorSortInput!]): Doctor!
+  "Get all medical specialties."
+  specialties(where: SpecialtiesFilterInput order: [SpecialtiesSortInput!]): [Specialties!]!
+}
+
+"Represents a doctor."
+input DoctorFilterInput {
+  and: [DoctorFilterInput!]
+  or: [DoctorFilterInput!]
+  "Doctor license number."
+  license: StringOperationFilterInput
+  "First name."
+  firstName: StringOperationFilterInput
+  "Last name."
+  lastName: StringOperationFilterInput
+  "Email."
+  email: StringOperationFilterInput
+  "Contact numbers."
+  contacts: ListStringOperationFilterInput
+  "Medical specialties."
+  specialties: ListStringOperationFilterInput
+}
+
+"Represents a doctor."
+input DoctorSortInput {
+  "Doctor license number."
+  license: SortEnumType
+  "First name."
+  firstName: SortEnumType
+  "Last name."
+  lastName: SortEnumType
+  "Email."
+  email: SortEnumType
+}
+
+"Medical Specialties"
+input SpecialtiesFilterInput {
+  and: [SpecialtiesFilterInput!]
+  or: [SpecialtiesFilterInput!]
+  "Description"
+  description: StringOperationFilterInput
+}
+
+"Medical Specialties"
+input SpecialtiesSortInput {
+  "Description"
+  description: SortEnumType
+}
+
+input StringOperationFilterInput {
+  and: [StringOperationFilterInput!]
+  or: [StringOperationFilterInput!]
+  eq: String
+  neq: String
+  contains: String
+  ncontains: String
+  in: [String]
+  nin: [String]
+  startsWith: String
+  nstartsWith: String
+  endsWith: String
+  nendsWith: String
+}
+
+input ListStringOperationFilterInput {
+  all: StringOperationFilterInput
+  none: StringOperationFilterInput
+  some: StringOperationFilterInput
+  any: Boolean
+}
+
+enum SortEnumType {
+  ASC
+  DESC
+}
+
+"Represents a doctor."
+input DoctorInput {
+  "Doctor license number."
+  license: String!
+  "First name."
+  firstName: String!
+  "Last name."
+  lastName: String!
+  "Email."
+  email: String!
+  "Contact numbers."
+  contacts: [String!]!
+  "Medical specialties."
+  specialties: [String!]!
+}
+
+"Represents a doctor."
+type Doctor {
+  "Doctor license number."
+  license: String!
+  "First name."
+  firstName: String!
+  "Last name."
+  lastName: String!
+  "Email."
+  email: String!
+  "Contact numbers."
+  contacts: [String!]!
+  "Medical specialties."
+  specialties: [String!]!
+}
+
+"Medical Specialties"
+type Specialties {
+  "Description"
+  description: String!
+}
+
+input SetDoctorInput {
+  "The doctor."
+  doctor: DoctorInput!
+}
+
+type SetDoctorPayload {
+  doctor: Doctor
+}
+
+input AddSpecialtiesInput {
+  "A list of medical specialties."
+  descriptions: [String!]!
+}
+
+type AddSpecialtiesPayload {
+  specialties: [Specialties!]
+}
+
+input RemoveSpecialtiesInput {
+  "A medical specialty."
+  description: String!
+}
+
+type RemoveSpecialtiesPayload {
+  specialties: [Specialties!]
+}
