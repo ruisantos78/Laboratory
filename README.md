@@ -34,7 +34,6 @@ This project was built using the following technologies:
   - [AWS Dynamodb](https://aws.amazon.com/en/pm/dynamodb/)
   - [Docker](https://www.docker.com/)
 
-
 ## Getting Started
 To set up the Rui Santos Laboratory on your local machine, follow these steps:
 
