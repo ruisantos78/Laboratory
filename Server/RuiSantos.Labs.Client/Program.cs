@@ -28,6 +28,8 @@ builder.Services
 
 builder.Services.AddMvvmNavigation();
 
-builder.Services.RegisterServices();
+builder.Services
+    .RegisterServices()
+    .RegisterViewModels();
 
 await builder.Build().RunAsync();

@@ -1,5 +1,6 @@
 main {
     padding-top: 25px;
+    overflow: auto;
 }
 
 h1:focus {

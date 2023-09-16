@@ -2,7 +2,7 @@
 @inherits MvvmComponentBase<AdminMedicalSpecialtiesViewModel>
 @if (ViewModel is null) return;
 
-<Container>
+<Container Margin="Margin.Is4.FromBottom">
     <Card>
         <CardHeader>
             <CardTitle>Medical Specialties Management</CardTitle>
@@ -11,14 +11,12 @@
             <Table Striped Narrow>
                 <TableHeader>
                     <TableRow>
-                        <TableHeaderCell class="col-1">
-                            <Button Color="Color.Primary"
-                                    Size="Size.ExtraSmall"
-                                    Command="ViewModel.AddNewCommand">
+                        <TableHeaderCell>
+                            <Button Color="Color.Primary" Size="Size.ExtraSmall" Command="ViewModel.AddNewCommand">
                                 Add
                             </Button>
                         </TableHeaderCell>
-                        <TableHeaderCell class="col">
+                        <TableHeaderCell Width="Width.Is100">
                             Medical Specialty
                         </TableHeaderCell>
                     </TableRow>
@@ -27,10 +25,7 @@
                     <Repeater Items="ViewModel.Specialties">
                         <TableRow>
                             <TableRowCell>
-                                <Button Color="Color.Link"
-                                        Size="Size.ExtraSmall"
-                                        CommandParameter="context"
-                                        Command="ViewModel.RemoveCommand">
+                                <Button Color="Color.Link" Size="Size.ExtraSmall" CommandParameter="context" Command="ViewModel.RemoveCommand">
                                     Remove
                                 </Button>
                             </TableRowCell>
@@ -39,7 +34,6 @@
                             </TableRowCell>
                         </TableRow>
                     </Repeater>
-
                 </TableBody>
             </Table>
         </CardBody>
@@ -55,34 +49,29 @@
         <ModalBody>
             <Field>
                 <FieldLabel>Description</FieldLabel>
-                <TextEdit Autofocus
-                          @bind-Text="ViewModel.InputSpecialty"
-                          KeyUp="ViewModel.OnInputSpecialtyKeyPress" />
-                <Label>Press Enter to add more descriptions...</Label>
+                <TextEdit Autofocus @bind-Text="ViewModel.InputSpecialty" KeyUp="ViewModel.OnInputSpecialtyKeyPress" />
+                 <Label>Press Enter to add more descriptions...</Label>
 
-                <Repeater Items="ViewModel.InputSpecialties">
-                    <Addons>
-                        <Addon AddonType="AddonType.Body">
-                            <TextEdit ReadOnly Text="@context" TabIndex="-1" />
-                        </Addon>
-                        <Addon AddonType="AddonType.End">
-                            <Button TabIndex="-1"
-                                    Color="Color.Danger"
-                                    Size="Size.ExtraSmall"
-                                    Command="ViewModel.RemoveSpecialtiesInputCommand"
-                                    CommandParameter="context">
-                                Remove
-                            </Button>
-                        </Addon>
-                    </Addons>
-                </Repeater>
-            </Field>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Primary" Clicked="ViewModel.Save">
-                Save Changes
-            </Button>
-            <Button Color="Color.Secondary" Clicked="ViewModel.CloseModal">Close</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+                 <Repeater Items="ViewModel.InputSpecialties">
+                     <Addons>
+                         <Addon AddonType="AddonType.Body">
+                             <TextEdit ReadOnly Text="@context" TabIndex="-1" />
+                         </Addon>
+                         <Addon AddonType="AddonType.End">
+                             <Button TabIndex="-1" Color="Color.Danger" Size="Size.ExtraSmall"
+                                 Command="ViewModel.RemoveSpecialtiesInputCommand" CommandParameter="context">
+                                 Remove
+                             </Button>
+                         </Addon>
+                     </Addons>
+                 </Repeater>
+             </Field>
+         </ModalBody>
+         <ModalFooter>
+             <Button Color="Color.Primary" Clicked="ViewModel.Save">
+                 Save Changes
+             </Button>
+             <Button Color="Color.Secondary" Clicked="ViewModel.CloseModal">Close</Button>
+         </ModalFooter>
+     </ModalContent>
+ </Modal>

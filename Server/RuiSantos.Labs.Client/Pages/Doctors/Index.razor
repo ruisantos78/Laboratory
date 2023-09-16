@@ -5,10 +5,30 @@
 <Container>
     <Card>
         <CardHeader>
-            <CardTitle>Doctors</CardTitle>
+            <CardTitle>Doctors Management</CardTitle>
         </CardHeader>
         <CardBody>
-
-        </CardBody>
-    </Card>
-</Container>
+            <DataGrid FixedHeader Virtualize Responsive Editable Narrow Striped
+                      TItem="IGetDoctors_Doctors" 
+                      Data="ViewModel.Doctors"
+                      ReadData="ViewModel.OnReadData" 
+                      TotalItems="ViewModel.TotalDoctors">
+                 <DataGridCommandColumn>
+                     <NewCommandTemplate>
+                         <Button Color="Color.Primary" Size="Size.ExtraSmall">Add</Button>
+                     </NewCommandTemplate>
+                     <EditCommandTemplate>
+                         <Button Color="Color.Link" Size="Size.ExtraSmall">Edit</Button>
+                     </EditCommandTemplate>
+                 </DataGridCommandColumn>
+                 <DataGridColumn Field="@nameof(IGetDoctors_Doctors.License)" Caption="License" Readonly/>
+                 <DataGridColumn Caption="Full Name" Readonly Width="50%">
+                     <DisplayTemplate>
+                         @($"{(context as IGetDoctors_Doctors).LastName}, {(context as IGetDoctors_Doctors).FirstName}")
+                     </DisplayTemplate>
+                 </DataGridColumn>
+                 <DataGridColumn Field="@nameof(IGetDoctors_Doctors.Email)" Caption="E-mail" Readonly Width="50%"/>
+             </DataGrid>
+         </CardBody>
+     </Card>
+ </Container>
