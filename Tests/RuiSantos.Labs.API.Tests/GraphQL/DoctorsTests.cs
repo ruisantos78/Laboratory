@@ -1,4 +1,5 @@
-﻿using System.Net;
+﻿using System.ComponentModel;
+using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using FluentAssertions;
 using RuiSantos.Labs.Api.Tests.Fixtures;

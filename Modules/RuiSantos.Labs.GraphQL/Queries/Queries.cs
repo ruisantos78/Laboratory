@@ -4,3 +4,5 @@ public partial class Queries
 {
 
 }
+
+public record Pagination(int Take, string? From = null);

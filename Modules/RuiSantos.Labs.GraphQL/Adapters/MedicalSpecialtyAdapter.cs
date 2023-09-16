@@ -6,7 +6,7 @@ namespace RuiSantos.Labs.GraphQL;
 [Adapter(typeof(MedicalSpecialtySchemaAdapter))]
 public interface IMedicalSpecialtySchemaAdapter
 {
-    Task<IQueryable<MedicalSpecialtySchema>> FindAllAsync();
+    Task<IEnumerable<MedicalSpecialtySchema>> FindAllAsync();
     Task<IEnumerable<MedicalSpecialtySchema>> StoreAsync(IEnumerable<string> descriptions);
     Task<IEnumerable<MedicalSpecialtySchema>> RemoveAsync(string description);
 }
@@ -32,10 +32,10 @@ internal class MedicalSpecialtySchemaAdapter : IMedicalSpecialtySchemaAdapter
         return new List<MedicalSpecialtySchema> {GetSchema(description)};
     }
 
-    public async Task<IQueryable<MedicalSpecialtySchema>> FindAllAsync()
+    public async Task<IEnumerable<MedicalSpecialtySchema>> FindAllAsync()
     {
         var result = await service.GetMedicalSpecialitiesAsync();
-        return result.Select(GetSchema).AsQueryable();
+        return result.Select(GetSchema).OrderBy(x => x.Description);
     }
 
     private MedicalSpecialtySchema GetSchema(string description)

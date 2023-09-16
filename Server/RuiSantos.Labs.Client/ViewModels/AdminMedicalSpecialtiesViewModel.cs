@@ -1,89 +1,140 @@
+using System.Collections.ObjectModel;
 using Blazing.Mvvm.ComponentModel;
-using Blazorise;
+using Blazorise.LoadingIndicator;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using Microsoft.AspNetCore.Components.Web;
 using StrawberryShake;
 
 namespace RuiSantos.Labs.Client.ViewModels;
 
-[RegisterService]
 public partial class AdminMedicalSpecialtiesViewModel : ViewModelBase
 {
     private readonly ILabsClient client;
+    private readonly ILoadingIndicatorService loadingIndicatorService;
 
     [ObservableProperty] private LinkedList<string> _specialties = new();
     [ObservableProperty] private bool _modalVisible = false;
-    [ObservableProperty] private string _specialty = string.Empty;
+    [ObservableProperty] private string _inputSpecialty = string.Empty;
+    [ObservableProperty] private ObservableCollection<string> _inputSpecialties = new();
 
-    public AdminMedicalSpecialtiesViewModel(ILabsClient client)
+    public AdminMedicalSpecialtiesViewModel(
+        ILabsClient client,
+        ILoadingIndicatorService loadingIndicatorService)
     {
         this.client = client;
-    }    
-
-    [RelayCommand] public void AddNew()
-    {
-        ModalVisible = true;
+        this.loadingIndicatorService = loadingIndicatorService;
     }
 
-    [RelayCommand] public void CloseModal()
+    [RelayCommand]
+    public Task AddNew()
+    {
+        InputSpecialty = string.Empty;
+        InputSpecialties.Clear();
+
+        ModalVisible = true;
+
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    public Task RemoveSpecialtiesInput(string specialty)
+    {
+        InputSpecialties.Remove(specialty);
+        NotifyStateChanged();
+        
+        return Task.CompletedTask;
+    }
+
+    [RelayCommand]
+    public Task CloseModal()
     {
         ModalVisible = false;
+
+        return Task.CompletedTask;
     }
 
-    [RelayCommand] public async Task Save()
-    {        
+    [RelayCommand]
+    public async Task Save()
+    {
+        if (!string.IsNullOrWhiteSpace(InputSpecialty))
+            InputSpecialties.Add(InputSpecialty.Trim());
+
         var response = await client.AddSpecialties.ExecuteAsync(new AddSpecialtiesInput()
         {
-            Descriptions = new[] { Specialty }
+            Descriptions = InputSpecialties
         });
 
-        if (response.IsSuccessResult() && !Specialties.Contains(Specialty))
-        {                                        
-            var index = Specialties.LastOrDefault(x => x.CompareTo(Specialty) < 0, string.Empty);
-            if (Specialties.Find(index) is {} node)                
-                Specialties.AddAfter(node, Specialty);
-            else
-                Specialties.AddFirst(Specialty);
-            
-            this.NotifyStateChanged();       
+        if (response.IsSuccessResult() && response.Data?.AddSpecialties?.Specialties?.Any() is true)
+        {
+            // Append each new specialty to the list in alphabetical order
+            foreach (var item in response.Data.AddSpecialties.Specialties.Select(x => x.Description))
+            {
+                var index = Specialties.LastOrDefault(x => x.CompareTo(item) < 0, string.Empty);
+                if (Specialties.Find(index) is { } node)
+                    Specialties.AddAfter(node, item);
+                else
+                    Specialties.AddFirst(item);
+            }
+
+            NotifyStateChanged();
         }
 
-        CloseModal();
+        await CloseModal();
     }
 
-    [RelayCommand] public async Task Remove(string specialty)
+    [RelayCommand]
+    public async Task Remove(string specialty)
     {
-        var response = await client.RemoveSpecialties.ExecuteAsync(new RemoveSpecialtiesInput() 
+        var response = await client.RemoveSpecialties.ExecuteAsync(new RemoveSpecialtiesInput()
         {
             Description = specialty
         });
 
         if (response.IsSuccessResult() && response.Data?.RemoveSpecialties?.Specialties?.Any() is true)
-        {    
+        {
             response.Data.RemoveSpecialties.Specialties
                 .ToList()
-                .ForEach(x => Specialties.Remove(x.Description));     
+                .ForEach(x => Specialties.Remove(x.Description));
 
-            this.NotifyStateChanged();       
-        }        
+            NotifyStateChanged();
+        }
     }
 
-    public Task OnModalClosing(ModalClosingEventArgs e)
+    public Task OnInputSpecialtyKeyPress(KeyboardEventArgs e)
     {
-        Specialty = string.Empty;
+        if (e.Key is not "Enter" || string.IsNullOrWhiteSpace(InputSpecialty))
+            return Task.CompletedTask;
+
+        InputSpecialty.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .ToList()
+            .ForEach(InputSpecialties.Add);
+
+        InputSpecialty = string.Empty;
+
         return Task.CompletedTask;
     }
 
     public override async Task Loaded()
     {
-        Specialties.Clear();
-
-        var response = await client.GetMedicalSpecialties.ExecuteAsync();
-        if (response.IsSuccessResult() && response.Data?.Specialties?.Any() is true)
+        await loadingIndicatorService.Show();
+        try
         {
-            Specialties = new(response.Data.Specialties.Select(x => x.Description));
-            
-            this.NotifyStateChanged();       
+            Specialties.Clear();
+
+            var response = await client.GetMedicalSpecialties.ExecuteAsync();
+            if (response.IsSuccessResult() && response.Data?.Specialties?.Any() is true)
+            {
+                Specialties = new(response.Data.Specialties
+                    .OrderBy(x => x.Description)
+                    .Select(x => x.Description));
+            }
+
+            NotifyStateChanged();
+        }
+        finally
+        {
+            await loadingIndicatorService.Hide();
         }
     }
 }

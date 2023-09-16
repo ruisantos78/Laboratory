@@ -10,6 +10,8 @@ namespace RuiSantos.Labs.Data.Dynamodb.Entities;
 [DynamoDBTable(PatientsTableName)]
 internal partial class PatientDto: IDynamoEntity<Patient>
 {
+    public string TableName => PatientsTableName;
+
     [DynamoDBHashKey(
         AttributeName = PatientIdAttributeName, 
         Converter = typeof(GuidConverter))]

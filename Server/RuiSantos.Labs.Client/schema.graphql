@@ -13,81 +13,14 @@ type Mutations {
 }
 
 type Queries {
+  "Get the amount of doctors."
+  countDoctors: Long!
+  "Get information about all doctors."
+  doctors(page: PaginationInput!): [Doctor!]!
   "Get information about a doctor."
-  doctor("License number" license: String! where: DoctorFilterInput order: [DoctorSortInput!]): Doctor!
+  doctor("License number" license: String!): Doctor!
   "Get all medical specialties."
-  specialties(where: SpecialtiesFilterInput order: [SpecialtiesSortInput!]): [Specialties!]!
-}
-
-"Represents a doctor."
-input DoctorFilterInput {
-  and: [DoctorFilterInput!]
-  or: [DoctorFilterInput!]
-  "Doctor license number."
-  license: StringOperationFilterInput
-  "First name."
-  firstName: StringOperationFilterInput
-  "Last name."
-  lastName: StringOperationFilterInput
-  "Email."
-  email: StringOperationFilterInput
-  "Contact numbers."
-  contacts: ListStringOperationFilterInput
-  "Medical specialties."
-  specialties: ListStringOperationFilterInput
-}
-
-"Represents a doctor."
-input DoctorSortInput {
-  "Doctor license number."
-  license: SortEnumType
-  "First name."
-  firstName: SortEnumType
-  "Last name."
-  lastName: SortEnumType
-  "Email."
-  email: SortEnumType
-}
-
-"Medical Specialties"
-input SpecialtiesFilterInput {
-  and: [SpecialtiesFilterInput!]
-  or: [SpecialtiesFilterInput!]
-  "Description"
-  description: StringOperationFilterInput
-}
-
-"Medical Specialties"
-input SpecialtiesSortInput {
-  "Description"
-  description: SortEnumType
-}
-
-input StringOperationFilterInput {
-  and: [StringOperationFilterInput!]
-  or: [StringOperationFilterInput!]
-  eq: String
-  neq: String
-  contains: String
-  ncontains: String
-  in: [String]
-  nin: [String]
-  startsWith: String
-  nstartsWith: String
-  endsWith: String
-  nendsWith: String
-}
-
-input ListStringOperationFilterInput {
-  all: StringOperationFilterInput
-  none: StringOperationFilterInput
-  some: StringOperationFilterInput
-  any: Boolean
-}
-
-enum SortEnumType {
-  ASC
-  DESC
+  specialties: [Specialties!]!
 }
 
 "Represents a doctor."
@@ -126,6 +59,14 @@ type Doctor {
 type Specialties {
   "Description"
   description: String!
+}
+
+"The `Long` scalar type represents non-fractional signed whole 64-bit numeric values. Long can represent values between -(2^63) and 2^63 - 1."
+scalar Long
+
+input PaginationInput {
+  take: Int!
+  from: String
 }
 
 input SetDoctorInput {

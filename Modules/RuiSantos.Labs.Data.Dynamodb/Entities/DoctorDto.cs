@@ -8,7 +8,9 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;
 
 [DynamoDBTable(DoctorsTableName)]
-internal partial class DoctorDto: IDynamoEntity<Doctor> {
+internal partial class DoctorDto: IDynamoEntity<Doctor> 
+{
+    public string TableName => DoctorsTableName;
 
     [DynamoDBHashKey(
         AttributeName = DoctorIdAttributeName,

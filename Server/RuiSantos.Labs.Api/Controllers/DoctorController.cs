@@ -18,6 +18,23 @@ public class DoctorController : Controller
         this.service = service;
     }
 
+    [HttpGet("")]
+    [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorContract[]))]
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    public async Task<IActionResult> GetAllDoctorsAsync([FromQuery]int? take, [FromQuery]string? from)
+    {
+        try
+        {
+            var model = await service.GetAllDoctors(take.GetValueOrDefault(20), from);
+            return this.OkOrNoContent(model, typeof(DoctorContract));
+        }
+        catch (Exception ex)
+        {
+            return this.FromException(ex);
+        }
+    }
+
     /// <summary>
     /// Gets information about a doctor.
     /// </summary>

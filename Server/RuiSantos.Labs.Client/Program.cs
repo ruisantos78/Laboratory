@@ -5,6 +5,7 @@ using Blazorise;
 using Blazorise.Material;
 using Blazorise.Icons.Material;
 using Blazing.Mvvm;
+using Blazorise.LoadingIndicator;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -17,12 +18,13 @@ builder.Services
     .ConfigureHttpClient(client => client.BaseAddress = new Uri(graphqlUrl));
 
 builder.Services
-    .AddBlazorise( options =>
+    .AddBlazorise(options =>
     {
-        options.Immediate = true;
-    } )
+        options.Immediate = false;
+    })
     .AddMaterialProviders()
-    .AddMaterialIcons();
+    .AddMaterialIcons()
+    .AddLoadingIndicator();
 
 builder.Services.AddMvvmNavigation();
 

@@ -1,30 +1,21 @@
-﻿using CommunityToolkit.Mvvm.ComponentModel;
+﻿using Blazing.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.AspNetCore.Components;
 using RuiSantos.Labs.Client.Services;
 
 namespace RuiSantos.Labs.Client.ViewModels;
 
-[RegisterService]
-public partial class IndexViewModel : ObservableObject
+public partial class IndexViewModel : ViewModelBase
 {
     private readonly IProfilesOperations profilesOperations;
     private readonly NavigationManager navigationManager;
 
-    [ObservableProperty]
-    private string _profile;
-
-    [ObservableProperty]
-    private string _operation;
-
-    [ObservableProperty]
-    private IReadOnlyCollection<string> _profiles;
-
-    [ObservableProperty]
-    private IReadOnlyCollection<Operation> _operations;
-
-    [ObservableProperty]
-    private bool _disableConfirmButton;
+    [ObservableProperty] private string _profile = string.Empty ;
+    [ObservableProperty] private string _operation = string.Empty;
+    [ObservableProperty] private IReadOnlyCollection<string> _profiles = Array.Empty<string>();
+    [ObservableProperty] private IReadOnlyCollection<Operation> _operations = Array.Empty<Operation>();
+    [ObservableProperty] private bool _disableConfirmButton = true;
 
     public IndexViewModel(
         IProfilesOperations profilesOperations,
@@ -33,19 +24,15 @@ public partial class IndexViewModel : ObservableObject
     {
         this.profilesOperations = profilesOperations;
         this.navigationManager = navigationManager;
-
-        _profile = string.Empty;
-        _operation = string.Empty;
-        _profiles = this.profilesOperations.GetAllProfiles();
-        _operations = Array.Empty<Operation>();
-        _disableConfirmButton = true;
     }
 
     [RelayCommand]
-    public void Confirm()
+    public Task Confirm()
     {
         if (Guid.TryParse(Operation, out var operation))
             navigationManager.NavigateTo(profilesOperations.GetRoute(operation));
+
+        return Task.CompletedTask;
     }
 
     partial void OnProfileChanged(string value)
@@ -57,5 +44,11 @@ public partial class IndexViewModel : ObservableObject
     partial void OnOperationChanged(string value)
     {
         this.DisableConfirmButton = string.IsNullOrEmpty(value);
+    }
+
+    public override Task Loaded()
+    {
+        Profiles = profilesOperations.GetAllProfiles();
+        return Task.CompletedTask;
     }
 }

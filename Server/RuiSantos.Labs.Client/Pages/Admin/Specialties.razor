@@ -1,40 +1,52 @@
 ﻿@page "/admin/specialties"
 @inherits MvvmComponentBase<AdminMedicalSpecialtiesViewModel>
+@if (ViewModel is null) return;
 
-<Column ColumnSize="ColumnSize.IsHalf" Margin="Margin.IsAuto.OnX.Is4.OnY">
+<Container>
     <Card>
-        <CardHeader>Medical Specialties</CardHeader>
+        <CardHeader>
+            <CardTitle>Medical Specialties Management</CardTitle>
+        </CardHeader>
         <CardBody>
             <Table Striped Narrow>
                 <TableHeader>
                     <TableRow>
                         <TableHeaderCell class="col-1">
-                            <Button Color="Color.Primary" Size="Size.ExtraSmall" @onclick="ViewModel!.AddNew">Add</Button>
+                            <Button Color="Color.Primary"
+                                    Size="Size.ExtraSmall"
+                                    Command="ViewModel.AddNewCommand">
+                                Add
+                            </Button>
                         </TableHeaderCell>
-                        <TableHeaderCell  class="col">
+                        <TableHeaderCell class="col">
                             Medical Specialty
                         </TableHeaderCell>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    @foreach (var specialty in ViewModel!.Specialties)
-                    {
+                    <Repeater Items="ViewModel.Specialties">
                         <TableRow>
                             <TableRowCell>
-                                <Button Color="Color.Link" Size="Size.ExtraSmall" CommandParameter="specialty" Command="ViewModel.RemoveCommand">Remove</Button>
+                                <Button Color="Color.Link"
+                                        Size="Size.ExtraSmall"
+                                        CommandParameter="context"
+                                        Command="ViewModel.RemoveCommand">
+                                    Remove
+                                </Button>
                             </TableRowCell>
                             <TableRowCell>
-                                @specialty
+                                @context
                             </TableRowCell>
                         </TableRow>
-                    }
+                    </Repeater>
+
                 </TableBody>
             </Table>
         </CardBody>
     </Card>
-</Column>
+</Container>
 
-<Modal @bind-Visible="ViewModel!.ModalVisible" Closing="ViewModel.OnModalClosing">
+<Modal @bind-Visible="ViewModel.ModalVisible" FocusTrap="true">
     <ModalContent>
         <ModalHeader>
             <ModalTitle>Add Medical Specialty</ModalTitle>
@@ -43,12 +55,34 @@
         <ModalBody>
             <Field>
                 <FieldLabel>Description</FieldLabel>
-                <TextEdit Autofocus @bind-Text="ViewModel.Specialty"/>
+                <TextEdit Autofocus
+                          @bind-Text="ViewModel.InputSpecialty"
+                          KeyUp="ViewModel.OnInputSpecialtyKeyPress" />
+                <Label>Press Enter to add more descriptions...</Label>
+
+                <Repeater Items="ViewModel.InputSpecialties">
+                    <Addons>
+                        <Addon AddonType="AddonType.Body">
+                            <TextEdit ReadOnly Text="@context" TabIndex="-1" />
+                        </Addon>
+                        <Addon AddonType="AddonType.End">
+                            <Button TabIndex="-1"
+                                    Color="Color.Danger"
+                                    Size="Size.ExtraSmall"
+                                    Command="ViewModel.RemoveSpecialtiesInputCommand"
+                                    CommandParameter="context">
+                                Remove
+                            </Button>
+                        </Addon>
+                    </Addons>
+                </Repeater>
             </Field>
         </ModalBody>
         <ModalFooter>
+            <Button Color="Color.Primary" Clicked="ViewModel.Save">
+                Save Changes
+            </Button>
             <Button Color="Color.Secondary" Clicked="ViewModel.CloseModal">Close</Button>
-            <Button Color="Color.Primary" Clicked="ViewModel.Save">Save Changes</Button>
         </ModalFooter>
     </ModalContent>
 </Modal>

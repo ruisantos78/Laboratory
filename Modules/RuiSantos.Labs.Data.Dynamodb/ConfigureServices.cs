@@ -8,15 +8,13 @@ namespace Microsoft.Extensions.DependencyInjection;
 
 public static class ConfigureServices
 {
-    private static string ConnectionString => Environment.GetEnvironmentVariable("DATABASE_DYNAMO")
-        ?? "http://127.0.0.1:8000";        
-
-    public static IServiceCollection AddLabsDynamoDb(this IServiceCollection services)
+    public static IServiceCollection AddLabsDynamoDb(this IServiceCollection services, string serviceUrl,
+        string accessKey = "api", string secretKey = "secret")
     {
         services.AddSingleton<IAmazonDynamoDB>(provider =>
         {
-            var credentials = new BasicAWSCredentials("api", "secret");
-            var config = new AmazonDynamoDBConfig() { ServiceURL = ConnectionString };
+            var credentials = new BasicAWSCredentials(accessKey, secretKey);
+            var config = new AmazonDynamoDBConfig() { ServiceURL = serviceUrl };
             var client = new AmazonDynamoDBClient(credentials, config);
             RegisterClassMaps.InitializeDatabase(client);
 

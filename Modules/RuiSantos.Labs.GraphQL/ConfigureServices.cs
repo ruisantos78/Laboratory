@@ -11,6 +11,7 @@ public static class ConfigureServices
             .AddMutationConventions()
             .AddFiltering()
             .AddSorting()
+            .AddProjections()
             .AddMutationType<Mutations>()
             .AddQueryType<Queries>();
 

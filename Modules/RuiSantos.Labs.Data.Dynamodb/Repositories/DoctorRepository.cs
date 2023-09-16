@@ -3,6 +3,7 @@ using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
+using RuiSantos.Labs.Data.Dynamodb.Mappings;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
@@ -64,5 +65,15 @@ public class DoctorRepository : IDoctorRepository
     public async Task StoreAsync(Doctor doctor)
     {
         await DoctorDto.SetDoctorAsync(context, doctor);
+    }
+
+    public IAsyncEnumerable<Doctor> FindAllAsync(int take, string? from = null)
+    {
+        return DoctorDto.GetDoctorsAsync(context, take, from); 
+    }
+
+    public Task<long> CountAsync()
+    {
+        return DictionaryDto.GetCounterAsync(context, ClassMapConstants.DoctorsTableName);
     }
 }

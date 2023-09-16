@@ -9,13 +9,11 @@ namespace RuiSantos.Labs.Tests.Asserts;
 internal class DoctorsAsserts: ServiceAsserts<DoctorService>
 {    
     private IDoctorRepository DoctorRepository { get; }
-    private IPatientRepository PatientRepository { get; }
     private IAppointamentsRepository AppointamentsRepository { get; }    
 
     public DoctorsAsserts(): base()
     {
         DoctorRepository = Substitute.For<IDoctorRepository>();
-        PatientRepository = Substitute.For<IPatientRepository>();
         AppointamentsRepository = Substitute.For<IAppointamentsRepository>();
     }
     
@@ -23,7 +21,6 @@ internal class DoctorsAsserts: ServiceAsserts<DoctorService>
     {
         return new DoctorService(
             DoctorRepository,
-            PatientRepository,
             AppointamentsRepository,
             Logger);
     }

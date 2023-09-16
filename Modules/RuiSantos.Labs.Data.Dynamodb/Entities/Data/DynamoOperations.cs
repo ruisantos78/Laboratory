@@ -39,8 +39,10 @@ internal static class DynamoOperations<TModel> where TModel : class, new()
     {
         var entity = new TEntity();
         await entity.LoadFromAsync(context, model);
-        await context.SaveAsync(entity);
 
+        await context.SaveAsync(entity);
+        await DictionaryDto.IncrementCounterAsync(context, entity.TableName);
+        
         return entity;
     }
 
@@ -52,6 +54,7 @@ internal static class DynamoOperations<TModel> where TModel : class, new()
 
         var writer = context.CreateBatchWrite<TEntity>();
         writer.AddPutItem(entity);
+        await DictionaryDto.IncrementCounterAsync(context, entity.TableName);
 
         var batch = writes.Append(writer).ToArray();        
         await context.ExecuteBatchWriteAsync(batch.ToArray());

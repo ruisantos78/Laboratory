@@ -8,6 +8,8 @@ namespace RuiSantos.Labs.GraphQL;
 public interface IDoctorSchemaAdapter {
     Task<DoctorSchema> StoreAsync(DoctorSchema doctor);
     Task<DoctorSchema> FindAsync(string license);
+    Task<IEnumerable<DoctorSchema>> FindAllAsync(int take, string? from = null);
+    Task<long> CountAsync();
 }
 
 internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
@@ -42,7 +44,13 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
     public async Task<DoctorSchema> FindAsync(string license) {
         var doctor = await service.GetDoctorByLicenseAsync(license);     
         return GetSchema(doctor ?? new Doctor());
-    }    
+    }
+
+    public async Task<IEnumerable<DoctorSchema>> FindAllAsync(int take, string? from = null)
+    {
+        var doctors = await service.GetAllDoctors(take, from);
+        return doctors.Select(GetSchema);
+    }
 
     public async Task<DoctorSchema> StoreAsync(DoctorSchema schema)
     {
@@ -55,5 +63,10 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
             specialties: schema.Specialties
         );
         return schema;
-    }    
+    }
+
+    public async Task<long> CountAsync()
+    {
+        return await service.CountDoctorsAsync();
+    }
 }

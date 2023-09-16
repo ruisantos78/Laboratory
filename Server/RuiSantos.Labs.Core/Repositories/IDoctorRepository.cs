@@ -4,6 +4,8 @@ namespace RuiSantos.Labs.Core.Repositories;
 
 public interface IDoctorRepository
 {
+    IAsyncEnumerable<Doctor> FindAllAsync(int take, string? from = null);
+
     /// <summary>
     /// Finds doctor by license. This is the asynchronous version of the method. It returns a task that completes when the doctor is found or fails when it is not found.
     /// </summary>
@@ -39,4 +41,5 @@ public interface IDoctorRepository
     /// <param name="doctor">The doctor to store. This should be a non - null reference</param>
     /// <returns>A representing the asynchronous operation</returns>
     Task StoreAsync(Doctor doctor);
+    Task<long> CountAsync();
 }

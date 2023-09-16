@@ -15,6 +15,9 @@ public class Startup
 
 	public void ConfigureServices(IServiceCollection services)
 	{
+        var connectionString = Environment.GetEnvironmentVariable("DATABASE_DYNAMO") ?? "http://127.0.0.1:8000";
+        var origins = Environment.GetEnvironmentVariable("CORS_ORIGINS")?.Split(';') ?? Array.Empty<string>();
+
         services.AddLogging(config => config.AddConsole());
 
         services.AddMemoryCache();
@@ -23,7 +26,7 @@ public class Startup
 
         services.AddLabsGraphQL();
         services.AddLabsServices();
-        services.AddLabsDynamoDb();
+        services.AddLabsDynamoDb(connectionString);
 
         services.AddSwaggerGen(options =>
         {
@@ -39,13 +42,14 @@ public class Startup
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
+        
 
         services.AddCors(options =>
-        {
+        {            
             options.AddDefaultPolicy(builder => {
-                builder.WithOrigins("http://localhost:5051") // Add the origin of your Blazor WebAssembly app
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
+                builder.WithOrigins(origins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
             });
         });
     }

@@ -1,13 +1,35 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using RuiSantos.Labs.Core.Models;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
 using static RuiSantos.Labs.Data.Dynamodb.Entities.Data.DynamoOperations<RuiSantos.Labs.Core.Models.Doctor>;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;
 
 partial class DoctorDto
 {
+    public static async IAsyncEnumerable<Doctor> GetDoctorsAsync(IDynamoDBContext context, int take, string? from = null)
+    {
+        var query = new ScanOperationConfig
+        {
+            IndexName = DoctorLicenseIndexName,
+            Limit = take,
+            PaginationToken = from
+        };
+
+        var result = await context.FromScanAsync<DoctorDto>(query)
+            .GetNextSetAsync();
+
+        if (result?.Any(doctor => doctor is not null) is not true)
+            yield break;
+
+        foreach (var entity in result)
+        {
+            yield return await entity.GetModelAsync(context);
+        }
+    }
+
     public static async Task<Doctor?> GetDoctorByLicenseAsync(IDynamoDBContext context, string license)
     {
         var result = await FindAllAsync<DoctorDto>(context, DoctorLicenseIndexName, license);

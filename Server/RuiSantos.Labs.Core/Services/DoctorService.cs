@@ -1,8 +1,8 @@
 ﻿using Microsoft.Extensions.Logging;
-using RuiSantos.Labs.Core.Repositories;
-using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Resources;
+using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Core.Validators;
 
 namespace RuiSantos.Labs.Core.Services;
@@ -41,6 +41,9 @@ public interface IDoctorService
     /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
     Task<Doctor?> GetDoctorByLicenseAsync(string license);
 
+    
+    Task<IEnumerable<Doctor>> GetAllDoctors(int take, string? from = null);
+
     /// <summary>
     /// Set the office hours for a doctor.
     /// </summary>
@@ -50,23 +53,21 @@ public interface IDoctorService
     /// <exception cref="ValidationFailException">Thrown when the doctor's license number is not found.</exception>
     /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
     Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours);
+    Task<long> CountDoctorsAsync();
 }
 
 internal class DoctorService : IDoctorService
 {
     private readonly IDoctorRepository doctorRepository;
-    private readonly IPatientRepository patientRepository;
     private readonly IAppointamentsRepository appointamentsRepository;
     private readonly ILogger logger;
 
     public DoctorService(
         IDoctorRepository doctorRepository,
-        IPatientRepository patientRepository,
         IAppointamentsRepository appointamentsRepository,
         ILogger<DoctorService> logger)
     {
         this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
         this.appointamentsRepository = appointamentsRepository;
         this.logger = logger;
     }
@@ -153,5 +154,37 @@ internal class DoctorService : IDoctorService
             logger?.Fail(ex);
             throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
         }
-    }    
+    }
+
+    public async Task<IEnumerable<Doctor>> GetAllDoctors(int take, string? from = null)
+    {
+        try
+        {
+            var result = await doctorRepository.FindAllAsync(take, from)
+                .ToArrayAsync();
+
+            if (result is null)
+                return Array.Empty<Doctor>();
+
+            return result;
+        }
+        catch (Exception ex)
+        {
+            logger?.Fail(ex);
+            throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
+        }
+    }
+
+    public async Task<long> CountDoctorsAsync()
+    {
+        try
+        {
+            return await doctorRepository.CountAsync();
+        }
+        catch (Exception ex)
+        {
+            logger?.Fail(ex);
+            throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
+        }
+    }
 }

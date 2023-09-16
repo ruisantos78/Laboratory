@@ -1,7 +1,6 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Data.Dynamodb.Entities.Data;
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;
@@ -25,7 +24,7 @@ partial class AppointmentsDto
                 },
                 ExpressionAttributeValues = {
                     {":patientId", patient.Id},
-                    {":dateTime", dateTimeString}
+                    {":dateTime", dateTimeString}                    
                 }
             }
         }).GetNextSetAsync();
@@ -88,7 +87,7 @@ partial class AppointmentsDto
     }
 
     public static async Task RemoveAsync(IDynamoDBContext context, Appointment appointment)
-    {
+    {        
         await context.DeleteAsync<AppointmentsDto>(appointment.Id);
     }
 

@@ -1,26 +1,5 @@
-﻿using System.Reflection;
-
-// ReSharper disable once CheckNamespace
+﻿// ReSharper disable once CheckNamespace
 namespace RuiSantos.Labs.Client;
-
-internal static class RegisterServiceMediator
-{
-    public static IServiceCollection RegisterServices(this IServiceCollection services)
-    {
-        var dependencies = typeof(RegisterServiceAttribute).Assembly.GetTypes()
-            .Where(x => x.GetCustomAttribute<RegisterServiceAttribute>() is not null)
-            .ToList();
-
-        foreach (var dependency in dependencies)
-        {
-            dependency.GetCustomAttributes<RegisterServiceAttribute>()
-                .ToList()
-                .ForEach(attribute => attribute.Register(dependency, services));
-        }
-
-        return services;
-    }    
-}
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
 internal class RegisterServiceAttribute: Attribute
@@ -57,11 +36,4 @@ internal class RegisterServiceAttribute: Attribute
             _ => services
         };
     }         
-}
-
-public enum InstanceType 
-{
-    Transient,
-    Scoped,
-    Singleton
 }

@@ -1,3 +1,7 @@
+main {
+    padding-top: 25px;
+}
+
 h1:focus {
     outline: none;
 }

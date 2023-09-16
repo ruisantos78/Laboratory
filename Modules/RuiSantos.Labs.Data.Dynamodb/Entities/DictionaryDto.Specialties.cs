@@ -11,7 +11,7 @@ partial class DictionaryDto
         => await GetAsync(context, Specialties);
 
     public static Task SetSpecialtyAsync(IDynamoDBContext context, IEnumerable<string> specialties)
-        => SetAsync(context, Specialties, specialties);
+        => SetAsync(context, Specialties, specialties.ToArray());
 
     public static async Task RemoveSpecialtyAsync(IDynamoDBContext context, string speciality) 
     {

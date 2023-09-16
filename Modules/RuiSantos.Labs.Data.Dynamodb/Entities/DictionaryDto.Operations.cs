@@ -10,13 +10,13 @@ partial class DictionaryDto
         return entities?.Select(s => s.Value).ToHashSet() ?? new();
     }
 
-    private static async Task SetAsync(IDynamoDBContext context, string source, IEnumerable<string> values)
+    private static async Task SetAsync(IDynamoDBContext context, string source, params object[] values)
     {
         if (!values.Any())
             return;
 
         var writer = context.CreateBatchWrite<DictionaryDto>();
-        writer.AddPutItems(values.Select(value => new DictionaryDto { Source = source, Value = value }));
+        writer.AddPutItems(values.Select(value => new DictionaryDto { Source = source, Value = value.ToString() ?? string.Empty }));
         await writer.ExecuteAsync();        
     }        
 
