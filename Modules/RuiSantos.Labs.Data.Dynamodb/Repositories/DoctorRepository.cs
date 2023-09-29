@@ -1,79 +1,73 @@
 using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Data.Dynamodb.Entities;
-using RuiSantos.Labs.Data.Dynamodb.Mappings;
+using RuiSantos.Labs.Data.Dynamodb.Adapters;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
 public class DoctorRepository : IDoctorRepository
 {
-    private readonly IDynamoDBContext context;
+    private readonly DoctorAdapter doctorAdapter;
+    private readonly IAmazonDynamoDB client;
 
     public DoctorRepository(IAmazonDynamoDB client)
     {
-        this.context = new DynamoDBContext(client);
+        this.doctorAdapter = new DoctorAdapter(client);
+        this.client = client;
     }
 
-    public async Task<Doctor?> FindAsync(string license)
+    public async Task<Doctor?> FindAsync(Guid doctorId)
     {
-        return await DoctorDto.GetDoctorByLicenseAsync(context, license);
+        return await doctorAdapter.FindAsync(doctorId);
     }
 
-    public async Task<List<Doctor>> FindBySpecialityAsync(string specialty)
+    public IAsyncEnumerable<Doctor> FindBySpecialityAsync(string specialty)
     {
-        return await DoctorDto.GetDoctorsBySpecialtyAsync(context, specialty);
+        return doctorAdapter.LoadBySpecialtyAsync(specialty);
     }
 
     public async IAsyncEnumerable<DoctorSchedule> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date)
     {
-        var doctors = await FindBySpecialityAsync(specialty);
-        if (doctors?.Any() is not true)
-            yield break;
+        var appointmentAdapter = new AppointmentAdapter(client);            
 
-        doctors = doctors.FindAll(d => d.OfficeHours.Any(h => h.Week == date.DayOfWeek));
-        if (doctors?.Any() is not true)
-            yield break;
-
-        foreach (var doctor in doctors) {
-            var appointments = await AppointmentsDto.GetAppointmentsByDoctorAsync(context, doctor, date);  
-
-            var availableTimes = doctor.OfficeHours
-                .Where(x => x.Week == date.DayOfWeek)
-                .SelectMany(s => s.Hours)
-                .Except(appointments.Select(a => a.Time))
-                .Select(hour => date.ToDateTime(TimeOnly.FromTimeSpan(hour)));
-            
-            if (availableTimes.Any())
-                yield return new(doctor, availableTimes);
-        }
+        await foreach (var doctor in doctorAdapter.LoadBySpecialtyAsync(specialty)) 
+        {
+            if (!doctor.OfficeHours.Any(h => h.Week == date.DayOfWeek))
+                continue;
+                                    
+            await foreach (var appointment in appointmentAdapter.LoadByDoctorAsync(doctor, date)) 
+            {
+                 var availableTimes = doctor.OfficeHours
+                    .Where(x => x.Week == date.DayOfWeek)
+                    .SelectMany(s => s.Hours.Where(hour => hour != appointment.Time))
+                    .Select(x => date.ToDateTime(TimeOnly.FromTimeSpan(x)));
+                                  
+                if (availableTimes?.Any() is true)
+                    yield return new(doctor, availableTimes);
+            }
+        }                          
     }
 
-    public async Task<List<Doctor>> FindByAppointmentsAsync(IEnumerable<Appointment> appointments)
+    public IAsyncEnumerable<Doctor> FindByAppointmentsAsync(IEnumerable<Appointment> appointments)
     {
-        var tasks = appointments.Select(appoint => DoctorDto.GetDoctorByAppointmentAsync(context, appoint));
-        var result = await Task.WhenAll(tasks);
-        if (result?.Any(doctor => doctor is not null) is not true)
-            return new List<Doctor>();
-
-        return result.Where(doctor => doctor is not null)
-            .Select(doctor => doctor!)
-            .ToList();
+        return appointments
+            .Select(x => doctorAdapter.FindByAppointmentAsync(x))
+            .OfType<Task<Doctor>>()
+            .ToModelsAsync();      
     }
 
     public async Task StoreAsync(Doctor doctor)
     {
-        await DoctorDto.SetDoctorAsync(context, doctor);
+        await doctorAdapter.StoreAsync(doctor);
     }
 
-    public IAsyncEnumerable<Doctor> FindAllAsync(int take, string? from = null)
+    public IAsyncEnumerable<Doctor> FindAllAsync(int take, string? lastLicense = null)
     {
-        return DoctorDto.GetDoctorsAsync(context, take, from); 
+        return doctorAdapter.LoadByLicenseAsync(lastLicense, take);
     }
 
-    public Task<long> CountAsync()
+    public Task<Doctor?> FindByLicenseAsync(string license)
     {
-        return DictionaryDto.GetCounterAsync(context, ClassMapConstants.DoctorsTableName);
+        return doctorAdapter.FindByLicenseAsync(license);
     }
 }

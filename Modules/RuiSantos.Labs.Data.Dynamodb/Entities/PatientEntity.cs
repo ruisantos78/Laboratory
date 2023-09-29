@@ -1,17 +1,13 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
-using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Entities.Converters;
-using RuiSantos.Labs.Data.Dynamodb.Entities.Data;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;
 
 [DynamoDBTable(PatientsTableName)]
-internal partial class PatientDto: IDynamoEntity<Patient>
+internal partial class PatientEntity
 {
-    public string TableName => PatientsTableName;
-
     [DynamoDBHashKey(
         AttributeName = PatientIdAttributeName, 
         Converter = typeof(GuidConverter))]

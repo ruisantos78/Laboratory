@@ -1,0 +1,108 @@
+@page "/doctor"
+@page "/doctor/{id?}"
+
+@inherits MvvmComponentBase<DoctorViewModel>
+@if (ViewModel is null) return;
+
+<Container>
+    <Card>
+        <CardHeader>
+            <CardTitle>Add New Doctor</CardTitle>
+        </CardHeader>
+        <CardBody>
+            <FocusTrap Active>
+                <Field Padding="Padding.Is0" ColumnSize="ColumnSize.Is2">
+                    <FieldLabel RequiredIndicator>Medical License</FieldLabel>
+                    <TextEdit Autofocus @bind-Text="ViewModel.License" />
+                </Field>
+                <Fields Padding="Padding.Is0" ColumnSize="ColumnSize.Is12">
+                    <Field>
+                        <FieldLabel RequiredIndicator>First Name</FieldLabel>
+                        <TextEdit @bind-Text="ViewModel.FirstName" />
+                    </Field>
+                    <Field>
+                        <FieldLabel RequiredIndicator>Last Name</FieldLabel>
+                        <TextEdit @bind-Text="ViewModel.LastName" />
+                    </Field>
+                </Fields>
+                <Field Padding="Padding.Is0" ColumnSize="ColumnSize.Is6">
+                    <FieldLabel RequiredIndicator>Email</FieldLabel>
+                    <TextEdit @bind-Text="ViewModel.Email" />
+                </Field>
+                <Fields Padding="Padding.Is0" ColumnSize="ColumnSize.Is12">
+                    <Field>
+                        <FieldLabel>Contacts</FieldLabel>
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <InputMask Mask="(999) 99999-9999" @bind-Value="ViewModel.Contact" />
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Button TabIndex="-1" Color="Color.Primary" Size="Size.ExtraSmall"
+                                        Command="ViewModel.AddContactCommand">
+                                    <Icon Name="IconName.Add" IconSize="IconSize.Small" />
+                                </Button>
+                            </Addon>
+                        </Addons>
+                        <Div Class="scroll">
+                            <Repeater Items="ViewModel.Contacts">
+                                <Addons>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit ReadOnly Text="@context" TabIndex="-1" />
+                                    </Addon>
+                                    <Addon AddonType="AddonType.End">
+                                        <Button TabIndex="-1" Color="Color.Danger" Size="Size.ExtraSmall"
+                                                Command="ViewModel.RemoveContactCommand" CommandParameter="context">
+                                            <Icon Name="IconName.Remove" IconSize="IconSize.ExtraSmall" />
+                                        </Button>
+                                    </Addon>
+                                </Addons>
+                            </Repeater>
+                        </Div>
+                    </Field>
+
+                    <Field>
+                        <FieldLabel>Medical Specialties</FieldLabel>
+                        <Addons>
+                            <Addon AddonType="AddonType.Body">
+                                <Select @bind-SelectedValue="ViewModel.Specialty">
+                                    <SelectItem>- Select -</SelectItem>
+                                    <Repeater Items="ViewModel.SpecialtiesOptions">
+                                        <SelectItem Value="@context">@context</SelectItem>
+                                    </Repeater>
+                                </Select>
+                            </Addon>
+                            <Addon AddonType="AddonType.End">
+                                <Button TabIndex="-1" Color="Color.Primary" Size="Size.ExtraSmall"
+                                        Command="ViewModel.AddSpecialtyCommand">
+                                    <Icon Name="IconName.Add" IconSize="IconSize.Small" />
+                                </Button>
+                            </Addon>
+                        </Addons>
+                        <Div Class="scroll">
+                            <Repeater Items="ViewModel.Specialties">
+                                <Addons>
+                                    <Addon AddonType="AddonType.Body">
+                                        <TextEdit ReadOnly Text="@context" TabIndex="-1" />
+                                    </Addon>
+                                    <Addon AddonType="AddonType.End">
+                                        <Button TabIndex="-1" Color="Color.Danger" Size="Size.Small"
+                                                Command="ViewModel.RemoveSpecialtyCommand" CommandParameter="context">
+                                            <Icon Name="IconName.Remove" IconSize="IconSize.Small" />
+                                        </Button>
+                                    </Addon>
+                                </Addons>
+                            </Repeater>
+                        </Div>
+                    </Field>
+                </Fields>
+            </FocusTrap>
+        </CardBody>
+
+        <ModalFooter>
+            <Button Type="ButtonType.Submit" Color="Color.Primary" Clicked="ViewModel.Store">
+                Save Changes
+            </Button>
+            <Button Type="ButtonType.Link" Color="Color.Default" To="/doctors">Cancel</Button>
+        </ModalFooter>
+    </Card>
+</Container>

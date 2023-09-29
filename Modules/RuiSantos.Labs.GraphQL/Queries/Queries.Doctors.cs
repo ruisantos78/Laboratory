@@ -4,11 +4,6 @@ namespace RuiSantos.Labs.GraphQL;
 
 partial class Queries
 {
-    [GraphQLDescription("Get the amount of doctors.")]
-    public async Task<long> CountDoctors(
-        [Service] IDoctorSchemaAdapter adapter)
-        => await adapter.CountAsync();
-
     [GraphQLDescription("Get information about all doctors.")]
     public async Task<IEnumerable<DoctorSchema>> GetDoctors(
         [GraphQLName("page")] Pagination page,
@@ -17,7 +12,7 @@ partial class Queries
 
     [GraphQLDescription("Get information about a doctor.")]
     public async Task<DoctorSchema> GetDoctor(
-        [GraphQLDescription("License number")] string license,
+        [GraphQLDescription("id")] string id,
         [Service] IDoctorSchemaAdapter adapter) 
-        => await adapter.FindAsync(license);
+        => await adapter.FindAsync(id);
 }

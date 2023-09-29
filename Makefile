@@ -16,6 +16,7 @@ help:
 	@echo "  build-client   Start the client container."
 	@echo "  kill			Stop and remove all containers."
 	@echo "  update-client	Update the GraphQL schema on the client container (requires the build-server command to be run first)."
+	@echo "  run			Start and watch the client application on local machine."
 	@echo "  help			Display this help message."
 	@echo ""
 
@@ -34,4 +35,7 @@ update-client:
 	dotnet graphql update -p Server/RuiSantos.Labs.Client
 	dotnet build
 
-.PHONY: build run kill update-client help
+run:
+	dotnet watch run --urls http://localhost:8002 --project Server/RuiSantos.Labs.Client
+
+.PHONY: build run kill update-client run help

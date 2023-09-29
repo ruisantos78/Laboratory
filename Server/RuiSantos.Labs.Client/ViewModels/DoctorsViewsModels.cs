@@ -11,8 +11,7 @@ public partial class DoctorsViewsModel : ViewModelBase
 	private readonly ILabsClient client;
 	private readonly ILoadingIndicatorService loadingIndicatorService;
 
-	[ObservableProperty] int? _totalDoctors = null;
-	[ObservableProperty] ObservableCollection<IGetDoctors_Doctors> _doctors = new();
+	[ObservableProperty] ObservableCollection<DoctorModel> _doctors = new();
 
 	public DoctorsViewsModel(
 		ILabsClient client,
@@ -22,29 +21,20 @@ public partial class DoctorsViewsModel : ViewModelBase
 		this.loadingIndicatorService = loadingIndicatorService;
 	}
 
-	public async Task OnReadData(DataGridReadDataEventArgs<IGetDoctors_Doctors> e)
+	public async Task ReadData(DataGridReadDataEventArgs<DoctorModel> e)
 	{
 		await loadingIndicatorService.Show();
 		try
 		{
-			if (e.CancellationToken.IsCancellationRequested)
-				return;
-			
-				var counter = await client.CountDoctors.ExecuteAsync();
-				TotalDoctors = (int?)counter?.Data?.CountDoctors;
-				if (TotalDoctors == 0)
-					return;
+			var result = await client.GetDoctors.ExecuteAsync(new()
+			{
+				Take = e.VirtualizeCount,
+				From = Doctors.LastOrDefault()?.License
+			});
 
-				var paginator = new PaginationInput
-				{
-					Take = e.VirtualizeCount,
-					From = Doctors.LastOrDefault()?.License
-				};
-
-				var result = await client.GetDoctors.ExecuteAsync(paginator);
-				Doctors = result?.Data?.Doctors?.Any() is true
-					? new(result.Data.Doctors)
-					: new();			
+			result?.Data?.Doctors.Select(x => new DoctorModel(x))
+				.ToList()
+				.ForEach(Doctors.Add);
 		}
 		finally
 		{

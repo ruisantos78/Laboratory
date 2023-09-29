@@ -27,7 +27,7 @@ partial class DoctorControllerTests
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var doctor = await context.FindAsync<DoctorDto>(license, DoctorLicenseIndexName);
+        var doctor = await context.FindAsync<DoctorEntity>(license, DoctorLicenseIndexName);
         doctor.Availability.Should().HaveCount(1);
         doctor.Availability.Should().ContainSingle(i => i.Week == week && i.Hours.SequenceEqual(hours));
 

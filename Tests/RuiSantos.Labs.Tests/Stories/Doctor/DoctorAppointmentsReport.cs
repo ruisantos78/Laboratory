@@ -13,15 +13,15 @@ namespace RuiSantos.Labs.Tests;
 public class DoctorAppointmentsReport
 {
     [Theory(DisplayName = "The doctor should be able to query all of his appointments for a given date.")]
-    [InlineData("ABC123", default)]
-    [InlineData("ABC123", "2023-01-01")]
-    public async void GetAppointmentsAsync_WithSuccess(string license, string? dateString)
+    [InlineData(default)]
+    [InlineData("2023-01-01")]
+    public async void GetAppointmentsAsync_WithSuccess(string? dateString)
     {
         // Arrange
+        var doctorId = Guid.NewGuid();
         DateTime? dateTime = dateString is null ? null : DateTime.Parse(dateString);
          
-        var doctor =  new DoctorBuilder()
-            .With(license)            
+        var doctor =  new DoctorBuilder(doctorId)
             .Build();
 
         var apptDate = dateTime?.Date ?? DateTime.Today;
@@ -32,14 +32,14 @@ public class DoctorAppointmentsReport
             .Build();
 
         var asserts = new DoctorsAsserts();
-        asserts.ReturnsOnFindAsync(license, doctor);
+        asserts.ReturnsOnFindAsync(doctorId, doctor);
 
         var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
         asserts.ReturnsOnGetPatientAppointmentsAsync(doctor, date, appointments);
 
         // Act
         var service = asserts.GetService();
-        var result = await service.GetAppointmentsAsync(license, dateTime);
+        var result = await service.GetAppointmentsAsync(doctorId, dateTime);
 
         // Assert        
         result.Should().BeEquivalentTo(appointments);        
@@ -51,15 +51,14 @@ public class DoctorAppointmentsReport
     public async Task GetAppointmentsAsync_WithUnregisteredDoctor_ShouldReturnEmptyList()
     {
         // Arrange
-        var license = "ABC123";
-        var today = DateOnly.FromDateTime(DateTime.Today);
+        var doctorId = Guid.NewGuid();
 
         var asserts = new DoctorsAsserts();
-        asserts.ReturnsOnFindAsync(license, null);
+        asserts.ReturnsOnFindAsync(doctorId, null);
 
         // Act
         var service = asserts.GetService();
-        var result = await service.GetAppointmentsAsync(license, default);
+        var result = await service.GetAppointmentsAsync(doctorId, default);
 
         // Assert        
         result.Should().BeEmpty();        
@@ -71,20 +70,19 @@ public class DoctorAppointmentsReport
     public async Task GetAppointmentsAsync_WithNoAppointments_ShouldReturnEmptyList()
     {
         // Arrange
-        var license = "ABC123";
+        var doctorId = Guid.NewGuid();
         var today = DateOnly.FromDateTime(DateTime.Today);
 
-        var doctor =  new DoctorBuilder()
-            .With(license)            
+        var doctor =  new DoctorBuilder(doctorId)
             .Build();
 
         var asserts = new DoctorsAsserts();
-        asserts.ReturnsOnFindAsync(license, doctor);
+        asserts.ReturnsOnFindAsync(doctorId, doctor);
         asserts.ReturnsOnGetPatientAppointmentsAsync(doctor, today, Array.Empty<PatientAppointment>());
 
         // Act
         var service = asserts.GetService();
-        var result = await service.GetAppointmentsAsync(license, default);
+        var result = await service.GetAppointmentsAsync(doctorId, default);
 
         // Assert        
         result.Should().BeEmpty();        
@@ -96,20 +94,19 @@ public class DoctorAppointmentsReport
     public async Task GetAppointmentsAsync_WhenFailsToGetPatientAppointments_ThenThrowsException_AndLogsError()
     {
         // Arrange
-        var license = "ABC123";
+        var doctorId = Guid.NewGuid();
         var today = DateOnly.FromDateTime(DateTime.Today);
 
-        var doctor =  new DoctorBuilder()
-            .With(license)            
+        var doctor =  new DoctorBuilder(doctorId)
             .Build();
 
         var asserts = new DoctorsAsserts();
-        asserts.ReturnsOnFindAsync(license, doctor);
+        asserts.ReturnsOnFindAsync(doctorId, doctor);
         asserts.ThrowsOnGetPatientAppointmentsAsync(doctor, today);
 
         // Act
         var service = asserts.GetService();
-        await service.Awaiting(x => x.GetAppointmentsAsync(license, default))
+        await service.Awaiting(x => x.GetAppointmentsAsync(doctorId, default))
             .Should()
             .ThrowAsync<ServiceFailException>()
             .WithMessage(MessageResources.DoctorsGetAppointmentsFail);
@@ -122,19 +119,18 @@ public class DoctorAppointmentsReport
     public async Task GetAppointmentsAsync_WhenFailsToFindDoctor_ThenThrowsException_AndLogsError()
     {
         // Arrange
-        var license = "ABC123";
+        var doctorId = Guid.NewGuid();
         var today = DateOnly.FromDateTime(DateTime.Today);
 
-        var doctor =  new DoctorBuilder()
-            .With(license)            
+        var doctor =  new DoctorBuilder(doctorId)
             .Build();
 
         var asserts = new DoctorsAsserts();
-        asserts.ThrowOnFindAsync(license);
+        asserts.ThrowOnFindAsync(doctorId);
 
         // Act
         var service = asserts.GetService();
-        await service.Awaiting(x => x.GetAppointmentsAsync(license, default))
+        await service.Awaiting(x => x.GetAppointmentsAsync(doctorId, default))
             .Should()
             .ThrowAsync<ServiceFailException>()
             .WithMessage(MessageResources.DoctorsGetAppointmentsFail);

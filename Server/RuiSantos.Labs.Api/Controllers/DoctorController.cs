@@ -26,8 +26,10 @@ public class DoctorController : Controller
     {
         try
         {
-            var model = await service.GetAllDoctors(take.GetValueOrDefault(20), from);
-            return this.OkOrNoContent(model, typeof(DoctorContract));
+            IEnumerable<Labs.Core.Models.Doctor> model = Array.Empty<Labs.Core.Models.Doctor>();
+            model = await service.GetAllDoctors(take.GetValueOrDefault(20), from);
+
+            return this.OkOrNoContent(model, typeof(DoctorContract[]));
         }
         catch (Exception ex)
         {
@@ -62,7 +64,7 @@ public class DoctorController : Controller
     /// <summary>
     /// Gets the appointments of a doctor.
     /// </summary>
-    /// <param name="license">The doctor's medical license.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <param name="dateTime">The date of the appointments (optional).</param>
     /// <response code="200">Returns a list of the doctor's appointments.</response>
     /// <response code="204">If no records are found for the given doctor and date.</response>
@@ -71,12 +73,12 @@ public class DoctorController : Controller
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorAppointmentsContract[]))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAppointmentsAsync(string license, DateTime? dateTime)
+    public async Task<IActionResult> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime)
     {
         try
         {
             var models = await service.GetAppointmentsAsync(
-                license, 
+                doctorId, 
                 dateTime);
 
             return this.OkOrNoContent(models, typeof(DoctorAppointmentsContract));
@@ -119,7 +121,7 @@ public class DoctorController : Controller
     /// <summary>
     /// Sets the office hours of a doctor.
     /// </summary>
-    /// <param name="license">The doctor's license number.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <param name="dayOfweek">The day of the week to set the office hours (Sunday, Monday, ...).</param>
     /// <param name="hours">An array of strings representing the office hours in HH:mm format.</param>
     /// <response code="200">Returns a success message if the office hours are successfully set.</response>
@@ -127,7 +129,7 @@ public class DoctorController : Controller
     [HttpPut("{license}/OfficeHours/{dayOfweek}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PutOfficeHoursAsync(string license, string dayOfweek, [FromBody] string[] hours)
+    public async Task<IActionResult> PutOfficeHoursAsync(Guid doctorId, string dayOfweek, [FromBody] string[] hours)
     {
         try
         {
@@ -138,7 +140,7 @@ public class DoctorController : Controller
                 return BadRequest("Invalid timespan format for hours");
             
             await service.SetOfficeHoursAsync(
-                license,
+                doctorId,
                 week,
                 timeSpans);
 

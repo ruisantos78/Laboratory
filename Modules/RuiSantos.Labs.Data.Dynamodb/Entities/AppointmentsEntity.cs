@@ -6,7 +6,7 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;
 
 [DynamoDBTable(AppointmentsTableName)]
-internal partial class AppointmentsDto
+internal partial class AppointmentsEntity
 {    
     [DynamoDBHashKey(
         AttributeName = AppointmentIdAttributeName, 

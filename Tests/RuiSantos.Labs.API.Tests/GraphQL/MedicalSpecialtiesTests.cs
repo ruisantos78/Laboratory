@@ -26,7 +26,7 @@ public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
     public async Task GetAllMedicalSpecialties()
     {
         // Arrange
-        var expected = (await context.FindAllAsync<DictionaryDto>("specialties"))
+        var expected = (await context.FindAllAsync<DictionaryEntity>("specialties"))
             .Select(x => x.Value)
             .ToArray();
 
@@ -87,7 +87,7 @@ public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var specialties = await context.FindAllAsync<DictionaryDto>("specialties");
+        var specialties = await context.FindAllAsync<DictionaryEntity>("specialties");
         specialties.Select(x => x.Value).Should().OnlyHaveUniqueItems().And.Contain(new[]
          {
             "Gastroenterology",
@@ -102,7 +102,7 @@ public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
     public async Task RemoveMedicalSpecialtiesList()
     {
         // Arrange
-        await context.SaveAsync(new DictionaryDto
+        await context.SaveAsync(new DictionaryEntity
         {
             Source = "specialties",
             Value = "Oncology"
@@ -132,7 +132,7 @@ public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var specialties = await context.FindAllAsync<DictionaryDto>("specialties");
+        var specialties = await context.FindAllAsync<DictionaryEntity>("specialties");
         specialties.Should().OnlyHaveUniqueItems().And.NotContain(x => x.Value == "Oncology");
     }
 }

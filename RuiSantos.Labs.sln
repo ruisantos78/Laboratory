@@ -23,6 +23,14 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Tests", "Tes
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Client", "Server\RuiSantos.Labs.Client\RuiSantos.Labs.Client.csproj", "{11D06CE5-CD99-4C40-9313-C7AEC09CA82F}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{50EDB1FD-DE27-47E5-BEB1-FAF1DEFE6B98}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		Makefile = Makefile
+		README.md = README.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -75,25 +83,5 @@ Global
 		$0.DotNetNamingPolicy = $1
 		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
 		$0.TextStylePolicy = $9
-		$2.inheritsSet = null
-		$2.scope = text/x-csharp
-		$0.CSharpFormattingPolicy = $3
-		$3.scope = text/x-csharp
-		$4.FileWidth = 80
-		$4.TabsToSpaces = True
-		$4.scope = text/plain
-		$5.inheritsSet = null
-		$5.scope = text/x-web
-		$6.inheritsSet = null
-		$6.scope = text/x-vs
-		$7.inheritsSet = null
-		$7.scope = text/microsoft-resx
-		$0.XmlFormattingPolicy = $10
-		$8.inheritsSet = null
-		$8.scope = text/microsoft-resx
-		$9.inheritsSet = null
-		$9.scope = application/xml
-		$10.scope = application/xml
-		$0.StandardHeader = $11
 	EndGlobalSection
 EndGlobal

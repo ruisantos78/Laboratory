@@ -1,5 +1,5 @@
 ﻿@page "/admin/specialties"
-@inherits MvvmComponentBase<AdminMedicalSpecialtiesViewModel>
+@inherits MvvmComponentBase<MedicalSpecialtiesViewModel>
 @if (ViewModel is null) return;
 
 <Container Margin="Margin.Is4.FromBottom">
@@ -8,34 +8,39 @@
             <CardTitle>Medical Specialties Management</CardTitle>
         </CardHeader>
         <CardBody>
-            <Table Striped Narrow>
-                <TableHeader>
-                    <TableRow>
-                        <TableHeaderCell>
-                            <Button Color="Color.Primary" Size="Size.ExtraSmall" Command="ViewModel.AddNewCommand">
-                                Add
-                            </Button>
-                        </TableHeaderCell>
-                        <TableHeaderCell Width="Width.Is100">
-                            Medical Specialty
-                        </TableHeaderCell>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    <Repeater Items="ViewModel.Specialties">
-                        <TableRow>
-                            <TableRowCell>
-                                <Button Color="Color.Link" Size="Size.ExtraSmall" CommandParameter="context" Command="ViewModel.RemoveCommand">
-                                    Remove
-                                </Button>
-                            </TableRowCell>
-                            <TableRowCell>
-                                @context
-                            </TableRowCell>
-                        </TableRow>
-                    </Repeater>
-                </TableBody>
-            </Table>
+            <DataGrid Striped Narrow ShowPager 
+                      TItem="String" 
+                      Data="ViewModel.Specialties"
+                      PageSize="15"
+                      RowSelectable="NoSelectable">
+                 <DataGridColumns>
+                     <DataGridColumn>
+                         <CaptionTemplate>
+                             <Button Color="Color.Primary" Size="Size.ExtraSmall" Command="ViewModel.AddNewCommand">
+                                 Add
+                             </Button>
+                         </CaptionTemplate>
+                         <DisplayTemplate>
+                             <Button Color="Color.Link" Size="Size.ExtraSmall" Command="ViewModel.RemoveCommand" 
+                                     CommandParameter="context">
+                                 Remove
+                             </Button>
+                         </DisplayTemplate>
+                     </DataGridColumn>
+                     <DataGridColumn Width="100%" Sortable="false">
+                         <CaptionTemplate>
+                             Medical Specialty
+                         </CaptionTemplate>
+                         <DisplayTemplate>
+                             @context
+                        </DisplayTemplate>
+                    </DataGridColumn>
+                </DataGridColumns>
+                <FirstPageButtonTemplate>&lt;</FirstPageButtonTemplate>
+                <PreviousPageButtonTemplate>&lt;&lt;</PreviousPageButtonTemplate>
+                <NextPageButtonTemplate>&gt;&gt;</NextPageButtonTemplate>                
+                <LastPageButtonTemplate>&gt;</LastPageButtonTemplate>                
+            </DataGrid>
         </CardBody>
     </Card>
 </Container>
@@ -49,8 +54,9 @@
         <ModalBody>
             <Field>
                 <FieldLabel>Description</FieldLabel>
-                <TextEdit Autofocus @bind-Text="ViewModel.InputSpecialty" KeyUp="ViewModel.OnInputSpecialtyKeyPress" />
-                 <Label>Press Enter to add more descriptions...</Label>
+                <TextEdit Autofocus @bind-Text="ViewModel.InputSpecialty" KeyUp="ViewModel.OnInputSpecialtyKeyPress">
+                     <FieldHelp>Press Enter to add more descriptions...</FieldHelp>
+                 </TextEdit>
 
                  <Repeater Items="ViewModel.InputSpecialties">
                      <Addons>
@@ -71,7 +77,7 @@
              <Button Color="Color.Primary" Clicked="ViewModel.Save">
                  Save Changes
              </Button>
-             <Button Color="Color.Secondary" Clicked="ViewModel.CloseModal">Close</Button>
+             <Button Color="Color.Default" Clicked="ViewModel.CloseModal">Close</Button>
          </ModalFooter>
      </ModalContent>
  </Modal>

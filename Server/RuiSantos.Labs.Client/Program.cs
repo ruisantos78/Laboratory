@@ -6,6 +6,7 @@ using Blazorise.Material;
 using Blazorise.Icons.Material;
 using Blazing.Mvvm;
 using Blazorise.LoadingIndicator;
+using Blazored.LocalStorage;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -26,7 +27,9 @@ builder.Services
     .AddMaterialIcons()
     .AddLoadingIndicator();
 
-builder.Services.AddMvvmNavigation();
+builder.Services
+    .AddBlazoredLocalStorage()
+    .AddMvvmNavigation();
 
 builder.Services
     .RegisterServices()

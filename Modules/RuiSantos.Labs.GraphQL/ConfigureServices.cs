@@ -1,5 +1,7 @@
 ﻿using System.Reflection;
 using RuiSantos.Labs.GraphQL;
+using RuiSantos.Labs.GraphQL.Services;
+using Sqids;
 
 namespace Microsoft.Extensions.DependencyInjection;
 
@@ -16,7 +18,8 @@ public static class ConfigureServices
             .AddQueryType<Queries>();
 
         services.AddAdapters();
-        
+        services.AddSingleton<ISecurity, Security>();
+
         return services;
     }
 

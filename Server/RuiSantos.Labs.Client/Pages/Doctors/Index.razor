@@ -8,27 +8,31 @@
             <CardTitle>Doctors Management</CardTitle>
         </CardHeader>
         <CardBody>
-            <DataGrid FixedHeader Virtualize Responsive Editable Narrow Striped
-                      TItem="IGetDoctors_Doctors" 
+            <DataGrid Striped Narrow Virtualize                    
+                      TItem="DoctorModel"                      
                       Data="ViewModel.Doctors"
-                      ReadData="ViewModel.OnReadData" 
-                      TotalItems="ViewModel.TotalDoctors">
-                 <DataGridCommandColumn>
-                     <NewCommandTemplate>
-                         <Button Color="Color.Primary" Size="Size.ExtraSmall">Add</Button>
-                     </NewCommandTemplate>
-                     <EditCommandTemplate>
-                         <Button Color="Color.Link" Size="Size.ExtraSmall">Edit</Button>
-                     </EditCommandTemplate>
-                 </DataGridCommandColumn>
-                 <DataGridColumn Field="@nameof(IGetDoctors_Doctors.License)" Caption="License" Readonly/>
-                 <DataGridColumn Caption="Full Name" Readonly Width="50%">
-                     <DisplayTemplate>
-                         @($"{(context as IGetDoctors_Doctors).LastName}, {(context as IGetDoctors_Doctors).FirstName}")
-                     </DisplayTemplate>
-                 </DataGridColumn>
-                 <DataGridColumn Field="@nameof(IGetDoctors_Doctors.Email)" Caption="E-mail" Readonly Width="50%"/>
-             </DataGrid>
+                      ReadData="ViewModel.ReadData"    
+                      TotalItems="ViewModel.Doctors.Count"          
+                      VirtualizeOptions="VirtualizeOptions"
+                      RowSelectable="NoSelectable">
+                 <DataGridColumns>
+                     <DataGridColumn>
+                         <CaptionTemplate>
+                            <Button Type="ButtonType.Link" Color="Color.Primary" Size="Size.ExtraSmall" To="/doctor">
+                                Add
+                            </Button>
+                         </CaptionTemplate>
+                         <DisplayTemplate>
+                            <Button Type="ButtonType.Link" Color="Color.Link" Size="Size.ExtraSmall" To="@context!.EditUrl">
+                                Edit                                
+                            </Button>
+                         </DisplayTemplate>
+                     </DataGridColumn>
+                     <DataGridColumn Field="@nameof(DoctorModel.License)" Caption="License" CellClass="_ => Css.NoWrap"/>
+                     <DataGridColumn Field="@nameof(DoctorModel.FullName)" Caption="Name" Width="50%" Sortable="false"/>
+                     <DataGridColumn Field="@nameof(DoctorModel.Email)" Caption="E-mail"  Width="50%" Sortable="false"/>
+                 </DataGridColumns>
+            </DataGrid>            
          </CardBody>
      </Card>
  </Container>

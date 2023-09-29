@@ -12,11 +12,12 @@
     "http": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "swagger",
-      "applicationUrl": "http://localhost:5188",
+      "launchUrl": "graphql",
+      "applicationUrl": "http://localhost:8001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DATABASE_DYNAMO": "http://127.0.0.1:8000"
+        "DATABASE_DYNAMO": "http://127.0.0.1:8000",
+        "CORS_ORIGINS": "http://localhost:8002;https://localhost:8003"
       }
     },
     "IIS Express": {

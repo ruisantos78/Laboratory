@@ -28,18 +28,18 @@ public interface IDoctorService
     /// <summary>
     /// Get the doctor's appointments on a given date.
     /// </summary>
-    /// <param name="license">The doctor's license number.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <param name="dateTime">The date.</param>
     /// <returns>The doctor's appointments on the given date.</returns>
-    Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(string license, DateTime? dateTime);
+    Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime);
 
     /// <summary>
-    /// Get the doctor's informations by a given license number.
+    /// Get the doctor's informations.
     /// </summary>
-    /// <param name="license">The doctor's license number.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <returns>The doctor's informations.</returns>
     /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
-    Task<Doctor?> GetDoctorByLicenseAsync(string license);
+    Task<Doctor?> GetDoctorAsync(Guid doctorId);
 
     
     Task<IEnumerable<Doctor>> GetAllDoctors(int take, string? from = null);
@@ -47,13 +47,14 @@ public interface IDoctorService
     /// <summary>
     /// Set the office hours for a doctor.
     /// </summary>
-    /// <param name="license">The doctor's license number.</param>
+    //// <param name="id">The doctor's identification.</param>
     /// <param name="dayOfWeek">The day of the week.</param>
     /// <param name="hours">The office hours.</param>
     /// <exception cref="ValidationFailException">Thrown when the doctor's license number is not found.</exception>
     /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
-    Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours);
-    Task<long> CountDoctorsAsync();
+    Task SetOfficeHoursAsync(Guid doctorId, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours);
+
+    Task<Doctor?> GetDoctorByLicenseAsync(string license);
 }
 
 internal class DoctorService : IDoctorService
@@ -101,11 +102,11 @@ internal class DoctorService : IDoctorService
         }
     }
 
-    public async Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
+    public async Task SetOfficeHoursAsync(Guid doctorId, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
     {
         try
         {
-            var doctor = await doctorRepository.FindAsync(license) ??
+            var doctor = await doctorRepository.FindAsync(doctorId) ??
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
             doctor.OfficeHours.RemoveWhere(hour => hour.Week == dayOfWeek);
@@ -125,11 +126,11 @@ internal class DoctorService : IDoctorService
         }
     }
 
-    public async Task<Doctor?> GetDoctorByLicenseAsync(string license)
+    public async Task<Doctor?> GetDoctorAsync(Guid doctorId)
     {
         try
         {
-            return await doctorRepository.FindAsync(license);
+            return await doctorRepository.FindAsync(doctorId);
         }
         catch (Exception ex)
         {
@@ -138,16 +139,19 @@ internal class DoctorService : IDoctorService
         }
     }
 
-    public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(string license, DateTime? dateTime)
+    public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime)
     {
         try {
             var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
 
-            var doctor = await doctorRepository.FindAsync(license);
+            var doctor = await doctorRepository.FindAsync(doctorId);
             if (doctor is null)
                 return Array.Empty<PatientAppointment>();
 
-            return await appointamentsRepository.GetPatientAppointmentsAsync(doctor, date);
+            var result = await appointamentsRepository.GetPatientAppointmentsAsync(doctor, date)
+                .ToArrayAsync();
+
+            return result ?? Array.Empty<PatientAppointment>();
         } 
         catch(Exception ex) 
         {
@@ -156,17 +160,14 @@ internal class DoctorService : IDoctorService
         }
     }
 
-    public async Task<IEnumerable<Doctor>> GetAllDoctors(int take, string? from = null)
+    public async Task<IEnumerable<Doctor>> GetAllDoctors(int take, string? last = null)
     {
         try
         {
-            var result = await doctorRepository.FindAllAsync(take, from)
+            var result = await doctorRepository.FindAllAsync(take, last)
                 .ToArrayAsync();
 
-            if (result is null)
-                return Array.Empty<Doctor>();
-
-            return result;
+            return result ?? Array.Empty<Doctor>();
         }
         catch (Exception ex)
         {
@@ -175,16 +176,16 @@ internal class DoctorService : IDoctorService
         }
     }
 
-    public async Task<long> CountDoctorsAsync()
+    public async Task<Doctor?> GetDoctorByLicenseAsync(string license)
     {
         try
         {
-            return await doctorRepository.CountAsync();
+            return await doctorRepository.FindByLicenseAsync(license);
         }
         catch (Exception ex)
         {
             logger?.Fail(ex);
-            throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
+            throw new ServiceFailException(MessageResources.DoctorsGetFail);
         }
     }
 }

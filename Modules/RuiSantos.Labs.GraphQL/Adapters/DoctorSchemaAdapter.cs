@@ -1,28 +1,33 @@
 ﻿using RuiSantos.Labs.Core.Services;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.GraphQL.Schemas;
+using RuiSantos.Labs.GraphQL.Services;
 
 namespace RuiSantos.Labs.GraphQL;
 
 [Adapter(typeof(DoctorSchemaAdapter))]
 public interface IDoctorSchemaAdapter {
     Task<DoctorSchema> StoreAsync(DoctorSchema doctor);
-    Task<DoctorSchema> FindAsync(string license);
+    Task<DoctorSchema> FindAsync(string id);
     Task<IEnumerable<DoctorSchema>> FindAllAsync(int take, string? from = null);
-    Task<long> CountAsync();
 }
 
 internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
 {
+    private readonly ISecurity security;
     private readonly IDoctorService service;
 
-    public DoctorSchemaAdapter(IDoctorService service)
+    public DoctorSchemaAdapter(
+        ISecurity security,
+        IDoctorService service)
     {
+        this.security = security;
         this.service = service;
     }
 
-    private static DoctorSchema GetSchema(Doctor model) => new()
+    private DoctorSchema GetSchema(Doctor model) => new()
     {
+        Id = security.Encode(model.Id),
         License = model.License,
         FirstName = model.FirstName,
         LastName = model.LastName,
@@ -31,8 +36,9 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
         Specialties = model.Specialties.ToList()
     };
 
-    private static Doctor GetModel(DoctorSchema schema) => new()
+    private Doctor GetModel(DoctorSchema schema) => new()
     {
+        Id = security.Decode(schema.Id),
         License = schema.License,
         FirstName = schema.FirstName,
         LastName = schema.LastName,
@@ -41,8 +47,9 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
         Specialties = schema.Specialties.ToHashSet()
     };
 
-    public async Task<DoctorSchema> FindAsync(string license) {
-        var doctor = await service.GetDoctorByLicenseAsync(license);     
+    public async Task<DoctorSchema> FindAsync(string id) {
+        var doctorId = security.Decode(id);
+        var doctor = await service.GetDoctorAsync(doctorId);     
         return GetSchema(doctor ?? new Doctor());
     }
 
@@ -63,10 +70,5 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
             specialties: schema.Specialties
         );
         return schema;
-    }
-
-    public async Task<long> CountAsync()
-    {
-        return await service.CountDoctorsAsync();
     }
 }

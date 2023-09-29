@@ -57,7 +57,7 @@ public class SchedulesController : Controller
         {
             await service.CreateAppointmentAsync(
                 request.PatientSecuritySocialNumber, 
-                request.MedicalLicense, 
+                request.DoctorId, 
                 request.Date);
 
             return Ok();
@@ -85,7 +85,7 @@ public class SchedulesController : Controller
         {
             await service.DeleteAppointmentAsync(
                 request.PatientSecuritySocialNumber, 
-                request.MedicalLicense, 
+                request.DoctorId, 
                 request.Date);
                 
             return Ok();

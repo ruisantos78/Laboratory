@@ -16,21 +16,21 @@ public interface IAppointmentService
     /// Gets the appointments for a given patient.
     /// </summary>
     /// <param name="socialNumber">The social number of the patient.</param>
-    /// <param name="medicalLicence">The medical licence of the doctor.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <param name="dateTime">The date and time of the appointment.</param>
     /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
     /// <exception cref="ManagementFailException">Thrown when the appointment creation fails.</exception>
-    Task CreateAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime);
+    Task CreateAppointmentAsync(string socialNumber, Guid doctorId, DateTime dateTime);
 
     /// <sumary>
     /// Deletes an appointment for a given patient.
     /// </sumary>
     /// <param name="socialNumber">The social number of the patient.</param>
-    /// <param name="medicalLicence">The medical licence of the doctor.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <param name="dateTime">The date and time of the appointment.</param>
     /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
     /// <exception cref="ManagementFailException">Thrown when the appointment deletion fails.</exception>
-    Task DeleteAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime);
+    Task DeleteAppointmentAsync(string socialNumber, Guid doctorId, DateTime dateTime);
 
     /// <summary>
     /// Gets the availability of a doctor.
@@ -59,11 +59,11 @@ internal class AppointmentService : IAppointmentService
         this.logger = logger;
     }
 
-    public async Task CreateAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime)
+    public async Task CreateAppointmentAsync(string socialNumber, Guid doctorId, DateTime dateTime)
     {
         try
         {
-            var doctor = await doctorRepository.FindAsync(medicalLicence);
+            var doctor = await doctorRepository.FindAsync(doctorId);
             if (doctor is null)
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
@@ -93,7 +93,7 @@ internal class AppointmentService : IAppointmentService
         }
     }
 
-    public async Task DeleteAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime)
+    public async Task DeleteAppointmentAsync(string socialNumber, Guid doctorId, DateTime dateTime)
     {
         try
         {
@@ -105,7 +105,7 @@ internal class AppointmentService : IAppointmentService
             if (patientAppointment is null)
                 return;
 
-            var doctor = await doctorRepository.FindAsync(medicalLicence);
+            var doctor = await doctorRepository.FindAsync(doctorId);
             if (doctor is null)
                 return;
 

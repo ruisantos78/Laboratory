@@ -6,7 +6,7 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;
 
 [DynamoDBTable(DoctorSpecialtiesTableName)]
-internal class DoctorSpecialtyDto
+internal class DoctorSpecialtyEntity
 {
     [DynamoDBHashKey(
         AttributeName = DoctorIdAttributeName, 

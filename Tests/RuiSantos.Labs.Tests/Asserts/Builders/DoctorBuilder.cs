@@ -4,8 +4,16 @@ namespace RuiSantos.Labs.Tests.Asserts.Builders;
 
 internal class DoctorBuilder
 {
-    private readonly Doctor model = new();
-    
+    private readonly Doctor model;
+
+    public DoctorBuilder(Guid? doctorId = null)
+    {
+        model = new()
+        {
+            Id = doctorId ?? Guid.NewGuid()
+        };
+    }
+
     public Doctor Build()
     {
         return model;

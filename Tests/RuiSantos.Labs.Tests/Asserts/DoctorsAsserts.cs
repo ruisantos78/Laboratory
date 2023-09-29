@@ -43,10 +43,10 @@ internal class DoctorsAsserts: ServiceAsserts<DoctorService>
             .StoreAsync(Arg.Is(expression));
     }
 
-    public void ReturnsOnFindAsync(string license, 
+    public void ReturnsOnFindAsync(Guid doctorId, 
         Doctor? result)
     {
-        DoctorRepository.FindAsync(license)
+        DoctorRepository.FindAsync(doctorId)
             .Returns(result);
     }
 
@@ -54,7 +54,7 @@ internal class DoctorsAsserts: ServiceAsserts<DoctorService>
         IEnumerable<PatientAppointment> result)
     {
         AppointamentsRepository.GetPatientAppointmentsAsync(doctor, date)
-            .Returns(result);
+            .Returns(result.ToAsyncEnumerable());
     }
 
     public void ThrowOnAddAsync(string licence)
@@ -64,10 +64,10 @@ internal class DoctorsAsserts: ServiceAsserts<DoctorService>
             .Throw<Exception>();
     }
 
-    public void ThrowOnFindAsync(string licence)
+    public void ThrowOnFindAsync(Guid doctorId)
     {
         DoctorRepository
-            .When(x => x.FindAsync(licence))
+            .When(x => x.FindAsync(doctorId))
             .Throw<Exception>();
     }
 

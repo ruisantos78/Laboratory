@@ -5,7 +5,7 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;
 
 [DynamoDBTable(DictionaryTableName)]
-internal partial class DictionaryDto
+internal partial class DictionaryEntity
 {    
     [DynamoDBHashKey(AttributeName = SourceAttributeName)]
     public string Source { get; init; }
@@ -13,7 +13,7 @@ internal partial class DictionaryDto
     [DynamoDBRangeKey(AttributeName = ValueAttributeName)]
     public string Value { get; init; }
 
-    public DictionaryDto()
+    public DictionaryEntity()
     {
         this.Source = string.Empty;
         this.Value = string.Empty;

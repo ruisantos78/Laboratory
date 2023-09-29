@@ -29,7 +29,7 @@ public interface IAppointamentsRepository
     /// <param name="doctor">The doctor for whom to get appointments.</param>
     /// <param name="date">Specifies which date to get appointments for.</param>
     /// <returns>An enumeration of appointments for the doctor or an empty enumeration if there are no appointments</returns>
-    Task<IEnumerable<PatientAppointment>> GetPatientAppointmentsAsync(Doctor doctor, DateOnly date);
+    IAsyncEnumerable<PatientAppointment> GetPatientAppointmentsAsync(Doctor doctor, DateOnly date);
 
     /// <summary>
     /// Asynchronously removes an appointment from the user's calendar. This is equivalent to a request to remove an appointment from the user's calendar.

@@ -8,22 +8,25 @@ using StrawberryShake;
 
 namespace RuiSantos.Labs.Client.ViewModels;
 
-public partial class AdminMedicalSpecialtiesViewModel : ViewModelBase
+public partial class MedicalSpecialtiesViewModel : ViewModelBase
 {
     private readonly ILabsClient client;
     private readonly ILoadingIndicatorService loadingIndicatorService;
-
-    [ObservableProperty] private LinkedList<string> _specialties = new();
+    private readonly ILogger<MedicalSpecialtiesViewModel> logger;
+    [ObservableProperty] private ObservableCollection<string> _specialties = new();
     [ObservableProperty] private bool _modalVisible = false;
     [ObservableProperty] private string _inputSpecialty = string.Empty;
     [ObservableProperty] private ObservableCollection<string> _inputSpecialties = new();
 
-    public AdminMedicalSpecialtiesViewModel(
+    public MedicalSpecialtiesViewModel(
         ILabsClient client,
-        ILoadingIndicatorService loadingIndicatorService)
+        ILoadingIndicatorService loadingIndicatorService,
+        ILogger<MedicalSpecialtiesViewModel> loggeer
+    )
     {
         this.client = client;
         this.loadingIndicatorService = loadingIndicatorService;
+        this.logger = loggeer;
     }
 
     [RelayCommand]
@@ -41,8 +44,7 @@ public partial class AdminMedicalSpecialtiesViewModel : ViewModelBase
     public Task RemoveSpecialtiesInput(string specialty)
     {
         InputSpecialties.Remove(specialty);
-        NotifyStateChanged();
-        
+
         return Task.CompletedTask;
     }
 
@@ -58,7 +60,7 @@ public partial class AdminMedicalSpecialtiesViewModel : ViewModelBase
     public async Task Save()
     {
         if (!string.IsNullOrWhiteSpace(InputSpecialty))
-            InputSpecialties.Add(InputSpecialty.Trim());
+            InputSpecialties.Insert(0, InputSpecialty.Trim());
 
         var response = await client.AddSpecialties.ExecuteAsync(new AddSpecialtiesInput()
         {
@@ -67,17 +69,14 @@ public partial class AdminMedicalSpecialtiesViewModel : ViewModelBase
 
         if (response.IsSuccessResult() && response.Data?.AddSpecialties?.Specialties?.Any() is true)
         {
-            // Append each new specialty to the list in alphabetical order
-            foreach (var item in response.Data.AddSpecialties.Specialties.Select(x => x.Description))
+            foreach(var item in response.Data.AddSpecialties.Specialties) 
             {
-                var index = Specialties.LastOrDefault(x => x.CompareTo(item) < 0, string.Empty);
-                if (Specialties.Find(index) is { } node)
-                    Specialties.AddAfter(node, item);
-                else
-                    Specialties.AddFirst(item);
+                var index = Specialties.IndexOf(Specialties.FirstOrDefault(x => x.CompareTo(item.Description) > 0, string.Empty));
+                if (index < 0) 
+                    Specialties.Add(item.Description);
+                else 
+                    Specialties.Insert(index, item.Description);
             }
-
-            NotifyStateChanged();
         }
 
         await CloseModal();
@@ -93,11 +92,8 @@ public partial class AdminMedicalSpecialtiesViewModel : ViewModelBase
 
         if (response.IsSuccessResult() && response.Data?.RemoveSpecialties?.Specialties?.Any() is true)
         {
-            response.Data.RemoveSpecialties.Specialties
-                .ToList()
-                .ForEach(x => Specialties.Remove(x.Description));
-
-            NotifyStateChanged();
+            response.Data.RemoveSpecialties.Specialties.ToList()
+                .ForEach(x => Specialties.Remove(x.Description));            
         }
     }
 
@@ -108,7 +104,7 @@ public partial class AdminMedicalSpecialtiesViewModel : ViewModelBase
 
         InputSpecialty.Split(';', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
             .ToList()
-            .ForEach(InputSpecialties.Add);
+            .ForEach(x => InputSpecialties.Insert(0, x));
 
         InputSpecialty = string.Empty;
 
@@ -122,15 +118,17 @@ public partial class AdminMedicalSpecialtiesViewModel : ViewModelBase
         {
             Specialties.Clear();
 
-            var response = await client.GetMedicalSpecialties.ExecuteAsync();
-            if (response.IsSuccessResult() && response.Data?.Specialties?.Any() is true)
-            {
-                Specialties = new(response.Data.Specialties
-                    .OrderBy(x => x.Description)
-                    .Select(x => x.Description));
-            }
+            var operationResult = await client.GetMedicalSpecialties.ExecuteAsync();
 
-            NotifyStateChanged();
+            operationResult.EnsureNoErrors();
+
+            operationResult.Data?.Specialties
+                .ToList()
+                .ForEach(x => Specialties.Add(x.Description));
+        }
+        catch(Exception ex)
+        {
+            logger.LogCritical(ex, "Error loading medical specialties!");
         }
         finally
         {
