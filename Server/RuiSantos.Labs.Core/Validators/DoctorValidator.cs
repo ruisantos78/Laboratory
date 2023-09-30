@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.Validators;
 using RuiSantos.Labs.Core.Models;
 
 namespace RuiSantos.Labs.Core.Validators;
@@ -13,7 +12,7 @@ internal sealed class DoctorValidator : AbstractValidator<Doctor>
 
         RuleFor(model => model.Email)
             .NotEmpty()
-            .EmailAddress(EmailValidationMode.AspNetCoreCompatible);
+            .EmailAddress();
 
         RuleFor(model => model.FirstName)
             .NotEmpty();
@@ -31,4 +30,3 @@ internal sealed class DoctorValidator : AbstractValidator<Doctor>
             .NotEmpty();
     }
 }
-

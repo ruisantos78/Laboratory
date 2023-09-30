@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using FluentAssertions;
 using RuiSantos.Labs.Api.Tests.Fixtures;
@@ -6,7 +6,7 @@ using RuiSantos.Labs.Data.Dynamodb.Entities;
 using RuiSantos.Labs.GraphQL.Services;
 using Xunit.Abstractions;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Api.Tests.GraphQL;
 

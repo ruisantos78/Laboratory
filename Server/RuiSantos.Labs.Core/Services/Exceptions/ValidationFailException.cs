@@ -17,7 +17,6 @@ public class ValidationFailException : ValidationException, IFailure
     /// <summary>
     /// Creates a new instance of the exception.
     /// </summary>
-    /// <param name="message">The error message.</param>
     protected ValidationFailException() : this(string.Empty) { }
 
     /// <summary>

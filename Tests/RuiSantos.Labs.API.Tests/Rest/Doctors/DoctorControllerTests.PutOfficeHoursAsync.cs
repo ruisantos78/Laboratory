@@ -1,8 +1,8 @@
-﻿using System.Net;
+using System.Net;
 using FluentAssertions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Api.Tests.Rest;
 

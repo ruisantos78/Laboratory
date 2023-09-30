@@ -1,5 +1,4 @@
 ﻿using FluentValidation;
-using FluentValidation.Validators;
 using RuiSantos.Labs.Core.Models;
 using System.Text.RegularExpressions;
 
@@ -7,7 +6,7 @@ namespace RuiSantos.Labs.Core.Validators;
 
 internal sealed class PatientValidator : AbstractValidator<Patient>
 {
-    private readonly Regex SocialSecurityNumberRegex = new(@"^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$", RegexOptions.Compiled, TimeSpan.FromSeconds(5));
+    private readonly Regex _socialSecurityNumberRegex = new(@"^(?!666|000|9\d{2})\d{3}-(?!00)\d{2}-(?!0{4})\d{4}$", RegexOptions.Compiled, TimeSpan.FromSeconds(5));
 
     public PatientValidator()
     {
@@ -16,11 +15,11 @@ internal sealed class PatientValidator : AbstractValidator<Patient>
 
         RuleFor(model => model.SocialSecurityNumber)
             .NotEmpty()
-            .Matches(SocialSecurityNumberRegex);
+            .Matches(_socialSecurityNumberRegex);
 
         RuleFor(model => model.Email)
             .NotEmpty()
-            .EmailAddress(EmailValidationMode.AspNetCoreCompatible);
+            .EmailAddress();
 
         RuleFor(model => model.FirstName)
             .NotEmpty();

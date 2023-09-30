@@ -1,20 +1,20 @@
-﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal class DoctorAdapter : EntityAdapter<DoctorEntity, Doctor>
+internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>
 {
     const int DefaultPageSize = 25;
 
     public DoctorAdapter(IAmazonDynamoDB client) : base(client) { }
 
-    protected override Task<DoctorEntity> ToEntityAsync(Doctor model) => Task.FromResult(new DoctorEntity() {
+    protected override Task<DoctorEntity> AsEntityAsync(Doctor model) => Task.FromResult(new DoctorEntity {
         Id = model.Id,
         License = model.License,
         FirstName = model.FirstName,
@@ -24,7 +24,7 @@ internal class DoctorAdapter : EntityAdapter<DoctorEntity, Doctor>
         Availability = model.OfficeHours.ToList()   
     });
 
-    protected override async Task<Doctor> ToModelAsync(DoctorEntity entity) => new()
+    protected override async Task<Doctor> AsModelAsync(DoctorEntity entity) => new()
     {
         Id = entity.Id,
         License = entity.License,
@@ -36,7 +36,7 @@ internal class DoctorAdapter : EntityAdapter<DoctorEntity, Doctor>
         Specialties = await GetSpecialtiesAsync(entity)        
     };    
 
-    private async Task<HashSet<string>> GetSpecialtiesAsync(DoctorEntity entity)
+    private Task<HashSet<string>> GetSpecialtiesAsync(DoctorEntity entity)
     {
         var query = new QueryOperationConfig {        
             Filter = new QueryFilter(DoctorIdAttributeName, QueryOperator.Equal, entity.Id),
@@ -44,11 +44,12 @@ internal class DoctorAdapter : EntityAdapter<DoctorEntity, Doctor>
             AttributesToGet = new() { SpecialtyAttributeName }
         };
 
-        return await Context.FromQueryAsync<DoctorSpecialtyEntity>(query)
+        return Context.FromQueryAsync<DoctorSpecialtyEntity>(query)
             .GetRemainingAsync()
             .ContinueWith(task => task.Result
                 .Select(x => x.Specialty)
-                .ToHashSet());
+                .ToHashSet()
+            );
     }
 
     private async Task<Guid?> GetIdByLicenseAsync(string license)
@@ -70,13 +71,13 @@ internal class DoctorAdapter : EntityAdapter<DoctorEntity, Doctor>
     public async Task<Doctor?> FindAsync(Guid doctorId)
     {
         var entity = await Context.LoadAsync<DoctorEntity>(doctorId);
-        return await ToModelAsync(entity);
+        return await AsModelAsync(entity);
     }
      
     public async Task<Doctor?> FindByAppointmentAsync(Appointment appointment)
     {
-        var appointmentEntity = await Context.LoadAsync<AppointmentsEntity>(appointment.Id);
-        return await FindAsync(appointmentEntity.DoctorId);
+        var entity = await Context.LoadAsync<AppointmentsEntity>(appointment.Id);
+        return await FindAsync(entity.DoctorId);
     }
 
     public async Task<Doctor?> FindByLicenseAsync(string license)
@@ -91,7 +92,7 @@ internal class DoctorAdapter : EntityAdapter<DoctorEntity, Doctor>
             .GetNextSetAsync();
 
         return entities.FirstOrDefault() is {} entity 
-            ? await ToModelAsync(entity)
+            ? await AsModelAsync(entity)
             : default;
     }
 
@@ -104,8 +105,11 @@ internal class DoctorAdapter : EntityAdapter<DoctorEntity, Doctor>
 
         return Context.FromQueryAsync<DoctorSpecialtyEntity>(query)
             .GetRemainingAsync()
-            .ContinueWith(task => task.Result.Select(x => FindAsync(x.DoctorId)).OfType<Task<Doctor>>())                        
-            .ToModelsAsync();
+            .ContinueWith(task => task.Result
+                .Select(x => FindAsync(x.DoctorId))
+                .OfType<Task<Doctor>>()
+            )
+            .AsModelsAsyncEnumerable();
     }
 
     public IAsyncEnumerable<Doctor> LoadByLicenseAsync(string? previousLicense = null, int pageSize = DefaultPageSize)
@@ -120,13 +124,15 @@ internal class DoctorAdapter : EntityAdapter<DoctorEntity, Doctor>
 
         return Context.FromQueryAsync<DoctorEntity>(query)
             .GetRemainingAsync()
-            .ContinueWith(task => task.Result.Select(x => ToModelAsync(x)))
-            .ToModelsAsync();
+            .ContinueWith(task => task.Result
+                .Select(AsModelAsync)
+            )
+            .AsModelsAsyncEnumerable();
     }
 
     public async Task StoreAsync(Doctor doctor)
     {
-        var entity = await ToEntityAsync(doctor);
+        var entity = await AsEntityAsync(doctor);
 
         var doctorId = await GetIdByLicenseAsync(doctor.License);
         if (doctorId is not null)

@@ -1,5 +1,6 @@
-﻿using Newtonsoft.Json;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
+using RuiSantos.Labs.Core.Models.Converters;
 
 namespace RuiSantos.Labs.Core.Models;
 

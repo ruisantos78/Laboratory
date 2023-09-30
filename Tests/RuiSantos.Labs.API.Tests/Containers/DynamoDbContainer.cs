@@ -1,4 +1,4 @@
-﻿using System.Net;
+using System.Net;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using DotNet.Testcontainers.Builders;
@@ -62,8 +62,8 @@ public sealed partial class DynamoDbContainer : IAsyncDisposable
         var context = new DynamoDBContext(client);
         var repository = await JToken.ReadFromAsync(new JsonTextReader(new StreamReader(RepositoySourceFile)));
 
-        var mappings = RegisterClassMaps.GetTypeMappings();
-        var requests = RegisterClassMaps.GetCreateTableRequests()
+        var mappings = RegisterClassMaps.TableEntities();
+        var requests = RegisterClassMaps.CreateTableRequests()
             .Select(x => client.CreateTableAsync(x));
 
         var tables = await Task.WhenAll(requests);

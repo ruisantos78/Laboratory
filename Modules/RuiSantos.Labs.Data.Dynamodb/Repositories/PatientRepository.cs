@@ -7,20 +7,20 @@ namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
 public class PatientRepository : IPatientRepository
 {
-    private readonly PatientAdapter patientAdapter;
+    private readonly PatientAdapter _patientAdapter;
 
     public PatientRepository(IAmazonDynamoDB client)
     {
-        this.patientAdapter = new PatientAdapter(client);
+        _patientAdapter = new PatientAdapter(client);
     }
 
-    public async Task StoreAsync(Patient patient)
+    public Task StoreAsync(Patient patient)
     {
-        await patientAdapter.StoreAsync(patient);
+        return _patientAdapter.StoreAsync(patient);
     }
 
-    public async Task<Patient?> FindAsync(string socialSecurityNumber)
+    public Task<Patient?> FindAsync(string socialSecurityNumber)
     {
-        return await patientAdapter.FindBySocialSecurityNumberAsync(socialSecurityNumber);
+        return _patientAdapter.FindBySocialSecurityNumberAsync(socialSecurityNumber);
     }
 }

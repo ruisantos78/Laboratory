@@ -6,12 +6,7 @@ namespace RuiSantos.Labs.Tests.Asserts;
 
 internal abstract class ServiceAsserts<TService>
 {
-    protected ILogger<TService> Logger { get; }
-
-    public ServiceAsserts()
-    {
-        Logger = Substitute.For<ILogger<TService>>();
-    }
+    protected readonly ILogger<TService> Logger = Substitute.For<ILogger<TService>>();
 
     [SuppressMessage("Usage", "NS5000:Received check.", Justification = "Logger")]
     [SuppressMessage("Non-substitutable member", "NS1001:Non-virtual setup specification.", Justification = "<Pending>")]

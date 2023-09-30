@@ -7,37 +7,42 @@ namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 public class MedicalSpecialtyAdapter
 {
     private const string Source = "specialties";
-    private readonly IDynamoDBContext context;
+    
+    private IDynamoDBContext Context { get; }
 
     public MedicalSpecialtyAdapter(IAmazonDynamoDB client)
     {
-        this.context = new DynamoDBContext(client);
+        Context = new DynamoDBContext(client);
     }
 
     public async Task<IReadOnlySet<string>> LoadAsync() 
     {
-        return await context.QueryAsync<DictionaryEntity>(Source)
+        return await Context.QueryAsync<DictionaryEntity>(Source)
             .GetRemainingAsync()
-            .ContinueWith(x => x.Result.Select(s => s.Value).ToHashSet());                              
+            .ContinueWith(x => x.Result
+                .Select(s => s.Value)
+                .ToHashSet()
+            );                              
     }
 
-    public async Task StoreAsync(IEnumerable<string> values)
+    public Task StoreAsync(IEnumerable<string> entries)
     {
+        var values = entries.ToArray();
         if (!values.Any())
-            return;
+            return Task.CompletedTask;
 
-        var writer = context.CreateBatchWrite<DictionaryEntity>();
+        var writer = Context.CreateBatchWrite<DictionaryEntity>();
         writer.AddPutItems(values.Select(value => new DictionaryEntity 
         { 
             Source = Source, 
             Value = value 
         }));
 
-        await writer.ExecuteAsync();  
+        return writer.ExecuteAsync();  
     }
 
-    public async Task RemoveAsync(string value)
+    public Task RemoveAsync(string value)
     {
-        await context.DeleteAsync<DictionaryEntity>(Source, value, CancellationToken.None);
+        return Context.DeleteAsync<DictionaryEntity>(Source, value, CancellationToken.None);
     }
 }

@@ -1,11 +1,10 @@
 ﻿using FluentAssertions;
-using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;
 using RuiSantos.Labs.Tests.Asserts.Builders;
 
-namespace RuiSantos.Labs.Tests;
+namespace RuiSantos.Labs.Tests.Stories.Doctor;
 
 /// <UserStory>
 /// As a doctor, I want to be able to query all my appointments for a given date, with the patient's information allocated to each appointment.
@@ -18,28 +17,24 @@ public class DoctorAppointmentsReport
     public async void GetAppointmentsAsync_WithSuccess(string? dateString)
     {
         // Arrange
-        var doctorId = Guid.NewGuid();
-        DateTime? dateTime = dateString is null ? null : DateTime.Parse(dateString);
-         
-        var doctor =  new DoctorBuilder(doctorId)
-            .Build();
-
-        var apptDate = dateTime?.Date ?? DateTime.Today;
+        var dateTime = DateTime.TryParse(dateString, out var dateValue) ? dateValue.Date : DateTime.Today;
+        var doctor =  new DoctorBuilder().Build();
+        
         var appointments = new PatientAppointmentBuilder()
-            .AddAppointment(apptDate.AddHours(10), "111-11-1111")
-            .AddAppointment(apptDate.AddHours(11), "222-22-2222")
-            .AddAppointment(apptDate.AddHours(12), "333-33-3333")            
-            .Build();
+                .AddAppointment(dateTime.AddHours(10))
+                .AddAppointment(dateTime.AddHours(11))
+                .AddAppointment(dateTime.AddHours(12))
+                .Build();
 
         var asserts = new DoctorsAsserts();
-        asserts.ReturnsOnFindAsync(doctorId, doctor);
+        asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
 
-        var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
-        asserts.ReturnsOnGetPatientAppointmentsAsync(doctor, date, appointments);
+        var date = DateOnly.FromDateTime(dateTime);
+        asserts.OnGetPatientAppointmentsAsyncReturns(doctor, date, result: appointments);
 
         // Act
         var service = asserts.GetService();
-        var result = await service.GetAppointmentsAsync(doctorId, dateTime);
+        var result = await service.GetAppointmentsAsync(doctor.Id, dateTime);
 
         // Assert        
         result.Should().BeEquivalentTo(appointments);        
@@ -51,14 +46,14 @@ public class DoctorAppointmentsReport
     public async Task GetAppointmentsAsync_WithUnregisteredDoctor_ShouldReturnEmptyList()
     {
         // Arrange
-        var doctorId = Guid.NewGuid();
+        var doctor = new DoctorBuilder().Build();
 
         var asserts = new DoctorsAsserts();
-        asserts.ReturnsOnFindAsync(doctorId, null);
+        asserts.OnFindAsyncReturns(doctor.Id, result: default);
 
         // Act
         var service = asserts.GetService();
-        var result = await service.GetAppointmentsAsync(doctorId, default);
+        var result = await service.GetAppointmentsAsync(doctor.Id, default);
 
         // Assert        
         result.Should().BeEmpty();        
@@ -70,19 +65,16 @@ public class DoctorAppointmentsReport
     public async Task GetAppointmentsAsync_WithNoAppointments_ShouldReturnEmptyList()
     {
         // Arrange
-        var doctorId = Guid.NewGuid();
         var today = DateOnly.FromDateTime(DateTime.Today);
-
-        var doctor =  new DoctorBuilder(doctorId)
-            .Build();
+        var doctor =  new DoctorBuilder().Build();
 
         var asserts = new DoctorsAsserts();
-        asserts.ReturnsOnFindAsync(doctorId, doctor);
-        asserts.ReturnsOnGetPatientAppointmentsAsync(doctor, today, Array.Empty<PatientAppointment>());
+        asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
+        asserts.OnGetPatientAppointmentsAsyncReturns(doctor, today, result: default!);
 
         // Act
         var service = asserts.GetService();
-        var result = await service.GetAppointmentsAsync(doctorId, default);
+        var result = await service.GetAppointmentsAsync(doctor.Id, default);
 
         // Assert        
         result.Should().BeEmpty();        
@@ -94,19 +86,16 @@ public class DoctorAppointmentsReport
     public async Task GetAppointmentsAsync_WhenFailsToGetPatientAppointments_ThenThrowsException_AndLogsError()
     {
         // Arrange
-        var doctorId = Guid.NewGuid();
         var today = DateOnly.FromDateTime(DateTime.Today);
-
-        var doctor =  new DoctorBuilder(doctorId)
-            .Build();
+        var doctor =  new DoctorBuilder().Build();
 
         var asserts = new DoctorsAsserts();
-        asserts.ReturnsOnFindAsync(doctorId, doctor);
-        asserts.ThrowsOnGetPatientAppointmentsAsync(doctor, today);
+        asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
+        asserts.WhenGetPatientAppointmentsAsyncThrows(doctor, today);
 
         // Act
         var service = asserts.GetService();
-        await service.Awaiting(x => x.GetAppointmentsAsync(doctorId, default))
+        await service.Awaiting(x => x.GetAppointmentsAsync(doctor.Id, default))
             .Should()
             .ThrowAsync<ServiceFailException>()
             .WithMessage(MessageResources.DoctorsGetAppointmentsFail);
@@ -119,18 +108,14 @@ public class DoctorAppointmentsReport
     public async Task GetAppointmentsAsync_WhenFailsToFindDoctor_ThenThrowsException_AndLogsError()
     {
         // Arrange
-        var doctorId = Guid.NewGuid();
-        var today = DateOnly.FromDateTime(DateTime.Today);
-
-        var doctor =  new DoctorBuilder(doctorId)
-            .Build();
+        var doctor =  new DoctorBuilder().Build();
 
         var asserts = new DoctorsAsserts();
-        asserts.ThrowOnFindAsync(doctorId);
+        asserts.WhenFindAsyncThrows(doctor.Id);
 
         // Act
         var service = asserts.GetService();
-        await service.Awaiting(x => x.GetAppointmentsAsync(doctorId, default))
+        await service.Awaiting(x => x.GetAppointmentsAsync(doctor.Id, default))
             .Should()
             .ThrowAsync<ServiceFailException>()
             .WithMessage(MessageResources.DoctorsGetAppointmentsFail);

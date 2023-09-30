@@ -8,23 +8,20 @@ internal static class Validator
     private static AbstractValidator<TModel> GetValidator<TModel>(params object?[] args)
         where TModel : class
     {
-        var entityType = typeof(AbstractValidator<>).MakeGenericType(typeof(TModel));
+        var abstractValidatorType = typeof(AbstractValidator<>).MakeGenericType(typeof(TModel));
+        var validatorType = typeof(Validator).Assembly.GetTypes().First(abstractValidatorType.IsAssignableFrom);
 
-        var entityImplType = AppDomain.CurrentDomain.GetAssemblies()
-            .SelectMany(s => s.GetTypes())
-            .FirstOrDefault(entityType.IsAssignableFrom);
+        if (Activator.CreateInstance(validatorType, args) is not AbstractValidator<TModel> entity)
+            throw new ArgumentException($"Cannot find a validator for {typeof(TModel).Name}");
 
-        if (entityImplType is not null && Activator.CreateInstance(entityImplType, args) is AbstractValidator<TModel> entity)
-            return entity;
-
-        throw new ArgumentException($"Cannot find a validator for {typeof(TModel).Name}");
+        return entity;
     }
 
-    public static void ThrowExceptionIfIsNotValid<TModel>(TModel model, params object?[] args) where TModel: class {
-        var validation = Validator.GetValidator<TModel>(args).Validate(model);
+    public static void ThrowExceptionIfIsNotValid<TModel>(TModel model, params object?[] args)
+        where TModel: class
+    {
+        var validation = GetValidator<TModel>(args).Validate(model);
         if (!validation.IsValid)
-        {
             throw new ValidationFailException(validation.Errors);
-        }
     }
 }

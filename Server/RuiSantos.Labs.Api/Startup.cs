@@ -1,6 +1,9 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using RuiSantos.Labs.Api.Core;
+using RuiSantos.Labs.Core;
+using RuiSantos.Labs.Data.Dynamodb;
+using RuiSantos.Labs.GraphQL;
 
 namespace RuiSantos.Labs.Api;
 
@@ -10,7 +13,7 @@ public class Startup
 
 	public Startup(IConfiguration configuration)
 	{
-		this.Configuration = configuration;
+		Configuration = configuration;
 	}
 
 	public void ConfigureServices(IServiceCollection services)
@@ -24,7 +27,7 @@ public class Startup
         services.AddControllers();
         services.AddHealthChecks();
 
-        services.AddLabsGraphQL();
+        services.AddLabsGraphql();
         services.AddLabsServices();
         services.AddLabsDynamoDb(connectionString);
 
@@ -69,7 +72,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapGraphQL();  // Make sure you have a method like this in your services
+            endpoints.MapGraphQL();
             endpoints.MapHealthChecks("/health");
         });
     }

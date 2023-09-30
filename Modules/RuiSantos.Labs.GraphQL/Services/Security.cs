@@ -9,24 +9,19 @@ internal interface ISecurity {
 
 internal class Security: ISecurity
 {
-    private readonly SqidsEncoder<int> sqids;
-
-    public Security()
-	{
-        this.sqids = new SqidsEncoder<int>();
-    }
+    private readonly SqidsEncoder<int> _sqids = new();
 
     public string Encode(Guid guid)
     {
         var array = Array.ConvertAll(guid.ToByteArray(), Convert.ToInt32);
-        return sqids.Encode(array);
+        return _sqids.Encode(array);
     }
 
     public Guid Decode(string? id)
     {
         if (id == null) return Guid.Empty;
 
-        var array = sqids.Decode(id).ToArray();
+        var array = _sqids.Decode(id).ToArray();
         var bytes = Array.ConvertAll(array, Convert.ToByte);
         return new Guid(bytes);
     }

@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using RuiSantos.Labs.Api.Contracts;
 using RuiSantos.Labs.Api.Core;
 using RuiSantos.Labs.Core.Services;
@@ -11,11 +12,13 @@ namespace RuiSantos.Labs.Api.Controllers;
 [ApiController]
 public class DoctorController : Controller
 {
-    private readonly IDoctorService service;
+    const int PageSize = 25;
+
+    private readonly IDoctorService _service;
 
     public DoctorController(IDoctorService service)
     {
-        this.service = service;
+        _service = service;
     }
 
     [HttpGet("")]
@@ -26,14 +29,12 @@ public class DoctorController : Controller
     {
         try
         {
-            IEnumerable<Labs.Core.Models.Doctor> model = Array.Empty<Labs.Core.Models.Doctor>();
-            model = await service.GetAllDoctors(take.GetValueOrDefault(20), from);
-
-            return this.OkOrNoContent(model, typeof(DoctorContract[]));
+            var model = await _service.GetAllDoctors(take.GetValueOrDefault(PageSize), from);
+            return this.Success(model, typeof(DoctorContract[]));
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 
@@ -52,12 +53,12 @@ public class DoctorController : Controller
     {
         try
         {
-            var model = await service.GetDoctorByLicenseAsync(license);
-            return this.OkOrNoContent(model, typeof(DoctorContract));
+            var model = await _service.GetDoctorByLicenseAsync(license);
+            return this.Success(model, typeof(DoctorContract));
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 
@@ -77,15 +78,15 @@ public class DoctorController : Controller
     {
         try
         {
-            var models = await service.GetAppointmentsAsync(
+            var models = await _service.GetAppointmentsAsync(
                 doctorId, 
                 dateTime);
 
-            return this.OkOrNoContent(models, typeof(DoctorAppointmentsContract));
+            return this.Success(models, typeof(DoctorAppointmentsContract));
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 
@@ -102,7 +103,7 @@ public class DoctorController : Controller
     {
         try
         {
-            await service.CreateDoctorAsync(
+            await _service.CreateDoctorAsync(
                 request.License,
                 request.Email,
                 request.FirstName,
@@ -110,11 +111,11 @@ public class DoctorController : Controller
                 request.ContactNumbers,
                 request.Specialties);
 
-            return StatusCode(201);
+            return this.Success(true);
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 
@@ -139,16 +140,16 @@ public class DoctorController : Controller
             if (!TryParseTimeSpanArray(hours, out var timeSpans))
                 return BadRequest("Invalid timespan format for hours");
             
-            await service.SetOfficeHoursAsync(
+            await _service.SetOfficeHoursAsync(
                 doctorId,
                 week,
                 timeSpans);
 
-            return Ok();
+            return this.Success();
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 }

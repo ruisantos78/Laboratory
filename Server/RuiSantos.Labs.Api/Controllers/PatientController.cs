@@ -10,11 +10,11 @@ namespace RuiSantos.Labs.Api.Controllers;
 [ApiController]
 public class PatientController : Controller
 {
-    private readonly IPatientService service;
+    private readonly IPatientService _service;
 
     public PatientController(IPatientService service)
     {
-        this.service = service;
+        _service = service;
     }
 
     /// <summary>
@@ -32,12 +32,12 @@ public class PatientController : Controller
     {
         try
         {
-            var model = await service.GetPatientBySocialNumberAsync(socialNumber);
-            return this.OkOrNoContent(model, typeof(PatientContract));
+            var model = await _service.GetPatientBySocialNumberAsync(socialNumber);
+            return this.Success(model, typeof(PatientContract));
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
     /// <summary>
@@ -55,12 +55,12 @@ public class PatientController : Controller
     {
         try
         {
-            var models = service.GetAppointmentsAsync(socialNumber);
-            return await this.OkOrNoContentAsync(models, typeof(PatientAppointmentsContract));
+            var models = _service.GetAppointmentsAsync(socialNumber);
+            return await this.SuccessAsync(models, typeof(PatientAppointmentsContract));
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 
@@ -77,18 +77,18 @@ public class PatientController : Controller
     {
         try
         {
-            await service.CreatePatientAsync(
+            await _service.CreatePatientAsync(
                 request.SocialSecurityNumber, 
                 request.Email,
                 request.FirstName, 
                 request.LastName, 
                 request.ContactNumbers);
 
-            return Ok();
+            return this.Success();
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 }

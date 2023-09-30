@@ -8,72 +8,63 @@ namespace RuiSantos.Labs.Tests.Asserts;
 
 internal class DoctorsAsserts: ServiceAsserts<DoctorService>
 {    
-    private IDoctorRepository DoctorRepository { get; }
-    private IAppointamentsRepository AppointamentsRepository { get; }    
+    private readonly IDoctorRepository _doctorRepository = Substitute.For<IDoctorRepository>();
+    private readonly IAppointamentsRepository _appointamentsRepository = Substitute.For<IAppointamentsRepository>();
 
-    public DoctorsAsserts(): base()
+    public IDoctorService GetService() => new DoctorService(_doctorRepository, _appointamentsRepository, Logger);
+    
+    public Task ShouldAddAsync(Expression<Predicate<Doctor>> expression)
     {
-        DoctorRepository = Substitute.For<IDoctorRepository>();
-        AppointamentsRepository = Substitute.For<IAppointamentsRepository>();
+        return _doctorRepository.Received()
+            .StoreAsync(Arg.Is(expression));
+    }
+
+    public Task ShouldStoreAsync(Expression<Predicate<Doctor>> expression)
+    {
+        return _doctorRepository.Received()
+            .StoreAsync(Arg.Is(expression));
+    }
+
+    public Task ShouldNotStoreAsync(Expression<Predicate<Doctor>> expression)
+    {
+        return _doctorRepository.DidNotReceive()
+            .StoreAsync(Arg.Is(expression));
     }
     
-    public IDoctorService GetService()
-    {
-        return new DoctorService(
-            DoctorRepository,
-            AppointamentsRepository,
-            Logger);
-    }
 
-    public async Task ShouldAddAsync(Expression<Predicate<Doctor>> expression)
-    {
-        await DoctorRepository.Received()
-            .StoreAsync(Arg.Is(expression));
-    }
-
-    public async Task ShouldStoreAsync(Expression<Predicate<Doctor>> expression)
-    {
-        await DoctorRepository.Received()
-            .StoreAsync(Arg.Is(expression));
-    }
-
-    public async Task ShouldNotStoreAsync(Expression<Predicate<Doctor>> expression)
-    {
-        await DoctorRepository.DidNotReceive()
-            .StoreAsync(Arg.Is(expression));
-    }
-
-    public void ReturnsOnFindAsync(Guid doctorId, 
+    public void OnFindAsyncReturns(Guid doctorId,
         Doctor? result)
     {
-        DoctorRepository.FindAsync(doctorId)
+        _doctorRepository.FindAsync(doctorId)
             .Returns(result);
     }
 
-    public void ReturnsOnGetPatientAppointmentsAsync(Doctor doctor, DateOnly date, 
+    public void OnGetPatientAppointmentsAsyncReturns(Doctor doctor, DateOnly date,
         IEnumerable<PatientAppointment> result)
     {
-        AppointamentsRepository.GetPatientAppointmentsAsync(doctor, date)
+        _appointamentsRepository.GetPatientAppointmentsAsync(doctor, date)
             .Returns(result.ToAsyncEnumerable());
     }
-
-    public void ThrowOnAddAsync(string licence)
+    
+    public void WhenAddAsyncThrows(string licence)
     {
-        DoctorRepository
-            .When(x => x.StoreAsync(Arg.Is<Doctor>(x => x.License == licence)))
+        Expression<Predicate<Doctor>> expression = doctor => doctor.License == licence;
+
+        _doctorRepository
+            .When(x => x.StoreAsync(Arg.Is(expression)))
             .Throw<Exception>();
     }
 
-    public void ThrowOnFindAsync(Guid doctorId)
+    public void WhenFindAsyncThrows(Guid doctorId)
     {
-        DoctorRepository
+        _doctorRepository
             .When(x => x.FindAsync(doctorId))
             .Throw<Exception>();
     }
 
-    public void ThrowsOnGetPatientAppointmentsAsync(Doctor doctor, DateOnly date)
+    public void WhenGetPatientAppointmentsAsyncThrows(Doctor doctor, DateOnly date)
     {
-        AppointamentsRepository
+        _appointamentsRepository
             .When(x => x.GetPatientAppointmentsAsync(doctor, date))
             .Throw<Exception>();
     }

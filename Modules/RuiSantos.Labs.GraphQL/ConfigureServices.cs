@@ -1,21 +1,23 @@
-﻿using System.Reflection;
-using RuiSantos.Labs.GraphQL;
+using System.Reflection;
+using Microsoft.Extensions.DependencyInjection;
+using RuiSantos.Labs.GraphQL.Adapters;
 using RuiSantos.Labs.GraphQL.Services;
-using Sqids;
+using Mutation = RuiSantos.Labs.GraphQL.Mutations.Mutation;
+using Query = RuiSantos.Labs.GraphQL.Queries.Query;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace RuiSantos.Labs.GraphQL;
 
 public static class ConfigureServices
 {
-    public static IServiceCollection AddLabsGraphQL(this IServiceCollection services)
+    public static IServiceCollection AddLabsGraphql(this IServiceCollection services)
     {
         services.AddGraphQLServer()
             .AddMutationConventions()
             .AddFiltering()
             .AddSorting()
             .AddProjections()
-            .AddMutationType<Mutations>()
-            .AddQueryType<Queries>();
+            .AddMutationType<Mutation>()
+            .AddQueryType<Query>();
 
         services.AddAdapters();
         services.AddSingleton<ISecurity, Security>();

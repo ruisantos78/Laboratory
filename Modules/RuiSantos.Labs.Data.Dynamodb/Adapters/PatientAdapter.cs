@@ -1,19 +1,17 @@
-﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DocumentModel;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal class PatientAdapter : EntityAdapter<PatientEntity, Patient>
+internal class PatientAdapter : EntityModelAdapter<PatientEntity, Patient>
 {
-    public PatientAdapter(IAmazonDynamoDB client) : base(client)
-    {
-    }
+    public PatientAdapter(IAmazonDynamoDB client) : base(client) { }
 
-    protected override Task<PatientEntity> ToEntityAsync(Patient model) => Task.FromResult(new PatientEntity()
+    protected override Task<PatientEntity> AsEntityAsync(Patient model) => Task.FromResult(new PatientEntity()
     {
         Id = model.Id,
         SocialSecurityNumber = model.SocialSecurityNumber,
@@ -23,7 +21,7 @@ internal class PatientAdapter : EntityAdapter<PatientEntity, Patient>
         ContactNumbers = model.ContactNumbers.ToList()
     });
 
-    protected override Task<Patient> ToModelAsync(PatientEntity entity)=> Task.FromResult(new Patient()
+    protected override Task<Patient> AsModelAsync(PatientEntity entity)=> Task.FromResult(new Patient()
     {
         Id = entity.Id,
         SocialSecurityNumber = entity.SocialSecurityNumber,
@@ -52,7 +50,7 @@ internal class PatientAdapter : EntityAdapter<PatientEntity, Patient>
     public async Task<Patient?> FindAsync(Guid patientId)
     {
         var entity = await Context.LoadAsync<PatientEntity>(patientId);
-        return await ToModelAsync(entity);
+        return await AsModelAsync(entity);
     }
 
     public async Task<Patient?> FindBySocialSecurityNumberAsync(string socialSecurityNumber)    
@@ -67,7 +65,7 @@ internal class PatientAdapter : EntityAdapter<PatientEntity, Patient>
             .GetNextSetAsync();
 
         return entities.FirstOrDefault() is {} entity 
-            ? await ToModelAsync(entity)
+            ? await AsModelAsync(entity)
             : default;
     }
 
@@ -89,12 +87,12 @@ internal class PatientAdapter : EntityAdapter<PatientEntity, Patient>
 
     public async Task StoreAsync(Patient patient)
     {
-        var entity = await ToEntityAsync(patient);
+        var entity = await AsEntityAsync(patient);
 
         var patientId = await GetIdBySocialSecurityNumbeAsync(patient.SocialSecurityNumber);
         if (patientId is not null)
             entity.Id = patientId.Value;
 
-        await Context.SaveAsync<PatientEntity>(entity);
+        await Context.SaveAsync(entity);
     }
 }

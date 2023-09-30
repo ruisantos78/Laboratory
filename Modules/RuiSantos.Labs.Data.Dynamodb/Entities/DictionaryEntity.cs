@@ -1,21 +1,15 @@
-﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DataModel;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;
 
 [DynamoDBTable(DictionaryTableName)]
-internal partial class DictionaryEntity
+internal class DictionaryEntity
 {    
     [DynamoDBHashKey(AttributeName = SourceAttributeName)]
-    public string Source { get; init; }
+    public string Source { get; set; } = string.Empty;
 
     [DynamoDBRangeKey(AttributeName = ValueAttributeName)]
-    public string Value { get; init; }
-
-    public DictionaryEntity()
-    {
-        this.Source = string.Empty;
-        this.Value = string.Empty;
-    }
+    public string Value { get; set; } = string.Empty;
 }

@@ -1,12 +1,12 @@
 using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.Labs.Data.Dynamodb.Entities.Converters;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;
 
 [DynamoDBTable(AppointmentsTableName)]
-internal partial class AppointmentsEntity
+internal class AppointmentsEntity
 {    
     [DynamoDBHashKey(
         AttributeName = AppointmentIdAttributeName, 

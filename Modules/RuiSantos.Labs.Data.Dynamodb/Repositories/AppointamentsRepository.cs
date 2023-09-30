@@ -7,42 +7,42 @@ namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
 public class AppointamentsRepository : IAppointamentsRepository
 {
-    private readonly AppointmentAdapter appointmentAdapter;
-    private readonly IAmazonDynamoDB client;
+    private readonly AppointmentAdapter _appointmentAdapter;
+    private readonly Lazy<PatientAdapter> _patientAdapter;
 
     public AppointamentsRepository(IAmazonDynamoDB client)
     {
-        this.appointmentAdapter = new AppointmentAdapter(client);
-        this.client = client;
+        _appointmentAdapter = new AppointmentAdapter(client);
+        _patientAdapter = new Lazy<PatientAdapter>(new PatientAdapter(client));
     }
 
-    public async Task<Appointment?> GetAsync(Patient patient, DateTime dateTime)
+    public Task<Appointment?> GetAsync(Patient patient, DateTime dateTime)
     {
-        return await appointmentAdapter.FindByPatientAsync(patient, dateTime);
+        return _appointmentAdapter.FindByPatientAsync(patient, dateTime);
     }
 
-    public async Task<Appointment?> GetAsync(Doctor doctor, DateTime dateTime)
+    public Task<Appointment?> GetAsync(Doctor doctor, DateTime dateTime)
     {
-        return await appointmentAdapter.FindByDoctorAsync(doctor, dateTime);
+        return _appointmentAdapter.FindByDoctorAsync(doctor, dateTime);
     }
 
     public async IAsyncEnumerable<PatientAppointment> GetPatientAppointmentsAsync(Doctor doctor, DateOnly date)
     {
-        var patientAdapter = new PatientAdapter(client);
+        var patientAdapter = _patientAdapter.Value;
 
-        await foreach(var appointment in appointmentAdapter.LoadByDoctorAsync(doctor, date)) {
+        await foreach(var appointment in _appointmentAdapter.LoadByDoctorAsync(doctor, date)) {
             if (await patientAdapter.GetAppointmentAsync(appointment) is {} patientAppointment)
                 yield return patientAppointment;
         }
     }
 
-    public async Task RemoveAsync(Appointment appointment)
+    public Task RemoveAsync(Appointment appointment)
     {
-        await appointmentAdapter.RemoveAsync(appointment);
+        return _appointmentAdapter.RemoveAsync(appointment);
     }
 
-    public async Task StoreAsync(Doctor doctor, Patient patient, DateTime dateTime)
+    public Task StoreAsync(Doctor doctor, Patient patient, DateTime dateTime)
     {
-        await appointmentAdapter.StoreAsync(doctor, patient, dateTime);
+        return _appointmentAdapter.StoreAsync(doctor, patient, dateTime);
     }
 }

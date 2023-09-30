@@ -10,11 +10,11 @@ namespace RuiSantos.Labs.Api.Controllers;
 [ApiController]
 public class SchedulesController : Controller
 {
-    private readonly IAppointmentService service;
+    private readonly IAppointmentService _service;
 
     public SchedulesController(IAppointmentService service)
     {
-        this.service = service;
+        _service = service;
     }
 
     /// <summary>
@@ -33,12 +33,12 @@ public class SchedulesController : Controller
     {
         try
         {
-            var models = service.GetAvailabilityAsync(specialty, date);
-            return await this.OkOrNoContentAsync(models, typeof(DoctorAvailabilityContract));
+            var models = _service.GetAvailabilityAsync(specialty, date);
+            return await this.SuccessAsync(models, typeof(DoctorAvailabilityContract));
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }    
     }
 
@@ -55,16 +55,16 @@ public class SchedulesController : Controller
     {
         try
         {
-            await service.CreateAppointmentAsync(
+            await _service.CreateAppointmentAsync(
                 request.PatientSecuritySocialNumber, 
                 request.DoctorId, 
                 request.Date);
 
-            return Ok();
+            return this.Success();
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 
@@ -83,7 +83,7 @@ public class SchedulesController : Controller
     {
         try
         {
-            await service.DeleteAppointmentAsync(
+            await _service.DeleteAppointmentAsync(
                 request.PatientSecuritySocialNumber, 
                 request.DoctorId, 
                 request.Date);
@@ -92,7 +92,7 @@ public class SchedulesController : Controller
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 }

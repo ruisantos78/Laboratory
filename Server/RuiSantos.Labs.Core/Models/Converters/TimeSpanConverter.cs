@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace RuiSantos.Labs.Core;
+namespace RuiSantos.Labs.Core.Models.Converters;
 
 public class TimeSpanConverter : JsonConverter
 {
@@ -16,9 +16,8 @@ public class TimeSpanConverter : JsonConverter
         if (value is not IEnumerable<TimeSpan> timespans)
             throw new JsonSerializationException("Expected an IEnumerable<TimeSpan> but got something else");
         
-        var formattedTimeSpans = timespans.Select(ts => ts.ToString("g"));        
-        var formattedArray = new JArray(formattedTimeSpans);
-        formattedArray.WriteTo(writer);
+        var jsonArray = new JArray(timespans.Select(x => x.ToString("g")));
+        jsonArray.WriteTo(writer);
     }
 
     /// <summary>
@@ -31,16 +30,10 @@ public class TimeSpanConverter : JsonConverter
     /// <returns>The time span ( s ) read from the reader. The list can be empty but never null. If null is returned the reader is positioned on the property with the name of the property</returns>
     public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
     {
-        var timespans = JArray.Load(reader).Select(token =>
-        {
-            /// timeSpan is a TimeSpan object.
-            if (token.Type == JTokenType.String && TimeSpan.TryParse(token.ToString(), out var timeSpan))
-                return timeSpan;
-
-            throw new JsonSerializationException("Invalid TimeSpan format");
-        });
-        
-        return timespans.ToList();
+        return JArray.Load(reader)
+            .Where(token => token.Type == JTokenType.String)
+            .Select(token => TimeSpan.Parse(token.ToString()))
+            .ToList();
     }
 
     /// <summary>

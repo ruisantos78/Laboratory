@@ -1,6 +1,7 @@
-﻿using RuiSantos.Labs.Core.Services;
+﻿using Microsoft.Extensions.DependencyInjection;
+using RuiSantos.Labs.Core.Services;
 
-namespace Microsoft.Extensions.DependencyInjection;
+namespace RuiSantos.Labs.Core;
 
 /// <summary>
 /// Extension methods for registering dependencies in the container.
