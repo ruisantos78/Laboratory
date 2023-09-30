@@ -1,8 +1,8 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 
-namespace RuiSantos.Labs.Api.Tests;
+namespace RuiSantos.Labs.Api.Tests.Extensions;
 
-internal static class DynamoDBContextExtensions
+internal static class DynamoDbContextExtensions
 {
     public static async Task<IReadOnlyList<TEntity>> FindAllAsync<TEntity>(this IDynamoDBContext context,
         object hashKeyValue, string? indexName = null)

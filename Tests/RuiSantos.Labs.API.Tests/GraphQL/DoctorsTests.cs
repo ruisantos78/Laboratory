@@ -1,11 +1,12 @@
 using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using FluentAssertions;
+using RuiSantos.Labs.Api.Tests.Extensions;
+using RuiSantos.Labs.Api.Tests.Extensions.FluentAssertions;
 using RuiSantos.Labs.Api.Tests.Fixtures;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 using RuiSantos.Labs.GraphQL.Services;
 using Xunit.Abstractions;
-
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Api.Tests.GraphQL;
@@ -13,17 +14,16 @@ namespace RuiSantos.Labs.Api.Tests.GraphQL;
 [Collection(nameof(ServiceCollectionFixture))]
 public class DoctorsTests : IClassFixture<ServiceFixture>
 {
-    protected readonly HttpClient client;
-    protected readonly IDynamoDBContext context;
-    protected readonly ITestOutputHelper output;
-
-    private readonly ISecurity security = new Security();
+    private readonly HttpClient _client;
+    private readonly IDynamoDBContext _context;
+    private readonly ITestOutputHelper _output;
+    private readonly ISecurity _security = new Security();
 
     public DoctorsTests(ServiceFixture service, ITestOutputHelper output)
     {
-        this.context = service.GetContext();
-        this.client = service.GetClient();
-        this.output = output;
+        _context = service.GetContext();
+        _client = service.GetClient();
+        _output = output;
     }
 
     [Theory(DisplayName = "Get doctor information by license")]
@@ -34,8 +34,8 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
     {
         // Arrange
         var doctorId = Guid.Parse(uuid);
-        var expected = await context.LoadAsync<DoctorEntity>(doctorId);
-        var expectedSpecialties = await context.FindAllAsync<DoctorSpecialtyEntity>(expected.Id);
+        var expected = await _context.LoadAsync<DoctorEntity>(doctorId);
+        var expectedSpecialties = await _context.FindAllAsync<DoctorSpecialtyEntity>(expected.Id);
 
         var request = new
         {
@@ -53,16 +53,16 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
                     """,
             variables = new
             {
-                id = security.Encode(doctorId)
+                id = _security.Encode(doctorId)
             }
         };
 
         // Act
-        var response = await client.PostAsync("graphql", request);
+        var response = await _client.PostAsync("graphql", request);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var result = await response.Content.GetTokenAsync();
+        var result = await response.Content.GetTokenAsync(_output);
 
         var doctor = result["data"].Should().HaveChild("doctor");
         doctor["license"].Should().Be(expected.License);
@@ -111,18 +111,18 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         };
 
         // Act
-        var response = await client.PostAsync("graphql", request);
+        var response = await _client.PostAsync("graphql", request);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var doctor = await context.FindAsync<DoctorEntity>("ABC456", DoctorLicenseIndexName);
+        var doctor = await _context.FindAsync<DoctorEntity>("ABC456", DoctorLicenseIndexName);
         doctor.License.Should().Be("ABC456");
         doctor.FirstName.Should().Be("John");
         doctor.LastName.Should().Be("Doe");
         doctor.Email.Should().Be("john.doe@example.com");
         doctor.ContactNumbers.Should().AllBe("123-456-7890");
 
-        var specialties = await context.FindAllAsync<DoctorSpecialtyEntity>(doctor.Id);
+        var specialties = await _context.FindAllAsync<DoctorSpecialtyEntity>(doctor.Id);
         specialties.Should().HaveCount(2);
         specialties.Select(ds => ds.Specialty).Should().BeEquivalentTo("Cardiology", "Pediatrics");
     }

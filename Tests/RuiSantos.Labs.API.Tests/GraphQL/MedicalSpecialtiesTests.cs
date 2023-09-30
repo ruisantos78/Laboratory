@@ -1,32 +1,34 @@
-﻿using System.Net;
+using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
+using RuiSantos.Labs.Api.Tests.Extensions;
+using RuiSantos.Labs.Api.Tests.Extensions.FluentAssertions;
 using RuiSantos.Labs.Api.Tests.Fixtures;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 using Xunit.Abstractions;
 
-namespace RuiSantos.Labs.Api.Tests;
+namespace RuiSantos.Labs.Api.Tests.GraphQL;
 
 [Collection(nameof(ServiceCollectionFixture))]
 public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
 {
-    protected readonly HttpClient client;
-    protected readonly IDynamoDBContext context;
-    protected readonly ITestOutputHelper output;
+    private readonly HttpClient _client;
+    private readonly IDynamoDBContext _context;
+    private readonly ITestOutputHelper _output;
 
     public MedicalSpecialtiesTests(ServiceFixture service, ITestOutputHelper output)
     {
-        this.context = service.GetContext();
-        this.client = service.GetClient();
-        this.output = output;
+        _context = service.GetContext();
+        _client = service.GetClient();
+        _output = output;
     }
 
     [Fact(DisplayName = "Get all medical specialties")]
     public async Task GetAllMedicalSpecialties()
     {
         // Arrange
-        var expected = (await context.FindAllAsync<DictionaryEntity>("specialties"))
+        var expected = (await _context.FindAllAsync<DictionaryEntity>("specialties"))
             .Select(x => x.Value)
             .ToArray();
 
@@ -42,11 +44,12 @@ public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
         };
 
         // Act
-        var response = await client.PostAsync("graphql", request);
+        var response = await _client.PostAsync("graphql", request);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var result = await response.Content.GetTokenAsync();
+        var result = await response.Content.GetTokenAsync(_output);
+        
         var specialties = result["data"].Should().HaveChild("specialties").AsJEnumerable();
         specialties.Values<string>("description").Should().BeEquivalentTo(expected);
     }
@@ -83,11 +86,11 @@ public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
         };
 
         // Act
-        var response = await client.PostAsync("graphql", request);
+        var response = await _client.PostAsync("graphql", request);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var specialties = await context.FindAllAsync<DictionaryEntity>("specialties");
+        var specialties = await _context.FindAllAsync<DictionaryEntity>("specialties");
         specialties.Select(x => x.Value).Should().OnlyHaveUniqueItems().And.Contain(new[]
          {
             "Gastroenterology",
@@ -102,7 +105,7 @@ public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
     public async Task RemoveMedicalSpecialtiesList()
     {
         // Arrange
-        await context.SaveAsync(new DictionaryEntity
+        await _context.SaveAsync(new DictionaryEntity
         {
             Source = "specialties",
             Value = "Oncology"
@@ -128,11 +131,11 @@ public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
         };
 
         // Act
-        var response = await client.PostAsync("graphql", request);
+        var response = await _client.PostAsync("graphql", request);
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var specialties = await context.FindAllAsync<DictionaryEntity>("specialties");
+        var specialties = await _context.FindAllAsync<DictionaryEntity>("specialties");
         specialties.Should().OnlyHaveUniqueItems().And.NotContain(x => x.Value == "Oncology");
     }
 }

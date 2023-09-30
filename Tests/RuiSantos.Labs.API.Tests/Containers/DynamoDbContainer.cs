@@ -6,10 +6,12 @@ using DotNet.Testcontainers.Containers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RuiSantos.Labs.Data.Dynamodb.Mediators;
+using static System.DateTime;
 
 namespace RuiSantos.Labs.Api.Tests.Containers;
 
-public sealed partial class DynamoDbContainer : IAsyncDisposable
+// ReSharper disable LocalizableElement
+public sealed class DynamoDbContainer : IAsyncDisposable
 {
     private const string RepositoySourceFile = @"Assets/Repository.json";
 
@@ -33,7 +35,6 @@ public sealed partial class DynamoDbContainer : IAsyncDisposable
             .Build();
     }
 
-    public IContainer GetContainer() => _container;
     public string GetConnectionString() => $"http://{_container.Hostname}:{_container.GetMappedPublicPort(8000)}";
     public IAmazonDynamoDB GetClient() => new AmazonDynamoDBClient(new AmazonDynamoDBConfig
     {
@@ -49,7 +50,7 @@ public sealed partial class DynamoDbContainer : IAsyncDisposable
     public async Task StartAsync()
     {
         await _container.StartAsync();
-        Console.WriteLine($"[ruisantos {DateTime.Now:HH:mm:ss}] Start Dynamodb Client at port: {_container.GetMappedPublicPort(8000)}");
+        Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] Start Dynamodb Client at port: {_container.GetMappedPublicPort(8000)}");
 
         await InitializeAsync();
     }
@@ -58,31 +59,33 @@ public sealed partial class DynamoDbContainer : IAsyncDisposable
     {
         using var client = GetClient();
 
-        Console.WriteLine($"[ruisantos {DateTime.Now:HH:mm:ss}] Start Create Dynamodb Tables");
+        Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] Start Create Dynamodb Tables");
         var context = new DynamoDBContext(client);
         var repository = await JToken.ReadFromAsync(new JsonTextReader(new StreamReader(RepositoySourceFile)));
 
         var mappings = RegisterClassMaps.TableEntities();
         var requests = RegisterClassMaps.CreateTableRequests()
-            .Select(x => client.CreateTableAsync(x));
+            .Select(x => client.CreateTableAsync(x))
+            .ToArray();
 
         var tables = await Task.WhenAll(requests);
         foreach (var table in tables)
         {
             var tableName = table.TableDescription.TableName;
-            if (repository[tableName] is not JToken token || !mappings.TryGetValue(tableName, out var entityType))
+            if (repository[tableName] is not {} token || !mappings.TryGetValue(tableName, out var entityType))
             {
-                Console.WriteLine($"[ruisantos {DateTime.Now:HH:mm:ss}] # {tableName} - {table.TableDescription.TableStatus} - 0 records.");
+                Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] # {tableName} - {table.TableDescription.TableStatus} - 0 records.");
                 continue;
             }
 
-            var entities = token.Select(t => t.ToObject(entityType));
+            var entities = token.Select(t => t.ToObject(entityType)).ToArray();
 
             var writer = context.CreateBatchWrite(entityType);
             writer.AddPutItems(entities);
             await writer.ExecuteAsync();
 
-            Console.WriteLine($"[ruisantos {DateTime.Now:HH:mm:ss}] # {tableName} - {table.TableDescription.TableStatus} - {entities.Count()} records.");
+            Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] # {tableName} - {table.TableDescription.TableStatus} - {entities.Count()} records.");
         }
     }
 }
+// ReSharper enable LocalizableElement

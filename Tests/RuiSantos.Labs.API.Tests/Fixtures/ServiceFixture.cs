@@ -1,4 +1,3 @@
-using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc.Testing;
 using RuiSantos.Labs.Api.Tests.Containers;
@@ -10,37 +9,32 @@ public class ServiceCollectionFixture: ICollectionFixture<ServiceFixture> { }
 
 public class ServiceFixture : IAsyncLifetime
 {
-    private readonly DynamoDbContainer dynamoDbContainer;
-    private readonly WebApplicationFactory<Program> factory;
-
+    private readonly DynamoDbContainer _dynamoDbContainer;
+    private readonly WebApplicationFactory<Program> _factory;
+    
     public ServiceFixture()
     {
         Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://+:55555");
         Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
 
-        this.dynamoDbContainer = new DynamoDbContainer();
-        this.factory = new WebApplicationFactory<Program>();
+        _dynamoDbContainer = new DynamoDbContainer();
+        _factory = new WebApplicationFactory<Program>();
     }
 
-    internal IDynamoDBContext GetContext() => new DynamoDBContext(dynamoDbContainer.GetClient());
+    internal IDynamoDBContext GetContext() => new DynamoDBContext(_dynamoDbContainer.GetClient());
 
     internal HttpClient GetClient(string root = "/")
     {
-        var client = factory.CreateClient();
-        client.BaseAddress = new Uri(factory.Server.BaseAddress, root);
+        var client = _factory.CreateClient();
+        client.BaseAddress = new Uri(_factory.Server.BaseAddress, root);
         return client;
     }    
 
-    public async Task DisposeAsync()
-    {
-        this.factory.Dispose();
-        await this.dynamoDbContainer.DisposeAsync();
-    }
+    public Task DisposeAsync() => Task.WhenAll(
+        _factory.DisposeAsync().AsTask(),
+        _dynamoDbContainer.DisposeAsync().AsTask()
+    );
 
-    public async Task InitializeAsync()
-    {
-        await dynamoDbContainer.StartAsync();
-
-        Environment.SetEnvironmentVariable("DATABASE_DYNAMO", dynamoDbContainer.GetConnectionString());
-    }
+    public Task InitializeAsync() => _dynamoDbContainer.StartAsync()
+        .ContinueWith(_ => Environment.SetEnvironmentVariable("DATABASE_DYNAMO", _dynamoDbContainer.GetConnectionString()));
 }

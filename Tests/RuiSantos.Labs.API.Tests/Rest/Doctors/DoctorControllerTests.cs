@@ -3,21 +3,21 @@ using RuiSantos.Labs.Api.Tests.Fixtures;
 using RuiSantos.Labs.GraphQL.Services;
 using Xunit.Abstractions;
 
-namespace RuiSantos.Labs.Api.Tests.Rest;
+namespace RuiSantos.Labs.Api.Tests.Rest.Doctors;
 
 [Collection(nameof(ServiceCollectionFixture))]
 public partial class DoctorControllerTests: IClassFixture<ServiceFixture>
 {
-    private readonly IDynamoDBContext context;
-    private readonly HttpClient client;
-    private readonly ITestOutputHelper output;
+    protected readonly IDynamoDBContext Context;
+    protected readonly HttpClient Client;
+    protected readonly ITestOutputHelper Output;
 
-    private readonly ISecurity security = new Security();
+    private readonly ISecurity _security = new Security();
 
     public DoctorControllerTests(ServiceFixture service, ITestOutputHelper output)
     {
-        this.context = service.GetContext();
-        this.client = service.GetClient();
-        this.output = output;
+        Context = service.GetContext();
+        Client = service.GetClient();
+        Output = output;
     }
 }

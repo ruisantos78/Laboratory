@@ -1,11 +1,12 @@
 using System.Net;
 using FluentAssertions;
 using RuiSantos.Labs.Api.Contracts;
+using RuiSantos.Labs.Api.Tests.Extensions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
-namespace RuiSantos.Labs.Api.Tests.Rest;
+namespace RuiSantos.Labs.Api.Tests.Rest.Doctors;
 
 partial class DoctorControllerTests
 {
@@ -24,22 +25,22 @@ partial class DoctorControllerTests
         };
 
         // Act
-        var response = await client.PostAsync("/Doctor/", request, output);
+        var response = await Client.PostAsync("/Doctor/", request, Output);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.Created);
 
-        var doctor = await context.FindAsync<DoctorEntity>("ZZZ123", DoctorLicenseIndexName);
+        var doctor = await Context.FindAsync<DoctorEntity>("ZZZ123", DoctorLicenseIndexName);
         doctor.FirstName.Should().Be("Joe");
         doctor.LastName.Should().Be("Doe");
         doctor.Email.Should().Be("joe.doe@email.net");
         doctor.ContactNumbers.Should().ContainSingle("1-555-5555");
 
-        var specialties = await context.FindAllAsync<DoctorSpecialtyEntity>(doctor.Id);
+        var specialties = await Context.FindAllAsync<DoctorSpecialtyEntity>(doctor.Id);
 
         specialties.Should().HaveCount(1).And.ContainSingle(ds => ds.Specialty == "Cardiology");
 
         // Teardown
-        await context.DeleteAsync(doctor);
+        await Context.DeleteAsync(doctor);
     }
 }

@@ -1,10 +1,12 @@
 using System.Net;
 using FluentAssertions;
+using RuiSantos.Labs.Api.Tests.Extensions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
-namespace RuiSantos.Labs.Api.Tests.Rest;
+
+namespace RuiSantos.Labs.Api.Tests.Rest.Doctors;
 
 partial class DoctorControllerTests
 {
@@ -16,23 +18,21 @@ partial class DoctorControllerTests
     {
         // Arrange
         var hours = Enumerable.Range(9, 4)
-            .SelectMany(i => new[] {
-                    TimeSpan.FromHours(i),
-                    TimeSpan.FromMinutes(i * 60 + 30) }
-            ).ToArray();
+                .SelectMany(i => new[] { TimeSpan.FromHours(i), TimeSpan.FromMinutes(i * 60 + 30) })
+                .ToArray();
 
         // Act
-        var response = await client.PutAsync($"/Doctor/{license}/OfficeHours/{week}", hours, output);
+        var response = await Client.PutAsync($"/Doctor/{license}/OfficeHours/{week}", hours, Output);
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
-        var doctor = await context.FindAsync<DoctorEntity>(license, DoctorLicenseIndexName);
+        var doctor = await Context.FindAsync<DoctorEntity>(license, DoctorLicenseIndexName);
         doctor.Availability.Should().HaveCount(1);
         doctor.Availability.Should().ContainSingle(i => i.Week == week && i.Hours.SequenceEqual(hours));
 
         // Teardown
         doctor.Availability.Clear();
-        await context.SaveAsync(doctor);
+        await Context.SaveAsync(doctor);
     }
 }

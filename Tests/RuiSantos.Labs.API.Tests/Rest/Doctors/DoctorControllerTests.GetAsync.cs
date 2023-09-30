@@ -1,8 +1,9 @@
-﻿using System.Net;
+using System.Net;
 using FluentAssertions;
 using RuiSantos.Labs.Api.Contracts;
+using RuiSantos.Labs.Api.Tests.Extensions;
 
-namespace RuiSantos.Labs.Api.Tests.Rest;
+namespace RuiSantos.Labs.Api.Tests.Rest.Doctors;
 
 partial class DoctorControllerTests
 {
@@ -13,11 +14,11 @@ partial class DoctorControllerTests
     public async Task ShouldReturnDoctorInformation(string license)
     {
         // Act
-        var response = await client.GetAsync($"/Doctor/{license}");
+        var response = await Client.GetAsync($"/Doctor/{license}");
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var content = await response.Content.GetModelAsync<DoctorContract>(output);
+        var content = await response.Content.GetContractAsync<DoctorContract>(Output);
         content.License.Should().Be(license);
     }
 
@@ -26,7 +27,7 @@ partial class DoctorControllerTests
     public async Task ShouldReturnNoContentForNonExistingLicense(string license)
     {
         // Act
-        var response = await client.GetAsync($"/Doctor/{license}");
+        var response = await Client.GetAsync($"/Doctor/{license}");
 
         // Assert
         response.StatusCode.Should().Be(HttpStatusCode.NoContent);
