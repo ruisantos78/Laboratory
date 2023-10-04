@@ -2,7 +2,7 @@
 using Newtonsoft.Json.Linq;
 using Xunit.Abstractions;
 
-namespace RuiSantos.Labs.Api.Tests.Extensions;
+namespace RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 
 internal static class HttpExtensions
 {

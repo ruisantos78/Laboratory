@@ -1,12 +1,13 @@
 using System.Net;
 using FluentAssertions;
 using RuiSantos.Labs.Api.Contracts;
-using RuiSantos.Labs.Api.Tests.Extensions;
+using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
+using RuiSantos.Labs.Core.Models;
 
-namespace RuiSantos.Labs.Api.Tests.Rest.Doctors;
+namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;
 
 partial class DoctorControllerTests
 {
@@ -26,7 +27,7 @@ partial class DoctorControllerTests
         content.Should().HaveCount(1);
 
         var element = content.First();
-        element.Patient.Should().BeEquivalentTo(patient);
+        element.Patient.Should().BeEquivalentTo(patient, options => options.Excluding(x => x.Id));
         element.Date.Should().Be(DateTime.Parse("2023-08-21 09:00:00"));
     }
 

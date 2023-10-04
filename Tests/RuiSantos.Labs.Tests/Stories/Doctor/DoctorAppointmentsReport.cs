@@ -1,4 +1,5 @@
 ﻿using FluentAssertions;
+using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;
@@ -70,7 +71,7 @@ public class DoctorAppointmentsReport
 
         var asserts = new DoctorsAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
-        asserts.OnGetPatientAppointmentsAsyncReturns(doctor, today, result: default!);
+        asserts.OnGetPatientAppointmentsAsyncReturns(doctor, today, result: Array.Empty<PatientAppointment>());
 
         // Act
         var service = asserts.GetService();

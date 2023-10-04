@@ -6,13 +6,14 @@ using DotNet.Testcontainers.Containers;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RuiSantos.Labs.Data.Dynamodb.Mediators;
-using static System.DateTime;
 
-namespace RuiSantos.Labs.Api.Tests.Containers;
+namespace RuiSantos.Labs.Infrastrucutre.Tests.Containers;
 
 // ReSharper disable LocalizableElement
 public sealed class DynamoDbContainer : IAsyncDisposable
 {
+    private static DateTime Now => DateTime.Now;
+
     private const string RepositoySourceFile = @"Assets/Repository.json";
 
     private readonly IContainer _container;

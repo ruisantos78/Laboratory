@@ -1,9 +1,9 @@
 using System.Net;
 using FluentAssertions;
 using RuiSantos.Labs.Api.Contracts;
-using RuiSantos.Labs.Api.Tests.Extensions;
+using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 
-namespace RuiSantos.Labs.Api.Tests.Rest.Doctors;
+namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;
 
 partial class DoctorControllerTests
 {

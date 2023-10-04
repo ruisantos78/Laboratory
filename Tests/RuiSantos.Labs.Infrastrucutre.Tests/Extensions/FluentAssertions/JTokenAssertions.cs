@@ -3,7 +3,7 @@ using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 using Newtonsoft.Json.Linq;
 
-namespace RuiSantos.Labs.Api.Tests.Extensions.FluentAssertions;
+namespace RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
 
 public class JTokenAssertions: ReferenceTypeAssertions<JToken?, JTokenAssertions>
 {

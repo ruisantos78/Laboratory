@@ -2,13 +2,13 @@ using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using FluentAssertions;
 using Newtonsoft.Json.Linq;
-using RuiSantos.Labs.Api.Tests.Extensions;
-using RuiSantos.Labs.Api.Tests.Extensions.FluentAssertions;
-using RuiSantos.Labs.Api.Tests.Fixtures;
+using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
+using RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
+using RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 using Xunit.Abstractions;
 
-namespace RuiSantos.Labs.Api.Tests.GraphQL;
+namespace RuiSantos.Labs.Infrastrucutre.Tests.GraphQL;
 
 [Collection(nameof(ServiceCollectionFixture))]
 public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>

@@ -1,8 +1,8 @@
-﻿using System.Net;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using RuiSantos.Labs.Api.Contracts;
 using RuiSantos.Labs.Api.Core;
 using RuiSantos.Labs.Core.Services;
+
 using static RuiSantos.Labs.Api.Core.ControllerUtils;
 
 namespace RuiSantos.Labs.Api.Controllers;
@@ -70,7 +70,7 @@ public class DoctorController : Controller
     /// <response code="200">Returns a list of the doctor's appointments.</response>
     /// <response code="204">If no records are found for the given doctor and date.</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
-    [HttpGet("{license}/Appointments/{dateTime?}")]
+    [HttpGet("{doctorId}/Appointments/{dateTime?}")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorAppointmentsContract[]))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
@@ -127,7 +127,7 @@ public class DoctorController : Controller
     /// <param name="hours">An array of strings representing the office hours in HH:mm format.</param>
     /// <response code="200">Returns a success message if the office hours are successfully set.</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
-    [HttpPut("{license}/OfficeHours/{dayOfweek}")]
+    [HttpPut("{doctorId}/OfficeHours/{dayOfweek}")]
     [ProducesResponseType(StatusCodes.Status200OK)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PutOfficeHoursAsync(Guid doctorId, string dayOfweek, [FromBody] string[] hours)
