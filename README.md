@@ -34,6 +34,7 @@ This project was built using the following technologies:
   - [AWS Dynamodb](https://aws.amazon.com/en/pm/dynamodb/)
   - [Docker](https://www.docker.com/)
 
+
 ## Getting Started
 To set up the Rui Santos Laboratory on your local machine, follow these steps:
 
@@ -47,12 +48,24 @@ git clone https://github.com/ruisantos78/Laboratory.git
 cd Laboratory
 ```
 
-3. Build and start the API using Docker Compose:
+3. Build and start the API Service and Database containers:
 ```bash
-docker-compose up --build
+make build-server
 ```
 
 4. The API will now be available at `http://localhost:8001`.
+
+5. Build and start the Client container:
+```bash
+make build-client
+```
+
+6. The Client will now be available at `http://localhost:8002`.
+
+7.  Stop and remove all containers.
+```bash
+make kill
+```
 
 ### API Documentation
 
@@ -60,13 +73,15 @@ API documentation is available at `http://localhost:8001/swagger`.
 
 GraphQL documentation is available at `http://localhost:8001/graphql`.
 
+
 ## Makefile Commands
 
 For simplified project management, we provide a Makefile with the following commands:
 
-- make build: Start the DynamoDB and API containers.
-- make run: Start the client container.
+- make build-server: Start the DynamoDB and API containers.
+- make build-client: Start the client container.
 - make kill: Stop and remove all containers.
+- make update-client:	Update the GraphQL schema on the client container (requires the build-server command to be run first).
 - make help: Show this help message.
 
 To use these commands, make sure you have the make utility installed on your system.

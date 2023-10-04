@@ -1,27 +1,26 @@
 ﻿using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Data.Dynamodb.Entities;
+using RuiSantos.Labs.Data.Dynamodb.Adapters;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
 public class PatientRepository : IPatientRepository
 {
-    private readonly IDynamoDBContext context;
+    private readonly PatientAdapter _patientAdapter;
 
     public PatientRepository(IAmazonDynamoDB client)
     {
-        this.context = new DynamoDBContext(client);
+        _patientAdapter = new PatientAdapter(client);
     }
 
-    public async Task StoreAsync(Patient patient)
+    public Task StoreAsync(Patient patient)
     {
-        await PatientDto.SetPatientAsync(context, patient);
+        return _patientAdapter.StoreAsync(patient);
     }
 
-    public async Task<Patient?> FindAsync(string socialSecurityNumber)
+    public Task<Patient?> FindAsync(string socialSecurityNumber)
     {
-        return await PatientDto.GetPatientBySocialSecurityNumberAsync(context, socialSecurityNumber);
+        return _patientAdapter.FindBySocialSecurityNumberAsync(socialSecurityNumber);
     }
 }

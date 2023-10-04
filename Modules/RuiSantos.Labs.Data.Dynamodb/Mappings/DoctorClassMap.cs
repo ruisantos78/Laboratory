@@ -1,15 +1,15 @@
-﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using RuiSantos.Labs.Data.Dynamodb.Mediators;
 using RuiSantos.Labs.Data.Dynamodb.Mappings.Core;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Mappings;
 
 internal class DoctorClassMap : IRegisterClassMap
 {
-    public CreateTableRequest GetCreateTableRequest() => new()
+    public CreateTableRequest CreateTableRequest() => new()
     {
         TableName = DoctorsTableName,
         AttributeDefinitions = new List<AttributeDefinition>
@@ -23,7 +23,7 @@ internal class DoctorClassMap : IRegisterClassMap
         },
         GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>
         {
-            new GlobalSecondaryIndexHashKey(DoctorLicenseIndexName, LicenseAttributeName)
+            new GlobalSecondaryIndexKeys(DoctorLicenseIndexName, LicenseAttributeName)
         },
         ProvisionedThroughput = new(5, 5)
     };

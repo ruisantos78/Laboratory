@@ -8,7 +8,7 @@ public class AppointmentContract
     /// <summary>
     /// The medical license number of the medical professional.
     /// </summary>
-    public string MedicalLicense { get; init; }
+    public Guid DoctorId { get; init; }
 
     /// <summary>
     /// The security social number of the patient.
@@ -25,7 +25,7 @@ public class AppointmentContract
     /// </summary>s
     public AppointmentContract()
     {
-        MedicalLicense = string.Empty;
+        DoctorId = Guid.Empty;
         PatientSecuritySocialNumber = string.Empty;
         Date = DateTime.MinValue;
     }

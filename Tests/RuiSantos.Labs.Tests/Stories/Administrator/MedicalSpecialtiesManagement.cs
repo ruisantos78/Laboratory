@@ -1,4 +1,4 @@
-﻿using FluentAssertions;
+using FluentAssertions;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Tests.Asserts;
@@ -39,7 +39,7 @@ public class MedicalSpecialtiesManagement
         var specialties = new List<string>();
         
         var asserts = new MedicalSpecialtiesAsserts();
-        asserts.ThrowsOnAddAsync(specialties);
+        asserts.WhenAddAsyncThrows(specialties);
 
         // Act
         var service = asserts.GetService();
@@ -77,7 +77,7 @@ public class MedicalSpecialtiesManagement
         var specialty = string.Empty;
         
         var asserts = new MedicalSpecialtiesAsserts();
-        asserts.ThrowsOnRemoveAsync(specialty);
+        asserts.WhenRemoveAsyncThrows(specialty);
 
         // Act
         var service = asserts.GetService();

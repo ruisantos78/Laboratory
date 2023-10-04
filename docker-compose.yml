@@ -15,6 +15,7 @@ services:
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - DATABASE_DYNAMO=http://ruisantos.labs.db.dynamo:8000
+      - CORS_ORIGINS=http://localhost:8002;https://localhost:8003
     ports:
       - 8001:80
     build:
@@ -27,9 +28,10 @@ services:
       - ruisantos.labs.api
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
-      - RUISANTOS_LABS_API_URL=http://localhost:8001/graphql/
+      - RUISANTOS_LABS_API_URL=http://ruisantos.labs.api:8001/graphql/
     ports:
       - 8002:80
+      - 8003:443
     build:
       context: ./Server/RuiSantos.Labs.Client
       dockerfile: ./Dockerfile 

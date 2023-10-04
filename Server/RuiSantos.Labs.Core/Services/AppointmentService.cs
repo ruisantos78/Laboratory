@@ -1,9 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using RuiSantos.Labs.Core.Repositories;
-using RuiSantos.Labs.Core.Services.Exceptions;
+using Microsoft.Extensions.Logging;
+using RuiSantos.Labs.Core.Extensions;
 using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Resources;
-using RuiSantos.Labs.Core.Validators;
+using RuiSantos.Labs.Core.Services.Exceptions;
 
 namespace RuiSantos.Labs.Core.Services;
 
@@ -16,21 +16,19 @@ public interface IAppointmentService
     /// Gets the appointments for a given patient.
     /// </summary>
     /// <param name="socialNumber">The social number of the patient.</param>
-    /// <param name="medicalLicence">The medical licence of the doctor.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <param name="dateTime">The date and time of the appointment.</param>
     /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
-    /// <exception cref="ManagementFailException">Thrown when the appointment creation fails.</exception>
-    Task CreateAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime);
+    Task CreateAppointmentAsync(string socialNumber, Guid doctorId, DateTime dateTime);
 
     /// <sumary>
     /// Deletes an appointment for a given patient.
     /// </sumary>
     /// <param name="socialNumber">The social number of the patient.</param>
-    /// <param name="medicalLicence">The medical licence of the doctor.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <param name="dateTime">The date and time of the appointment.</param>
     /// <exception cref="ValidationFailException">Thrown when the validation fails.</exception>
-    /// <exception cref="ManagementFailException">Thrown when the appointment deletion fails.</exception>
-    Task DeleteAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime);
+    Task DeleteAppointmentAsync(string socialNumber, Guid doctorId, DateTime dateTime);
 
     /// <summary>
     /// Gets the availability of a doctor.
@@ -43,44 +41,39 @@ public interface IAppointmentService
 
 internal class AppointmentService : IAppointmentService
 {
-    private readonly IDoctorRepository doctorRepository;
-    private readonly IPatientRepository patientRepository;
-    private readonly IAppointamentsRepository appointamentsRepository;
-    private readonly ILogger logger;
+    private readonly IDoctorRepository _doctorRepository;
+    private readonly IPatientRepository _patientRepository;
+    private readonly IAppointamentsRepository _appointamentsRepository;
+    private readonly ILogger _logger;
 
     public AppointmentService(IDoctorRepository doctorRepository,
         IPatientRepository patientRepository,
         IAppointamentsRepository appointamentsRepository,
         ILogger<AppointmentService> logger)
     {
-        this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.appointamentsRepository = appointamentsRepository;
-        this.logger = logger;
+        _doctorRepository = doctorRepository;
+        _patientRepository = patientRepository;
+        _appointamentsRepository = appointamentsRepository;
+        _logger = logger;
     }
 
-    public async Task CreateAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime)
+    public async Task CreateAppointmentAsync(string socialNumber, Guid doctorId, DateTime dateTime)
     {
         try
         {
-            var doctor = await doctorRepository.FindAsync(medicalLicence);
-            if (doctor is null)
+            if (await _doctorRepository.FindAsync(doctorId) is not {} doctor)
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
-            var doctorAppointment = await appointamentsRepository.GetAsync(doctor, dateTime);
-            if (doctorAppointment is not null)
+            if (await _appointamentsRepository.GetAsync(doctor, dateTime) is not null)
                 throw new ValidationFailException(MessageResources.RecordAlreadyExists);
 
-            var patient = await patientRepository.FindAsync(socialNumber);
-            if (patient is null)
+            if (await _patientRepository.FindAsync(socialNumber) is not {} patient)
                 throw new ValidationFailException(MessageResources.PatientSocialNumberNotFound);
 
-            var patientAppointment = await appointamentsRepository.GetAsync(patient, dateTime);
-            if (patientAppointment is not null)
+            if (await _appointamentsRepository.GetAsync(patient, dateTime) is not null)
                 throw new ValidationFailException(MessageResources.RecordAlreadyExists);
 
-            var appointment = new Appointment(dateTime);
-            await appointamentsRepository.StoreAsync(doctor, patient, dateTime);        
+            await _appointamentsRepository.StoreAsync(doctor, patient, dateTime);
         }        
         catch (ValidationFailException)
         {
@@ -88,35 +81,31 @@ internal class AppointmentService : IAppointmentService
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.PatientSetFail);
         }
     }
 
-    public async Task DeleteAppointmentAsync(string socialNumber, string medicalLicence, DateTime dateTime)
+    public async Task DeleteAppointmentAsync(string socialNumber, Guid doctorId, DateTime dateTime)
     {
         try
         {
-            var patient = await patientRepository.FindAsync(socialNumber);
-            if (patient is null)
+            if (await _patientRepository.FindAsync(socialNumber) is not {} patient)
                 throw new ValidationFailException(MessageResources.PatientSocialNumberNotFound);
 
-            var patientAppointment = await appointamentsRepository.GetAsync(patient, dateTime);
-            if (patientAppointment is null)
+            if (await _appointamentsRepository.GetAsync(patient, dateTime) is not {} patientAppointment)
                 return;
 
-            var doctor = await doctorRepository.FindAsync(medicalLicence);
-            if (doctor is null)
+            if (await _doctorRepository.FindAsync(doctorId) is not {} doctor)
                 return;
 
-            var doctorAppointment = await appointamentsRepository.GetAsync(doctor, dateTime);
-            if (doctorAppointment is null)
+            if (await _appointamentsRepository.GetAsync(doctor, dateTime) is not {} doctorAppointment)
                 return;
 
             if (patientAppointment.Id != doctorAppointment.Id)
                 return;
 
-            await appointamentsRepository.RemoveAsync(patientAppointment);
+            await _appointamentsRepository.RemoveAsync(patientAppointment);
         }         
         catch (ValidationFailException)
         {
@@ -124,7 +113,7 @@ internal class AppointmentService : IAppointmentService
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.PatientSetFail);
         }
     }
@@ -132,6 +121,6 @@ internal class AppointmentService : IAppointmentService
     public IAsyncEnumerable<DoctorSchedule> GetAvailabilityAsync(string speciality, DateTime dateTime)
     {
         var date = DateOnly.FromDateTime(dateTime);
-        return doctorRepository.FindBySpecialtyWithAvailabilityAsync(speciality, date);
+        return _doctorRepository.FindBySpecialtyWithAvailabilityAsync(speciality, date);
     }
 }

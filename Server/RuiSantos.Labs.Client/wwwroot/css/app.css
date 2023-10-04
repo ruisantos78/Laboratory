@@ -1,5 +1,14 @@
+main {
+    padding-top: 25px;
+    overflow: auto;
+}
+
 h1:focus {
     outline: none;
+}
+
+.no-wrap {
+    white-space: nowrap;
 }
 
 #blazor-error-ui {

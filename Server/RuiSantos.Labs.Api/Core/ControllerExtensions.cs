@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Net;
+using Microsoft.AspNetCore.Mvc;
 using RuiSantos.Labs.Core.Services.Exceptions;
 
 namespace RuiSantos.Labs.Api.Core;
@@ -15,7 +16,7 @@ internal static class ControllerExtensions
     /// <param name="controller">The controller.</param>
     /// <param name="exception">The exception.</param>
     /// <returns>The result HTTP Status code and the message of the exception, if any, that caused the failure of the handling.</returns>
-    public static IActionResult FromException(this Controller controller, Exception exception)
+    public static IActionResult Failure(this Controller controller, Exception exception)
     {
         return exception switch
         {
@@ -23,6 +24,14 @@ internal static class ControllerExtensions
             ValidationFailException validationFailException => controller.BadRequest(validationFailException.Message),
             _ => controller.Problem(),
         };
+    }
+
+    public static IActionResult Success(this Controller controller, bool created = false)
+    {
+        if (created)
+            return controller.StatusCode((int)HttpStatusCode.Created);
+
+        return controller.Ok();
     }
 
     /// <summary>
@@ -33,7 +42,7 @@ internal static class ControllerExtensions
     /// <param name="result">The result.</param>
     /// <param name="contractType">The contract type. (optional)</param>
     /// <returns>The result HTTP Status code and the result.</returns>
-    public static IActionResult OkOrNoContent<TModel>(this Controller controller, TModel? result, Type? contractType = null)
+    public static IActionResult Success<TModel>(this Controller controller, TModel? result, Type? contractType = null)
     {
         if (result is null)
             return controller.NoContent();
@@ -56,16 +65,16 @@ internal static class ControllerExtensions
     /// <param name="models">The model list.</param>
     /// <param name="contractType">The contract type. (optional)</param>
     /// <returns>The result HTTP Status code and the result.</returns>
-    public static IActionResult OkOrNoContent<TModel>(this Controller controller, IEnumerable<TModel>? models, Type? contractType = null)
+    public static IActionResult Success<TModel>(this Controller controller, IEnumerable<TModel>? models, Type? contractType = null)
     {
-        if (!models?.Any() ?? false)
-            return controller.NoContent();
-
         if (contractType is null)
             return controller.Ok(models);
 
-        var result = models!.Select(model => Activator.CreateInstance(contractType, model));
+        var values = models?.ToArray();
+        if (values?.Any() is not true)
+            return controller.NoContent();
 
+        var result = values.Select(model => Activator.CreateInstance(contractType, model));
         return controller.Ok(result);
     } 
 
@@ -77,7 +86,7 @@ internal static class ControllerExtensions
     /// <param name="model">The model.</param>
     /// <param name="contractType">The contract type. (optional)</param>
     /// <returns>The result HTTP Status code and the result.</returns>    
-    public static async Task<IActionResult> OkOrNoContentAsync<TModel>(this Controller controller, IAsyncEnumerable<TModel> model, Type? contractType = null)
+    public static async Task<IActionResult> SuccessAsync<TModel>(this Controller controller, IAsyncEnumerable<TModel> model, Type? contractType = null)
     {
         var response = await model.ToArrayAsync();
         if (!response.Any())

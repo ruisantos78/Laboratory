@@ -1,14 +1,14 @@
-﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
 using RuiSantos.Labs.Data.Dynamodb.Mediators;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Mappings;
 
 internal class DictionaryClassMap : IRegisterClassMap
 {
-    public CreateTableRequest GetCreateTableRequest() => new()
+    public CreateTableRequest CreateTableRequest() => new()
     {
         TableName = DictionaryTableName,
         AttributeDefinitions = new List<AttributeDefinition>

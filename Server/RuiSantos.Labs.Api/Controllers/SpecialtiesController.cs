@@ -9,11 +9,11 @@ namespace RuiSantos.Labs.Api.Controllers;
 [ApiController]
 public class SpecialtiesController : Controller
 {
-    private readonly IMedicalSpecialtiesService service;
+    private readonly IMedicalSpecialtiesService _service;
 
     public SpecialtiesController(IMedicalSpecialtiesService service)
     {
-        this.service = service;
+        _service = service;
     }
 
     /// <summary>
@@ -30,12 +30,12 @@ public class SpecialtiesController : Controller
     {
         try
         {
-            var result = await service.GetMedicalSpecialitiesAsync();
-            return this.OkOrNoContent<String>(result.OrderBy(s => s));
+            var result = await _service.GetMedicalSpecialitiesAsync();
+            return this.Success(result.OrderBy(s => s));
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 
@@ -43,21 +43,21 @@ public class SpecialtiesController : Controller
     /// Create one or more medical specialties.
     /// </summary>
     /// <param name="descriptions">An array of medical specialty descriptions.</param>
-    /// <response code="200">Medical specialties created successfully.</response>
+    /// <response code="201">Medical specialties created successfully.</response>
     /// <response code="400">If the request object contains invalid arguments.</response>
     [HttpPost]
-    [ProducesResponseType(StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> PostAsync([FromBody]List<string> descriptions)
     {
         try
         {
-            await service.CreateMedicalSpecialtiesAsync(descriptions);
-            return Ok();
+            await _service.CreateMedicalSpecialtiesAsync(descriptions);
+            return this.Success(true);
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 
@@ -74,12 +74,12 @@ public class SpecialtiesController : Controller
     {
         try
         {
-            await service.RemoveMedicalSpecialtiesAsync(description);
-            return Ok();
+            await _service.RemoveMedicalSpecialtiesAsync(description);
+            return this.Success();
         }
         catch (Exception ex)
         {
-            return this.FromException(ex);
+            return this.Failure(ex);
         }
     }
 }

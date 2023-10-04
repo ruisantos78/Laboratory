@@ -4,29 +4,34 @@ namespace RuiSantos.Labs.Tests.Asserts.Builders;
 
 internal class DoctorBuilder
 {
-    private readonly Doctor model = new();
-    
-    public Doctor Build()
+    private readonly Doctor _model;
+
+    public DoctorBuilder(Guid? doctorId = null)
     {
-        return model;
+        _model = new()
+        {
+            Id = doctorId ?? Guid.NewGuid()
+        };
     }
+
+    public Doctor Build() => _model;
 
     public DoctorBuilder With(string? license = null, string? email = null, string? firstName = null, string? lastName = null)
     {
-        model.License = license ?? model.License;
-        model.Email = email ?? model.Email;
-        model.FirstName = firstName ?? model.FirstName;
-        model.LastName = lastName ?? model.LastName;
+        _model.License = license ?? _model.License;
+        _model.Email = email ?? _model.Email;
+        _model.FirstName = firstName ?? _model.FirstName;
+        _model.LastName = lastName ?? _model.LastName;
         
         return this;
     }
 
     public DoctorBuilder WithOfficeHours(DayOfWeek week, params string[] hours)
     {
-        var timespans = hours.Select(x => TimeSpan.Parse(x));
+        var timespans = hours.Select(TimeSpan.Parse);
 
-        model.OfficeHours.RemoveWhere(x => x.Week == week);
-        model.OfficeHours.Add(new OfficeHour(week, timespans));
+        _model.OfficeHours.RemoveWhere(x => x.Week == week);
+        _model.OfficeHours.Add(new OfficeHour(week, timespans));
 
         return this;
     }

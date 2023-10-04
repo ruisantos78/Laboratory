@@ -1,16 +1,15 @@
-﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Mappings.Core;
 using RuiSantos.Labs.Data.Dynamodb.Mediators;
 
-using static RuiSantos.Labs.Data.Dynamodb.Mappings.ClassMapConstants;
+using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Mappings;
 
 internal class AppointmentsClassMap : IRegisterClassMap
 {
-    public CreateTableRequest GetCreateTableRequest() => new()
+    public CreateTableRequest CreateTableRequest() => new()
     {
         TableName = AppointmentsTableName,
         AttributeDefinitions = new List<AttributeDefinition> {            
@@ -24,8 +23,8 @@ internal class AppointmentsClassMap : IRegisterClassMap
         },
         GlobalSecondaryIndexes = new List<GlobalSecondaryIndex>
         {
-            new GlobalSecondaryIndexHashKey(DoctorAppointmentsIndexName, DoctorIdAttributeName, AppointmentDateTimeAttributeName),
-            new GlobalSecondaryIndexHashKey(PatientAppointmentsIndexName, PatientIdAttributeName, AppointmentDateTimeAttributeName)
+            new GlobalSecondaryIndexKeys(DoctorAppointmentsIndexName, DoctorIdAttributeName, AppointmentDateTimeAttributeName),
+            new GlobalSecondaryIndexKeys(PatientAppointmentsIndexName, PatientIdAttributeName, AppointmentDateTimeAttributeName)
         },
         ProvisionedThroughput = new(5, 5)
     };

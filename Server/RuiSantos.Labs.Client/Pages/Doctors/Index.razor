@@ -1,0 +1,38 @@
+﻿@page "/doctors"
+@inherits MvvmComponentBase<DoctorsViewsModel>
+@if (ViewModel is null) return;
+
+<Container>
+    <Card>
+        <CardHeader>
+            <CardTitle>Doctors Management</CardTitle>
+        </CardHeader>
+        <CardBody>
+            <DataGrid Striped Narrow Virtualize                    
+                      TItem="DoctorModel"                      
+                      Data="ViewModel.Doctors"
+                      ReadData="ViewModel.ReadData"    
+                      TotalItems="ViewModel.Doctors.Count"          
+                      VirtualizeOptions="VirtualizeOptions"
+                      RowSelectable="NoSelectable">
+                 <DataGridColumns>
+                     <DataGridColumn>
+                         <CaptionTemplate>
+                            <Button Type="ButtonType.Link" Color="Color.Primary" Size="Size.ExtraSmall" To="/doctor">
+                                Add
+                            </Button>
+                         </CaptionTemplate>
+                         <DisplayTemplate>
+                            <Button Type="ButtonType.Link" Color="Color.Link" Size="Size.ExtraSmall" To="@context!.EditUrl">
+                                Edit                                
+                            </Button>
+                         </DisplayTemplate>
+                     </DataGridColumn>
+                     <DataGridColumn Field="@nameof(DoctorModel.License)" Caption="License" CellClass="_ => Css.NoWrap"/>
+                     <DataGridColumn Field="@nameof(DoctorModel.FullName)" Caption="Name" Width="50%" Sortable="false"/>
+                     <DataGridColumn Field="@nameof(DoctorModel.Email)" Caption="E-mail"  Width="50%" Sortable="false"/>
+                 </DataGridColumns>
+            </DataGrid>            
+         </CardBody>
+     </Card>
+ </Container>

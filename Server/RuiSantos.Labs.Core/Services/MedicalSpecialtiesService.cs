@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using RuiSantos.Labs.Core.Extensions;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Core.Resources;
@@ -36,26 +37,26 @@ public interface IMedicalSpecialtiesService
 
 internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
 {
-    private readonly IMedicalSpecialityRepository medicalSpecialityRepository;
-    private readonly ILogger logger;
+    private readonly IMedicalSpecialityRepository _medicalSpecialityRepository;
+    private readonly ILogger _logger;
 
     public MedicalSpecialtiesService(
         IMedicalSpecialityRepository medicalSpecialityRepository,   
         ILogger<MedicalSpecialtiesService> logger)
     {
-        this.medicalSpecialityRepository = medicalSpecialityRepository;
-        this.logger = logger;
+        _medicalSpecialityRepository = medicalSpecialityRepository;
+        _logger = logger;
     }
 
     public async Task CreateMedicalSpecialtiesAsync(List<string> descriptions)
     {
         try
         {
-            await medicalSpecialityRepository.AddAsync(descriptions); 
+            await _medicalSpecialityRepository.AddAsync(descriptions);
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.MedicalSpecialitiesSetFail);
         }
     }
@@ -64,11 +65,11 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
     {
         try
         {
-            await medicalSpecialityRepository.RemoveAsync(description); 
+            await _medicalSpecialityRepository.RemoveAsync(description);
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.MedicalSpecialitiesSetFail);
         }
     }
@@ -77,11 +78,11 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
     {
         try
         {
-            return await medicalSpecialityRepository.GetAsync();        
+            return await _medicalSpecialityRepository.GetAsync();
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.MedicalSpecialitiesGetFail);
         }
     }

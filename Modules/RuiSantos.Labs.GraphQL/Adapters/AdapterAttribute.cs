@@ -1,4 +1,4 @@
-namespace RuiSantos.Labs.GraphQL;
+namespace RuiSantos.Labs.GraphQL.Adapters;
 
 [AttributeUsage(AttributeTargets.Interface)]
 internal class AdapterAttribute: Attribute { 
@@ -6,6 +6,6 @@ internal class AdapterAttribute: Attribute {
 
     public AdapterAttribute(Type instanceType)    
     {
-        this.InstanceType = instanceType;
+        InstanceType = instanceType;
     } 
 } 

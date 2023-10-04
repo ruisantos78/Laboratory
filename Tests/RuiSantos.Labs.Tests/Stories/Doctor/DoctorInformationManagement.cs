@@ -10,15 +10,14 @@ namespace RuiSantos.Labs.Tests.Stories.Doctor;
 /// </UserStory>
 public class DoctorInformationManagement
 {
-    public static IEnumerable<object[]> GetDoctors() => new List<object[]>()
+    public static IEnumerable<object[]> DoctorsMemberData() => new List<object[]>
     {
         new object[] { "ABC123", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" } }
     };
 
     [Theory(DisplayName = "The doctor should be able to create a new record with your personal information.")]
-    [MemberData(nameof(GetDoctors))]
-    public async Task CreateDoctorAsync_WithSuccess(
-        string license, string email, string firstName, string lastName,
+    [MemberData(nameof(DoctorsMemberData))]
+    public async Task CreateDoctorAsync_WithSuccess(string license, string email, string firstName, string lastName,
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
@@ -30,19 +29,25 @@ public class DoctorInformationManagement
 
         // Assert
         asserts.ShouldNotLogError();
-
-        await asserts.ShouldAddAsync(x => x.License == license);
+        
+        await asserts.ShouldAddAsync(x =>
+            x.License == license &&
+            x.Email == email &&
+            x.FirstName == firstName &&
+            x.LastName == lastName &&
+            x.ContactNumbers.SequenceEqual(contactNumbers) &&
+            x.Specialties.SequenceEqual(specialties));
     }
 
     [Theory(DisplayName = "A log should be writen when an unhandled exception occurs.")]
-    [MemberData(nameof(GetDoctors))]
+    [MemberData(nameof(DoctorsMemberData))]
     public async Task CreateDoctorAsync_WhenFailsToAdd_ThenThrowsException_AndLogsError(
         string license, string email, string firstName, string lastName,
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
         var asserts = new DoctorsAsserts();
-        asserts.ThrowOnAddAsync(license);
+        asserts.WhenAddAsyncThrows(license);
 
         // Act
         var service = asserts.GetService();
@@ -61,10 +66,9 @@ public class DoctorInformationManagement
     [InlineData("Email", "ABC123", null, "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("FirstName", "ABC123", "joe.doe@mail.com", null, "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("LastName", "ABC123", "joe.doe@mail.com", "Joe", null, new[] { "555-5555" }, new[] { "Cardiologist" })]    
-    public async Task CreateDoctorAsync_WithInvalidInformation_ThrowsValidationFailException(
-        string propertyName,
-        string license, string email, string firstName, string lastName,
-        string[] contactNumbers, string[] specialties)
+    public async Task CreateDoctorAsync_WithInvalidInformation_ThrowsValidationFailException(string propertyName,
+        string license, string email, string firstName, string lastName, string[] contactNumbers,
+        string[] specialties)
     {
         // Arrange
         var asserts = new DoctorsAsserts();
@@ -74,7 +78,7 @@ public class DoctorInformationManagement
         await service.Awaiting(x => x.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties))
             .Should()
             .ThrowAsync<ValidationFailException>()
-            .Where(ex => ex.Errors.Single().PropertyName == propertyName);
+            .Where(ex => ex.Errors.Count(x => x.PropertyName == propertyName) == 1);
 
         // Assert
         asserts.ShouldNotLogError();

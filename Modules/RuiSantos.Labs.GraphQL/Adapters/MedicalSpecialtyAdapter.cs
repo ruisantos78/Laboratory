@@ -1,48 +1,49 @@
-﻿using RuiSantos.Labs.Core.Services;
+using RuiSantos.Labs.Core.Services;
 using RuiSantos.Labs.GraphQL.Schemas;
 
-namespace RuiSantos.Labs.GraphQL;
+namespace RuiSantos.Labs.GraphQL.Adapters;
 
 [Adapter(typeof(MedicalSpecialtySchemaAdapter))]
 public interface IMedicalSpecialtySchemaAdapter
 {
-    Task<IQueryable<MedicalSpecialtySchema>> FindAllAsync();
+    Task<IEnumerable<MedicalSpecialtySchema>> FindAllAsync();
     Task<IEnumerable<MedicalSpecialtySchema>> StoreAsync(IEnumerable<string> descriptions);
     Task<IEnumerable<MedicalSpecialtySchema>> RemoveAsync(string description);
 }
 
-internal class MedicalSpecialtySchemaAdapter : IMedicalSpecialtySchemaAdapter
+internal class MedicalSpecialtySchemaAdapter : AdapterModelSchema<string, MedicalSpecialtySchema>, IMedicalSpecialtySchemaAdapter
 {
-    private readonly IMedicalSpecialtiesService service;
+    private readonly IMedicalSpecialtiesService _service;
 
     public MedicalSpecialtySchemaAdapter(IMedicalSpecialtiesService service)
     {
-        this.service = service;
+        _service = service;
     }
 
+    protected override MedicalSpecialtySchema GetSchema(string description) => new()
+    {
+        Description = description
+    };
+
+    protected override string GetModel(MedicalSpecialtySchema schema) => schema.Description;
+    
     public async Task<IEnumerable<MedicalSpecialtySchema>> StoreAsync(IEnumerable<string> descriptions)
     {
-        await service.CreateMedicalSpecialtiesAsync(descriptions.ToList()); 
-        return descriptions.Select(GetSchema);
+        var descriptionsList = descriptions.ToList();
+
+        await _service.CreateMedicalSpecialtiesAsync(descriptionsList);
+        return descriptionsList.Select(GetSchema);
     }
 
     public async Task<IEnumerable<MedicalSpecialtySchema>> RemoveAsync(string description)
     {
-        await service.RemoveMedicalSpecialtiesAsync(description); 
-        return new List<MedicalSpecialtySchema> {GetSchema(description)};
+        await _service.RemoveMedicalSpecialtiesAsync(description);
+        return new[] { GetSchema(description) };
     }
 
-    public async Task<IQueryable<MedicalSpecialtySchema>> FindAllAsync()
+    public async Task<IEnumerable<MedicalSpecialtySchema>> FindAllAsync()
     {
-        var result = await service.GetMedicalSpecialitiesAsync();
-        return result.Select(GetSchema).AsQueryable();
-    }
-
-    private MedicalSpecialtySchema GetSchema(string description)
-    {
-        return new MedicalSpecialtySchema
-        {
-            Description = description
-        };
+        var result = await _service.GetMedicalSpecialitiesAsync();
+        return result.Select(GetSchema).OrderBy(x => x.Description);
     }
 }

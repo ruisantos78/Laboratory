@@ -1,30 +1,21 @@
 ﻿using RuiSantos.Labs.Core.Models;
 
-namespace RuiSantos.Labs.Tests;
+namespace RuiSantos.Labs.Tests.Asserts.Builders;
 
 public class PatientAppointmentBuilder
 {
     private readonly HashSet<PatientAppointment> _appointments = new();
 
-    public IEnumerable<PatientAppointment> Build()
-    {
-        return _appointments.ToArray();
-    }
+    public HashSet<PatientAppointment> Build() => _appointments;
 
-    public PatientAppointmentBuilder AddAppointment(DateTime dateTime, string securityNumber,
+    public PatientAppointmentBuilder AddAppointment(DateTime dateTime, string? securityNumber = null,
         string? email = null, string? firstName = null, string? lastName = null)
     {
-        var patient = new Patient() {
-            SocialSecurityNumber = securityNumber,
-            FirstName = firstName ?? "Joe",
-            LastName = lastName ?? "Doe",
-            Email = email ?? "joe.doe@email.com"
-        };
+        var patient = new PatientBuilder()
+            .With(securityNumber, email, firstName, lastName)
+            .Build();
 
-        _appointments.Add(new() { 
-            Patient = patient, 
-            Date = dateTime 
-        });
+        _appointments.Add(new PatientAppointment(patient, dateTime));
 
         return this;
     }

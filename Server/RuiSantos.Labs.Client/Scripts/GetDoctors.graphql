@@ -1,0 +1,11 @@
+﻿query GetDoctors($page: PaginationInput!) {
+  doctors(page: $page) {
+    id,
+    license
+    firstName
+    lastName
+    email
+    contacts
+    specialties
+  }
+}

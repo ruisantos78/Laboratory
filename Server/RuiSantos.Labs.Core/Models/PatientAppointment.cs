@@ -7,7 +7,7 @@ public class PatientAppointment {
     /// <summary>
     /// Represents an empty patient appointment.
     /// </summary>
-    public static readonly PatientAppointment Empty = new PatientAppointment(Patient.Empty, DateTime.MinValue);
+    public static readonly PatientAppointment Empty = new(Patient.Empty, DateTime.MinValue);
 
     /// <summary>
     /// The patient.

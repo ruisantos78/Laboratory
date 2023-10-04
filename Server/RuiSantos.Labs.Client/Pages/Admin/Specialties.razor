@@ -1,40 +1,51 @@
 ﻿@page "/admin/specialties"
-@inherits MvvmComponentBase<AdminMedicalSpecialtiesViewModel>
+@inherits MvvmComponentBase<MedicalSpecialtiesViewModel>
+@if (ViewModel is null) return;
 
-<Column ColumnSize="ColumnSize.IsHalf" Margin="Margin.IsAuto.OnX.Is4.OnY">
+<Container Margin="Margin.Is4.FromBottom">
     <Card>
-        <CardHeader>Medical Specialties</CardHeader>
+        <CardHeader>
+            <CardTitle>Medical Specialties Management</CardTitle>
+        </CardHeader>
         <CardBody>
-            <Table Striped Narrow>
-                <TableHeader>
-                    <TableRow>
-                        <TableHeaderCell class="col-1">
-                            <Button Color="Color.Primary" Size="Size.ExtraSmall" @onclick="ViewModel!.AddNew">Add</Button>
-                        </TableHeaderCell>
-                        <TableHeaderCell  class="col">
-                            Medical Specialty
-                        </TableHeaderCell>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    @foreach (var specialty in ViewModel!.Specialties)
-                    {
-                        <TableRow>
-                            <TableRowCell>
-                                <Button Color="Color.Link" Size="Size.ExtraSmall" CommandParameter="specialty" Command="ViewModel.RemoveCommand">Remove</Button>
-                            </TableRowCell>
-                            <TableRowCell>
-                                @specialty
-                            </TableRowCell>
-                        </TableRow>
-                    }
-                </TableBody>
-            </Table>
+            <DataGrid Striped Narrow ShowPager 
+                      TItem="String" 
+                      Data="ViewModel.Specialties"
+                      PageSize="15"
+                      RowSelectable="NoSelectable">
+                 <DataGridColumns>
+                     <DataGridColumn>
+                         <CaptionTemplate>
+                             <Button Color="Color.Primary" Size="Size.ExtraSmall" Command="ViewModel.AddNewCommand">
+                                 Add
+                             </Button>
+                         </CaptionTemplate>
+                         <DisplayTemplate>
+                             <Button Color="Color.Link" Size="Size.ExtraSmall" Command="ViewModel.RemoveCommand" 
+                                     CommandParameter="context">
+                                 Remove
+                             </Button>
+                         </DisplayTemplate>
+                     </DataGridColumn>
+                     <DataGridColumn Width="100%" Sortable="false">
+                         <CaptionTemplate>
+                             Medical Specialty
+                         </CaptionTemplate>
+                         <DisplayTemplate>
+                             @context
+                        </DisplayTemplate>
+                    </DataGridColumn>
+                </DataGridColumns>
+                <FirstPageButtonTemplate>&lt;</FirstPageButtonTemplate>
+                <PreviousPageButtonTemplate>&lt;&lt;</PreviousPageButtonTemplate>
+                <NextPageButtonTemplate>&gt;&gt;</NextPageButtonTemplate>                
+                <LastPageButtonTemplate>&gt;</LastPageButtonTemplate>                
+            </DataGrid>
         </CardBody>
     </Card>
-</Column>
+</Container>
 
-<Modal @bind-Visible="ViewModel!.ModalVisible" Closing="ViewModel.OnModalClosing">
+<Modal @bind-Visible="ViewModel.ModalVisible" FocusTrap="true">
     <ModalContent>
         <ModalHeader>
             <ModalTitle>Add Medical Specialty</ModalTitle>
@@ -43,12 +54,30 @@
         <ModalBody>
             <Field>
                 <FieldLabel>Description</FieldLabel>
-                <TextEdit Autofocus @bind-Text="ViewModel.Specialty"/>
-            </Field>
-        </ModalBody>
-        <ModalFooter>
-            <Button Color="Color.Secondary" Clicked="ViewModel.CloseModal">Close</Button>
-            <Button Color="Color.Primary" Clicked="ViewModel.Save">Save Changes</Button>
-        </ModalFooter>
-    </ModalContent>
-</Modal>
+                <TextEdit Autofocus @bind-Text="ViewModel.InputSpecialty" KeyUp="ViewModel.OnInputSpecialtyKeyPress">
+                     <FieldHelp>Press Enter to add more descriptions...</FieldHelp>
+                 </TextEdit>
+
+                 <Repeater Items="ViewModel.InputSpecialties">
+                     <Addons>
+                         <Addon AddonType="AddonType.Body">
+                             <TextEdit ReadOnly Text="@context" TabIndex="-1" />
+                         </Addon>
+                         <Addon AddonType="AddonType.End">
+                             <Button TabIndex="-1" Color="Color.Danger" Size="Size.ExtraSmall"
+                                 Command="ViewModel.RemoveSpecialtiesInputCommand" CommandParameter="context">
+                                 Remove
+                             </Button>
+                         </Addon>
+                     </Addons>
+                 </Repeater>
+             </Field>
+         </ModalBody>
+         <ModalFooter>
+             <Button Color="Color.Primary" Clicked="ViewModel.Save">
+                 Save Changes
+             </Button>
+             <Button Color="Color.Default" Clicked="ViewModel.CloseModal">Close</Button>
+         </ModalFooter>
+     </ModalContent>
+ </Modal>

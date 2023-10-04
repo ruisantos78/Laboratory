@@ -1,26 +1,33 @@
-﻿using RuiSantos.Labs.Core.Services;
 using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Core.Services;
 using RuiSantos.Labs.GraphQL.Schemas;
+using RuiSantos.Labs.GraphQL.Services;
 
-namespace RuiSantos.Labs.GraphQL;
+namespace RuiSantos.Labs.GraphQL.Adapters;
 
 [Adapter(typeof(DoctorSchemaAdapter))]
 public interface IDoctorSchemaAdapter {
     Task<DoctorSchema> StoreAsync(DoctorSchema doctor);
-    Task<DoctorSchema> FindAsync(string license);
+    Task<DoctorSchema> FindAsync(string id);
+    Task<IEnumerable<DoctorSchema>> FindAllAsync(int take, string? from = null);
 }
 
-internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
+internal class DoctorSchemaAdapter: AdapterModelSchema<Doctor, DoctorSchema>, IDoctorSchemaAdapter
 {
-    private readonly IDoctorService service;
+    private readonly ISecurity _security;
+    private readonly IDoctorService _service;
 
-    public DoctorSchemaAdapter(IDoctorService service)
+    public DoctorSchemaAdapter(
+        ISecurity security,
+        IDoctorService service)
     {
-        this.service = service;
+        _security = security;
+        _service = service;
     }
 
-    private static DoctorSchema GetSchema(Doctor model) => new()
+    protected override DoctorSchema GetSchema(Doctor model) => new()
     {
+        Id = _security.Encode(model.Id),
         License = model.License,
         FirstName = model.FirstName,
         LastName = model.LastName,
@@ -29,8 +36,9 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
         Specialties = model.Specialties.ToList()
     };
 
-    private static Doctor GetModel(DoctorSchema schema) => new()
+    protected override Doctor GetModel(DoctorSchema schema) => new()
     {
+        Id = _security.Decode(schema.Id),
         License = schema.License,
         FirstName = schema.FirstName,
         LastName = schema.LastName,
@@ -39,14 +47,21 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
         Specialties = schema.Specialties.ToHashSet()
     };
 
-    public async Task<DoctorSchema> FindAsync(string license) {
-        var doctor = await service.GetDoctorByLicenseAsync(license);     
+    public async Task<DoctorSchema> FindAsync(string id) {
+        var doctorId = _security.Decode(id);
+        var doctor = await _service.GetDoctorAsync(doctorId);
         return GetSchema(doctor ?? new Doctor());
-    }    
+    }
+
+    public async Task<IEnumerable<DoctorSchema>> FindAllAsync(int take, string? from)
+    {
+        var doctors = await _service.GetAllDoctors(take, from);
+        return doctors.Select(GetSchema);
+    }
 
     public async Task<DoctorSchema> StoreAsync(DoctorSchema schema)
     {
-        await service.CreateDoctorAsync(
+        await _service.CreateDoctorAsync(
             license: schema.License,
             firstName: schema.FirstName,
             lastName: schema.LastName,
@@ -55,5 +70,5 @@ internal class DoctorSchemaAdapter: IDoctorSchemaAdapter
             specialties: schema.Specialties
         );
         return schema;
-    }    
+    }
 }

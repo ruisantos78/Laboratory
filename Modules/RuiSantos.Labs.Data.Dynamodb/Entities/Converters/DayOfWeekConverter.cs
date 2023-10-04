@@ -1,7 +1,7 @@
 ﻿using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 
-namespace RuiSantos.Labs.Data.Dynamodb;
+namespace RuiSantos.Labs.Data.Dynamodb.Entities.Converters;
 
 internal class DayOfWeekConverter : IPropertyConverter
 {

@@ -12,24 +12,30 @@ help:
 	@echo ""
 	@echo "Available commands:"
 	@echo ""
-	@echo "  build    	Start the DynamoDB and API containers."
-	@echo "  run      	Start the client container."
-	@echo "  kill		Stop and remove all containers."
-	@echo "  help		Show this help message."
+	@echo "  build-server	Start the DynamoDB and API containers."
+	@echo "  build-client   Start the client container."
+	@echo "  kill			Stop and remove all containers."
+	@echo "  update-client	Update the GraphQL schema on the client container (requires the build-server command to be run first)."
+	@echo "  run			Start and watch the client application on local machine."
+	@echo "  help			Display this help message."
 	@echo ""
 
-build:	
+build-server:	
 	docker-compose up -d $(DYNAMO_CONTAINER_NAME)
 	sleep 5
 	docker-compose up -d $(API_CONTAINER_NAME) --build
 
+build-client:
+	docker-compose up -d $(CLIENT_CONTAINER_NAME) --build
+
+kill:
+	docker-compose down
+
+update-client:
 	dotnet graphql update -p Server/RuiSantos.Labs.Client
 	dotnet build
 
 run:
-	docker-compose up -d $(CLIENT_CONTAINER_NAME)
+	dotnet watch run --urls http://localhost:8002 --project Server/RuiSantos.Labs.Client
 
-kill:
-	docker-compose down
-	
-.PHONY: build run kill help
+.PHONY: build run kill update-client run help

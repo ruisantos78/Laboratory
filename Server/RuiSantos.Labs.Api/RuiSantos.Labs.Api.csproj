@@ -17,7 +17,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\RuiSantos.Labs.Core\RuiSantos.Labs.Core.csproj" />
     <ProjectReference Include="..\..\Modules\RuiSantos.Labs.Data.Dynamodb\RuiSantos.Labs.Data.Dynamodb.csproj" />
     <ProjectReference Include="..\..\Modules\RuiSantos.Labs.GraphQL\RuiSantos.Labs.GraphQL.csproj" />
   </ItemGroup>

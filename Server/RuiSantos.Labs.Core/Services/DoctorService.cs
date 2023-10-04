@@ -1,8 +1,9 @@
-﻿using Microsoft.Extensions.Logging;
-using RuiSantos.Labs.Core.Repositories;
-using RuiSantos.Labs.Core.Services.Exceptions;
+using Microsoft.Extensions.Logging;
+using RuiSantos.Labs.Core.Extensions;
 using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Resources;
+using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Core.Validators;
 
 namespace RuiSantos.Labs.Core.Services;
@@ -28,47 +29,49 @@ public interface IDoctorService
     /// <summary>
     /// Get the doctor's appointments on a given date.
     /// </summary>
-    /// <param name="license">The doctor's license number.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <param name="dateTime">The date.</param>
     /// <returns>The doctor's appointments on the given date.</returns>
-    Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(string license, DateTime? dateTime);
+    Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime);
 
     /// <summary>
-    /// Get the doctor's informations by a given license number.
+    /// Get the doctor's informations.
     /// </summary>
-    /// <param name="license">The doctor's license number.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <returns>The doctor's informations.</returns>
     /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
-    Task<Doctor?> GetDoctorByLicenseAsync(string license);
+    Task<Doctor?> GetDoctorAsync(Guid doctorId);
+
+    
+    Task<IEnumerable<Doctor>> GetAllDoctors(int take, string? from = null);
 
     /// <summary>
     /// Set the office hours for a doctor.
     /// </summary>
-    /// <param name="license">The doctor's license number.</param>
+    /// <param name="doctorId">The doctor's identification.</param>
     /// <param name="dayOfWeek">The day of the week.</param>
     /// <param name="hours">The office hours.</param>
     /// <exception cref="ValidationFailException">Thrown when the doctor's license number is not found.</exception>
     /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
-    Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours);
+    Task SetOfficeHoursAsync(Guid doctorId, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours);
+
+    Task<Doctor?> GetDoctorByLicenseAsync(string license);
 }
 
 internal class DoctorService : IDoctorService
 {
-    private readonly IDoctorRepository doctorRepository;
-    private readonly IPatientRepository patientRepository;
-    private readonly IAppointamentsRepository appointamentsRepository;
-    private readonly ILogger logger;
+    private readonly IDoctorRepository _doctorRepository;
+    private readonly IAppointamentsRepository _appointamentsRepository;
+    private readonly ILogger _logger;
 
     public DoctorService(
         IDoctorRepository doctorRepository,
-        IPatientRepository patientRepository,
         IAppointamentsRepository appointamentsRepository,
         ILogger<DoctorService> logger)
     {
-        this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
-        this.appointamentsRepository = appointamentsRepository;
-        this.logger = logger;
+        _doctorRepository = doctorRepository;
+        _appointamentsRepository = appointamentsRepository;
+        _logger = logger;
     }
 
     public async Task CreateDoctorAsync(string license, string email, string firstName, string lastName,
@@ -76,7 +79,7 @@ internal class DoctorService : IDoctorService
     {
         try
         {
-            var doctor = new Doctor()
+            var doctor = new Doctor
             {
                 License = license,
                 Email = email,
@@ -87,7 +90,7 @@ internal class DoctorService : IDoctorService
             };
 
             Validator.ThrowExceptionIfIsNotValid(doctor);
-            await doctorRepository.StoreAsync(doctor);
+            await _doctorRepository.StoreAsync(doctor);
         }
         catch (ValidationFailException)
         {
@@ -95,23 +98,25 @@ internal class DoctorService : IDoctorService
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.DoctorSetFail);
         }
     }
 
-    public async Task SetOfficeHoursAsync(string license, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
+    public async Task SetOfficeHoursAsync(Guid doctorId, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
     {
         try
         {
-            var doctor = await doctorRepository.FindAsync(license) ??
+            if (await _doctorRepository.FindAsync(doctorId) is not {} doctor)
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
             doctor.OfficeHours.RemoveWhere(hour => hour.Week == dayOfWeek);
-            if (hours.Any())
-                doctor.OfficeHours.Add(new OfficeHour(dayOfWeek, hours));
 
-            await doctorRepository.StoreAsync(doctor);
+            var timeSpans = hours.ToList();
+            if (timeSpans.Any())
+                doctor.OfficeHours.Add(new OfficeHour(dayOfWeek, timeSpans));
+
+            await _doctorRepository.StoreAsync(doctor);
         }
         catch (ValidationFailException)
         {
@@ -119,8 +124,53 @@ internal class DoctorService : IDoctorService
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.DoctorSetFail);
+        }
+    }
+
+    public async Task<Doctor?> GetDoctorAsync(Guid doctorId)
+    {
+        try
+        {
+            return await _doctorRepository.FindAsync(doctorId);
+        }
+        catch (Exception ex)
+        {
+            _logger.Fail(ex);
+            throw new ServiceFailException(MessageResources.DoctorsGetFail);
+        }
+    }
+
+    public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime)
+    {
+        try {
+            var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
+
+            if (await _doctorRepository.FindAsync(doctorId) is not {} doctor)
+                return Array.Empty<PatientAppointment>();
+
+            return await _appointamentsRepository.GetPatientAppointmentsAsync(doctor, date)
+                .ToArrayAsync();
+        } 
+        catch(Exception ex) 
+        {
+            _logger.Fail(ex);
+            throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
+        }
+    }
+
+    public async Task<IEnumerable<Doctor>> GetAllDoctors(int take, string? last = null)
+    {
+        try
+        {
+            return await _doctorRepository.FindAllAsync(take, last)
+                .ToArrayAsync();
+        }
+        catch (Exception ex)
+        {
+            _logger.Fail(ex);
+            throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
         }
     }
 
@@ -128,30 +178,12 @@ internal class DoctorService : IDoctorService
     {
         try
         {
-            return await doctorRepository.FindAsync(license);
+            return await _doctorRepository.FindByLicenseAsync(license);
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.DoctorsGetFail);
         }
     }
-
-    public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(string license, DateTime? dateTime)
-    {
-        try {
-            var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
-
-            var doctor = await doctorRepository.FindAsync(license);
-            if (doctor is null)
-                return Array.Empty<PatientAppointment>();
-
-            return await appointamentsRepository.GetPatientAppointmentsAsync(doctor, date);
-        } 
-        catch(Exception ex) 
-        {
-            logger?.Fail(ex);
-            throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
-        }
-    }    
 }

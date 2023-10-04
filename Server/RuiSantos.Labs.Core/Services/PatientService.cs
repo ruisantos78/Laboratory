@@ -1,4 +1,5 @@
-﻿using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
+using RuiSantos.Labs.Core.Extensions;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Core.Models;
@@ -42,22 +43,20 @@ public interface IPatientService
 
 internal class PatientService : IPatientService
 {
-    private readonly IPatientRepository patientRepository;
-    private readonly IDoctorRepository doctorRepository;
-    private readonly ILogger logger;
+    private readonly IPatientRepository _patientRepository;
+    private readonly ILogger _logger;
 
-    public PatientService(IPatientRepository patientRepository, IDoctorRepository doctorRepository, ILogger<PatientService> logger)
+    public PatientService(IPatientRepository patientRepository, ILogger<PatientService> logger)
     {
-        this.patientRepository = patientRepository;
-        this.doctorRepository = doctorRepository;
-        this.logger = logger;
+        _patientRepository = patientRepository;
+        _logger = logger;
     }
 
     public async Task CreatePatientAsync(string socialNumber, string email, string firstName, string lastName, IEnumerable<string> contactNumbers)
     {
         try
         {
-            var patient = new Patient()
+            var patient = new Patient
             {
                 SocialSecurityNumber = socialNumber,
                 Email = email,
@@ -67,7 +66,7 @@ internal class PatientService : IPatientService
             };
 
             Validator.ThrowExceptionIfIsNotValid(patient);
-            await patientRepository.StoreAsync(patient);
+            await _patientRepository.StoreAsync(patient);
         }
         catch (ValidationFailException)
         {
@@ -75,7 +74,7 @@ internal class PatientService : IPatientService
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.PatientSetFail);
         }
     }
@@ -84,11 +83,11 @@ internal class PatientService : IPatientService
     {
         try
         {
-            return await patientRepository.FindAsync(socialNumber);
+            return await _patientRepository.FindAsync(socialNumber);
         }
         catch (Exception ex)
         {
-            logger?.Fail(ex);
+            _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.PatientSetFail);
         }
     }

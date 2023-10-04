@@ -13,85 +13,18 @@ type Mutations {
 }
 
 type Queries {
+  "Get information about all doctors."
+  doctors(page: PaginationInput!): [Doctor!]!
   "Get information about a doctor."
-  doctor("License number" license: String! where: DoctorFilterInput order: [DoctorSortInput!]): Doctor!
+  doctor("License number" license: String!): Doctor!
   "Get all medical specialties."
-  specialties(where: SpecialtiesFilterInput order: [SpecialtiesSortInput!]): [Specialties!]!
-}
-
-"Represents a doctor."
-input DoctorFilterInput {
-  and: [DoctorFilterInput!]
-  or: [DoctorFilterInput!]
-  "Doctor license number."
-  license: StringOperationFilterInput
-  "First name."
-  firstName: StringOperationFilterInput
-  "Last name."
-  lastName: StringOperationFilterInput
-  "Email."
-  email: StringOperationFilterInput
-  "Contact numbers."
-  contacts: ListStringOperationFilterInput
-  "Medical specialties."
-  specialties: ListStringOperationFilterInput
-}
-
-"Represents a doctor."
-input DoctorSortInput {
-  "Doctor license number."
-  license: SortEnumType
-  "First name."
-  firstName: SortEnumType
-  "Last name."
-  lastName: SortEnumType
-  "Email."
-  email: SortEnumType
-}
-
-"Medical Specialties"
-input SpecialtiesFilterInput {
-  and: [SpecialtiesFilterInput!]
-  or: [SpecialtiesFilterInput!]
-  "Description"
-  description: StringOperationFilterInput
-}
-
-"Medical Specialties"
-input SpecialtiesSortInput {
-  "Description"
-  description: SortEnumType
-}
-
-input StringOperationFilterInput {
-  and: [StringOperationFilterInput!]
-  or: [StringOperationFilterInput!]
-  eq: String
-  neq: String
-  contains: String
-  ncontains: String
-  in: [String]
-  nin: [String]
-  startsWith: String
-  nstartsWith: String
-  endsWith: String
-  nendsWith: String
-}
-
-input ListStringOperationFilterInput {
-  all: StringOperationFilterInput
-  none: StringOperationFilterInput
-  some: StringOperationFilterInput
-  any: Boolean
-}
-
-enum SortEnumType {
-  ASC
-  DESC
+  specialties: [Specialties!]!
 }
 
 "Represents a doctor."
 input DoctorInput {
+  "Doctor Unique Identifier."
+  id: String
   "Doctor license number."
   license: String!
   "First name."
@@ -108,6 +41,8 @@ input DoctorInput {
 
 "Represents a doctor."
 type Doctor {
+  "Doctor Unique Identifier."
+  id: String
   "Doctor license number."
   license: String!
   "First name."
@@ -126,6 +61,11 @@ type Doctor {
 type Specialties {
   "Description"
   description: String!
+}
+
+input PaginationInput {
+  take: Int!
+  from: String
 }
 
 input SetDoctorInput {

@@ -1,6 +1,9 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Microsoft.OpenApi.Models;
 using RuiSantos.Labs.Api.Core;
+using RuiSantos.Labs.Core;
+using RuiSantos.Labs.Data.Dynamodb;
+using RuiSantos.Labs.GraphQL;
 
 namespace RuiSantos.Labs.Api;
 
@@ -10,20 +13,23 @@ public class Startup
 
 	public Startup(IConfiguration configuration)
 	{
-		this.Configuration = configuration;
+		Configuration = configuration;
 	}
 
 	public void ConfigureServices(IServiceCollection services)
 	{
+        var connectionString = Environment.GetEnvironmentVariable("DATABASE_DYNAMO") ?? "http://127.0.0.1:8000";
+        var origins = Environment.GetEnvironmentVariable("CORS_ORIGINS")?.Split(';') ?? Array.Empty<string>();
+
         services.AddLogging(config => config.AddConsole());
 
         services.AddMemoryCache();
         services.AddControllers();
         services.AddHealthChecks();
 
-        services.AddLabsGraphQL();
+        services.AddLabsGraphql();
         services.AddLabsServices();
-        services.AddLabsDynamoDb();
+        services.AddLabsDynamoDb(connectionString);
 
         services.AddSwaggerGen(options =>
         {
@@ -39,13 +45,14 @@ public class Startup
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
+        
 
         services.AddCors(options =>
-        {
+        {            
             options.AddDefaultPolicy(builder => {
-                builder.WithOrigins("http://localhost:5051") // Add the origin of your Blazor WebAssembly app
-                   .AllowAnyHeader()
-                   .AllowAnyMethod();
+                builder.WithOrigins(origins)
+                    .AllowAnyHeader()
+                    .AllowAnyMethod();
             });
         });
     }
@@ -65,7 +72,7 @@ public class Startup
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();
-            endpoints.MapGraphQL();  // Make sure you have a method like this in your services
+            endpoints.MapGraphQL();
             endpoints.MapHealthChecks("/health");
         });
     }

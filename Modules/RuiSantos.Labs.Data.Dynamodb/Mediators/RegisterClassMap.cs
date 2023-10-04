@@ -6,18 +6,18 @@ namespace RuiSantos.Labs.Data.Dynamodb.Mediators;
 
 internal interface IRegisterClassMap
 {
-    CreateTableRequest GetCreateTableRequest();
+    CreateTableRequest CreateTableRequest();
 }
 
 internal static class RegisterClassMaps {
-    public static IEnumerable<CreateTableRequest> GetCreateTableRequests() => typeof(IRegisterClassMap).Assembly
+    public static IEnumerable<CreateTableRequest> CreateTableRequests() => typeof(IRegisterClassMap).Assembly
         .GetTypes()
         .Where(t => t.GetInterfaces().Contains(typeof(IRegisterClassMap)))
         .Select(Activator.CreateInstance)
         .OfType<IRegisterClassMap>()
-        .Select(i => i.GetCreateTableRequest());    
+        .Select(i => i.CreateTableRequest());
 
-    public static IReadOnlyDictionary<string, Type> GetTypeMappings() => typeof(IRegisterClassMap).Assembly
+    public static IReadOnlyDictionary<string, Type> TableEntities() => typeof(IRegisterClassMap).Assembly
         .GetTypes()
         .Where(t => t.GetCustomAttributes(false).OfType<DynamoDBTableAttribute>().Any())
         .ToDictionary(
@@ -25,16 +25,11 @@ internal static class RegisterClassMaps {
             v => v            
         );
     
-    public static void InitializeDatabase(IAmazonDynamoDB client)
-    {
-        Task.WaitAll(Task.CompletedTask, InitializeDatabaseAsync(client));
-    }
-
     public static async Task InitializeDatabaseAsync(IAmazonDynamoDB client)
     {
         var server = await client.ListTablesAsync().ConfigureAwait(false);
 
-        var tasks = GetCreateTableRequests()
+        var tasks = CreateTableRequests()
             .Where(req => !server.TableNames.Contains(req.TableName))
             .Select(req => client.CreateTableAsync(req));
 

@@ -1,31 +1,30 @@
 ﻿using Amazon.DynamoDBv2;
-using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.Labs.Core.Repositories;
-using RuiSantos.Labs.Data.Dynamodb.Entities;
+using RuiSantos.Labs.Data.Dynamodb.Adapters;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
 public class MedicalSpecialityRepository : IMedicalSpecialityRepository
 {
-    private readonly IDynamoDBContext context;
+    private readonly MedicalSpecialtyAdapter _medicalSpecialtyAdapter;
 
     public MedicalSpecialityRepository(IAmazonDynamoDB client)
     {
-        this.context = new DynamoDBContext(client);
+        _medicalSpecialtyAdapter = new MedicalSpecialtyAdapter(client);
     }
 
-    public async Task AddAsync(IEnumerable<string> specialties)
+    public Task AddAsync(IEnumerable<string> specialties)
     {
-        await DictionaryDto.SetSpecialtyAsync(context, specialties);
+        return _medicalSpecialtyAdapter.StoreAsync(specialties);
+    }
+    
+    public Task RemoveAsync(string speciality)
+    {
+        return _medicalSpecialtyAdapter.RemoveAsync(speciality);
     }
 
-    public async Task RemoveAsync(string speciality)
+    public Task<IReadOnlySet<string>> GetAsync()
     {
-        await DictionaryDto.RemoveSpecialtyAsync(context, speciality);
-    }
-
-    public async Task<IReadOnlySet<string>> GetAsync()
-    {
-        return await DictionaryDto.GetSpecialtiesAsync(context);
+        return _medicalSpecialtyAdapter.LoadAsync();
     }
 }
