@@ -1,4 +1,4 @@
-﻿using Blazing.Mvvm.ComponentModel;
+using Blazing.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.AspNetCore.Components;
