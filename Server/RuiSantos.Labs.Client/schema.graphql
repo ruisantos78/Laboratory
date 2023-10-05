@@ -1,9 +1,9 @@
 ﻿schema {
-  query: Queries
-  mutation: Mutations
+  query: Query
+  mutation: Mutation
 }
 
-type Mutations {
+type Mutation {
   "Create\/update a doctor."
   setDoctor(input: SetDoctorInput!): SetDoctorPayload!
   "Add medical specialties."
@@ -12,11 +12,11 @@ type Mutations {
   removeSpecialties(input: RemoveSpecialtiesInput!): RemoveSpecialtiesPayload!
 }
 
-type Queries {
+type Query {
   "Get information about all doctors."
-  doctors(page: PaginationInput!): [Doctor!]!
+  doctors(page: PaginationInput!): DoctorsCollection!
   "Get information about a doctor."
-  doctor("License number" license: String!): Doctor!
+  doctor("id" id: String!): Doctor!
   "Get all medical specialties."
   specialties: [Specialties!]!
 }
@@ -63,9 +63,17 @@ type Specialties {
   description: String!
 }
 
+"Represents a list of doctors."
+type DoctorsCollection {
+  "List of doctors."
+  doctors: [Doctor!]!
+  "Pagination token."
+  paginationToken: String
+}
+
 input PaginationInput {
   take: Int!
-  from: String
+  token: String
 }
 
 input SetDoctorInput {

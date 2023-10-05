@@ -11,6 +11,8 @@ public partial class DoctorsViewsModel : ViewModelBase
 	private readonly ILabsClient client;
 	private readonly ILoadingIndicatorService loadingIndicatorService;
 
+	private string? paginationToken = null;
+
 	[ObservableProperty] ObservableCollection<DoctorModel> _doctors = new();
 
 	public DoctorsViewsModel(
@@ -29,12 +31,17 @@ public partial class DoctorsViewsModel : ViewModelBase
 			var result = await client.GetDoctors.ExecuteAsync(new()
 			{
 				Take = e.VirtualizeCount,
-				From = Doctors.LastOrDefault()?.License
+				Token = paginationToken
 			});
 
-			result?.Data?.Doctors.Select(x => new DoctorModel(x))
+			if (result?.Data?.Doctors is null)
+				return;
+
+			result.Data.Doctors.Doctors.Select(x => new DoctorModel(x))
 				.ToList()
 				.ForEach(Doctors.Add);
+
+			paginationToken = result.Data.Doctors.PaginationToken;
 		}
 		finally
 		{

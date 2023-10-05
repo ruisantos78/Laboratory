@@ -6,10 +6,10 @@ namespace RuiSantos.Labs.GraphQL.Queries;
 partial class Query
 {
     [GraphQLDescription("Get information about all doctors.")]
-    public Task<IEnumerable<DoctorSchema>> GetDoctors(
+    public Task<DoctorsCollectionSchema> GetDoctors(
         [GraphQLName("page")] Pagination page,
         [Service] IDoctorSchemaAdapter adapter)
-        => adapter.FindAllAsync(page.Take, page.From);
+        => adapter.FindAllAsync(page.Take, page.Token);
 
     [GraphQLDescription("Get information about a doctor.")]
     public Task<DoctorSchema> GetDoctor(

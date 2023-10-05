@@ -25,7 +25,7 @@ internal static class ServicesMediator
     public static IServiceCollection RegisterViewModels(this IServiceCollection services)
     {
         typeof(ServicesMediator).Assembly.GetTypes()
-            .Where(x => x.IsAssignableTo(typeof(ViewModelBase)))
+            .Where(x => x.IsAssignableTo(typeof(IViewModelBase)))
             .ToList()
             .ForEach(x => services.AddTransient(x));
 

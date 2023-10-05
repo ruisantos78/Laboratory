@@ -1,12 +1,12 @@
 mutation SetDoctor($input: SetDoctorInput!) {
-  setDoctor(input: $input) {
-    doctor {
-      license
-      firstName
-      lastName
-      email
-      contacts
-      specialties
+    setDoctor(input: $input) {
+        doctor {
+            license
+            firstName
+            lastName
+            email
+            contacts
+            specialties
+        }
     }
-  }
 }

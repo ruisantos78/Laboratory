@@ -42,8 +42,8 @@ public interface IDoctorService
     /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
     Task<Doctor?> GetDoctorAsync(Guid doctorId);
 
-    
-    Task<IEnumerable<Doctor>> GetAllDoctors(int take, string? from = null);
+
+    Task<Pagination<Doctor>> GetAllDoctors(int take, string? paginationToken);
 
     /// <summary>
     /// Set the office hours for a doctor.
@@ -160,12 +160,11 @@ internal class DoctorService : IDoctorService
         }
     }
 
-    public async Task<IEnumerable<Doctor>> GetAllDoctors(int take, string? last = null)
+    public async Task<Pagination<Doctor>> GetAllDoctors(int take, string? paginationToken)
     {
         try
         {
-            return await _doctorRepository.FindAllAsync(take, last)
-                .ToArrayAsync();
+            return await _doctorRepository.FindAllAsync(take, paginationToken);
         }
         catch (Exception ex)
         {

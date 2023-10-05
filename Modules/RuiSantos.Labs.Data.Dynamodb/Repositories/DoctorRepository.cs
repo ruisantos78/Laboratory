@@ -2,6 +2,7 @@ using Amazon.DynamoDBv2;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
+using static RuiSantos.Labs.Data.Dynamodb.Adapters.DoctorAdapter;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
@@ -49,12 +50,13 @@ public class DoctorRepository : IDoctorRepository
         }                          
     }
 
-    public IAsyncEnumerable<Doctor> FindByAppointmentsAsync(IEnumerable<Appointment> appointments)
+    public async IAsyncEnumerable<Doctor> FindByAppointmentsAsync(IEnumerable<Appointment> appointments)
     {
-        return appointments
-            .Select(x => _doctorAdapter.FindByAppointmentAsync(x))
-            .OfType<Task<Doctor>>()
-            .AsModelsAsyncEnumerable();
+        var tasks = appointments.Select(_doctorAdapter.FindByAppointmentAsync)
+            .OfType<Task<Doctor>>();
+
+        foreach (var task in tasks)
+            yield return await task;
     }
 
     public Task StoreAsync(Doctor doctor)
@@ -62,9 +64,9 @@ public class DoctorRepository : IDoctorRepository
         return _doctorAdapter.StoreAsync(doctor);
     }
 
-    public IAsyncEnumerable<Doctor> FindAllAsync(int take, string? lastLicense = null)
+    public Task<Pagination<Doctor>> FindAllAsync(int take, string? paginationToken)
     {
-        return _doctorAdapter.LoadByLicenseAsync(lastLicense, take);
+        return _doctorAdapter.LoadByLicenseAsync(take, paginationToken);
     }
 
     public Task<Doctor?> FindByLicenseAsync(string license)

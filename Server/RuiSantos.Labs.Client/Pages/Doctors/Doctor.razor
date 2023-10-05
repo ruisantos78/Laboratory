@@ -11,98 +11,118 @@
         </CardHeader>
         <CardBody>
             <FocusTrap Active>
-                <Field Padding="Padding.Is0" ColumnSize="ColumnSize.Is2">
-                    <FieldLabel RequiredIndicator>Medical License</FieldLabel>
-                    <TextEdit Autofocus @bind-Text="ViewModel.License" />
-                </Field>
-                <Fields Padding="Padding.Is0" ColumnSize="ColumnSize.Is12">
-                    <Field>
-                        <FieldLabel RequiredIndicator>First Name</FieldLabel>
-                        <TextEdit @bind-Text="ViewModel.FirstName" />
-                    </Field>
-                    <Field>
-                        <FieldLabel RequiredIndicator>Last Name</FieldLabel>
-                        <TextEdit @bind-Text="ViewModel.LastName" />
-                    </Field>
-                </Fields>
-                <Field Padding="Padding.Is0" ColumnSize="ColumnSize.Is6">
-                    <FieldLabel RequiredIndicator>Email</FieldLabel>
-                    <TextEdit @bind-Text="ViewModel.Email" />
-                </Field>
-                <Fields Padding="Padding.Is0" ColumnSize="ColumnSize.Is12">
-                    <Field>
-                        <FieldLabel>Contacts</FieldLabel>
-                        <Addons>
-                            <Addon AddonType="AddonType.Body">
-                                <InputMask Mask="(999) 99999-9999" @bind-Value="ViewModel.Contact" />
-                            </Addon>
-                            <Addon AddonType="AddonType.End">
+                <Validations @ref="validations" Mode="ValidationMode.Manual" Model="@ViewModel">
+                    <Validation>
+                        <Field Padding="Padding.Is0" ColumnSize="ColumnSize.Is3">
+                            <FieldLabel RequiredIndicator>Medical License</FieldLabel>
+                            <TextEdit Autofocus @bind-Text="ViewModel.License">
+                                 <Feedback>
+                                     <ValidationError />
+                                 </Feedback>
+                             </TextEdit>
+                         </Field>
+                     </Validation>
+                     <Validation>
+                         <Fields Padding="Padding.Is0" ColumnSize="ColumnSize.Is12">
+                             <Field>
+                                 <FieldLabel RequiredIndicator>First Name</FieldLabel>
+                                <TextEdit @bind-Text="ViewModel.FirstName">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                            <Field>
+                                <FieldLabel RequiredIndicator>Last Name</FieldLabel>
+                                <TextEdit @bind-Text="ViewModel.LastName">
+                                    <Feedback>
+                                        <ValidationError />
+                                    </Feedback>
+                                </TextEdit>
+                            </Field>
+                        </Fields>
+                    </Validation>
+                    <Validation>
+                        <Field Padding="Padding.Is0" ColumnSize="ColumnSize.Is6">
+                            <FieldLabel RequiredIndicator>Email</FieldLabel>
+                            <TextEdit @bind-Text="ViewModel.Email">
+                                <Feedback>
+                                    <ValidationError />
+                                </Feedback>
+                            </TextEdit>
+                        </Field>
+                    </Validation>
+                    <Fields Padding="Padding.Is0" ColumnSize="ColumnSize.Is12">
+                        <Field>
+                            <FieldLabel>Contacts</FieldLabel>
+                            <Div Flex="Flex.AlignItems.Stretch">                  
+                                <InputMask Flex="Flex.Grow.Is1" Mask="(999) 99999-9999" @bind-Value="ViewModel.ContactSelected" />            
                                 <Button TabIndex="-1" Color="Color.Primary" Size="Size.ExtraSmall"
-                                        Command="ViewModel.AddContactCommand">
+                                    Margin="Margin.Is1.FromStart.Is2.FromTop"
+                                    Command="ViewModel.AddContactCommand">
                                     <Icon Name="IconName.Add" IconSize="IconSize.Small" />
                                 </Button>
-                            </Addon>
-                        </Addons>
-                        <Div Class="scroll">
-                            <Repeater Items="ViewModel.Contacts">
-                                <Addons>
-                                    <Addon AddonType="AddonType.Body">
-                                        <TextEdit ReadOnly Text="@context" TabIndex="-1" />
-                                    </Addon>
-                                    <Addon AddonType="AddonType.End">
-                                        <Button TabIndex="-1" Color="Color.Danger" Size="Size.ExtraSmall"
-                                                Command="ViewModel.RemoveContactCommand" CommandParameter="context">
-                                            <Icon Name="IconName.Remove" IconSize="IconSize.ExtraSmall" />
-                                        </Button>
-                                    </Addon>
-                                </Addons>
-                            </Repeater>
-                        </Div>
-                    </Field>
-
-                    <Field>
-                        <FieldLabel>Medical Specialties</FieldLabel>
-                        <Addons>
-                            <Addon AddonType="AddonType.Body">
-                                <Select @bind-SelectedValue="ViewModel.Specialty">
-                                    <SelectItem>- Select -</SelectItem>
-                                    <Repeater Items="ViewModel.SpecialtiesOptions">
-                                        <SelectItem Value="@context">@context</SelectItem>
-                                    </Repeater>
-                                </Select>
-                            </Addon>
-                            <Addon AddonType="AddonType.End">
-                                <Button TabIndex="-1" Color="Color.Primary" Size="Size.ExtraSmall"
-                                        Command="ViewModel.AddSpecialtyCommand">
-                                    <Icon Name="IconName.Add" IconSize="IconSize.Small" />
-                                </Button>
-                            </Addon>
-                        </Addons>
-                        <Div Class="scroll">
-                            <Repeater Items="ViewModel.Specialties">
-                                <Addons>
-                                    <Addon AddonType="AddonType.Body">
-                                        <TextEdit ReadOnly Text="@context" TabIndex="-1" />
-                                    </Addon>
-                                    <Addon AddonType="AddonType.End">
+                            </Div>
+                            <Div Class="scroll">
+                                <Repeater Items="ViewModel.Contacts">
+                                    <Div Flex="Flex.AlignItems.Stretch">
+                                        <TextEdit Flex="Flex.Grow.Is1" ReadOnly Text="@context" TabIndex="-1" />
                                         <Button TabIndex="-1" Color="Color.Danger" Size="Size.Small"
-                                                Command="ViewModel.RemoveSpecialtyCommand" CommandParameter="context">
+                                            Margin="Margin.Is1.FromStart.Is2.FromTop"
+                                            Command="ViewModel.RemoveContactCommand" CommandParameter="context">
                                             <Icon Name="IconName.Remove" IconSize="IconSize.Small" />
                                         </Button>
-                                    </Addon>
-                                </Addons>
-                            </Repeater>
-                        </Div>
-                    </Field>
-                </Fields>
-            </FocusTrap>
-        </CardBody>
-
-        <ModalFooter>
-            <Button Type="ButtonType.Submit" Color="Color.Primary" Clicked="ViewModel.Store">
-                Save Changes
-            </Button>
-            <Button Type="ButtonType.Link" Color="Color.Default" To="/doctors">Cancel</Button>
-        </ModalFooter>
-    </Card>
-</Container>
+                                    </Div>
+                                </Repeater>
+                             </Div>
+                         </Field>
+                         <Field>
+                            <FieldLabel RequiredIndicator>Medical Specialties</FieldLabel>
+                            <Div Flex="Flex.AlignItems.Stretch">
+                                <Div Flex="Flex.Grow.Is1">
+                                    <Validation Validator="ViewModel.ValidateSpecialties">
+                                        <Select  @bind-SelectedValue="ViewModel.SpecialtySelected">
+                                            <ChildContent>
+                                                <SelectItem Value="String.Empty">- Select -</SelectItem>
+                                                <Repeater Items="ViewModel.SpecialtiesOptions">
+                                                    <SelectItem Value="@context">@context</SelectItem>
+                                                </Repeater>
+                                            </ChildContent>
+                                            <Feedback>
+                                                <ValidationError />
+                                            </Feedback>
+                                        </Select>
+                                    </Validation> 
+                                </Div>                                                               
+                                <Button TabIndex="-1" Color="Color.Primary" Size="Size.ExtraSmall" 
+                                    Margin="Margin.Is1.FromStart.Is2.FromTop"
+                                    Command="ViewModel.AddSpecialtyCommand">
+                                    <Icon Name="IconName.Add" IconSize="IconSize.Small" />
+                                </Button>
+                            </Div>
+                            <Div Class="scroll">
+                                <Repeater Items="ViewModel.Specialties">
+                                    <Div Flex="Flex.AlignItems.Stretch">
+                                        <TextEdit Flex="Flex.Grow.Is1" ReadOnly Text="@context" TabIndex="-1" />
+                                        <Button TabIndex="-1" Color="Color.Danger" Size="Size.Small"
+                                            Margin="Margin.Is1.FromStart.Is2.FromTop"
+                                            Command="ViewModel.RemoveSpecialtyCommand" CommandParameter="context">
+                                            <Icon Name="IconName.Remove" IconSize="IconSize.Small" />
+                                        </Button>
+                                    </Div>
+                                </Repeater>
+                             </Div>
+                         </Field>
+                     </Fields>
+                 </Validations>
+             </FocusTrap>
+         </CardBody>
+         <ModalFooter>
+             <Button Type="ButtonType.Submit" Color="Color.Primary" Command="ViewModel.StoreCommand"
+                 CommandParameter="validations">
+                 Save Changes
+             </Button>
+             <Button Type="ButtonType.Link" Color="Color.Default" To="/doctors">Cancel</Button>
+         </ModalFooter>
+     </Card>
+ </Container>

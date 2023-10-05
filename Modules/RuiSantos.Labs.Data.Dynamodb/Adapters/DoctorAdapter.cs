@@ -1,7 +1,10 @@
+using System.Text;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using Newtonsoft.Json;
 using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
@@ -96,38 +99,51 @@ internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>
             : default;
     }
 
-    public IAsyncEnumerable<Doctor> LoadBySpecialtyAsync(string specialty)
+    public async IAsyncEnumerable<Doctor> LoadBySpecialtyAsync(string specialty)
     {
         var query = new QueryOperationConfig {        
             IndexName = DoctorSpecialtyIndexName,
             Filter = new QueryFilter(SpecialtyAttributeName, QueryOperator.Equal, specialty),            
         };
 
-        return Context.FromQueryAsync<DoctorSpecialtyEntity>(query)
-            .GetRemainingAsync()
-            .ContinueWith(task => task.Result
-                .Select(x => FindAsync(x.DoctorId))
-                .OfType<Task<Doctor>>()
-            )
-            .AsModelsAsyncEnumerable();
+        var result = await Context.FromQueryAsync<DoctorSpecialtyEntity>(query).GetRemainingAsync();
+
+        if (result is null)
+            yield break;
+
+        foreach (var entity in result)
+        {
+            if (await FindAsync(entity.DoctorId) is { } doctor)
+                yield return doctor;
+        }            
     }
 
-    public IAsyncEnumerable<Doctor> LoadByLicenseAsync(string? previousLicense = null, int pageSize = DefaultPageSize)
+    public async Task<Pagination<Doctor>> LoadByLicenseAsync(int pageSize = DefaultPageSize, string? paginationToken = null)
     {
-        var query = new QueryOperationConfig {        
+        var table = Context.GetTargetTable<DoctorEntity>();
+
+        var search = table.Scan(new ScanOperationConfig
+        {
             IndexName = DoctorLicenseIndexName,
             Limit = pageSize,
-        };
+            PaginationToken = paginationToken is not null
+                ? Encoding.UTF8.GetString(Convert.FromBase64String(paginationToken))
+                : null
+        });
 
-        if (previousLicense is not null)
-            query.Filter = new QueryFilter(LicenseAttributeName, QueryOperator.GreaterThan, previousLicense);
+        var documents = await search.GetNextSetAsync();
+        if (documents is null)
+            return new();
 
-        return Context.FromQueryAsync<DoctorEntity>(query)
-            .GetRemainingAsync()
-            .ContinueWith(task => task.Result
-                .Select(AsModelAsync)
-            )
-            .AsModelsAsyncEnumerable();
+        var entities = documents.Select(x => JsonConvert.DeserializeObject<DoctorEntity>(x.ToJson()))
+            .OfType<DoctorEntity>();
+
+        var token = search.PaginationToken is not null
+            ? Convert.ToBase64String(Encoding.UTF8.GetBytes(search.PaginationToken))
+            : default;
+
+        var doctors = await Task.WhenAll(entities.Select(AsModelAsync).ToArray());
+        return new(doctors, token);
     }
 
     public async Task StoreAsync(Doctor doctor)

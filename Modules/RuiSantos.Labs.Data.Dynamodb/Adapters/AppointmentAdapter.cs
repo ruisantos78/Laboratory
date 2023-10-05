@@ -63,7 +63,7 @@ internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appoi
             );
     }
 
-    public Task<Appointment?> FindByDoctorAsync(Doctor doctor, DateTime dateTime)
+    public async Task<Appointment?> FindByDoctorAsync(Doctor doctor, DateTime dateTime)
     {
         var dateTimeString = dateTime.ToUniversalTime().ToString("u");
 
@@ -85,15 +85,13 @@ internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appoi
             }
         };
 
-        return Context.FromQueryAsync<AppointmentsEntity>(query)
-            .GetNextSetAsync()
-            .ContinueWith(task => task.Result
-                .Select(AsModel)
-                .FirstOrDefault()
-            );
+        var result = await Context.FromQueryAsync<AppointmentsEntity>(query)
+            .GetNextSetAsync();
+
+        return result?.Select(AsModel).FirstOrDefault();
     }
 
-    public IAsyncEnumerable<Appointment> LoadByDoctorAsync(Doctor doctor, DateOnly date)
+    public async IAsyncEnumerable<Appointment> LoadByDoctorAsync(Doctor doctor, DateOnly date)
     {
         var startOfDay = date.ToDateTime(TimeOnly.MinValue).ToString("u");
         var endOfDay = date.ToDateTime(TimeOnly.MaxValue).ToString("u");
@@ -116,12 +114,14 @@ internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appoi
             }
         };
 
-        return Context.FromQueryAsync<AppointmentsEntity>(query)
-            .GetNextSetAsync()
-            .ContinueWith(task => task.Result
-                .Select(AsModelAsync)
-            )
-            .AsModelsAsyncEnumerable();
+        var result = await Context.FromQueryAsync<AppointmentsEntity>(query)
+            .GetNextSetAsync();
+
+        if (result is null)
+            yield break;
+
+        foreach (var entity in result)
+            yield return await AsModelAsync(entity);
     }
 
     public Task RemoveAsync(Appointment appointment)

@@ -9,7 +9,7 @@ namespace RuiSantos.Labs.GraphQL.Adapters;
 public interface IDoctorSchemaAdapter {
     Task<DoctorSchema> StoreAsync(DoctorSchema doctor);
     Task<DoctorSchema> FindAsync(string id);
-    Task<IEnumerable<DoctorSchema>> FindAllAsync(int take, string? from = null);
+    Task<DoctorsCollectionSchema> FindAllAsync(int take, string? paginationToken = null);
 }
 
 internal class DoctorSchemaAdapter: AdapterModelSchema<Doctor, DoctorSchema>, IDoctorSchemaAdapter
@@ -53,10 +53,14 @@ internal class DoctorSchemaAdapter: AdapterModelSchema<Doctor, DoctorSchema>, ID
         return GetSchema(doctor ?? new Doctor());
     }
 
-    public async Task<IEnumerable<DoctorSchema>> FindAllAsync(int take, string? from)
+    public async Task<DoctorsCollectionSchema> FindAllAsync(int take, string? paginationToken)
     {
-        var doctors = await _service.GetAllDoctors(take, from);
-        return doctors.Select(GetSchema);
+        var pagination = await _service.GetAllDoctors(take, paginationToken);
+        return new DoctorsCollectionSchema
+        {
+            Doctors = pagination.Models.Select(GetSchema).ToList(),
+            PaginationToken = pagination.PaginationToken
+        };
     }
 
     public async Task<DoctorSchema> StoreAsync(DoctorSchema schema)

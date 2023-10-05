@@ -9,7 +9,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E2
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Data.Dynamodb", "Modules\RuiSantos.Labs.Data.Dynamodb\RuiSantos.Labs.Data.Dynamodb.csproj", "{D4E9A02D-9CFE-451E-8247-8CEC3536E490}"
 EndProject
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{DB45FB4E-957C-4A14-8821-35418EEB474D}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{DB45FB4E-957C-4A14-8821-35418EEB474D}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Api", "Server\RuiSantos.Labs.Api\RuiSantos.Labs.Api.csproj", "{DB6CFD8C-3122-4CAC-B2A1-D9A4182923EB}"
 EndProject

@@ -1,13 +1,14 @@
 using System.Net;
 using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
 using FluentAssertions;
+using Newtonsoft.Json;
+using RuiSantos.Labs.Data.Dynamodb.Entities;
+using RuiSantos.Labs.GraphQL.Services;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
 using RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
-using RuiSantos.Labs.Data.Dynamodb.Entities;
-using RuiSantos.Labs.GraphQL.Services;
 using Xunit.Abstractions;
-
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.GraphQL;
@@ -74,6 +75,48 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         doctor["specialties"].Should().BeEquivalentTo(expectedSpecialties.Select(ds => ds.Specialty));
     }
 
+    [Fact(DisplayName = "Get doctors with pagination")]
+    public async Task GetDoctorsWithPagination()
+    {
+        // Arrange
+        var expected = await _context.FromScanAsync<DoctorEntity>(new ScanOperationConfig()
+        {
+            IndexName = DoctorLicenseIndexName,
+            Limit = 2
+        }).GetRemainingAsync();
+
+        var request = new
+        { 
+            query = """
+                    query GetDoctors($page: PaginationInput!) {
+                        doctors(page: $page) {
+                            id,
+                            license
+                            firstName
+                            lastName
+                            email
+                            contacts
+                        }
+                    }
+                    """,
+            variables = new
+            {
+                take = 2
+            }
+        };
+
+        // Act
+        var response = await _client.PostAsync("graphql", request);
+        response.StatusCode.Should().Be(HttpStatusCode.OK);
+
+        // Assert
+        var result = await response.Content.GetTokenAsync(_output);
+
+        var json = result["data"].Should().HaveChild("doctors").ToString();
+        var doctors = JsonConvert.DeserializeObject<List<DoctorEntity>>(json);
+        doctors.Should().BeEquivalentTo(expected, options => options.Excluding(x => x.Availability));
+    }
+
     [Fact(DisplayName = "Create a new doctor")]
     public async Task CreateNewDoctor()
     {
@@ -81,7 +124,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         var request = new
         {
             query = """
-                    mutation AddDoctor($input: SetDoctorInput!) {
+                    mutation SetDoctor($input: SetDoctorInput!) {
                         setDoctor(input: $input) {
                             doctor {
                                 license

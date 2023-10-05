@@ -25,3 +25,14 @@ public class DoctorSchema
     [GraphQLDescription("Medical specialties.")]
     public required List<string> Specialties { get; init; }
 }
+
+[GraphQLName("DoctorsCollection")]
+[GraphQLDescription("Represents a list of doctors.")]
+public class DoctorsCollectionSchema
+{
+    [GraphQLDescription("List of doctors.")]
+    public required List<DoctorSchema> Doctors { get; init; }
+
+    [GraphQLDescription("Pagination token.")]
+    public string? PaginationToken { get; init; }
+}

@@ -25,9 +25,8 @@ public class DoctorModel
         
     }
 
-    public DoctorModel(IGetDoctors_Doctors value): this()
+    public DoctorModel(IGetDoctors_Doctors_Doctors value): this()
     {
-        Id = value.Id;
         License = value.License;
         FirstName = value.FirstName;
         LastName = value.LastName;

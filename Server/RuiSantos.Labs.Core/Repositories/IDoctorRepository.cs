@@ -17,7 +17,7 @@ public interface IDoctorRepository
     /// <param name="take">Limit the number of results returned</param>
     /// <param name="lastLicense">Last license to search</param>
     /// <returns></returns>
-    IAsyncEnumerable<Doctor> FindAllAsync(int take, string? lastLicense = null);
+    Task<Pagination<Doctor>> FindAllAsync(int take, string? paginationToken);
 
     /// <summary>
     /// Finds doctor by speciality. Asynchronously invokes the search. Returns a task that represents the asynchronous operation.
