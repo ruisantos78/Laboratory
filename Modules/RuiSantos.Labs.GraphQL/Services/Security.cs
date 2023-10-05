@@ -1,4 +1,6 @@
-﻿using Sqids;
+﻿using System.IO.Compression;
+using System.Text;
+using Sqids;
 
 namespace RuiSantos.Labs.GraphQL.Services;
 
@@ -19,8 +21,6 @@ internal class Security: ISecurity
 
     public Guid Decode(string? id)
     {
-        if (id == null) return Guid.Empty;
-
         var array = _sqids.Decode(id).ToArray();
         var bytes = Array.ConvertAll(array, Convert.ToByte);
         return new Guid(bytes);

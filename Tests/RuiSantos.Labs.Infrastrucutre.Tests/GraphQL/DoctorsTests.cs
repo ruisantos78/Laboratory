@@ -2,7 +2,8 @@ using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using FluentAssertions;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using RuiSantos.Labs.Data.Dynamodb.Core;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 using RuiSantos.Labs.GraphQL.Services;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
@@ -75,33 +76,43 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         doctor["specialties"].Should().BeEquivalentTo(expectedSpecialties.Select(ds => ds.Specialty));
     }
 
-    [Fact(DisplayName = "Get doctors with pagination")]
-    public async Task GetDoctorsWithPagination()
+    [Theory(DisplayName = "Get doctors with pagination")]
+    [InlineData(2, default)]
+    [InlineData(2, @"{""DoctorId"":{""S"":""8a6151c7-9122-4f1b-a1e7-85e981c17a14""},""License"":{""S"":""DEF003""}}")]
+    public async Task GetDoctorsWithPagination(int limit, string? paginationToken)
     {
         // Arrange
-        var expected = await _context.FromScanAsync<DoctorEntity>(new ScanOperationConfig()
+        var search = _context.GetTargetTable<DoctorEntity>().Scan(new ScanOperationConfig()
         {
             IndexName = DoctorLicenseIndexName,
-            Limit = 2
-        }).GetRemainingAsync();
+            Limit = limit,
+            PaginationToken = paginationToken
+        });
+
+        var documents = await search.GetNextSetAsync();
 
         var request = new
         { 
             query = """
                     query GetDoctors($page: PaginationInput!) {
-                        doctors(page: $page) {
-                            id,
-                            license
-                            firstName
-                            lastName
-                            email
-                            contacts
+                      doctors(page: $page) {
+                        doctors {
+                          license
+                          firstName
+                          lastName
+                          email
                         }
+                        paginationToken
+                      }
                     }
                     """,
             variables = new
             {
-                take = 2
+                page = new
+                {
+                    take = 2,
+                    token = Tokens.Encode(paginationToken)
+                }
             }
         };
 
@@ -110,11 +121,14 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var result = await response.Content.GetTokenAsync(_output);
+        var result = await response.Content.GetTokenAsync();
+        var pagination = result["data"].Should().HaveChild("doctors");
 
-        var json = result["data"].Should().HaveChild("doctors").ToString();
-        var doctors = JsonConvert.DeserializeObject<List<DoctorEntity>>(json);
-        doctors.Should().BeEquivalentTo(expected, options => options.Excluding(x => x.Availability));
+        pagination["paginationToken"].Should().Be(Tokens.Encode(search.PaginationToken));
+        pagination["doctors"]!.Values<string>("license").Should().BeEquivalentTo(documents.Select(x => x["License"].AsString()));
+        pagination["doctors"]!.Values<string>("firstName").Should().BeEquivalentTo(documents.Select(x => x["FirstName"].AsString()));
+        pagination["doctors"]!.Values<string>("lastName").Should().BeEquivalentTo(documents.Select(x => x["LastName"].AsString()));
+        pagination["doctors"]!.Values<string>("email").Should().BeEquivalentTo(documents.Select(x => x["Email"].AsString()));
     }
 
     [Fact(DisplayName = "Create a new doctor")]

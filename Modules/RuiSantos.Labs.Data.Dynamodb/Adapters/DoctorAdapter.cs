@@ -1,10 +1,10 @@
-using System.Text;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
+using RuiSantos.Labs.Data.Dynamodb.Core;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
@@ -88,7 +88,7 @@ internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>
         var query = new QueryOperationConfig {        
             IndexName = DoctorLicenseIndexName,
             Filter = new QueryFilter(LicenseAttributeName, QueryOperator.Equal, license),            
-            Limit = 1,
+            Limit = 1
         };
 
         var entities = await Context.FromQueryAsync<DoctorEntity>(query)
@@ -103,7 +103,7 @@ internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>
     {
         var query = new QueryOperationConfig {        
             IndexName = DoctorSpecialtyIndexName,
-            Filter = new QueryFilter(SpecialtyAttributeName, QueryOperator.Equal, specialty),            
+            Filter = new QueryFilter(SpecialtyAttributeName, QueryOperator.Equal, specialty)         
         };
 
         var result = await Context.FromQueryAsync<DoctorSpecialtyEntity>(query).GetRemainingAsync();
@@ -126,24 +126,20 @@ internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>
         {
             IndexName = DoctorLicenseIndexName,
             Limit = pageSize,
-            PaginationToken = paginationToken is not null
-                ? Encoding.UTF8.GetString(Convert.FromBase64String(paginationToken))
-                : null
+            PaginationToken = Tokens.Decode(paginationToken)
         });
 
-        var documents = await search.GetNextSetAsync();
-        if (documents is null)
+        var documents = await search
+            .GetNextSetAsync()
+            .ContinueWith(task => task.Result.Select(x => JToken.Parse(x.ToJson())).ToList());
+        
+        if (!documents.Any())
             return new();
 
-        var entities = documents.Select(x => JsonConvert.DeserializeObject<DoctorEntity>(x.ToJson()))
-            .OfType<DoctorEntity>();
-
-        var token = search.PaginationToken is not null
-            ? Convert.ToBase64String(Encoding.UTF8.GetBytes(search.PaginationToken))
-            : default;
-
+        var entities = documents.Select(x => x.ToObject<DoctorEntity>()).OfType<DoctorEntity>();
+        
         var doctors = await Task.WhenAll(entities.Select(AsModelAsync).ToArray());
-        return new(doctors, token);
+        return new(doctors, Tokens.Encode(search.PaginationToken));
     }
 
     public async Task StoreAsync(Doctor doctor)
