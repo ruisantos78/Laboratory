@@ -4,9 +4,9 @@ using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services;
 
-namespace RuiSantos.Labs.Tests.Asserts;
+namespace RuiSantos.Labs.Tests.Asserts.Services;
 
-internal class DoctorsAsserts: ServiceAsserts<DoctorService>
+internal class DoctorsServiceAsserts: AssertsBase<DoctorService>
 {    
     private readonly IDoctorRepository _doctorRepository = Substitute.For<IDoctorRepository>();
     private readonly IAppointamentsRepository _appointamentsRepository = Substitute.For<IAppointamentsRepository>();
@@ -36,6 +36,12 @@ internal class DoctorsAsserts: ServiceAsserts<DoctorService>
         Doctor? result)
     {
         _doctorRepository.FindAsync(doctorId)
+            .Returns(result);
+    }
+
+    public void OnFindAllAsyncReturns(int take, string? paginationToken, Pagination<Doctor> result)
+    {
+        _doctorRepository.FindAllAsync(take, paginationToken)
             .Returns(result);
     }
 

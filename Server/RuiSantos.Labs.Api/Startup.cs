@@ -18,9 +18,6 @@ public class Startup
 
 	public void ConfigureServices(IServiceCollection services)
 	{
-        var connectionString = Environment.GetEnvironmentVariable("DATABASE_DYNAMO") ?? "http://127.0.0.1:8000";
-        var origins = Environment.GetEnvironmentVariable("CORS_ORIGINS")?.Split(';') ?? Array.Empty<string>();
-
         services.AddLogging(config => config.AddConsole());
 
         services.AddMemoryCache();
@@ -29,7 +26,7 @@ public class Startup
 
         services.AddLabsGraphql();
         services.AddLabsServices();
-        services.AddLabsDynamoDb(connectionString);
+        services.AddLabsDynamoDb(Configuration);
 
         services.AddSwaggerGen(options =>
         {
@@ -48,9 +45,9 @@ public class Startup
         
 
         services.AddCors(options =>
-        {            
+        {
             options.AddDefaultPolicy(builder => {
-                builder.WithOrigins(origins)
+                builder.WithOrigins(Configuration["LABS_ALLOWED_ORIGINS"] ?? string.Empty)
                     .AllowAnyHeader()
                     .AllowAnyMethod();
             });

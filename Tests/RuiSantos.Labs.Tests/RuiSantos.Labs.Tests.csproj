@@ -24,6 +24,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\..\Modules\RuiSantos.Labs.Data.Dynamodb\RuiSantos.Labs.Data.Dynamodb.csproj" />
     <ProjectReference Include="..\..\Server\RuiSantos.Labs.Core\RuiSantos.Labs.Core.csproj" />    
   </ItemGroup>
 </Project>

@@ -2,15 +2,15 @@
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
-using RuiSantos.Labs.Tests.Asserts;
 using RuiSantos.Labs.Tests.Asserts.Builders;
+using RuiSantos.Labs.Tests.Asserts.Services;
 
-namespace RuiSantos.Labs.Tests.Stories.Doctor;
+namespace RuiSantos.Labs.Tests.Services.Doctor;
 
 /// <UserStory>
 /// As a doctor, I want to be able to query all my appointments for a given date, with the patient's information allocated to each appointment.
 /// </UserStory>
-public class DoctorAppointmentsReport
+public class GetAppointmentsAsyncTests
 {
     [Theory(DisplayName = "The doctor should be able to query all of his appointments for a given date.")]
     [InlineData(default)]
@@ -27,7 +27,7 @@ public class DoctorAppointmentsReport
                 .AddAppointment(dateTime.AddHours(12))
                 .Build();
 
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
 
         var date = DateOnly.FromDateTime(dateTime);
@@ -49,7 +49,7 @@ public class DoctorAppointmentsReport
         // Arrange
         var doctor = new DoctorBuilder().Build();
 
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: default);
 
         // Act
@@ -69,7 +69,7 @@ public class DoctorAppointmentsReport
         var today = DateOnly.FromDateTime(DateTime.Today);
         var doctor =  new DoctorBuilder().Build();
 
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
         asserts.OnGetPatientAppointmentsAsyncReturns(doctor, today, result: Array.Empty<PatientAppointment>());
 
@@ -90,7 +90,7 @@ public class DoctorAppointmentsReport
         var today = DateOnly.FromDateTime(DateTime.Today);
         var doctor =  new DoctorBuilder().Build();
 
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
         asserts.WhenGetPatientAppointmentsAsyncThrows(doctor, today);
 
@@ -111,7 +111,7 @@ public class DoctorAppointmentsReport
         // Arrange
         var doctor =  new DoctorBuilder().Build();
 
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.WhenFindAsyncThrows(doctor.Id);
 
         // Act

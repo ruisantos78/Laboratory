@@ -1,4 +1,4 @@
-﻿using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc;
 using RuiSantos.Labs.Api.Contracts;
 using RuiSantos.Labs.Api.Core;
 using RuiSantos.Labs.Core.Services;
@@ -29,7 +29,7 @@ public class DoctorController : Controller
     {
         try
         {
-            var model = await _service.GetAllDoctors(take.GetValueOrDefault(PageSize), from);
+            var model = await _service.GetAllDoctorsAsync(take.GetValueOrDefault(PageSize), from);
             return this.Success(model, typeof(DoctorContract[]));
         }
         catch (Exception ex)

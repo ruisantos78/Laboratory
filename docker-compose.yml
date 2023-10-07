@@ -1,21 +1,30 @@
 version: '3.4'
 
 services:
-  ruisantos.labs.db.dynamo:
-   command: "-jar DynamoDBLocal.jar -sharedDb"
-   image: "amazon/dynamodb-local:latest"
-   restart: always
-   ports:
-     - "8000:8000"
+  ruisantos.labs.localstack:
+    image: "localstack/localstack"
+    restart: always
+    ports:
+      - "4566:4566"
+    environment:
+      - DOCKER_HOST=unix:///var/run/docker.sock
+      - DYNAMODB_SHARE_DB=1
+      - SERVICES=dynamodb:4569
+      - DEFAULT_REGION=us-east-1
+    volumes:
+      - "/var/run/docker.sock:/var/run/docker.sock"
+      - "/private${TMPDIR}:/tmp/localstack"
 
   ruisantos.labs.api:
     image: ${DOCKER_REGISTRY-}ruisantos.labs.api
     depends_on:
-      - ruisantos.labs.db.dynamo
+      - ruisantos.labs.localstack
     environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - DATABASE_DYNAMO=http://ruisantos.labs.db.dynamo:8000
-      - CORS_ORIGINS=http://localhost:8002;https://localhost:8003
+      - AWS_ACCESS_KEY_ID=docker
+      - AWS_SECRET_ACCESS_KEY=docker
+      - AWS_DEFAULT_REGION=us-east-1
+      - AWS_ENDPOINT_URL=http://ruisantos.labs.localstack:4566
+      - LABS_ALLOWED_ORIGINS=http://localhost:8002
     ports:
       - 8001:80
     build:
@@ -26,12 +35,8 @@ services:
     image: ${DOCKER_REGISTRY-}ruisantos.labs.client
     depends_on:
       - ruisantos.labs.api
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - RUISANTOS_LABS_API_URL=http://ruisantos.labs.api:8001/graphql/
     ports:
       - 8002:80
-      - 8003:443
     build:
       context: ./Server/RuiSantos.Labs.Client
       dockerfile: ./Dockerfile 

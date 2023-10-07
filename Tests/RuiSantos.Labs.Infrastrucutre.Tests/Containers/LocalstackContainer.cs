@@ -1,4 +1,5 @@
 using System.Net;
+using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using DotNet.Testcontainers.Builders;
@@ -10,35 +11,41 @@ using RuiSantos.Labs.Data.Dynamodb.Mediators;
 namespace RuiSantos.Labs.Infrastrucutre.Tests.Containers;
 
 // ReSharper disable LocalizableElement
-public sealed class DynamoDbContainer : IAsyncDisposable
+public sealed class LocalstackContainer : IAsyncDisposable
 {
+    private const int DefaultPort = 4566;
+
     private static DateTime Now => DateTime.Now;
 
     private const string RepositoySourceFile = @"Assets/Repository.json";
 
     private readonly IContainer _container;
 
-    public DynamoDbContainer()
+    public LocalstackContainer()
     {
         _container = new ContainerBuilder()
-            .WithEntrypoint("java")
-            .WithCommand("-jar", "DynamoDBLocal.jar", "-sharedDb")
-            .WithImage("amazon/dynamodb-local:latest")
-            .WithPortBinding(8000, true)
-            .WithWaitStrategy(
-                Wait.ForUnixContainer()
-                    .UntilHttpRequestIsSucceeded(request =>
-                        request.ForPath("/")
-                               .ForPort(8000)
-                               .ForStatusCode(HttpStatusCode.BadRequest)
-                    )
-            )
+            .WithImage("localstack/localstack")
+            .WithAutoRemove(true)
+            .WithPortBinding(DefaultPort, true)
+            .WithEnvironment(new Dictionary<string, string>
+            {
+                {"DOCKER_HOST", "unix:///var/run/docker.sock" },
+                {"DYNAMODB_SHARE_DB", "1" },
+                {"SERVICES", "dynamodb:4569" },
+                {"DEFAULT_REGION", "us-east-1" },
+            })
+            .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request =>
+                request.ForPath("/")
+                .ForPort(DefaultPort)
+                .ForStatusCode(HttpStatusCode.OK)
+            ))
             .Build();
     }
 
-    public string GetConnectionString() => $"http://{_container.Hostname}:{_container.GetMappedPublicPort(8000)}";
-    public IAmazonDynamoDB GetClient() => new AmazonDynamoDBClient(new AmazonDynamoDBConfig
+    public string GetConnectionString() => $"http://{_container.Hostname}:{_container.GetMappedPublicPort(DefaultPort)}";
+    public IAmazonDynamoDB GetClient() => new AmazonDynamoDBClient("docker", "docker", new AmazonDynamoDBConfig
     {
+        Profile = new Profile("default", "us-east-1"),
         ServiceURL = GetConnectionString()
     });
 
@@ -51,7 +58,7 @@ public sealed class DynamoDbContainer : IAsyncDisposable
     public async Task StartAsync()
     {
         await _container.StartAsync();
-        Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] Start Dynamodb Client at port: {_container.GetMappedPublicPort(8000)}");
+        Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] Start localstack at port: {_container.GetMappedPublicPort(DefaultPort)}");
 
         await InitializeAsync();
     }

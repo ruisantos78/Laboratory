@@ -55,7 +55,7 @@ internal class DoctorSchemaAdapter: AdapterModelSchema<Doctor, DoctorSchema>, ID
 
     public async Task<DoctorsCollectionSchema> FindAllAsync(int take, string? paginationToken)
     {
-        var pagination = await _service.GetAllDoctors(take, paginationToken);
+        var pagination = await _service.GetAllDoctorsAsync(take, paginationToken);
         return new DoctorsCollectionSchema
         {
             Doctors = pagination.Models.Select(GetSchema).ToList(),

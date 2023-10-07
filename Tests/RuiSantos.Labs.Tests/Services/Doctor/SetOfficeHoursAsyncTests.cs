@@ -1,15 +1,15 @@
 using FluentAssertions;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
-using RuiSantos.Labs.Tests.Asserts;
 using RuiSantos.Labs.Tests.Asserts.Builders;
+using RuiSantos.Labs.Tests.Asserts.Services;
 
-namespace RuiSantos.Labs.Tests.Stories.Doctor;
+namespace RuiSantos.Labs.Tests.Services.Doctor;
 
 /// <UserStory>
 /// As a doctor, I want to be able to define and manage my work hours.
 /// </UserStory>
-public class DoctorOfficeHoursManagement
+public class SetOfficeHoursAsyncTests
 {
     private static readonly string[] MorningHours = { "09:00", "09:30", "10:00", "10:30", "11:00", "11:30" };
     private static readonly string[] AfternoonHours = { "13:00", "13:30", "14:00", "14:30", "15:00", "15:30" };
@@ -28,7 +28,7 @@ public class DoctorOfficeHoursManagement
         var doctor = new DoctorBuilder().Build();
         var officeHours = hours.Select(TimeSpan.Parse).ToArray();
 
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
         
         // Act
@@ -57,7 +57,7 @@ public class DoctorOfficeHoursManagement
             .WithOfficeHours(DayOfWeek.Friday, AfternoonHours)
             .Build();
         
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, doctor);
 
         // Act
@@ -83,7 +83,7 @@ public class DoctorOfficeHoursManagement
         var doctorId = Guid.NewGuid();
         var officeHours = hours.Select(TimeSpan.Parse).ToArray();
         
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctorId, default);
         
         // Act & Assert
@@ -105,7 +105,7 @@ public class DoctorOfficeHoursManagement
         var doctorId = Guid.NewGuid();
         var officeHours = MorningHours.Select(TimeSpan.Parse).ToArray();
 
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.WhenFindAsyncThrows(doctorId);
         
         // Act & Assert

@@ -5,7 +5,6 @@ using Xunit.Abstractions;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;
 
-[Collection(nameof(ServiceCollectionFixture))]
 public partial class DoctorControllerTests: IClassFixture<ServiceFixture>
 {
     protected readonly IDynamoDBContext Context;

@@ -1,14 +1,14 @@
 using FluentAssertions;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
-using RuiSantos.Labs.Tests.Asserts;
+using RuiSantos.Labs.Tests.Asserts.Services;
 
-namespace RuiSantos.Labs.Tests.Stories.Doctor;
+namespace RuiSantos.Labs.Tests.Services.Doctor;
 
 /// <UserStory>
 /// As a doctor, I want to register and update my personal information as my contact numbers and email.
 /// </UserStory>
-public class DoctorInformationManagement
+public class CreateDoctorAsyncTests
 {
     public static IEnumerable<object[]> DoctorsMemberData() => new List<object[]>
     {
@@ -21,7 +21,7 @@ public class DoctorInformationManagement
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         
         // Act
         var service = asserts.GetService();
@@ -46,7 +46,7 @@ public class DoctorInformationManagement
         string[] contactNumbers, string[] specialties)
     {
         // Arrange
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
         asserts.WhenAddAsyncThrows(license);
 
         // Act
@@ -71,7 +71,7 @@ public class DoctorInformationManagement
         string[] specialties)
     {
         // Arrange
-        var asserts = new DoctorsAsserts();
+        var asserts = new DoctorsServiceAsserts();
 
         // Act
         var service = asserts.GetService();

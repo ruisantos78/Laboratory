@@ -10,7 +10,6 @@ using Xunit.Abstractions;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.GraphQL;
 
-[Collection(nameof(ServiceCollectionFixture))]
 public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
 {
     private readonly HttpClient _client;

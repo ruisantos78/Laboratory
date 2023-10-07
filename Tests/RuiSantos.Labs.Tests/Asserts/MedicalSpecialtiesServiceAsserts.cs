@@ -2,9 +2,9 @@
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services;
 
-namespace RuiSantos.Labs.Tests.Asserts;
+namespace RuiSantos.Labs.Tests.Asserts.Services;
 
-internal class MedicalSpecialtiesAsserts: ServiceAsserts<MedicalSpecialtiesService>
+internal class MedicalSpecialtiesServiceAsserts: AssertsBase<MedicalSpecialtiesService>
 {
     private readonly IMedicalSpecialityRepository _repository = Substitute.For<IMedicalSpecialityRepository>();
 

@@ -6,9 +6,6 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
-  <PropertyGroup Condition=" '$(RunConfiguration)' == 'https' ">
-    <ExternalConsole>true</ExternalConsole>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(RunConfiguration)' == 'http' ">
     <ExternalConsole>true</ExternalConsole>
   </PropertyGroup>
@@ -46,5 +43,10 @@
     <None Remove="Pages\Doctors\" />
     <None Remove="Controls\" />
     <None Remove="Core\Extensions\" />
+  </ItemGroup>
+  <ItemGroup>
+    <Content Update="wwwroot\environment.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
   </ItemGroup>
 </Project>

@@ -14,7 +14,6 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.GraphQL;
 
-[Collection(nameof(ServiceCollectionFixture))]
 public class DoctorsTests : IClassFixture<ServiceFixture>
 {
     private readonly HttpClient _client;

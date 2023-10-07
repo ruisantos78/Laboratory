@@ -4,7 +4,7 @@ using NSubstitute;
 
 namespace RuiSantos.Labs.Tests.Asserts;
 
-internal abstract class ServiceAsserts<TService>
+internal abstract class AssertsBase<TService>
 {
     protected readonly ILogger<TService> Logger = Substitute.For<ILogger<TService>>();
 

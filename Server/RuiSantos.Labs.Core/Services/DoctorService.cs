@@ -43,7 +43,7 @@ public interface IDoctorService
     Task<Doctor?> GetDoctorAsync(Guid doctorId);
 
 
-    Task<Pagination<Doctor>> GetAllDoctors(int take, string? paginationToken);
+    Task<Pagination<Doctor>> GetAllDoctorsAsync(int take, string? paginationToken);
 
     /// <summary>
     /// Set the office hours for a doctor.
@@ -160,7 +160,7 @@ internal class DoctorService : IDoctorService
         }
     }
 
-    public async Task<Pagination<Doctor>> GetAllDoctors(int take, string? paginationToken)
+    public async Task<Pagination<Doctor>> GetAllDoctorsAsync(int take, string? paginationToken)
     {
         try
         {

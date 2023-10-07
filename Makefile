@@ -1,7 +1,7 @@
 # Define container names as variables
-DYNAMO_CONTAINER_NAME := ruisantos.labs.db.dynamo
+AWS_CONTAINER_NAME := ruisantos.labs.localstack
 API_CONTAINER_NAME := ruisantos.labs.api
-CLIENT_CONTAINER_NAME := ruisantos.labs.client
+GUI_CONTAINER_NAME := ruisantos.labs.client
 
 # Default target (executed when you type just 'make')
 default: help
@@ -21,12 +21,12 @@ help:
 	@echo ""
 
 build-server:	
-	docker-compose up -d $(DYNAMO_CONTAINER_NAME)
+	docker-compose up -d $(AWS_CONTAINER_NAME)
 	sleep 5
 	docker-compose up -d $(API_CONTAINER_NAME) --build
 
 build-client:
-	docker-compose up -d $(CLIENT_CONTAINER_NAME) --build
+	docker-compose up -d $(GUI_CONTAINER_NAME) --build
 
 kill:
 	docker-compose down

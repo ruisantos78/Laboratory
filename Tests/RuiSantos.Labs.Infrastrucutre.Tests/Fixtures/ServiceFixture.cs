@@ -4,20 +4,24 @@ using RuiSantos.Labs.Infrastrucutre.Tests.Containers;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
 
-[CollectionDefinition(nameof(ServiceCollectionFixture))]
-public class ServiceCollectionFixture: ICollectionFixture<ServiceFixture> { }
-
-public class ServiceFixture : IAsyncLifetime
+public sealed class ServiceFixture : IDisposable
 {
-    private readonly DynamoDbContainer _dynamoDbContainer;
+    private readonly LocalstackContainer _dynamoDbContainer;
     private readonly WebApplicationFactory<Program> _factory;
     
     public ServiceFixture()
     {
+        _dynamoDbContainer = new LocalstackContainer();
+        _dynamoDbContainer.StartAsync().Wait();
+
         Environment.SetEnvironmentVariable("ASPNETCORE_URLS", "http://+:55555");
         Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
+        Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", "docker");
+        Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", "docker");
+        Environment.SetEnvironmentVariable("AWS_DEFAULT_REGION", "us-east-1");
+        Environment.SetEnvironmentVariable("AWS_ENDPOINT_URL", _dynamoDbContainer.GetConnectionString());
+        Environment.SetEnvironmentVariable("LABS_ALLOWED_ORIGINS", "http://localhost:8002");
 
-        _dynamoDbContainer = new DynamoDbContainer();
         _factory = new WebApplicationFactory<Program>();
     }
 
@@ -30,11 +34,8 @@ public class ServiceFixture : IAsyncLifetime
         return client;
     }    
 
-    public Task DisposeAsync() => Task.WhenAll(
-        _factory.DisposeAsync().AsTask(),
-        _dynamoDbContainer.DisposeAsync().AsTask()
-    );
-
-    public Task InitializeAsync() => _dynamoDbContainer.StartAsync()
-        .ContinueWith(_ => Environment.SetEnvironmentVariable("DATABASE_DYNAMO", _dynamoDbContainer.GetConnectionString()));
+    public void Dispose()
+    {
+        Task.WaitAll(_factory.DisposeAsync().AsTask(), _dynamoDbContainer.DisposeAsync().AsTask());
+    }
 }

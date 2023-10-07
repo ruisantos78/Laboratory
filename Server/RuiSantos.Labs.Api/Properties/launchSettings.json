@@ -1,13 +1,5 @@
 {
   "$schema": "https://json.schemastore.org/launchsettings.json",
-  "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
-    "iisExpress": {
-      "applicationUrl": "http://localhost:47923",
-      "sslPort": 0
-    }
-  },
   "profiles": {
     "http": {
       "commandName": "Project",
@@ -15,25 +7,12 @@
       "applicationUrl": "http://localhost:8001",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development",
-        "DATABASE_DYNAMO": "http://127.0.0.1:8000",
-        "CORS_ORIGINS": "http://localhost:8002;https://localhost:8003"
+        "AWS_ACCESS_KEY_ID": "docker",
+        "AWS_SECRET_ACCESS_KEY": "docker",
+        "AWS_DEFAULT_REGION": "us-east-1",
+        "AWS_ENDPOINT_URL": "https://localhost.localstack.cloud:4566",
+        "LABS_ALLOWED_ORIGINS": "http://localhost:8002"
       }
-    },
-    "IIS Express": {
-      "commandName": "IISExpress",
-      "launchBrowser": true,
-      "launchUrl": "swagger",
-      "environmentVariables": {
-        "ASPNETCORE_ENVIRONMENT": "Development",
-        "DATABASE_DYNAMO": "http://127.0.0.1:8000"
-      }
-    },
-    "Docker": {
-      "commandName": "Docker",
-      "launchBrowser": true,
-      "launchUrl": "{Scheme}://{ServiceHost}:{ServicePort}/swagger",
-      "environmentVariables": {},
-      "publishAllPorts": true
     }
   }
 }

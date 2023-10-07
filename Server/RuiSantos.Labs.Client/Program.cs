@@ -12,11 +12,9 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-var graphqlUrl = Environment.GetEnvironmentVariable("RUISANTOS_LABS_GRAPHQL_URL") ?? "http://localhost:8001/graphql";
-
 builder.Services
     .AddLabsClient()
-    .ConfigureHttpClient(client => client.BaseAddress = new Uri(graphqlUrl));
+    .ConfigureHttpClient(client => client.BaseAddress = builder.Configuration.GetValue<Uri>("services"));
 
 builder.Services
     .AddBlazorise(options =>

@@ -2,7 +2,6 @@ using Amazon.DynamoDBv2;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
-using static RuiSantos.Labs.Data.Dynamodb.Adapters.DoctorAdapter;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
