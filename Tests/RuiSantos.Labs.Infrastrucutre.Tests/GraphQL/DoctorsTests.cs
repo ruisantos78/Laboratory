@@ -27,33 +27,32 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
     }
 
     [Theory(DisplayName = "Get doctor information by license")]
-    [InlineData("d6c9f315-0e35-4d5b-b25e-61a61c92d9c9")]
-    [InlineData("8a6151c7-9122-4f1b-a1e7-85e981c17a14")]
-    [InlineData("fa626a8e-03a5-4fe1-a910-b3803bed256c")]
-    public async Task GetDoctorInformationByLicense(string uuid)
+    [InlineData("XYZ002")]
+    [InlineData("DEF003")]
+    [InlineData("PED001")]
+    public async Task GetDoctorInformationByLicense(string license)
     {
         // Arrange
-        var doctorId = Guid.Parse(uuid);
-        var expected = await _context.LoadAsync<DoctorEntity>(doctorId);
+        var expected = await _context.FindAsync<DoctorEntity>(license, DoctorLicenseIndexName);
         var expectedSpecialties = await _context.FindAllAsync<DoctorSpecialtyEntity>(expected.Id);
 
         var request = new
         {
             query = """
-                    query GetDoctor($id: String!) {
-                        doctor(id: $id) {
-                            license
-                            firstName
-                            lastName
-                            email
-                            contacts
-                            specialties
-                        }
+                    query GetDoctor($license: String!) {
+                      doctor(license: $license) {
+                        license
+                        firstName
+                        lastName
+                        email
+                        contacts
+                        specialties
+                      }
                     }
                     """,
             variables = new
             {
-                id = doctorId
+                license
             }
         };
 
