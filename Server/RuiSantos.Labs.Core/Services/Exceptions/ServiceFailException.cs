@@ -6,7 +6,7 @@ namespace RuiSantos.Labs.Core.Services.Exceptions;
 /// Exception thrown when a management operation fails.
 /// </summary>
 [Serializable]
-public class ServiceFailException : Exception, IFailure
+public class ServiceFailException : Exception
 {
     /// <summary>
     /// Empty exception.

@@ -7,7 +7,7 @@ namespace RuiSantos.Labs.Core.Services.Exceptions;
 /// Exception thrown when a validation fails.
 /// </summary>
 [Serializable]
-public class ValidationFailException : ValidationException, IFailure
+public class ValidationFailException : ValidationException
 {
     /// <summary>
     /// Empty exception used when no validation fails.
