@@ -1,8 +1,6 @@
-﻿using System.ComponentModel;
-
-namespace RuiSantos.Labs.Client;
+﻿namespace RuiSantos.Labs.Client;
 
 public static class Css
 {
-    public const string NoWrap = "no-wrap";
+    public const string NoWrap = "no-wrap";    
 }

@@ -4,9 +4,6 @@
 [GraphQLDescription("Represents a doctor.")]
 public class DoctorSchema
 {    
-    [GraphQLDescription("Doctor Unique Identifier.")]
-    public required string? Id { get; init; }
-
     [GraphQLDescription("Doctor license number.")]
     public required string License { get; init; }
 

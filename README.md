@@ -32,6 +32,7 @@ This project was built using the following technologies:
   - [NSubstitute](https://nsubstitute.github.io/)
 - Host:
   - [AWS Dynamodb](https://aws.amazon.com/en/pm/dynamodb/)
+  - [Localstack](https://localstack.cloud/)
   - [Docker](https://www.docker.com/)
 
 

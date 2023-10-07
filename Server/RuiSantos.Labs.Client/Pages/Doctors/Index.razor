@@ -1,4 +1,5 @@
-﻿@page "/doctors"
+@page "/doctors"
+@using RuiSantos.Labs.Client.Models
 @inherits MvvmComponentBase<DoctorsViewsModel>
 @if (ViewModel is null) return;
 
@@ -28,7 +29,7 @@
                             </Button>
                          </DisplayTemplate>
                      </DataGridColumn>
-                     <DataGridColumn Field="@nameof(DoctorModel.License)" Caption="License" CellClass="_ => Css.NoWrap"/>
+                     <DataGridColumn Field="@nameof(DoctorModel.License)" Caption="License" Sortable="false" CellClass="LicenseCellClass"/>
                      <DataGridColumn Field="@nameof(DoctorModel.FullName)" Caption="Name" Width="50%" Sortable="false"/>
                      <DataGridColumn Field="@nameof(DoctorModel.Email)" Caption="E-mail"  Width="50%" Sortable="false"/>
                  </DataGridColumns>

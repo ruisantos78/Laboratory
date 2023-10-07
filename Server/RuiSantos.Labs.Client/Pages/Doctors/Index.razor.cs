@@ -1,5 +1,6 @@
-﻿using Blazing.Mvvm.Components;
+using Blazing.Mvvm.Components;
 using Blazorise.DataGrid;
+using RuiSantos.Labs.Client.Models;
 using RuiSantos.Labs.Client.ViewModels;
 
 namespace RuiSantos.Labs.Client.Pages.Doctors {
@@ -12,5 +13,7 @@ namespace RuiSantos.Labs.Client.Pages.Doctors {
             DataGridHeight = "auto",
             DataGridMaxHeight = $"75vh"
         };
+
+        public Func<DoctorModel?, string> LicenseCellClass => _ => Css.NoWrap;
     }
 }

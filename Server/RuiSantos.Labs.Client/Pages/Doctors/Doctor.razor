@@ -1,10 +1,10 @@
 @page "/doctor"
-@page "/doctor/{id?}"
+@page "/doctor/{license}"
 
 @inherits MvvmComponentBase<DoctorViewModel>
 @if (ViewModel is null) return;
 
-<Container>
+<Container Visibility="FormVisibilty">
     <Card>
         <CardHeader>
             <CardTitle>Add New Doctor</CardTitle>
@@ -15,7 +15,7 @@
                     <Validation>
                         <Field Padding="Padding.Is0" ColumnSize="ColumnSize.Is3">
                             <FieldLabel RequiredIndicator>Medical License</FieldLabel>
-                            <TextEdit Autofocus @bind-Text="ViewModel.License">
+                            <TextEdit Autofocus @bind-Text="ViewModel.License" ReadOnly="ViewModel.Editing">
                                  <Feedback>
                                      <ValidationError />
                                  </Feedback>
@@ -81,7 +81,7 @@
                             <Div Flex="Flex.AlignItems.Stretch">
                                 <Div Flex="Flex.Grow.Is1">
                                     <Validation Validator="ViewModel.ValidateSpecialties">
-                                        <Select  @bind-SelectedValue="ViewModel.SpecialtySelected">
+                                        <Select @bind-SelectedValue="ViewModel.SpecialtySelected">
                                             <ChildContent>
                                                 <SelectItem Value="String.Empty">- Select -</SelectItem>
                                                 <Repeater Items="ViewModel.SpecialtiesOptions">
@@ -122,6 +122,7 @@
                  CommandParameter="validations">
                  Save Changes
              </Button>
+             <Button Type="ButtonType.Button" Color="Color.Danger" Display="RemoveButtonDisplay">Delete</Button>
              <Button Type="ButtonType.Link" Color="Color.Default" To="/doctors">Cancel</Button>
          </ModalFooter>
      </Card>

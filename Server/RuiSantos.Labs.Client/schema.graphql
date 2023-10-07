@@ -16,15 +16,13 @@ type Query {
   "Get information about all doctors."
   doctors(page: PaginationInput!): DoctorsCollection!
   "Get information about a doctor."
-  doctor("id" id: String!): Doctor!
+  doctor("id" license: String!): Doctor
   "Get all medical specialties."
   specialties: [Specialties!]!
 }
 
 "Represents a doctor."
 input DoctorInput {
-  "Doctor Unique Identifier."
-  id: String
   "Doctor license number."
   license: String!
   "First name."
@@ -41,8 +39,6 @@ input DoctorInput {
 
 "Represents a doctor."
 type Doctor {
-  "Doctor Unique Identifier."
-  id: String
   "Doctor license number."
   license: String!
   "First name."

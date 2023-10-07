@@ -1,33 +1,27 @@
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Services;
 using RuiSantos.Labs.GraphQL.Schemas;
-using RuiSantos.Labs.GraphQL.Services;
 
 namespace RuiSantos.Labs.GraphQL.Adapters;
 
 [Adapter(typeof(DoctorSchemaAdapter))]
 public interface IDoctorSchemaAdapter {
     Task<DoctorSchema> StoreAsync(DoctorSchema doctor);
-    Task<DoctorSchema> FindAsync(string id);
+    Task<DoctorSchema?> FindAsync(string license);
     Task<DoctorsCollectionSchema> FindAllAsync(int take, string? paginationToken = null);
 }
 
 internal class DoctorSchemaAdapter: AdapterModelSchema<Doctor, DoctorSchema>, IDoctorSchemaAdapter
 {
-    private readonly ISecurity _security;
     private readonly IDoctorService _service;
 
-    public DoctorSchemaAdapter(
-        ISecurity security,
-        IDoctorService service)
+    public DoctorSchemaAdapter(IDoctorService service)
     {
-        _security = security;
         _service = service;
     }
 
     protected override DoctorSchema GetSchema(Doctor model) => new()
     {
-        Id = _security.Encode(model.Id),
         License = model.License,
         FirstName = model.FirstName,
         LastName = model.LastName,
@@ -38,7 +32,6 @@ internal class DoctorSchemaAdapter: AdapterModelSchema<Doctor, DoctorSchema>, ID
 
     protected override Doctor GetModel(DoctorSchema schema) => new()
     {
-        Id = _security.Decode(schema.Id),
         License = schema.License,
         FirstName = schema.FirstName,
         LastName = schema.LastName,
@@ -47,10 +40,12 @@ internal class DoctorSchemaAdapter: AdapterModelSchema<Doctor, DoctorSchema>, ID
         Specialties = schema.Specialties.ToHashSet()
     };
 
-    public async Task<DoctorSchema> FindAsync(string id) {
-        var doctorId = _security.Decode(id);
-        var doctor = await _service.GetDoctorAsync(doctorId);
-        return GetSchema(doctor ?? new Doctor());
+    public async Task<DoctorSchema?> FindAsync(string license) {
+        var doctor = await _service.GetDoctorByLicenseAsync(license);
+        if (doctor is null)
+            return default;
+
+        return GetSchema(doctor);
     }
 
     public async Task<DoctorsCollectionSchema> FindAllAsync(int take, string? paginationToken)
@@ -73,6 +68,11 @@ internal class DoctorSchemaAdapter: AdapterModelSchema<Doctor, DoctorSchema>, ID
             contactNumbers: schema.Contacts,
             specialties: schema.Specialties
         );
-        return schema;
+
+        var entity = await _service.GetDoctorByLicenseAsync(schema.License);
+        if (entity is null)
+            throw new InvalidOperationException("Failure to store the doctor");
+
+        return GetSchema(entity);
     }
 }

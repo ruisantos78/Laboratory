@@ -5,7 +5,6 @@ using FluentAssertions;
 using Newtonsoft.Json.Linq;
 using RuiSantos.Labs.Data.Dynamodb.Core;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
-using RuiSantos.Labs.GraphQL.Services;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
 using RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
@@ -19,7 +18,6 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
     private readonly HttpClient _client;
     private readonly IDynamoDBContext _context;
     private readonly ITestOutputHelper _output;
-    private readonly ISecurity _security = new Security();
 
     public DoctorsTests(ServiceFixture service, ITestOutputHelper output)
     {
@@ -55,7 +53,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
                     """,
             variables = new
             {
-                id = _security.Encode(doctorId)
+                id = doctorId
             }
         };
 

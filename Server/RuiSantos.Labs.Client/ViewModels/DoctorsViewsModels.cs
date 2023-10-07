@@ -1,8 +1,9 @@
-﻿using System.Collections.ObjectModel;
+using System.Collections.ObjectModel;
 using Blazing.Mvvm.ComponentModel;
 using Blazorise.DataGrid;
 using Blazorise.LoadingIndicator;
 using CommunityToolkit.Mvvm.ComponentModel;
+using RuiSantos.Labs.Client.Models;
 
 namespace RuiSantos.Labs.Client.ViewModels;
 

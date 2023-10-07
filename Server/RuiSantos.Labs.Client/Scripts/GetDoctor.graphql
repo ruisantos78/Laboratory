@@ -1,0 +1,10 @@
+query GetDoctor($license: String!) {
+  doctor(license: $license) {
+    license
+    firstName
+    lastName
+    email
+    contacts
+    specialties
+  }
+}

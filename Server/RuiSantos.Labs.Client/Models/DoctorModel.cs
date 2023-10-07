@@ -1,9 +1,7 @@
-﻿namespace RuiSantos.Labs.Client;
+﻿namespace RuiSantos.Labs.Client.Models;
 
 public class DoctorModel
 {
-    public string? Id { get; init; }
-
     public string License { get; init; } = string.Empty;
 
     public string FirstName { get; init; } = string.Empty;
@@ -18,7 +16,7 @@ public class DoctorModel
 
     public string FullName => $"{LastName}, {FirstName}";
 
-    public string EditUrl => $"/doctors/{Id}";
+    public string EditUrl => $"/doctor/{License}";
 
     public DoctorModel()
     {

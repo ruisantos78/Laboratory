@@ -74,6 +74,9 @@ internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>
     public async Task<Doctor?> FindAsync(Guid doctorId)
     {
         var entity = await Context.LoadAsync<DoctorEntity>(doctorId);
+        if (entity is null)
+            return default;
+        
         return await AsModelAsync(entity);
     }
      

@@ -12,8 +12,8 @@ partial class Query
         => adapter.FindAllAsync(page.Take, page.Token);
 
     [GraphQLDescription("Get information about a doctor.")]
-    public Task<DoctorSchema> GetDoctor(
-        [GraphQLDescription("id")] string id,
+    public Task<DoctorSchema?> GetDoctor(
+        [GraphQLDescription("id")] string license,
         [Service] IDoctorSchemaAdapter adapter) 
-        => adapter.FindAsync(id);
+        => adapter.FindAsync(license);
 }

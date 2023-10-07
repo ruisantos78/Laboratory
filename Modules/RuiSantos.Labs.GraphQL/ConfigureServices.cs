@@ -1,7 +1,7 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using RuiSantos.Labs.GraphQL.Adapters;
-using RuiSantos.Labs.GraphQL.Services;
+
 using Mutation = RuiSantos.Labs.GraphQL.Mutations.Mutation;
 using Query = RuiSantos.Labs.GraphQL.Queries.Query;
 
@@ -20,7 +20,6 @@ public static class ConfigureServices
             .AddQueryType<Query>();
 
         services.AddAdapters();
-        services.AddSingleton<ISecurity, Security>();
 
         return services;
     }
