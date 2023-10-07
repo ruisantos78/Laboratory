@@ -10,26 +10,9 @@ public class DoctorModel
 
     public string Email { get; init; } = string.Empty;
 
-    public List<string> Contacts { get; init; } = new();
+    public IReadOnlyList<string> Contacts { get; init; } = Array.Empty<string>();
 
-    public List<string> Specialties { get; init; } = new();
+    public IReadOnlyList<string> Specialties { get; init; } = Array.Empty<string>();
 
     public string FullName => $"{LastName}, {FirstName}";
-
-    public string EditUrl => $"/doctor/{License}";
-
-    public DoctorModel()
-    {
-        
-    }
-
-    public DoctorModel(IGetDoctors_Doctors_Doctors value): this()
-    {
-        License = value.License;
-        FirstName = value.FirstName;
-        LastName = value.LastName;
-        Email = value.Email;
-        Contacts = value.Contacts.ToList();
-        Specialties = value.Specialties.ToList();
-    }
 }

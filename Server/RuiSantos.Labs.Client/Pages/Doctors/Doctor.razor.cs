@@ -1,13 +1,11 @@
-﻿using Blazing.Mvvm.Components;
-using Blazorise;
+﻿using Blazorise;
 using Microsoft.AspNetCore.Components;
-using RuiSantos.Labs.Client.ViewModels;
 
 namespace RuiSantos.Labs.Client.Pages.Doctors;
 
-public partial class Doctor : MvvmComponentBase<DoctorViewModel>
+partial class Doctor
 {
-    Validations? validations;
+    protected Validations? Validations;
 
     [Parameter] public string License { get; set; } = string.Empty;
 
@@ -17,11 +15,18 @@ public partial class Doctor : MvvmComponentBase<DoctorViewModel>
             await ViewModel.InitializeAsync(License);
     }
 
-    public Visibility FormVisibilty => ViewModel?.Loaded is true
+    public Task<bool> IsValid() => Validations?.ValidateAll() ?? Task.FromResult(false);
+
+    public Visibility FormVisibilty => ViewModel?.Visible is true
         ? Visibility.Visible
         : Visibility.Invisible;
 
     public IFluentDisplay RemoveButtonDisplay => ViewModel?.Editing is true
         ? Display.Block
-        : Display.None;    
+        : Display.None;
+
+    public void ValidateSpecialties(ValidatorEventArgs e) {
+        e.ErrorText = "The doctor must have at least one specialty";
+        e.Status = ViewModel?.Specialties.Count > 0 ? ValidationStatus.Success : ValidationStatus.Error;
+    }
 }

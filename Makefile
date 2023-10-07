@@ -12,6 +12,7 @@ help:
 	@echo ""
 	@echo "Available commands:"
 	@echo ""
+	@echo "  start			Build and start the all containers."
 	@echo "  build-server	Start the DynamoDB and API containers."
 	@echo "  build-client   Start the client container."
 	@echo "  kill			Stop and remove all containers."
@@ -19,6 +20,11 @@ help:
 	@echo "  run			Start and watch the client application on local machine."
 	@echo "  help			Display this help message."
 	@echo ""
+
+start:
+	docker-compose up -d $(AWS_CONTAINER_NAME)
+	docker-compose up -d $(API_CONTAINER_NAME) --build
+	docker-compose up -d $(GUI_CONTAINER_NAME) --build
 
 build-server:	
 	docker-compose up -d $(AWS_CONTAINER_NAME)
@@ -38,4 +44,4 @@ update-client:
 run:
 	dotnet watch run --urls http://localhost:8002 --project Server/RuiSantos.Labs.Client
 
-.PHONY: build run kill update-client run help
+.PHONY: start build-server build-client run kill update-client help

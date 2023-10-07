@@ -1,8 +1,8 @@
-﻿namespace RuiSantos.Labs.Core.Repositories;
+﻿namespace RuiSantos.Labs.Core.Models;
 
 public readonly struct Pagination<TModel>
 {
-    public IEnumerable<TModel> Models { get; init; }
+    public IReadOnlyList<TModel> Models { get; init; }
 
 	public string? PaginationToken { get; init; }
 
@@ -14,7 +14,7 @@ public readonly struct Pagination<TModel>
 
     public Pagination(IEnumerable<TModel> models, string? paginationToken)
     {
-        Models = models;
+        Models = models.ToList();
         PaginationToken = paginationToken;
     }
 }

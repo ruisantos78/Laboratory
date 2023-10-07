@@ -1,5 +1,5 @@
 using FluentAssertions;
-using RuiSantos.Labs.Core.Repositories;
+using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Tests.Asserts.Builders;
 using RuiSantos.Labs.Tests.Asserts.Services;
 
@@ -21,7 +21,7 @@ public class GetAllDoctorsAsyncTests
 
         var expected = new Pagination<Core.Models.Doctor>
         {
-            Models = doctors.Skip(5 * pageNumber).Take(5),
+            Models = doctors.Skip(5 * pageNumber).Take(5).ToArray(),
             PaginationToken = pageNumber < 2 ? Convert.ToBase64String(Guid.NewGuid().ToByteArray()) : default
         };
 

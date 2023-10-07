@@ -1,53 +1,56 @@
 ﻿using System.Collections.ObjectModel;
 using System.ComponentModel.DataAnnotations;
 using Blazing.Mvvm.ComponentModel;
-using Blazorise;
 using Blazorise.LoadingIndicator;
 using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
 using Microsoft.AspNetCore.Components;
-using StrawberryShake;
+using RuiSantos.Labs.Client.Core;
+using RuiSantos.Labs.Client.Services;
 
 namespace RuiSantos.Labs.Client.ViewModels;
 
 public partial class DoctorViewModel : ValidatorViewModelBase
 {
-	private readonly ILabsClient _client;
+    private readonly IDoctorService _doctorService;
+    private readonly IMedicalSpecialtiesService _medicalSpecialtiesService;
     private readonly NavigationManager _navigationManager;
     private readonly ILoadingIndicatorService _loadingIndicatorService;
     private readonly ILogger<DoctorViewModel> _logger;
 
 	[Required]
-	[ObservableProperty] private string _license = string.Empty;
+	[ObservableProperty] string _license = string.Empty;
 
 	[Required]
-	[ObservableProperty] private string _firstName = string.Empty;
+	[ObservableProperty] string _firstName = string.Empty;
 
 	[Required]
-	[ObservableProperty] private string _lastName = string.Empty;
+	[ObservableProperty] string _lastName = string.Empty;
 
 	[Required, EmailAddress]
-	[ObservableProperty] private string _email = string.Empty;
+	[ObservableProperty] string _email = string.Empty;
 
-	[ObservableProperty] private List<string> _specialties = new();
-	[ObservableProperty] private List<string> _contacts = new();
+	[ObservableProperty] List<string> _specialties = new();
+	[ObservableProperty] List<string> _contacts = new();
 	
-	[ObservableProperty] private string _contactSelected = string.Empty;
-	[ObservableProperty] private string _specialtySelected = string.Empty;
+	[ObservableProperty] string _contactSelected = string.Empty;
+	[ObservableProperty] string _specialtySelected = string.Empty;
 
-	[ObservableProperty] private bool _loaded = false;
-	[ObservableProperty] private bool _editing = false;
+	[ObservableProperty] bool _visible;
+	[ObservableProperty] bool _editing;
 
 	public ObservableCollection<string> SpecialtiesOptions { get; } = new();
 
     public DoctorViewModel(
-		ILabsClient client,
+		IDoctorService doctorService,
+		IMedicalSpecialtiesService medicalSpecialtiesService,
 		NavigationManager navigationManager,
 		ILoadingIndicatorService loadingIndicatorService,
 		ILogger<DoctorViewModel> logger
 	)
 	{
-		_client = client;
+        _doctorService = doctorService;
+        _medicalSpecialtiesService = medicalSpecialtiesService;
         _navigationManager = navigationManager;
         _loadingIndicatorService = loadingIndicatorService;
         _logger = logger;
@@ -61,6 +64,7 @@ public partial class DoctorViewModel : ValidatorViewModelBase
 
 		Contacts.Insert(0, ContactSelected.Trim());
 		ContactSelected = string.Empty;
+
 		NotifyStateChanged();
 
 		return Task.CompletedTask;
@@ -103,30 +107,24 @@ public partial class DoctorViewModel : ValidatorViewModelBase
 	}
 
 	[RelayCommand]
-	public async Task Store(Validations? validations)
+	public async Task Store(Func<Task<bool>> validations)
 	{
 		await _loadingIndicatorService.Show();
 		try
 		{
-			await AddContact();
-			await AddSpecialty();
+			FillRemainListItems();
 
-			if (validations is not null && await validations.ValidateAll() is false)
+			if (await validations() is false)
 				return;
 
-			var operationResult = await _client.SetDoctor.ExecuteAsync(new SetDoctorInput
-            {
-				Doctor = new() {
-					License = License,
-					FirstName = FirstName,
-					LastName = LastName,
-					Email = Email,
-					Contacts = Contacts,
-					Specialties = Specialties
-				}
-			});
-
-			operationResult.EnsureNoErrors();			
+			await _doctorService.SetDoctorAsync(
+				license: License,
+				firstName: FirstName,
+				lastName: LastName,
+				email: Email,
+				contacts: Contacts,
+				specialties: Specialties
+			);
 		}
 		catch(Exception ex)
 		{
@@ -141,19 +139,18 @@ public partial class DoctorViewModel : ValidatorViewModelBase
         _navigationManager.NavigateTo("/doctors");
     }
 
-	public void ValidateSpecialties(ValidatorEventArgs e) {
-		e.ErrorText = "The doctor must have at least one specialty";
-		e.Status = Specialties.Count > 0 ? ValidationStatus.Success : ValidationStatus.Error;
-	}
-
-	public async Task InitializeAsync(string? id)
+	public async Task InitializeAsync(string? license)
 	{
 		await _loadingIndicatorService.Show();
 		try
 		{
-			await InitializeMedicalSpecialtiesOptionsAsync();
+			await _medicalSpecialtiesService.GetMedicalSpecialtiesAsync()
+				.ContinueWith(task => task.Result.ForEach(SpecialtiesOptions.Add));
 
-			Loaded = await TryGetDoctorAsync(id);			
+			if (!string.IsNullOrWhiteSpace(license) && await TryGetDoctorAsync(license) is false)
+				return;
+
+			Visible = true;
 		}
 		finally
 		{
@@ -161,27 +158,16 @@ public partial class DoctorViewModel : ValidatorViewModelBase
 		}
 	}
 
-    private async Task InitializeMedicalSpecialtiesOptionsAsync()
-    {
-        var response = await _client.GetMedicalSpecialties.ExecuteAsync();
-        response.Data?.Specialties
-            .Select(x => x.Description)
-            .ToList()
-            .ForEach(SpecialtiesOptions.Add);
-    }
-
-	private async Task<bool> TryGetDoctorAsync(string? id)
+	private async Task<bool> TryGetDoctorAsync(string license)
 	{
-        if (string.IsNullOrWhiteSpace(id))
-            return true;
-
-        var response = await _client.GetDoctor.ExecuteAsync(id);
-		if (response.Data?.Doctor is not {} doctor)
+		var response = await _doctorService.GetDoctorByLicenseAsync(license);
+		if (response is not {} doctor)
 		{
             _navigationManager.NavigateTo("/doctors");
             return false;
         }
 			
+		Editing = true;
 		License = doctor.License;
 		FirstName = doctor.FirstName;
 		LastName = doctor.LastName;
@@ -190,7 +176,22 @@ public partial class DoctorViewModel : ValidatorViewModelBase
 		Specialties = doctor.Specialties.ToList();
 		Specialties.ForEach(x => SpecialtiesOptions.Remove(x));
 
-		Editing = true;
 		return true;
+	}
+
+	private void FillRemainListItems()
+	{
+		if (!string.IsNullOrWhiteSpace(ContactSelected))
+		{
+			Contacts.Add(ContactSelected.Trim());
+			ContactSelected = string.Empty;
+		}
+
+		if (!string.IsNullOrWhiteSpace(SpecialtySelected))
+		{
+			Specialties.Add(SpecialtySelected.Trim());
+			SpecialtiesOptions.Remove(SpecialtySelected);
+			SpecialtySelected = string.Empty;
+		}
 	}
 }

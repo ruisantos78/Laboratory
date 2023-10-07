@@ -1,10 +1,8 @@
-﻿using Blazing.Mvvm.Components;
-using RuiSantos.Labs.Client.ViewModels;
+﻿using Microsoft.AspNetCore.Components.Web;
 
-namespace RuiSantos.Labs.Client.Pages
+namespace RuiSantos.Labs.Client.Pages;
+
+partial class Index
 {
-    public partial class Index : MvvmComponentBase<IndexViewModel>
-    {
 
-    }
 }

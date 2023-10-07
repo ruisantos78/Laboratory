@@ -1,19 +1,21 @@
-using Blazing.Mvvm.Components;
 using Blazorise.DataGrid;
+using RuiSantos.Labs.Client.Core;
 using RuiSantos.Labs.Client.Models;
-using RuiSantos.Labs.Client.ViewModels;
 
-namespace RuiSantos.Labs.Client.Pages.Doctors {
-    public partial class Index: MvvmComponentBase<DoctorsViewsModel>
+namespace RuiSantos.Labs.Client.Pages.Doctors;
+
+partial class Index
+{
+    public bool NoSelectable(RowSelectableEventArgs<DoctorModel> e) => false;
+
+    public readonly VirtualizeOptions VirtualizeOptions = new()
     {
-        public bool NoSelectable(RowSelectableEventArgs<DoctorModel> e) => false;
+        DataGridHeight = "auto",
+        DataGridMaxHeight = "75vh"
+    };
 
-        public readonly VirtualizeOptions VirtualizeOptions = new()
-        {
-            DataGridHeight = "auto",
-            DataGridMaxHeight = $"75vh"
-        };
+    public Func<DoctorModel?, string> LicenseCellClass => _ => Css.NoWrap;
 
-        public Func<DoctorModel?, string> LicenseCellClass => _ => Css.NoWrap;
-    }
+    public string NewLink() => "/doctor";
+    public string EditLink(string? license) => $"/doctor/{license}";
 }

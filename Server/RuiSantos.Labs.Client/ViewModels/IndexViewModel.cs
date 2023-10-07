@@ -8,8 +8,8 @@ namespace RuiSantos.Labs.Client.ViewModels;
 
 public partial class IndexViewModel : ViewModelBase
 {
-    private readonly IProfilesOperations profilesOperations;
-    private readonly NavigationManager navigationManager;
+    private readonly IProfilesOperations _profilesOperations;
+    private readonly NavigationManager _navigationManager;
 
     [ObservableProperty] private string _profile = string.Empty ;
     [ObservableProperty] private string _operation = string.Empty;
@@ -22,33 +22,33 @@ public partial class IndexViewModel : ViewModelBase
         NavigationManager navigationManager
     )
     {
-        this.profilesOperations = profilesOperations;
-        this.navigationManager = navigationManager;
+        _profilesOperations = profilesOperations;
+        _navigationManager = navigationManager;
     }
 
     [RelayCommand]
     public Task Confirm()
     {
         if (Guid.TryParse(Operation, out var operation))
-            navigationManager.NavigateTo(profilesOperations.GetRoute(operation));
+            _navigationManager.NavigateTo(_profilesOperations.GetRoute(operation));
 
         return Task.CompletedTask;
     }
 
     partial void OnProfileChanged(string value)
     {
-        this.Operation = string.Empty;
-        this.Operations = profilesOperations.GetOperations(value);
+        Operation = string.Empty;
+        Operations = _profilesOperations.GetOperations(value);
     }
 
     partial void OnOperationChanged(string value)
     {
-        this.DisableConfirmButton = string.IsNullOrEmpty(value);
+        DisableConfirmButton = string.IsNullOrEmpty(value);
     }
 
     public override Task Loaded()
     {
-        Profiles = profilesOperations.GetAllProfiles();
+        Profiles = _profilesOperations.GetAllProfiles();
         return Task.CompletedTask;
     }
 }

@@ -1,4 +1,4 @@
-﻿namespace RuiSantos.Labs.Client;
+﻿namespace RuiSantos.Labs.Client.Core;
 
 public static class Css
 {

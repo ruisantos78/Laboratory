@@ -3,50 +3,42 @@ using Blazing.Mvvm.ComponentModel;
 using Blazorise.DataGrid;
 using Blazorise.LoadingIndicator;
 using CommunityToolkit.Mvvm.ComponentModel;
+using RuiSantos.Labs.Client.Core;
 using RuiSantos.Labs.Client.Models;
+using RuiSantos.Labs.Client.Services;
 
 namespace RuiSantos.Labs.Client.ViewModels;
 
 public partial class DoctorsViewsModel : ViewModelBase
 {
-	private readonly ILabsClient client;
-	private readonly ILoadingIndicatorService loadingIndicatorService;
+    private readonly IDoctorService _doctorService;
+    private readonly ILoadingIndicatorService _loadingIndicatorService;
 
-	private string? paginationToken = null;
+	private string? _paginationToken;
 
 	[ObservableProperty] ObservableCollection<DoctorModel> _doctors = new();
 
 	public DoctorsViewsModel(
-		ILabsClient client,
+		IDoctorService doctorService,
 		ILoadingIndicatorService loadingIndicatorService)
 	{
-		this.client = client;
-		this.loadingIndicatorService = loadingIndicatorService;
+        _doctorService = doctorService;
+        _loadingIndicatorService = loadingIndicatorService;
 	}
 
 	public async Task ReadData(DataGridReadDataEventArgs<DoctorModel> e)
 	{
-		await loadingIndicatorService.Show();
+		await _loadingIndicatorService.Show();
 		try
 		{
-			var result = await client.GetDoctors.ExecuteAsync(new()
-			{
-				Take = e.VirtualizeCount,
-				Token = paginationToken
-			});
+			var pagination = await _doctorService.GetDoctorsAsync(e.VirtualizeCount, _paginationToken);
 
-			if (result?.Data?.Doctors is null)
-				return;
-
-			result.Data.Doctors.Doctors.Select(x => new DoctorModel(x))
-				.ToList()
-				.ForEach(Doctors.Add);
-
-			paginationToken = result.Data.Doctors.PaginationToken;
+			_paginationToken = pagination.PaginationToken;
+			pagination.Models.ForEach(Doctors.Add);
 		}
 		finally
 		{
-			await loadingIndicatorService.Hide();
+			await _loadingIndicatorService.Hide();
 		}
 	}
 }

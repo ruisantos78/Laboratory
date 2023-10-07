@@ -1,27 +1,29 @@
 ﻿@page "/"
 @inherits MvvmComponentBase<IndexViewModel>
-@if (ViewModel is null) return;
 
-<Container>
-    <Jumbotron Background="Background.Light">
-        <JumbotronSubtitle>Select your user story</JumbotronSubtitle>
-        <Divider />
-        <Paragraph>
-            <Select @bind-SelectedValue="ViewModel.Profile">
-                <SelectItem>- Select your actor -</SelectItem>
-                <Repeater Items="ViewModel.Profiles">
-                    <SelectItem Value="@context">@context</SelectItem>
-                </Repeater>
-            </Select>
-            <Select @bind-SelectedValue="ViewModel.Operation">
-                <SelectItem>- Select your action -</SelectItem>
-                <Repeater Items="ViewModel.Operations">
-                    <SelectItem Value="@context.Id">@context.DisplayName</SelectItem>
-                </Repeater>
-            </Select>
-        </Paragraph>
-        <Paragraph>
-            <Button Color="Color.Primary" @onclick="ViewModel.Confirm" Disabled="ViewModel.DisableConfirmButton">Confirm</Button>
-        </Paragraph>
-    </Jumbotron>
-</Container>
+@if (ViewModel is not null)
+{
+    <Container>
+        <Jumbotron Background="Background.Light">
+            <JumbotronSubtitle>Select your user story</JumbotronSubtitle>
+            <Divider/>
+            <Paragraph>
+                <Select @bind-SelectedValue="ViewModel.Profile">
+                    <SelectItem>- Select your actor -</SelectItem>
+                    <Repeater Items="ViewModel.Profiles">
+                        <SelectItem Value="@context">@context</SelectItem>
+                    </Repeater>
+                </Select>
+                <Select @bind-SelectedValue="ViewModel.Operation">
+                    <SelectItem>- Select your action -</SelectItem>
+                    <Repeater Items="ViewModel.Operations">
+                        <SelectItem Value="@context.Id">@context.DisplayName</SelectItem>
+                    </Repeater>
+                </Select>
+            </Paragraph>
+            <Paragraph>
+                <Button Color="Color.Primary" @onclick="ViewModel.Confirm" Disabled="ViewModel.DisableConfirmButton">Confirm</Button>
+            </Paragraph>
+        </Jumbotron>
+    </Container>
+}

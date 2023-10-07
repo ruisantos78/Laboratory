@@ -1,11 +1,17 @@
-﻿using Blazing.Mvvm.Components;
-using Blazorise.DataGrid;
-using RuiSantos.Labs.Client.ViewModels;
+﻿using Blazorise.DataGrid;
+using Microsoft.AspNetCore.Components.Web;
 
-namespace RuiSantos.Labs.Client.Pages.Admin
+namespace RuiSantos.Labs.Client.Pages.Admin;
+
+partial class Specialties
 {
-    public partial class Specialties : MvvmComponentBase<MedicalSpecialtiesViewModel>
+    public bool NoSelectable(RowSelectableEventArgs<String> e) => false;
+
+    public Task OnInputSpecialtyKeyPress(KeyboardEventArgs e)
     {
-        public bool NoSelectable(RowSelectableEventArgs<String> e) => false;
+        if (e.Key is "Enter" && !string.IsNullOrWhiteSpace(ViewModel?.InputSpecialty))
+            ViewModel.SetInputSpecialty(ViewModel.InputSpecialty);
+
+        return Task.CompletedTask;
     }
 }

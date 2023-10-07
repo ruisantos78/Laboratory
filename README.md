@@ -79,6 +79,7 @@ GraphQL documentation is available at `http://localhost:8001/graphql`.
 
 For simplified project management, we provide a Makefile with the following commands:
 
+- make start: Built and start all containers.
 - make build-server: Start the DynamoDB and API containers.
 - make build-client: Start the client container.
 - make kill: Stop and remove all containers.
