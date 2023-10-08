@@ -21,7 +21,7 @@ public class RemoveMedicalSpecialtiesAsyncTests
         await service.RemoveMedicalSpecialtiesAsync(specialty);
 
         // Assert 
-        asserts.ShouldNotLogError();
+        asserts.ShouldLogError(false);
 
         await asserts.ShouldRemoveAsync(specialty);        
     }

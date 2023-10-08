@@ -28,7 +28,7 @@ public class CreateDoctorAsyncTests
         await service.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties);
 
         // Assert
-        asserts.ShouldNotLogError();
+        asserts.ShouldLogError(false);
         
         await asserts.ShouldAddAsync(x =>
             x.License == license &&
@@ -81,6 +81,6 @@ public class CreateDoctorAsyncTests
             .Where(ex => ex.Errors.Count(x => x.PropertyName == propertyName) == 1);
 
         // Assert
-        asserts.ShouldNotLogError();
+        asserts.ShouldLogError(false);
     }
 }

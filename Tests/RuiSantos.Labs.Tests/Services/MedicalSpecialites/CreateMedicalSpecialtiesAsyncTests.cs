@@ -27,7 +27,7 @@ public class CreateMedicalSpecialtiesAsyncTests
         await service.CreateMedicalSpecialtiesAsync(specialties);
         
         // Assert 
-        asserts.ShouldNotLogError();
+        asserts.ShouldLogError(false);
 
         await asserts.ShouldAddAsync(specialties);        
     }

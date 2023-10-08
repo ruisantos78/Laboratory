@@ -7,19 +7,29 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appointment>
+internal interface IAppointmentAdapter
 {
-    public AppointmentAdapter(IAmazonDynamoDB client) : base(client) { }
+    Task<Appointment?> FindByPatientAsync(Patient patient, DateTime dateTime);
+    Task<Appointment?> FindByDoctorAsync(Doctor doctor, DateTime dateTime);
+    IAsyncEnumerable<Appointment> LoadByDoctorAsync(Doctor doctor, DateOnly date);
+    Task RemoveAsync(Appointment appointment);
+    Task StoreAsync(Doctor doctor, Patient patient, DateTime dateTime);
+}
+
+internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appointment>, IAppointmentAdapter
+{
+    public AppointmentAdapter(IAmazonDynamoDB context) : base(context) { }
 
     protected override async Task<AppointmentsEntity> AsEntityAsync(Appointment model)
     {
         var entity = await Context.LoadAsync<AppointmentsEntity>(model.Id);
-        return new() {
+        return new()
+        {
             AppointmentId = model.Id,
             AppointmentDateTime = model.GetDateTime(),
             DoctorId = entity?.DoctorId ?? Guid.Empty,
             PatientId = entity?.PatientId ?? Guid.Empty
-        };      
+        };
     }
 
     protected override Task<Appointment> AsModelAsync(AppointmentsEntity entity)
@@ -50,7 +60,7 @@ internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appoi
                 },
                 ExpressionAttributeValues = {
                     {":patientId", patient.Id},
-                    {":dateTime", dateTimeString}                    
+                    {":dateTime", dateTimeString}
                 }
             }
         };
@@ -125,7 +135,7 @@ internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appoi
     }
 
     public Task RemoveAsync(Appointment appointment)
-    {        
+    {
         return Context.DeleteAsync<AppointmentsEntity>(appointment.Id);
     }
 

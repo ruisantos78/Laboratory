@@ -1,4 +1,3 @@
-using Amazon.DynamoDBv2;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
@@ -7,13 +6,15 @@ namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
 public class DoctorRepository : IDoctorRepository
 {
-    private readonly DoctorAdapter _doctorAdapter;
-    private readonly Lazy<AppointmentAdapter> _appointmentAdapter;
+    private readonly IDoctorAdapter _doctorAdapter;
+    private readonly IAppointmentAdapter _appointmentAdapter;
 
-    public DoctorRepository(IAmazonDynamoDB client)
+    internal DoctorRepository(
+        IDoctorAdapter doctorAdapter,
+        IAppointmentAdapter appointmentAdapter)
     {
-        _doctorAdapter = new DoctorAdapter(client);
-        _appointmentAdapter = new Lazy<AppointmentAdapter>(new AppointmentAdapter(client));
+        _doctorAdapter = doctorAdapter;
+        _appointmentAdapter = appointmentAdapter;
     }
 
     public Task<Doctor?> FindAsync(Guid doctorId)
@@ -28,14 +29,12 @@ public class DoctorRepository : IDoctorRepository
 
     public async IAsyncEnumerable<DoctorSchedule> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date)
     {
-        var appointmentAdapter = _appointmentAdapter.Value;            
-
         await foreach (var doctor in _doctorAdapter.LoadBySpecialtyAsync(specialty))
         {
             if (doctor.OfficeHours.All(h => h.Week != date.DayOfWeek))
                 continue;
                                     
-            await foreach (var appointment in appointmentAdapter.LoadByDoctorAsync(doctor, date)) 
+            await foreach (var appointment in _appointmentAdapter.LoadByDoctorAsync(doctor, date)) 
             {
                  var availableTimes = doctor.OfficeHours
                      .Where(x => x.Week == date.DayOfWeek)

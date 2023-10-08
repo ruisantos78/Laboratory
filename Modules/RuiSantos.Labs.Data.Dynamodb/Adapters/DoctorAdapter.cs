@@ -3,7 +3,6 @@ using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using Newtonsoft.Json.Linq;
 using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Data.Dynamodb.Core;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
@@ -11,9 +10,24 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>
+internal interface IDoctorAdapter 
 {
-    const int DefaultPageSize = 25;
+    Task<Doctor?> FindAsync(Guid doctorId);
+
+    Task<Doctor?> FindByAppointmentAsync(Appointment appointment);
+
+    Task<Doctor?> FindByLicenseAsync(string license);
+
+    IAsyncEnumerable<Doctor> LoadBySpecialtyAsync(string specialty);
+
+    Task<Pagination<Doctor>> LoadByLicenseAsync(int pageSize = DoctorAdapter.DefaultPageSize, string? paginationToken = null);
+
+    Task StoreAsync(Doctor doctor);
+}
+
+internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>, IDoctorAdapter
+{
+    internal const int DefaultPageSize = 25;
 
     public DoctorAdapter(IAmazonDynamoDB client) : base(client) { }
 

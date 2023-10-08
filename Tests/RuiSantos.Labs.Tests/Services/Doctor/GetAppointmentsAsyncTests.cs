@@ -40,7 +40,7 @@ public class GetAppointmentsAsyncTests
         // Assert        
         result.Should().BeEquivalentTo(appointments);        
 
-        asserts.ShouldNotLogError();    
+        asserts.ShouldLogError(false);    
     }
 
     [Fact(DisplayName = "An empty list should be returned when the doctor is not registred.")]
@@ -59,7 +59,7 @@ public class GetAppointmentsAsyncTests
         // Assert        
         result.Should().BeEmpty();        
 
-        asserts.ShouldNotLogError();    
+        asserts.ShouldLogError(false);   
     }
 
     [Fact(DisplayName = "An empty list should be returned when the doctor has no appointments for the given date.")]
@@ -80,7 +80,7 @@ public class GetAppointmentsAsyncTests
         // Assert        
         result.Should().BeEmpty();        
 
-        asserts.ShouldNotLogError();    
+        asserts.ShouldLogError(false);   
     }
 
     [Fact(DisplayName = "A log should be written when an unhandled exception occurs.")]

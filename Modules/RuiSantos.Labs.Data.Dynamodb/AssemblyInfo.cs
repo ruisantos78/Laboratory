@@ -2,4 +2,4 @@
 
 [assembly: InternalsVisibleTo("RuiSantos.Labs.Infrastrucutre.Tests")]
 [assembly: InternalsVisibleTo("RuiSantos.Labs.Tests")]
-
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]

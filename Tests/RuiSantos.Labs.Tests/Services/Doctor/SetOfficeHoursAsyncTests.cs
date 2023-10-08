@@ -36,7 +36,7 @@ public class SetOfficeHoursAsyncTests
         await service.SetOfficeHoursAsync(doctor.Id, dayOfWeek, officeHours);
 
         // Assert
-        asserts.ShouldNotLogError();
+        asserts.ShouldLogError(false);
 
         await asserts.ShouldStoreAsync(x =>
             x.Id == doctor.Id &&
@@ -65,7 +65,7 @@ public class SetOfficeHoursAsyncTests
         await service.SetOfficeHoursAsync(doctor.Id, dayOfWeek, officeHours);
 
         // Assert
-        asserts.ShouldNotLogError();
+        asserts.ShouldLogError(false);
 
         await asserts.ShouldStoreAsync(x => 
             x.Id == doctor.Id && 
@@ -93,9 +93,9 @@ public class SetOfficeHoursAsyncTests
             .ThrowAsync<ValidationFailException>()
             .WithMessage(MessageResources.DoctorLicenseNotFound);  
 
-        asserts.ShouldNotLogError();
+        asserts.ShouldLogError(false);
 
-        await asserts.ShouldNotStoreAsync(x => x.Id == doctorId);       
+        await asserts.ShouldStoreAsync(x => x.Id == doctorId, false);
     }   
 
     [Fact(DisplayName = "A log should be written when fails to find a doctor")]
@@ -117,6 +117,6 @@ public class SetOfficeHoursAsyncTests
 
         asserts.ShouldLogError();
 
-        await asserts.ShouldNotStoreAsync(x => x.Id == doctorId);       
+        await asserts.ShouldStoreAsync(x => x.Id == doctorId, false);
     }
 }

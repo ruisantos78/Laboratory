@@ -3,6 +3,7 @@ using Amazon.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using RuiSantos.Labs.Core.Repositories;
+using RuiSantos.Labs.Data.Dynamodb.Adapters;
 using RuiSantos.Labs.Data.Dynamodb.Repositories;
 
 namespace RuiSantos.Labs.Data.Dynamodb;
@@ -19,11 +20,14 @@ public static class ConfigureServices
 
         services.AddHostedService<DatabaseServices>();
 
+        services.AddTransient<IDoctorAdapter, DoctorAdapter>();
+        services.AddTransient<IAppointmentAdapter, AppointmentAdapter>();
+
         services.AddTransient<IMedicalSpecialityRepository, MedicalSpecialityRepository>();
         services.AddTransient<IPatientRepository, PatientRepository>();
         services.AddTransient<IDoctorRepository, DoctorRepository>();
         services.AddTransient<IAppointamentsRepository, AppointamentsRepository>();
-
+        
         return services;
     }
 }

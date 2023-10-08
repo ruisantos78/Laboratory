@@ -1,7 +1,4 @@
-﻿using System.Diagnostics;
-using Microsoft.Extensions.Logging;
-
-namespace RuiSantos.Labs.Core;
+﻿namespace RuiSantos.Labs.Core;
 
 /// <summary>
 /// Internal extension methods.

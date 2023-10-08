@@ -4,7 +4,7 @@ using RuiSantos.Labs.Core.Services;
 
 namespace RuiSantos.Labs.Tests.Asserts.Services;
 
-internal class MedicalSpecialtiesServiceAsserts: AssertsBase<MedicalSpecialtiesService>
+internal class MedicalSpecialtiesServiceAsserts: LoggerAsserts<MedicalSpecialtiesService>
 {
     private readonly IMedicalSpecialityRepository _repository = Substitute.For<IMedicalSpecialityRepository>();
 
