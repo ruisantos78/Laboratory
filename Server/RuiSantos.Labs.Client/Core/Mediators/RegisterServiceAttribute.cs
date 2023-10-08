@@ -1,21 +1,21 @@
-﻿// ReSharper disable once CheckNamespace
-namespace RuiSantos.Labs.Client;
+﻿namespace RuiSantos.Labs.Client.Core.Mediators;
 
 [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface)]
-internal class RegisterServiceAttribute: Attribute
+internal class RegisterServiceAttribute : Attribute
 {
     public InstanceType InstanceType { get; init; } = InstanceType.Transient;
 
     public Type? ImplementationType { get; init; }
 
-    public RegisterServiceAttribute() { 
+    public RegisterServiceAttribute()
+    {
         ImplementationType = null;
     }
 
     public RegisterServiceAttribute(Type implementationType)
     {
         ImplementationType = implementationType;
-    } 
+    }
 
     public IServiceCollection Register(Type dependency, IServiceCollection services)
     {
@@ -35,5 +35,5 @@ internal class RegisterServiceAttribute: Attribute
 
             _ => services
         };
-    }         
+    }
 }

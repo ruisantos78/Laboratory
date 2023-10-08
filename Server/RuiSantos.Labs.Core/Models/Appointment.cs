@@ -1,4 +1,6 @@
-﻿namespace RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Core.Extensions;
+
+namespace RuiSantos.Labs.Core.Models;
 
 /// <summary>
 /// Represents an appointment.
@@ -54,7 +56,7 @@ public class Appointment
     /// Creates a new instance of the appointment.
     /// </summary>
     /// <param name="date">The date of the appointment.</param>
-    public Appointment(DateTime date): this(Guid.NewGuid(), date)
+    public Appointment(DateTime date) : this(Guid.NewGuid(), date)
     {
     }
 

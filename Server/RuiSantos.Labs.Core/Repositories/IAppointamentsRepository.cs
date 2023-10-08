@@ -14,7 +14,7 @@ public interface IAppointamentsRepository
     /// <param name="dateTime">The date and time to retrieve information for.</param>
     /// <returns>An instance of representing the asynchronous operation</returns>
     Task<Appointment?> GetAsync(Patient patient, DateTime dateTime);
-    
+
     /// <summary>
     /// Retrieves appointment data for a doctor. This will return an empty object if none exists.
     /// </summary>

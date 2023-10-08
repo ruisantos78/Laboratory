@@ -39,7 +39,7 @@ public class SchedulesController : Controller
         catch (Exception ex)
         {
             return this.Failure(ex);
-        }    
+        }
     }
 
     /// <summary>
@@ -56,8 +56,8 @@ public class SchedulesController : Controller
         try
         {
             await _service.CreateAppointmentAsync(
-                request.PatientSecuritySocialNumber, 
-                request.DoctorId, 
+                request.PatientSecuritySocialNumber,
+                request.DoctorId,
                 request.Date);
 
             return this.Success();
@@ -84,10 +84,10 @@ public class SchedulesController : Controller
         try
         {
             await _service.DeleteAppointmentAsync(
-                request.PatientSecuritySocialNumber, 
-                request.DoctorId, 
+                request.PatientSecuritySocialNumber,
+                request.DoctorId,
                 request.Date);
-                
+
             return Ok();
         }
         catch (Exception ex)

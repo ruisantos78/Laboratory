@@ -2,7 +2,7 @@ using RuiSantos.Labs.Core.Models;
 
 namespace RuiSantos.Labs.Tests.Asserts.Builders;
 
-internal class DoctorBuilder
+internal sealed class DoctorBuilder
 {
     private readonly Doctor _model;
 
@@ -16,13 +16,14 @@ internal class DoctorBuilder
 
     public Doctor Build() => _model;
 
-    public DoctorBuilder With(string? license = null, string? email = null, string? firstName = null, string? lastName = null)
+    public DoctorBuilder With(string? license = null, string? email = null, string? firstName = null,
+        string? lastName = null)
     {
         _model.License = license ?? _model.License;
         _model.Email = email ?? _model.Email;
         _model.FirstName = firstName ?? _model.FirstName;
         _model.LastName = lastName ?? _model.LastName;
-        
+
         return this;
     }
 

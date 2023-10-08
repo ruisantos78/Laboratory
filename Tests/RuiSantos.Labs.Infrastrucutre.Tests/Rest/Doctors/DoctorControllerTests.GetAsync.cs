@@ -1,5 +1,4 @@
 using System.Net;
-using FluentAssertions;
 using RuiSantos.Labs.Api.Contracts;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 

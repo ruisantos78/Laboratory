@@ -29,7 +29,7 @@ public class Doctor : Person
     /// <summary>
     /// Creates a new instance of the <see cref="Doctor"/> class.
     /// </summary>
-    public Doctor() : base()
+    public Doctor()
     {
         License = string.Empty;
         Specialties = new HashSet<string>();

@@ -15,7 +15,7 @@ public interface IDoctorRepository
     /// Finds all doctors. Asynchronously invokes the search. Returns a task that represents the asynchronous operation.
     /// </summary>
     /// <param name="take">Limit the number of results returned</param>
-    /// <param name="lastLicense">Last license to search</param>
+    /// <param name="paginationToken">Pagination token</param>
     /// <returns></returns>
     Task<Pagination<Doctor>> FindAllAsync(int take, string? paginationToken);
 

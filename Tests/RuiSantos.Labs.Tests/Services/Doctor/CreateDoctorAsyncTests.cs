@@ -22,14 +22,14 @@ public class CreateDoctorAsyncTests
     {
         // Arrange
         var asserts = new DoctorsServiceAsserts();
-        
+
         // Act
         var service = asserts.GetService();
         await service.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties);
 
         // Assert
         asserts.ShouldLogError(false);
-        
+
         await asserts.ShouldAddAsync(x =>
             x.License == license &&
             x.Email == email &&
@@ -51,7 +51,8 @@ public class CreateDoctorAsyncTests
 
         // Act
         var service = asserts.GetService();
-        await service.Awaiting(x => x.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties))
+        await service.Awaiting(x =>
+                x.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties))
             .Should()
             .ThrowAsync<ServiceFailException>()
             .WithMessage(MessageResources.DoctorSetFail);
@@ -65,7 +66,7 @@ public class CreateDoctorAsyncTests
     [InlineData("Email", "ABC123", "<invalid email>", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("Email", "ABC123", null, "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("FirstName", "ABC123", "joe.doe@mail.com", null, "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
-    [InlineData("LastName", "ABC123", "joe.doe@mail.com", "Joe", null, new[] { "555-5555" }, new[] { "Cardiologist" })]    
+    [InlineData("LastName", "ABC123", "joe.doe@mail.com", "Joe", null, new[] { "555-5555" }, new[] { "Cardiologist" })]
     public async Task CreateDoctorAsync_WithInvalidInformation_ThrowsValidationFailException(string propertyName,
         string license, string email, string firstName, string lastName, string[] contactNumbers,
         string[] specialties)
@@ -75,7 +76,8 @@ public class CreateDoctorAsyncTests
 
         // Act
         var service = asserts.GetService();
-        await service.Awaiting(x => x.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties))
+        await service.Awaiting(x =>
+                x.CreateDoctorAsync(license, email, firstName, lastName, contactNumbers, specialties))
             .Should()
             .ThrowAsync<ValidationFailException>()
             .Where(ex => ex.Errors.Count(x => x.PropertyName == propertyName) == 1);

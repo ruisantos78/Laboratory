@@ -24,7 +24,7 @@ public class SpecialtiesController : Controller
     /// <response code="400">If the request object contains invalid arguments.</response>
     [HttpGet]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(string[]))]
-    [ProducesResponseType(StatusCodes.Status204NoContent)]    
+    [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
     public async Task<IActionResult> GetAsync()
     {
@@ -48,7 +48,7 @@ public class SpecialtiesController : Controller
     [HttpPost]
     [ProducesResponseType(StatusCodes.Status201Created)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> PostAsync([FromBody]List<string> descriptions)
+    public async Task<IActionResult> PostAsync([FromBody] List<string> descriptions)
     {
         try
         {

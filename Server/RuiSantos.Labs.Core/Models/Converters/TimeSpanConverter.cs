@@ -15,9 +15,9 @@ public class TimeSpanConverter : JsonConverter
     {
         if (value is not IEnumerable<TimeSpan> timespans)
             throw new JsonSerializationException("Expected an IEnumerable<TimeSpan> but got something else");
-        
-        var jsonArray = new JArray(timespans.Select(x => x.ToString("g")));
-        jsonArray.WriteTo(writer);
+
+        new JArray(timespans.Select(x => x.ToString("g")))
+            .WriteTo(writer);
     }
 
     /// <summary>
@@ -28,7 +28,8 @@ public class TimeSpanConverter : JsonConverter
     /// <param name="existingValue">The existing value of property being read.</param>
     /// <param name="serializer">The serializer to use for deserialization. Only public for compatibility.</param>
     /// <returns>The time span ( s ) read from the reader. The list can be empty but never null. If null is returned the reader is positioned on the property with the name of the property</returns>
-    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue, JsonSerializer serializer)
+    public override object ReadJson(JsonReader reader, Type objectType, object? existingValue,
+        JsonSerializer serializer)
     {
         return JArray.Load(reader)
             .Where(token => token.Type == JTokenType.String)

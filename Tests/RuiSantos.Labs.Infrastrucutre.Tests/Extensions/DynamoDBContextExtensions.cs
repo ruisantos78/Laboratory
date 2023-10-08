@@ -23,7 +23,8 @@ internal static class DynamoDbContextExtensions
         if (string.IsNullOrWhiteSpace(indexName))
             return await context.LoadAsync<TEntity>(hashKeyValue);
 
-        var query = context.QueryAsync<TEntity>(hashKeyValue, new DynamoDBOperationConfig {
+        var query = context.QueryAsync<TEntity>(hashKeyValue, new DynamoDBOperationConfig
+        {
             IndexName = indexName
         });
 

@@ -1,4 +1,4 @@
-﻿namespace RuiSantos.Labs.Core;
+﻿namespace RuiSantos.Labs.Core.Extensions;
 
 /// <summary>
 /// Internal extension methods.

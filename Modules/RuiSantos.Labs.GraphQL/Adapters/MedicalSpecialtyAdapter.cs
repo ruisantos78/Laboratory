@@ -11,7 +11,7 @@ public interface IMedicalSpecialtySchemaAdapter
     Task<IEnumerable<MedicalSpecialtySchema>> RemoveAsync(string description);
 }
 
-internal class MedicalSpecialtySchemaAdapter : AdapterModelSchema<string, MedicalSpecialtySchema>, IMedicalSpecialtySchemaAdapter
+internal class MedicalSpecialtySchemaAdapter : IMedicalSpecialtySchemaAdapter
 {
     private readonly IMedicalSpecialtiesService _service;
 
@@ -20,13 +20,11 @@ internal class MedicalSpecialtySchemaAdapter : AdapterModelSchema<string, Medica
         _service = service;
     }
 
-    protected override MedicalSpecialtySchema GetSchema(string description) => new()
+    private static MedicalSpecialtySchema GetSchema(string description) => new()
     {
         Description = description
     };
 
-    protected override string GetModel(MedicalSpecialtySchema schema) => schema.Description;
-    
     public async Task<IEnumerable<MedicalSpecialtySchema>> StoreAsync(IEnumerable<string> descriptions)
     {
         var descriptionsList = descriptions.ToList();
@@ -43,7 +41,9 @@ internal class MedicalSpecialtySchemaAdapter : AdapterModelSchema<string, Medica
 
     public async Task<IEnumerable<MedicalSpecialtySchema>> FindAllAsync()
     {
-        var result = await _service.GetMedicalSpecialitiesAsync();
-        return result.Select(GetSchema).OrderBy(x => x.Description);
+        var result = await _service.GetMedicalSpecialitiesAsync()
+            .ContinueWith(task => task.Result.Select(GetSchema));
+
+        return result.OrderBy(x => x.Description);
     }
 }

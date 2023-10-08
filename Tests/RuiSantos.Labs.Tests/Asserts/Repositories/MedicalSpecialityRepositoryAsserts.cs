@@ -9,7 +9,9 @@ internal class MedicalSpecialityRepositoryAsserts
 {
     private readonly IMedicalSpecialtyAdapter _medicalSpecialtyAdapter = Substitute.For<IMedicalSpecialtyAdapter>();
 
-    public IMedicalSpecialityRepository GetRepository() => new MedicalSpecialityRepository(_medicalSpecialtyAdapter);
+    public IMedicalSpecialityRepository GetRepository() => new MedicalSpecialityRepository(
+        _medicalSpecialtyAdapter
+    );
 
     public Task ShouldAddAsync(IEnumerable<string> specialties, bool received = true)
     {

@@ -17,7 +17,8 @@ internal class GlobalSecondaryIndexKeys : GlobalSecondaryIndex
         ProvisionedThroughput = new ProvisionedThroughput(5, 5);
     }
 
-    public GlobalSecondaryIndexKeys(string indexName, string hashAttributeName, params string[] sortAttributeNames): this(indexName, hashAttributeName)
+    public GlobalSecondaryIndexKeys(string indexName, string hashAttributeName, params string[] sortAttributeNames) :
+        this(indexName, hashAttributeName)
     {
         KeySchema.AddRange(sortAttributeNames.Select(x => new KeySchemaElement(x, KeyType.RANGE)));
     }

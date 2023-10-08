@@ -7,7 +7,7 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal interface IAppointmentAdapter
+public interface IAppointmentAdapter
 {
     Task<Appointment?> FindByPatientAsync(Patient patient, DateTime dateTime);
     Task<Appointment?> FindByDoctorAsync(Doctor doctor, DateTime dateTime);

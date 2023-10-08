@@ -1,6 +1,6 @@
 ﻿namespace RuiSantos.Labs.Client.Core;
 
-public static class Css
+internal static class Css
 {
-    public const string NoWrap = "no-wrap";    
+    public const string NoWrap = "no-wrap";
 }

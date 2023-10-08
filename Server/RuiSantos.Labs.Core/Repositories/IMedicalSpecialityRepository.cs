@@ -1,6 +1,6 @@
 namespace RuiSantos.Labs.Core.Repositories;
 
-public interface IMedicalSpecialityRepository 
+public interface IMedicalSpecialityRepository
 {
     /// <summary>
     /// Gets the list of strings. This will be empty if there are no strings in the list. The caller is responsible for ensuring that the list is not null.

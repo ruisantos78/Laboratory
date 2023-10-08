@@ -30,7 +30,8 @@ internal class ReApplyOptionalRouteParameterOperationFilter : IOperationFilter
             if (parameter != null)
             {
                 parameter.AllowEmptyValue = true;
-                parameter.Description = "Must check \"Send empty value\" or Swagger passes a comma for empty values otherwise";
+                parameter.Description =
+                    "Must check \"Send empty value\" or Swagger passes a comma for empty values otherwise";
                 parameter.Required = false;
                 parameter.Schema.Nullable = true;
             }

@@ -7,8 +7,6 @@ namespace RuiSantos.Labs.Api.Contracts;
 /// </summary>
 public class DoctorContract
 {
-    public static readonly DoctorContract Empty = new();
-
     /// <summary>
     /// The doctor's license number.
     /// </summary>
@@ -39,7 +37,9 @@ public class DoctorContract
     /// </summary>
     public IReadOnlyList<string> Specialties { get; init; }
 
-    public DoctorContract() : this(Doctor.Empty) { }
+    public DoctorContract() : this(Doctor.Empty)
+    {
+    }
 
     public DoctorContract(Doctor model)
     {

@@ -20,7 +20,9 @@ public class DoctorAppointmentsContract
     /// <summary>
     /// Empty constructor for serialization
     /// </summary>
-    public DoctorAppointmentsContract(): this(PatientAppointment.Empty) { }
+    public DoctorAppointmentsContract() : this(PatientAppointment.Empty)
+    {
+    }
 
     /// <summary>
     /// Constructor for a patient appointment

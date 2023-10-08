@@ -11,12 +11,17 @@ internal class AppointamentsRepositoryAsserts
     private readonly IAppointmentAdapter _appointmentAdapter = Substitute.For<IAppointmentAdapter>();
     private readonly IPatientAdapter _patientAdapter = Substitute.For<IPatientAdapter>();
 
-    public IAppointamentsRepository GetRepository() => new AppointamentsRepository(_patientAdapter, _appointmentAdapter);
+    public IAppointamentsRepository GetRepository() => new AppointamentsRepository(
+        _patientAdapter,
+        _appointmentAdapter
+    );
 
     public void OnGetPatientAppointmentsAsyncReturns(Doctor doctor, DateOnly date,
         IEnumerable<PatientAppointment> result)
     {
-        var appointments = result.Select(x => new Appointment(x.Date))
+        var patientAppointments = result.ToArray();
+        
+        var appointments = patientAppointments.Select(x => new Appointment(x.Date))
             .ToArray();
 
         _appointmentAdapter.LoadByDoctorAsync(doctor, date)
@@ -25,11 +30,12 @@ internal class AppointamentsRepositoryAsserts
         foreach (var appointment in appointments)
         {
             _patientAdapter.GetAppointmentAsync(appointment)
-                .Returns(result.First(x =>
+                .Returns(patientAppointments.First(x =>
                     x.Date.DayOfYear == appointment.Date.DayOfYear &&
                     x.Date.Year == appointment.Date.Year &&
-                    x.Date.TimeOfDay == appointment.Time));
-        }        
+                    x.Date.TimeOfDay == appointment.Time)
+                );
+        }
     }
 
     public void WhenGetPatientAppointmentsAsyncThrows(Doctor doctor, DateOnly date, Exception ex)

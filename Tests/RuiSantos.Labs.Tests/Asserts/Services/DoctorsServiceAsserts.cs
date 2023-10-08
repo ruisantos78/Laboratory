@@ -6,16 +6,17 @@ using RuiSantos.Labs.Tests.Asserts.Repositories;
 
 namespace RuiSantos.Labs.Tests.Asserts.Services;
 
-internal class DoctorsServiceAsserts: LoggerAsserts<DoctorService>
-{    
+internal class DoctorsServiceAsserts : LoggerAsserts<DoctorService>
+{
     private readonly DoctorRepositoryAsserts _doctorRepository = new();
     private readonly AppointamentsRepositoryAsserts _appointamentsRepository = new();
 
     public IDoctorService GetService() => new DoctorService(
-        _doctorRepository.GetRepository(), 
-        _appointamentsRepository.GetRepository(), 
-        Logger);
-    
+        _doctorRepository.GetRepository(),
+        _appointamentsRepository.GetRepository(),
+        Logger
+    );
+
     public Task ShouldAddAsync(Expression<Predicate<Doctor>> expression, bool received = true)
     {
         var doctor = Arg.Is(expression);
@@ -26,7 +27,7 @@ internal class DoctorsServiceAsserts: LoggerAsserts<DoctorService>
     {
         var doctor = Arg.Is(expression);
         return _doctorRepository.ShouldStoreAsync(doctor, received);
-    }    
+    }
 
     public void OnFindAsyncReturns(Guid doctorId,
         Doctor? result)
@@ -44,7 +45,7 @@ internal class DoctorsServiceAsserts: LoggerAsserts<DoctorService>
     {
         _appointamentsRepository.OnGetPatientAppointmentsAsyncReturns(doctor, date, result);
     }
-    
+
     public void WhenAddAsyncThrows(string licence)
     {
         var doctor = Arg.Is<Doctor>(x => x.License == licence);

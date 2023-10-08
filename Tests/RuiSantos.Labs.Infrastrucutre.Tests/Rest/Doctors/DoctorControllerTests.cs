@@ -1,10 +1,9 @@
-﻿using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DataModel;
 using RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
-using Xunit.Abstractions;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;
 
-public partial class DoctorControllerTests: IClassFixture<ServiceFixture>
+public partial class DoctorControllerTests : IClassFixture<ServiceFixture>
 {
     protected readonly IDynamoDBContext Context;
     protected readonly HttpClient Client;
@@ -12,8 +11,8 @@ public partial class DoctorControllerTests: IClassFixture<ServiceFixture>
 
     public DoctorControllerTests(ServiceFixture service, ITestOutputHelper output)
     {
-        Context = service.GetContext();
-        Client = service.GetClient();
+        Context = service.GetDynamoDbContext();
+        Client = service.GetHttpClient();
         Output = output;
     }
 }

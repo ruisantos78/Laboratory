@@ -15,13 +15,13 @@ internal class DayOfWeekConverter : IPropertyConverter
             return default(DayOfWeek);
 
         return dayOfWeek;
-    }   
+    }
 
     public DynamoDBEntry ToEntry(object value)
     {
         if (value is not DayOfWeek dayOfWeek)
             return new DynamoDBNull();
-        
+
         return new Primitive(dayOfWeek.ToString());
     }
 }

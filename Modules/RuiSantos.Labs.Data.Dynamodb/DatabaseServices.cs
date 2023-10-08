@@ -1,14 +1,13 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.Model;
-using Amazon.Runtime;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using RuiSantos.Labs.Data.Dynamodb.Mediators;
 
 namespace RuiSantos.Labs.Data.Dynamodb;
 
-internal class DatabaseServices: IHostedService {
-    
+internal class DatabaseServices : IHostedService
+{
     private readonly IAmazonDynamoDB _amazonDynamo;
     private readonly ILogger _logger;
 
@@ -19,11 +18,11 @@ internal class DatabaseServices: IHostedService {
         _amazonDynamo = amazonDynamo;
         _logger = logger;
     }
-    
+
     public async Task StartAsync(CancellationToken cancellationToken)
     {
         _logger.LogInformation("Initializing Amazon DynamoDB...");
-        
+
         var tables = await _amazonDynamo.ListTablesAsync(cancellationToken)
             .ConfigureAwait(false);
 
@@ -33,7 +32,7 @@ internal class DatabaseServices: IHostedService {
 
         await Task.WhenAll(tasks)
             .ContinueWith(CreateTableResponseLogger, cancellationToken);
-        
+
         _logger.LogInformation("Amazon DynamoDB Update Completed!");
     }
 
@@ -41,7 +40,7 @@ internal class DatabaseServices: IHostedService {
     {
         return Task.CompletedTask;
     }
-    
+
     private void CreateTableResponseLogger(Task<CreateTableResponse[]> task)
     {
         foreach (var response in task.Result)

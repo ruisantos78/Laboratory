@@ -7,6 +7,7 @@ using Blazorise.Icons.Material;
 using Blazing.Mvvm;
 using Blazorise.LoadingIndicator;
 using Blazored.LocalStorage;
+using RuiSantos.Labs.Client.Core.Mediators;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");

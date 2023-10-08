@@ -9,7 +9,7 @@ public class AppointamentsRepository : IAppointamentsRepository
     private readonly IAppointmentAdapter _appointmentAdapter;
     private readonly IPatientAdapter _patientAdapter;
 
-    internal AppointamentsRepository(
+    public AppointamentsRepository(
         IPatientAdapter patientAdapter,
         IAppointmentAdapter appointmentAdapter)
     {
@@ -30,7 +30,7 @@ public class AppointamentsRepository : IAppointamentsRepository
     public async Task<IEnumerable<PatientAppointment>> GetPatientAppointmentsAsync(Doctor doctor, DateOnly date)
     {
         var tasks = await _appointmentAdapter.LoadByDoctorAsync(doctor, date)
-            .ContinueWith(task => task.Result                
+            .ContinueWith(task => task.Result
                 .Select(_patientAdapter.GetAppointmentAsync)
                 .OfType<Task<PatientAppointment>>()
             );

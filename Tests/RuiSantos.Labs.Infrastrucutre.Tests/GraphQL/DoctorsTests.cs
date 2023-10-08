@@ -1,28 +1,29 @@
 using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using FluentAssertions;
-using Newtonsoft.Json.Linq;
 using RuiSantos.Labs.Data.Dynamodb.Core;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
 using RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
-using Xunit.Abstractions;
+
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.GraphQL;
 
 public class DoctorsTests : IClassFixture<ServiceFixture>
 {
+    protected record GetDoctorsResult(string License, string FirstName, string LastName, string Email);
+    protected record GetDoctorResult(string License, string FirstName, string LastName, string Email, string[] Contacts, string[] Specialties);
+
     private readonly HttpClient _client;
     private readonly IDynamoDBContext _context;
     private readonly ITestOutputHelper _output;
 
     public DoctorsTests(ServiceFixture service, ITestOutputHelper output)
     {
-        _context = service.GetContext();
-        _client = service.GetClient();
+        _context = service.GetDynamoDbContext();
+        _client = service.GetHttpClient();
         _output = output;
     }
 
@@ -33,8 +34,16 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
     public async Task GetDoctorInformationByLicense(string license)
     {
         // Arrange
-        var expected = await _context.FindAsync<DoctorEntity>(license, DoctorLicenseIndexName);
-        var expectedSpecialties = await _context.FindAllAsync<DoctorSpecialtyEntity>(expected.Id);
+        var doctorEntity = await _context.FindAsync<DoctorEntity>(license, DoctorLicenseIndexName);
+        var specialtyEntities = await _context.FindAllAsync<DoctorSpecialtyEntity>(doctorEntity.Id);
+        var expected = new GetDoctorResult(
+            doctorEntity.License,
+            doctorEntity.FirstName,
+            doctorEntity.LastName,
+            doctorEntity.Email,
+            doctorEntity.ContactNumbers.ToArray(),
+            specialtyEntities.Select(x => x.Specialty).ToArray()
+        );
 
         var request = new
         {
@@ -62,14 +71,10 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
 
         // Assert
         var result = await response.Content.GetTokenAsync(_output);
-
-        var doctor = result["data"].Should().HaveChild("doctor");
-        doctor["license"].Should().Be(expected.License);
-        doctor["firstName"].Should().Be(expected.FirstName);
-        doctor["lastName"].Should().Be(expected.LastName);
-        doctor["email"].Should().Be(expected.Email);
-        doctor["contacts"].Should().BeEquivalentTo(expected.ContactNumbers);
-        doctor["specialties"].Should().BeEquivalentTo(expectedSpecialties.Select(ds => ds.Specialty));
+        result["data"].Should().HaveChild("doctor")
+            .ToObject<GetDoctorResult>()
+            .Should()
+            .BeEquivalentTo(expected);
     }
 
     [Theory(DisplayName = "Get doctors with pagination")]
@@ -78,7 +83,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
     public async Task GetDoctorsWithPagination(int limit, string? paginationToken)
     {
         // Arrange
-        var search = _context.GetTargetTable<DoctorEntity>().Scan(new ScanOperationConfig()
+        var search = _context.GetTargetTable<DoctorEntity>().Scan(new ScanOperationConfig
         {
             IndexName = DoctorLicenseIndexName,
             Limit = limit,
@@ -86,9 +91,16 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         });
 
         var documents = await search.GetNextSetAsync();
+        var expected = _context.FromDocuments<DoctorEntity>(documents)
+            .Select(x => new GetDoctorsResult(
+                x.License,
+                x.FirstName,
+                x.LastName,
+                x.Email
+            ));
 
         var request = new
-        { 
+        {
             query = """
                     query GetDoctors($page: PaginationInput!) {
                       doctors(page: $page) {
@@ -120,11 +132,14 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         var result = await response.Content.GetTokenAsync();
         var pagination = result["data"].Should().HaveChild("doctors");
 
-        pagination["paginationToken"].Should().Be(Tokens.Encode(search.PaginationToken));
-        pagination["doctors"]!.Values<string>("license").Should().BeEquivalentTo(documents.Select(x => x["License"].AsString()));
-        pagination["doctors"]!.Values<string>("firstName").Should().BeEquivalentTo(documents.Select(x => x["FirstName"].AsString()));
-        pagination["doctors"]!.Values<string>("lastName").Should().BeEquivalentTo(documents.Select(x => x["LastName"].AsString()));
-        pagination["doctors"]!.Values<string>("email").Should().BeEquivalentTo(documents.Select(x => x["Email"].AsString()));
+        pagination.Should().HaveChild("paginationToken")
+            .Should()
+            .Be(Tokens.Encode(search.PaginationToken));
+
+        pagination.Should().HaveChild("doctors")
+            .ToObject<List<GetDoctorsResult>>()
+            .Should()
+            .BeEquivalentTo(expected);
     }
 
     [Fact(DisplayName = "Create a new doctor")]

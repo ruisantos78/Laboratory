@@ -9,13 +9,12 @@ partial class Doctor
 
     [Parameter] public string License { get; set; } = string.Empty;
 
-    protected override async Task OnInitializedAsync()
+    protected override Task OnInitializedAsync()
     {
-        if (ViewModel is not null)
-            await ViewModel.InitializeAsync(License);
+        return ViewModel?.InitializeAsync(License) ?? Task.CompletedTask;
     }
 
-    public Task<bool> IsValid() => Validations?.ValidateAll() ?? Task.FromResult(false);
+    public Func<Task<bool>> IsValid => () => Validations?.ValidateAll() ?? Task.FromResult(false);  
 
     public Visibility FormVisibilty => ViewModel?.Visible is true
         ? Visibility.Visible
@@ -25,7 +24,8 @@ partial class Doctor
         ? Display.Block
         : Display.None;
 
-    public void ValidateSpecialties(ValidatorEventArgs e) {
+    public void ValidateSpecialties(ValidatorEventArgs e)
+    {
         e.ErrorText = "The doctor must have at least one specialty";
         e.Status = ViewModel?.Specialties.Count > 0 ? ValidationStatus.Success : ValidationStatus.Error;
     }

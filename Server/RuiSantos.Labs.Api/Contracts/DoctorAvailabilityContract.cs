@@ -10,7 +10,7 @@ public class DoctorAvailabilityContract
     /// <summary>
     /// The doctor's informations
     /// </summary>
-    public DoctorContract Doctor { get; init; }    
+    public DoctorContract Doctor { get; init; }
 
     /// <summary>
     /// An array with the availability schedule for the doctor on a specific date
@@ -20,7 +20,9 @@ public class DoctorAvailabilityContract
     /// <summary>
     /// Constructor for an empty doctor availability
     /// </summary>
-    public DoctorAvailabilityContract() : this(DoctorSchedule.Empty) { }
+    public DoctorAvailabilityContract() : this(DoctorSchedule.Empty)
+    {
+    }
 
     /// <summary>
     /// Constructor for a doctor availability
@@ -28,7 +30,7 @@ public class DoctorAvailabilityContract
     /// <param name="doctorSchedule">The doctor's availability</param>
     public DoctorAvailabilityContract(DoctorSchedule doctorSchedule)
     {
-        Doctor =  new DoctorContract(doctorSchedule.Doctor);
+        Doctor = new DoctorContract(doctorSchedule.Doctor);
         Schedule = doctorSchedule.Schedule;
     }
 }

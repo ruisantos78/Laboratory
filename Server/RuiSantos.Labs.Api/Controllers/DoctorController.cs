@@ -2,7 +2,6 @@ using Microsoft.AspNetCore.Mvc;
 using RuiSantos.Labs.Api.Contracts;
 using RuiSantos.Labs.Api.Core;
 using RuiSantos.Labs.Core.Services;
-
 using static RuiSantos.Labs.Api.Core.ControllerUtils;
 
 namespace RuiSantos.Labs.Api.Controllers;
@@ -25,7 +24,7 @@ public class DoctorController : Controller
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorContract[]))]
     [ProducesResponseType(StatusCodes.Status204NoContent)]
     [ProducesResponseType(StatusCodes.Status400BadRequest)]
-    public async Task<IActionResult> GetAllDoctorsAsync([FromQuery]int? take, [FromQuery]string? from)
+    public async Task<IActionResult> GetAllDoctorsAsync([FromQuery] int? take, [FromQuery] string? from)
     {
         try
         {
@@ -79,7 +78,7 @@ public class DoctorController : Controller
         try
         {
             var models = await _service.GetAppointmentsAsync(
-                doctorId, 
+                doctorId,
                 dateTime);
 
             return this.Success(models, typeof(DoctorAppointmentsContract));
@@ -139,7 +138,7 @@ public class DoctorController : Controller
 
             if (!TryParseTimeSpanArray(hours, out var timeSpans))
                 return BadRequest("Invalid timespan format for hours");
-            
+
             await _service.SetOfficeHoursAsync(
                 doctorId,
                 week,

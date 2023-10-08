@@ -7,8 +7,6 @@ namespace RuiSantos.Labs.Api.Contracts;
 /// </summary>
 public class PatientContract
 {
-    public static readonly PatientContract Empty = new();
-
     /// <summary>
     /// The Social Security Number of the patient
     /// </summary>
@@ -34,7 +32,9 @@ public class PatientContract
     /// </summary>  
     public IEnumerable<string> ContactNumbers { get; init; }
 
-    public PatientContract() : this(Patient.Empty) { }
+    public PatientContract() : this(Patient.Empty)
+    {
+    }
 
     public PatientContract(Patient model)
     {

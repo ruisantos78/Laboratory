@@ -1,4 +1,6 @@
-﻿namespace RuiSantos.Labs.Client.Services;
+using RuiSantos.Labs.Client.Core.Mediators;
+
+namespace RuiSantos.Labs.Client.Services;
 
 [RegisterService(typeof(ProfilesOperations), InstanceType = InstanceType.Singleton)]
 public interface IProfilesOperations
@@ -12,23 +14,30 @@ public readonly record struct Operation(Guid Id, string DisplayName, string Rout
 
 public class ProfilesOperations : IProfilesOperations
 {
-    private static readonly IReadOnlyList<ProfilesOperations> Items = new List<ProfilesOperations> {
-        new() {
+    private static readonly IReadOnlyList<ProfilesOperations> Items = new List<ProfilesOperations>
+    {
+        new()
+        {
             Profile = "Administrator",
-            Operations = new Operation[] {
+            Operations = new Operation[]
+            {
                 new(Guid.NewGuid(), "Medical specialties management", "/admin/specialties"),
             }
         },
-        new() {
+        new()
+        {
             Profile = "Doctor",
-            Operations = new Operation[] {
+            Operations = new Operation[]
+            {
                 new(Guid.NewGuid(), "Doctor Operation 1", "doctor-operation-1"),
                 new(Guid.NewGuid(), "Doctor Operation 2", "doctor-operation-2")
             }
         },
-        new() {
+        new()
+        {
             Profile = "Patient",
-            Operations = new Operation[] {
+            Operations = new Operation[]
+            {
                 new(Guid.NewGuid(), "Patient Operation 1", "patient-operation-1"),
                 new(Guid.NewGuid(), "Patient Operation 2", "patient-operation-2")
             }

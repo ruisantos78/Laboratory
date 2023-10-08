@@ -1,7 +1,6 @@
 using System.Reflection;
 using Microsoft.Extensions.DependencyInjection;
 using RuiSantos.Labs.GraphQL.Adapters;
-
 using Mutation = RuiSantos.Labs.GraphQL.Mutations.Mutation;
 using Query = RuiSantos.Labs.GraphQL.Queries.Query;
 
@@ -24,11 +23,12 @@ public static class ConfigureServices
         return services;
     }
 
-    private static IServiceCollection AddAdapters(this IServiceCollection services)
+    internal static IServiceCollection AddAdapters(this IServiceCollection services)
     {
         typeof(AdapterAttribute).Assembly.GetTypes()
             .Where(x => x.IsInterface && x.GetCustomAttribute<AdapterAttribute>() is not null)
-            .Select(x => new {
+            .Select(x => new
+            {
                 Interface = x,
                 Instance = x.GetCustomAttribute<AdapterAttribute>()!.InstanceType
             })

@@ -1,9 +1,7 @@
 using System.Net;
-using FluentAssertions;
 using RuiSantos.Labs.Api.Contracts;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
-
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;

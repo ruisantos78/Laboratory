@@ -1,13 +1,14 @@
-﻿using FluentAssertions;
-using FluentAssertions.Execution;
+﻿using FluentAssertions.Execution;
 using FluentAssertions.Primitives;
 using Newtonsoft.Json.Linq;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
 
-public class JTokenAssertions: ReferenceTypeAssertions<JToken?, JTokenAssertions>
+public class JTokenAssertions : ReferenceTypeAssertions<JToken?, JTokenAssertions>
 {
-    public JTokenAssertions(JToken? subject) : base(subject) { }
+    public JTokenAssertions(JToken? subject) : base(subject)
+    {
+    }
 
     protected override string Identifier => nameof(JToken);
 
@@ -18,7 +19,7 @@ public class JTokenAssertions: ReferenceTypeAssertions<JToken?, JTokenAssertions
             .FailWith("Expected JSON token to have value {0}, but the element was <null>.", expected);
 
         Execute.Assertion
-            .ForCondition(Subject?.Value<TValue>()?.Equals(expected) is true)            
+            .ForCondition(Subject?.Value<TValue>()?.Equals(expected) is true)
             .FailWith("Expected JSON property {0} to have value {1}, but found {2}.",
                 Subject?.Path, expected, Subject?.Value<string>());
 
@@ -32,7 +33,7 @@ public class JTokenAssertions: ReferenceTypeAssertions<JToken?, JTokenAssertions
             .FailWith("Expected JSON token to have value {0}, but the element was <null>.", expected);
 
         Execute.Assertion
-            .ForCondition(Subject?.Values<TValue>().All(expected.Contains) is true)            
+            .ForCondition(Subject?.Values<TValue>().All(expected.Contains) is true)
             .FailWith("Expected JSON property {0} to have value {1}, but found {2}.",
                 Subject?.Path, expected, Subject?.Values<string>());
 

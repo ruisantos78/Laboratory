@@ -3,7 +3,8 @@ namespace RuiSantos.Labs.Core.Models;
 /// <summary>
 /// Represents a doctor appointment.
 /// </summary>
-public class DoctorAppointment {
+public class DoctorAppointment
+{
     /// <summary>
     /// Represents an empty doctor appointment.
     /// </summary>
@@ -24,7 +25,8 @@ public class DoctorAppointment {
     /// </summary>
     /// <param name="doctor">The doctor.</param>
     /// <param name="date">The date.</param>
-    public DoctorAppointment(Doctor doctor, DateTime date) {
+    public DoctorAppointment(Doctor doctor, DateTime date)
+    {
         Doctor = doctor;
         Date = date;
     }

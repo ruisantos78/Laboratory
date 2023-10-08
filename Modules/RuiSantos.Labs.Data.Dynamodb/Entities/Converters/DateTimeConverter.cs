@@ -4,24 +4,26 @@ using Amazon.DynamoDBv2.DocumentModel;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Entities.Converters;
 
-internal class DateTimeConverter: IPropertyConverter {
+internal class DateTimeConverter : IPropertyConverter
+{
     public DynamoDBEntry ToEntry(object value)
     {
         if (value is not DateTime dateTime)
             return new DynamoDBNull();
-        
+
         return new Primitive(dateTime.ToUniversalTime().ToString("u"));
     }
 
     public object FromEntry(DynamoDBEntry entry)
     {
         if (entry is not Primitive)
-            return default(DateTime);    
-            
-        var value = entry.AsString();
-        if (!DateTime.TryParseExact(value, "u", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal, out var dateTime))
             return default(DateTime);
-        
+
+        var value = entry.AsString();
+        if (!DateTime.TryParseExact(value, "u", CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal,
+                out var dateTime))
+            return default(DateTime);
+
         return dateTime;
     }
 }

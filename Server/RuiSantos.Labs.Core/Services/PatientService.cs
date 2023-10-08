@@ -23,7 +23,8 @@ public interface IPatientService
     /// <param name="contactNumbers">The contact numbers.</param>
     /// <exception cref="ValidationFailException">If the patient is not valid.</exception>
     /// <exception cref="ServiceFailException">If the patient could not be created.</exception>
-    Task CreatePatientAsync(string socialNumber, string email, string firstName, string lastName, IEnumerable<string> contactNumbers);
+    Task CreatePatientAsync(string socialNumber, string email, string firstName, string lastName,
+        IEnumerable<string> contactNumbers);
 
     /// <summary>
     /// Gets all the appointments of a patient.
@@ -52,7 +53,8 @@ internal class PatientService : IPatientService
         _logger = logger;
     }
 
-    public async Task CreatePatientAsync(string socialNumber, string email, string firstName, string lastName, IEnumerable<string> contactNumbers)
+    public async Task CreatePatientAsync(string socialNumber, string email, string firstName, string lastName,
+        IEnumerable<string> contactNumbers)
     {
         try
         {
@@ -91,7 +93,7 @@ internal class PatientService : IPatientService
             throw new ServiceFailException(MessageResources.PatientSetFail);
         }
     }
-    
+
     public IAsyncEnumerable<DoctorAppointment> GetAppointmentsAsync(string socialNumber)
     {
         // var patient = await patientRepository.FindAsync(socialNumber);

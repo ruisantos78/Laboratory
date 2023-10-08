@@ -17,7 +17,9 @@ public class PatientAppointmentsContract
     /// </summary>
     public DateTime Date { get; init; }
 
-    public PatientAppointmentsContract(): this(DoctorAppointment.Empty) { }
+    public PatientAppointmentsContract() : this(DoctorAppointment.Empty)
+    {
+    }
 
     public PatientAppointmentsContract(DoctorAppointment doctorAppointment)
     {

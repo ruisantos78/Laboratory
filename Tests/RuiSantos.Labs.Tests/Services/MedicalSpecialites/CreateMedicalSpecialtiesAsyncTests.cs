@@ -7,16 +7,17 @@ namespace RuiSantos.Labs.Tests.Services.MedicalSpecialites;
 
 // As an administrator, I want to be able to add or remove medical specialties
 public class CreateMedicalSpecialtiesAsyncTests
-{    
+{
     [Fact(DisplayName = "The medical specialties should be available in the system")]
     public async Task CreateMedicalSpecialtiesAsync_WithSuccess()
     {
         // Arrange
-        var specialties = new List<string> {
-            "Cardiology", 
-            "Dermatology", 
-            "Neurology", 
-            "Orthopedics", 
+        var specialties = new List<string>
+        {
+            "Cardiology",
+            "Dermatology",
+            "Neurology",
+            "Orthopedics",
             "Pediatrics"
         };
 
@@ -25,11 +26,11 @@ public class CreateMedicalSpecialtiesAsyncTests
         // Act
         var service = asserts.GetService();
         await service.CreateMedicalSpecialtiesAsync(specialties);
-        
+
         // Assert 
         asserts.ShouldLogError(false);
 
-        await asserts.ShouldAddAsync(specialties);        
+        await asserts.ShouldAddAsync(specialties);
     }
 
     [Fact(DisplayName = "A log should be written when failling to add medical specialties")]
@@ -37,7 +38,7 @@ public class CreateMedicalSpecialtiesAsyncTests
     {
         // Arrange
         var specialties = new List<string>();
-        
+
         var asserts = new MedicalSpecialtiesServiceAsserts();
         asserts.WhenAddAsyncThrows(specialties);
 

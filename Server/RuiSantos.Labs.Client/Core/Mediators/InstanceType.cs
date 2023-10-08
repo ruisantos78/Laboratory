@@ -1,7 +1,6 @@
-﻿// ReSharper disable once CheckNamespace
-namespace RuiSantos.Labs.Client;
+﻿namespace RuiSantos.Labs.Client.Core.Mediators;
 
-public enum InstanceType 
+internal enum InstanceType
 {
     Transient,
     Scoped,

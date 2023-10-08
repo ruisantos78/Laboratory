@@ -41,7 +41,7 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
     private readonly ILogger _logger;
 
     public MedicalSpecialtiesService(
-        IMedicalSpecialityRepository medicalSpecialityRepository,   
+        IMedicalSpecialityRepository medicalSpecialityRepository,
         ILogger<MedicalSpecialtiesService> logger)
     {
         _medicalSpecialityRepository = medicalSpecialityRepository;

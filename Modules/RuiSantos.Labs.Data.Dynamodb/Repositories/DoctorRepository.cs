@@ -9,7 +9,7 @@ public class DoctorRepository : IDoctorRepository
     private readonly IDoctorAdapter _doctorAdapter;
     private readonly IAppointmentAdapter _appointmentAdapter;
 
-    internal DoctorRepository(
+    public DoctorRepository(
         IDoctorAdapter doctorAdapter,
         IAppointmentAdapter appointmentAdapter)
     {
@@ -33,19 +33,19 @@ public class DoctorRepository : IDoctorRepository
         {
             if (doctor.OfficeHours.All(h => h.Week != date.DayOfWeek))
                 continue;
-                                    
-            foreach (var appointment in await _appointmentAdapter.LoadByDoctorAsync(doctor, date)) 
+
+            foreach (var appointment in await _appointmentAdapter.LoadByDoctorAsync(doctor, date))
             {
-                 var availableTimes = doctor.OfficeHours
-                     .Where(x => x.Week == date.DayOfWeek)
-                     .SelectMany(s => s.Hours.Where(hour => hour != appointment.Time))
-                     .Select(x => date.ToDateTime(TimeOnly.FromTimeSpan(x)))
-                     .ToList(); 
-                                  
+                var availableTimes = doctor.OfficeHours
+                    .Where(x => x.Week == date.DayOfWeek)
+                    .SelectMany(s => s.Hours.Where(hour => hour != appointment.Time))
+                    .Select(x => date.ToDateTime(TimeOnly.FromTimeSpan(x)))
+                    .ToList();
+
                 if (availableTimes.Any())
                     yield return new(doctor, availableTimes);
             }
-        }                          
+        }
     }
 
     public async Task<IEnumerable<Doctor>> FindByAppointmentsAsync(IEnumerable<Appointment> appointments)

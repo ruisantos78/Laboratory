@@ -1,8 +1,7 @@
-﻿using System.Reflection;
+using System.Reflection;
 using Blazing.Mvvm.ComponentModel;
 
-// ReSharper disable once CheckNamespace
-namespace RuiSantos.Labs.Client;
+namespace RuiSantos.Labs.Client.Core.Mediators;
 
 internal static class ServicesMediator
 {

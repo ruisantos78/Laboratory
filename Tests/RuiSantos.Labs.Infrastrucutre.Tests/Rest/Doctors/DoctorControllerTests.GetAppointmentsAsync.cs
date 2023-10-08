@@ -1,5 +1,4 @@
 using System.Net;
-using FluentAssertions;
 using RuiSantos.Labs.Api.Contracts;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
@@ -80,7 +79,7 @@ partial class DoctorControllerTests
     // Helper method to create an appointment
     private async Task<AppointmentsEntity> CreateTestAppointmentAsync(Guid doctorId, Guid patientId, DateTime dateTime)
     {
-        var entity = new AppointmentsEntity()
+        var entity = new AppointmentsEntity
         {
             DoctorId = doctorId,
             PatientId = patientId,

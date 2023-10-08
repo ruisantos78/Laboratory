@@ -19,13 +19,13 @@ public class GetAppointmentsAsyncTests
     {
         // Arrange
         var dateTime = DateTime.TryParse(dateString, out var dateValue) ? dateValue.Date : DateTime.Today;
-        var doctor =  new DoctorBuilder().Build();
-        
+        var doctor = new DoctorBuilder().Build();
+
         var appointments = new PatientAppointmentBuilder()
-                .AddAppointment(dateTime.AddHours(10))
-                .AddAppointment(dateTime.AddHours(11))
-                .AddAppointment(dateTime.AddHours(12))
-                .Build();
+            .AddAppointment(dateTime.AddHours(10))
+            .AddAppointment(dateTime.AddHours(11))
+            .AddAppointment(dateTime.AddHours(12))
+            .Build();
 
         var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
@@ -38,9 +38,9 @@ public class GetAppointmentsAsyncTests
         var result = await service.GetAppointmentsAsync(doctor.Id, dateTime);
 
         // Assert        
-        result.Should().BeEquivalentTo(appointments);        
+        result.Should().BeEquivalentTo(appointments);
 
-        asserts.ShouldLogError(false);    
+        asserts.ShouldLogError(false);
     }
 
     [Fact(DisplayName = "An empty list should be returned when the doctor is not registred.")]
@@ -57,9 +57,9 @@ public class GetAppointmentsAsyncTests
         var result = await service.GetAppointmentsAsync(doctor.Id, default);
 
         // Assert        
-        result.Should().BeEmpty();        
+        result.Should().BeEmpty();
 
-        asserts.ShouldLogError(false);   
+        asserts.ShouldLogError(false);
     }
 
     [Fact(DisplayName = "An empty list should be returned when the doctor has no appointments for the given date.")]
@@ -67,7 +67,7 @@ public class GetAppointmentsAsyncTests
     {
         // Arrange
         var today = DateOnly.FromDateTime(DateTime.Today);
-        var doctor =  new DoctorBuilder().Build();
+        var doctor = new DoctorBuilder().Build();
 
         var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
@@ -78,9 +78,9 @@ public class GetAppointmentsAsyncTests
         var result = await service.GetAppointmentsAsync(doctor.Id, default);
 
         // Assert        
-        result.Should().BeEmpty();        
+        result.Should().BeEmpty();
 
-        asserts.ShouldLogError(false);   
+        asserts.ShouldLogError(false);
     }
 
     [Fact(DisplayName = "A log should be written when an unhandled exception occurs.")]
@@ -88,7 +88,7 @@ public class GetAppointmentsAsyncTests
     {
         // Arrange
         var today = DateOnly.FromDateTime(DateTime.Today);
-        var doctor =  new DoctorBuilder().Build();
+        var doctor = new DoctorBuilder().Build();
 
         var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
@@ -102,14 +102,14 @@ public class GetAppointmentsAsyncTests
             .WithMessage(MessageResources.DoctorsGetAppointmentsFail);
 
         // Assert
-        asserts.ShouldLogError();    
+        asserts.ShouldLogError();
     }
-    
+
     [Fact(DisplayName = "A log should be written when an unhandled exception occurs.")]
     public async Task GetAppointmentsAsync_WhenFailsToFindDoctor_ThenThrowsException_AndLogsError()
     {
         // Arrange
-        var doctor =  new DoctorBuilder().Build();
+        var doctor = new DoctorBuilder().Build();
 
         var asserts = new DoctorsServiceAsserts();
         asserts.WhenFindAsyncThrows(doctor.Id);
@@ -122,6 +122,6 @@ public class GetAppointmentsAsyncTests
             .WithMessage(MessageResources.DoctorsGetAppointmentsFail);
 
         // Assert
-        asserts.ShouldLogError();    
+        asserts.ShouldLogError();
     }
 }

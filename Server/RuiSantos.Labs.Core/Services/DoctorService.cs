@@ -24,7 +24,8 @@ public interface IDoctorService
     /// <param name="specialties">The doctor's specialties.</param>
     /// <exception cref="ValidationFailException">Thrown when the doctor's license number is not unique.</exception>
     /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
-    Task CreateDoctorAsync(string license, string email, string firstName, string lastName, IEnumerable<string> contactNumbers, IEnumerable<string> specialties);
+    Task CreateDoctorAsync(string license, string email, string firstName, string lastName,
+        IEnumerable<string> contactNumbers, IEnumerable<string> specialties);
 
     /// <summary>
     /// Get the doctor's appointments on a given date.
@@ -33,14 +34,6 @@ public interface IDoctorService
     /// <param name="dateTime">The date.</param>
     /// <returns>The doctor's appointments on the given date.</returns>
     Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime);
-
-    /// <summary>
-    /// Get the doctor's informations.
-    /// </summary>
-    /// <param name="doctorId">The doctor's identification.</param>
-    /// <returns>The doctor's informations.</returns>
-    /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
-    Task<Doctor?> GetDoctorAsync(Guid doctorId);
 
 
     Task<Pagination<Doctor>> GetAllDoctorsAsync(int take, string? paginationToken);
@@ -107,7 +100,7 @@ internal class DoctorService : IDoctorService
     {
         try
         {
-            if (await _doctorRepository.FindAsync(doctorId) is not {} doctor)
+            if (await _doctorRepository.FindAsync(doctorId) is not { } doctor)
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
             doctor.OfficeHours.RemoveWhere(hour => hour.Week == dayOfWeek);
@@ -129,30 +122,18 @@ internal class DoctorService : IDoctorService
         }
     }
 
-    public async Task<Doctor?> GetDoctorAsync(Guid doctorId)
+    public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime)
     {
         try
         {
-            return await _doctorRepository.FindAsync(doctorId);
-        }
-        catch (Exception ex)
-        {
-            _logger.Fail(ex);
-            throw new ServiceFailException(MessageResources.DoctorsGetFail);
-        }
-    }
-
-    public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime)
-    {
-        try {
             var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
 
-            if (await _doctorRepository.FindAsync(doctorId) is not {} doctor)
+            if (await _doctorRepository.FindAsync(doctorId) is not { } doctor)
                 return Array.Empty<PatientAppointment>();
 
             return await _appointamentsRepository.GetPatientAppointmentsAsync(doctor, date);
-        } 
-        catch(Exception ex) 
+        }
+        catch (Exception ex)
         {
             _logger.Fail(ex);
             throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);

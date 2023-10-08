@@ -4,7 +4,7 @@ using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal interface IMedicalSpecialtyAdapter
+public interface IMedicalSpecialtyAdapter
 {
     Task<IEnumerable<string>> LoadAsync();
     Task RemoveAsync(string value);

@@ -7,7 +7,7 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal interface IPatientAdapter
+public interface IPatientAdapter
 {
     Task<Patient?> FindAsync(Guid patientId);
     Task<Patient?> FindBySocialSecurityNumberAsync(string socialSecurityNumber);
@@ -73,7 +73,7 @@ internal class PatientAdapter : IPatientAdapter
         {
             IndexName = PatientSocialSecurityNumberIndexName,
             Filter = new QueryFilter(SocialSecurityNumberAttributeName, QueryOperator.Equal, socialSecurityNumber),
-            Limit = 1,
+            Limit = 1
         };
 
         var entities = await _context.FromQueryAsync<PatientEntity>(query)

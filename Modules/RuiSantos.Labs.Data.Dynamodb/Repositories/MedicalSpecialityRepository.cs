@@ -7,7 +7,7 @@ public class MedicalSpecialityRepository : IMedicalSpecialityRepository
 {
     private readonly IMedicalSpecialtyAdapter _medicalSpecialtyAdapter;
 
-    internal MedicalSpecialityRepository(IMedicalSpecialtyAdapter medicalSpecialtyAdapter)
+    public MedicalSpecialityRepository(IMedicalSpecialtyAdapter medicalSpecialtyAdapter)
     {
         _medicalSpecialtyAdapter = medicalSpecialtyAdapter;
     }
@@ -16,7 +16,7 @@ public class MedicalSpecialityRepository : IMedicalSpecialityRepository
     {
         return _medicalSpecialtyAdapter.StoreAsync(specialties);
     }
-    
+
     public Task RemoveAsync(string speciality)
     {
         return _medicalSpecialtyAdapter.RemoveAsync(speciality);

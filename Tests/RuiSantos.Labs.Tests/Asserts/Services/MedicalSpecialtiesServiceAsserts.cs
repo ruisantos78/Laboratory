@@ -3,13 +3,14 @@ using RuiSantos.Labs.Tests.Asserts.Repositories;
 
 namespace RuiSantos.Labs.Tests.Asserts.Services;
 
-internal class MedicalSpecialtiesServiceAsserts: LoggerAsserts<MedicalSpecialtiesService>
+internal class MedicalSpecialtiesServiceAsserts : LoggerAsserts<MedicalSpecialtiesService>
 {
     private readonly MedicalSpecialityRepositoryAsserts _repository = new();
 
     public IMedicalSpecialtiesService GetService() => new MedicalSpecialtiesService(
         _repository.GetRepository(),
-        Logger);
+        Logger
+    );
 
     public Task ShouldAddAsync(IEnumerable<string> specialties, bool received = true)
     {

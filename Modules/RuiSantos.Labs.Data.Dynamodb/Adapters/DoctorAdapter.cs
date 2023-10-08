@@ -8,7 +8,7 @@ using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal interface IDoctorAdapter
+public interface IDoctorAdapter
 {
     Task<Doctor?> FindAsync(Guid doctorId);
 

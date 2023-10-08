@@ -14,32 +14,32 @@ public partial class DoctorsViewsModel : ViewModelBase
     private readonly IDoctorService _doctorService;
     private readonly ILoadingIndicatorService _loadingIndicatorService;
 
-	private string? _paginationToken;
+    private string? _paginationToken;
 
-	[ObservableProperty] ObservableCollection<DoctorModel> _doctors = new();
+    [ObservableProperty] ObservableCollection<DoctorModel> _doctors = new();
 
-	public DoctorsViewsModel(
-		IDoctorService doctorService,
-		ILoadingIndicatorService loadingIndicatorService)
-	{
+    public DoctorsViewsModel(
+        IDoctorService doctorService,
+        ILoadingIndicatorService loadingIndicatorService)
+    {
         _doctorService = doctorService;
         _loadingIndicatorService = loadingIndicatorService;
-	}
+    }
 
-	public async Task ReadData(DataGridReadDataEventArgs<DoctorModel> e)
-	{
-		await _loadingIndicatorService.Show();
-		try
-		{
-			var pagination = await _doctorService.GetDoctorsAsync(e.VirtualizeCount, _paginationToken);
+    public async Task ReadData(DataGridReadDataEventArgs<DoctorModel> e)
+    {
+        await _loadingIndicatorService.Show();
+        try
+        {
+            var pagination = await _doctorService.GetDoctorsAsync(e.VirtualizeCount, _paginationToken);
 
-			_paginationToken = pagination.PaginationToken;
-			pagination.Models.ForEach(Doctors.Add);
-		}
-		finally
-		{
-			await _loadingIndicatorService.Hide();
-		}
-	}
+            _paginationToken = pagination.PaginationToken;
+            pagination.Models.ForEach(Doctors.Add);
+        }
+        finally
+        {
+            await _loadingIndicatorService.Hide();
+        }
+    }
 }
 

@@ -4,7 +4,7 @@ using Amazon.DynamoDBv2.DocumentModel;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Entities.Converters;
 
-internal class JsonConverter<TModel>: IPropertyConverter
+internal class JsonConverter<TModel> : IPropertyConverter
 {
     public object? FromEntry(DynamoDBEntry entry)
     {
@@ -13,7 +13,7 @@ internal class JsonConverter<TModel>: IPropertyConverter
             var json = document.ToJson();
             return JsonSerializer.Deserialize<TModel>(json);
         }
-        
+
         return default(TModel);
     }
 

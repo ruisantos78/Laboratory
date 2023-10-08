@@ -29,24 +29,25 @@ public sealed class LocalstackContainer : IAsyncDisposable
             .WithPortBinding(DefaultPort, true)
             .WithEnvironment(new Dictionary<string, string>
             {
-                {"DOCKER_HOST", "unix:///var/run/docker.sock" },
-                {"DYNAMODB_SHARE_DB", "1" },
-                {"SERVICES", "dynamodb:4569" },
-                {"DEFAULT_REGION", "us-east-1" },
+                { "DOCKER_HOST", "unix:///var/run/docker.sock" },
+                { "DYNAMODB_SHARE_DB", "1" },
+                { "SERVICES", "dynamodb:4569" },
+                { "DEFAULT_REGION", "us-east-1" }
             })
             .WithWaitStrategy(Wait.ForUnixContainer().UntilHttpRequestIsSucceeded(request =>
                 request.ForPath("/")
-                .ForPort(DefaultPort)
-                .ForStatusCode(HttpStatusCode.OK)
+                    .ForPort(DefaultPort)
+                    .ForStatusCode(HttpStatusCode.OK)
             ))
             .Build();
     }
 
-    public string GetConnectionString() => $"http://{_container.Hostname}:{_container.GetMappedPublicPort(DefaultPort)}";
-    public IAmazonDynamoDB GetClient() => new AmazonDynamoDBClient("docker", "docker", new AmazonDynamoDBConfig
+    public string GetEndpoint() => $"http://{_container.Hostname}:{_container.GetMappedPublicPort(DefaultPort)}";
+
+    public IAmazonDynamoDB GetDynamoDbClient() => new AmazonDynamoDBClient("docker", "docker", new AmazonDynamoDBConfig
     {
         Profile = new Profile("default", "us-east-1"),
-        ServiceURL = GetConnectionString()
+        ServiceURL = GetEndpoint()
     });
 
     public async ValueTask DisposeAsync()
@@ -58,14 +59,15 @@ public sealed class LocalstackContainer : IAsyncDisposable
     public async Task StartAsync()
     {
         await _container.StartAsync();
-        Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] Start localstack at port: {_container.GetMappedPublicPort(DefaultPort)}");
+        Console.WriteLine(
+            $"[ruisantos {Now:HH:mm:ss}] Start localstack at port: {_container.GetMappedPublicPort(DefaultPort)}");
 
         await InitializeAsync();
     }
 
     private async Task InitializeAsync()
     {
-        using var client = GetClient();
+        using var client = GetDynamoDbClient();
 
         Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] Start Create Dynamodb Tables");
         var context = new DynamoDBContext(client);
@@ -80,9 +82,10 @@ public sealed class LocalstackContainer : IAsyncDisposable
         foreach (var table in tables)
         {
             var tableName = table.TableDescription.TableName;
-            if (repository[tableName] is not {} token || !mappings.TryGetValue(tableName, out var entityType))
+            if (repository[tableName] is not { } token || !mappings.TryGetValue(tableName, out var entityType))
             {
-                Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] # {tableName} - {table.TableDescription.TableStatus} - 0 records.");
+                Console.WriteLine(
+                    $"[ruisantos {Now:HH:mm:ss}] # {tableName} - {table.TableDescription.TableStatus} - 0 records.");
                 continue;
             }
 
@@ -92,7 +95,7 @@ public sealed class LocalstackContainer : IAsyncDisposable
             writer.AddPutItems(entities);
             await writer.ExecuteAsync();
 
-            Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] # {tableName} - {table.TableDescription.TableStatus} - {entities.Count()} records.");
+            Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] # {tableName} - {table.TableDescription.TableStatus} - {entities.Length} records.");
         }
     }
 }

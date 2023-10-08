@@ -8,7 +8,7 @@ public class PatientRepository : IPatientRepository
 {
     private readonly IPatientAdapter _patientAdapter;
 
-    internal PatientRepository(IPatientAdapter patientAdapter)
+    public PatientRepository(IPatientAdapter patientAdapter)
     {
         _patientAdapter = patientAdapter;
     }

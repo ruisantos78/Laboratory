@@ -40,6 +40,7 @@ public class PatientController : Controller
             return this.Failure(ex);
         }
     }
+
     /// <summary>
     /// Get a patient's appointments.
     /// </summary>
@@ -78,10 +79,10 @@ public class PatientController : Controller
         try
         {
             await _service.CreatePatientAsync(
-                request.SocialSecurityNumber, 
+                request.SocialSecurityNumber,
                 request.Email,
-                request.FirstName, 
-                request.LastName, 
+                request.FirstName,
+                request.LastName,
                 request.ContactNumbers);
 
             return this.Success();

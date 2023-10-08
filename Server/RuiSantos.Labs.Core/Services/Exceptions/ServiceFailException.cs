@@ -9,33 +9,36 @@ namespace RuiSantos.Labs.Core.Services.Exceptions;
 public class ServiceFailException : Exception
 {
     /// <summary>
-    /// Empty exception.
-    /// </summary>
-    public static readonly ServiceFailException Empty = new();
-
-    /// <summary>
     /// Creates a new ManagementFailException.
     /// </summary>
-    protected ServiceFailException() { }
+    protected ServiceFailException()
+    {
+    }
 
     /// <summary>
     /// Creates a new ManagementFailException.
     /// </summary>
     /// <param name="message">Exception message.</param>
-    public ServiceFailException(string message) : base(message) { }
+    public ServiceFailException(string message) : base(message)
+    {
+    }
 
     /// <summary>
     /// Creates a new ManagementFailException.
     /// </summary>
     /// <param name="message">Exception message.</param>
     /// <param name="innerException">Inner exception.</param>
-    public ServiceFailException(string? message, Exception? innerException) : base(message, innerException) { }
+    public ServiceFailException(string? message, Exception? innerException) : base(message, innerException)
+    {
+    }
 
     /// <summary>
     /// Creates a new ManagementFailException.
     /// </summary>
     /// <param name="info">Serialization info.</param>
     /// <param name="context">Streaming context.</param>
-    protected ServiceFailException(SerializationInfo info, StreamingContext context) : base(info, context) { }
+    protected ServiceFailException(SerializationInfo info, StreamingContext context) : base(info, context)
+    {
+    }
 }
 

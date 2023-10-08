@@ -9,23 +9,23 @@ namespace RuiSantos.Labs.Api;
 
 public class Startup
 {
-	public IConfiguration Configuration { get; }
+    public IConfiguration Configuration { get; }
 
-	public Startup(IConfiguration configuration)
-	{
-		Configuration = configuration;
-	}
+    public Startup(IConfiguration configuration)
+    {
+        Configuration = configuration;
+    }
 
-	public void ConfigureServices(IServiceCollection services)
-	{
+    public void ConfigureServices(IServiceCollection services)
+    {
         services.AddLogging(config => config.AddConsole());
 
         services.AddMemoryCache();
         services.AddControllers();
         services.AddHealthChecks();
-
-        services.AddLabsGraphql();
+        
         services.AddLabsServices();
+        services.AddLabsGraphql();
         services.AddLabsDynamoDb(Configuration);
 
         services.AddSwaggerGen(options =>
@@ -42,11 +42,12 @@ public class Startup
             var xmlFilename = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
             options.IncludeXmlComments(Path.Combine(AppContext.BaseDirectory, xmlFilename));
         });
-        
+
 
         services.AddCors(options =>
         {
-            options.AddDefaultPolicy(builder => {
+            options.AddDefaultPolicy(builder =>
+            {
                 builder.WithOrigins(Configuration["LABS_ALLOWED_ORIGINS"] ?? string.Empty)
                     .AllowAnyHeader()
                     .AllowAnyMethod();
@@ -63,9 +64,9 @@ public class Startup
         }
 
         app.UseCors();
-        app.UseRouting();        
+        app.UseRouting();
         app.UseAuthorization();
-        
+
         app.UseEndpoints(endpoints =>
         {
             endpoints.MapControllers();

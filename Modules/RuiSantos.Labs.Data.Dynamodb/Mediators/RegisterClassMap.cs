@@ -8,7 +8,8 @@ internal interface IRegisterClassMap
     CreateTableRequest CreateTableRequest();
 }
 
-internal static class RegisterClassMaps {
+internal static class RegisterClassMaps
+{
     public static IEnumerable<CreateTableRequest> CreateTableRequests() => typeof(IRegisterClassMap).Assembly
         .GetTypes()
         .Where(t => t.GetInterfaces().Contains(typeof(IRegisterClassMap)))
@@ -21,6 +22,6 @@ internal static class RegisterClassMaps {
         .Where(t => t.GetCustomAttributes(false).OfType<DynamoDBTableAttribute>().Any())
         .ToDictionary(
             k => k.GetCustomAttributes(false).OfType<DynamoDBTableAttribute>().First().TableName,
-            v => v            
+            v => v
         );
 }

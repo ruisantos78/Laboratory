@@ -18,7 +18,7 @@ internal static class Validator
     }
 
     public static void ThrowExceptionIfIsNotValid<TModel>(TModel model, params object?[] args)
-        where TModel: class
+        where TModel : class
     {
         var validation = GetValidator<TModel>(args).Validate(model);
         if (!validation.IsValid)

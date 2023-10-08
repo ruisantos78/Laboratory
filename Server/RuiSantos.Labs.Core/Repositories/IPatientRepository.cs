@@ -2,7 +2,7 @@ using RuiSantos.Labs.Core.Models;
 
 namespace RuiSantos.Labs.Core.Repositories;
 
-public interface IPatientRepository 
+public interface IPatientRepository
 {
     /// <summary>
     /// Finds a patient by social security number. This is a synchronous method. It will return a Patient object when the request completes.

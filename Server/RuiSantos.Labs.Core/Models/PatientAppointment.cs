@@ -3,7 +3,8 @@ namespace RuiSantos.Labs.Core.Models;
 /// <summary>
 /// Represents a patient appointment.
 /// </summary>
-public class PatientAppointment {
+public class PatientAppointment
+{
     /// <summary>
     /// Represents an empty patient appointment.
     /// </summary>
@@ -19,9 +20,8 @@ public class PatientAppointment {
     /// </summary>
     public DateTime Date { get; init; }
 
-    public PatientAppointment(): this(Patient.Empty, DateTime.MinValue)
+    public PatientAppointment() : this(Patient.Empty, DateTime.MinValue)
     {
-
     }
 
     /// <summary>

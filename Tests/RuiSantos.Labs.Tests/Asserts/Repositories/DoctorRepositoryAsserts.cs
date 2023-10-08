@@ -11,7 +11,10 @@ internal class DoctorRepositoryAsserts
     private readonly IDoctorAdapter _doctorAdapter = Substitute.For<IDoctorAdapter>();
     private readonly IAppointmentAdapter _appointmentAdapter = Substitute.For<IAppointmentAdapter>();
 
-    public IDoctorRepository GetRepository() => new DoctorRepository(_doctorAdapter, _appointmentAdapter);
+    public IDoctorRepository GetRepository() => new DoctorRepository(
+        _doctorAdapter,
+        _appointmentAdapter
+    );
 
     public void OnFindAsyncReturns(Guid doctorId, Doctor? result)
     {

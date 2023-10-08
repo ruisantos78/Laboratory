@@ -61,20 +61,20 @@ internal class AppointmentService : IAppointmentService
     {
         try
         {
-            if (await _doctorRepository.FindAsync(doctorId) is not {} doctor)
+            if (await _doctorRepository.FindAsync(doctorId) is not { } doctor)
                 throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
 
             if (await _appointamentsRepository.GetAsync(doctor, dateTime) is not null)
                 throw new ValidationFailException(MessageResources.RecordAlreadyExists);
 
-            if (await _patientRepository.FindAsync(socialNumber) is not {} patient)
+            if (await _patientRepository.FindAsync(socialNumber) is not { } patient)
                 throw new ValidationFailException(MessageResources.PatientSocialNumberNotFound);
 
             if (await _appointamentsRepository.GetAsync(patient, dateTime) is not null)
                 throw new ValidationFailException(MessageResources.RecordAlreadyExists);
 
             await _appointamentsRepository.StoreAsync(doctor, patient, dateTime);
-        }        
+        }
         catch (ValidationFailException)
         {
             throw;
@@ -90,23 +90,23 @@ internal class AppointmentService : IAppointmentService
     {
         try
         {
-            if (await _patientRepository.FindAsync(socialNumber) is not {} patient)
+            if (await _patientRepository.FindAsync(socialNumber) is not { } patient)
                 throw new ValidationFailException(MessageResources.PatientSocialNumberNotFound);
 
-            if (await _appointamentsRepository.GetAsync(patient, dateTime) is not {} patientAppointment)
+            if (await _appointamentsRepository.GetAsync(patient, dateTime) is not { } patientAppointment)
                 return;
 
-            if (await _doctorRepository.FindAsync(doctorId) is not {} doctor)
+            if (await _doctorRepository.FindAsync(doctorId) is not { } doctor)
                 return;
 
-            if (await _appointamentsRepository.GetAsync(doctor, dateTime) is not {} doctorAppointment)
+            if (await _appointamentsRepository.GetAsync(doctor, dateTime) is not { } doctorAppointment)
                 return;
 
             if (patientAppointment.Id != doctorAppointment.Id)
                 return;
 
             await _appointamentsRepository.RemoveAsync(patientAppointment);
-        }         
+        }
         catch (ValidationFailException)
         {
             throw;
