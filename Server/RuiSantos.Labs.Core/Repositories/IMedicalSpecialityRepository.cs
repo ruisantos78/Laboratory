@@ -6,7 +6,7 @@ public interface IMedicalSpecialityRepository
     /// Gets the list of strings. This will be empty if there are no strings in the list. The caller is responsible for ensuring that the list is not null.
     /// </summary>
     /// <returns>A that can be used to monitor the operation and obtain the list of strings or null if there are no strings</returns>
-    Task<IReadOnlySet<string>> GetAsync();
+    Task<IEnumerable<string>> GetAsync();
 
     /// <summary>
     /// Removes speciality from the list of specialities. This is a no - op if the speciality is not in the list.

@@ -1,7 +1,6 @@
 using System.Linq.Expressions;
 using NSubstitute;
 using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services;
 using RuiSantos.Labs.Tests.Asserts.Repositories;
 
@@ -10,11 +9,11 @@ namespace RuiSantos.Labs.Tests.Asserts.Services;
 internal class DoctorsServiceAsserts: LoggerAsserts<DoctorService>
 {    
     private readonly DoctorRepositoryAsserts _doctorRepository = new();
-    private readonly IAppointamentsRepository _appointamentsRepository = Substitute.For<IAppointamentsRepository>();
+    private readonly AppointamentsRepositoryAsserts _appointamentsRepository = new();
 
     public IDoctorService GetService() => new DoctorService(
         _doctorRepository.GetRepository(), 
-        _appointamentsRepository, 
+        _appointamentsRepository.GetRepository(), 
         Logger);
     
     public Task ShouldAddAsync(Expression<Predicate<Doctor>> expression, bool received = true)
@@ -43,8 +42,7 @@ internal class DoctorsServiceAsserts: LoggerAsserts<DoctorService>
     public void OnGetPatientAppointmentsAsyncReturns(Doctor doctor, DateOnly date,
         IEnumerable<PatientAppointment> result)
     {
-        _appointamentsRepository.GetPatientAppointmentsAsync(doctor, date)
-            .Returns(result.ToAsyncEnumerable());
+        _appointamentsRepository.OnGetPatientAppointmentsAsyncReturns(doctor, date, result);
     }
     
     public void WhenAddAsyncThrows(string licence)
@@ -60,8 +58,6 @@ internal class DoctorsServiceAsserts: LoggerAsserts<DoctorService>
 
     public void WhenGetPatientAppointmentsAsyncThrows(Doctor doctor, DateOnly date)
     {
-        _appointamentsRepository
-            .When(x => x.GetPatientAppointmentsAsync(doctor, date))
-            .Throw<Exception>();
+        _appointamentsRepository.WhenGetPatientAppointmentsAsyncThrows(doctor, date, new Exception());
     }
 }

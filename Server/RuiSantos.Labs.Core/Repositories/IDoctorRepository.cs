@@ -24,14 +24,14 @@ public interface IDoctorRepository
     /// </summary>
     /// <param name="specialty">The name of the speciality. E. g.</param>
     /// <returns>A object that represents the asynchronous operation. The task result contains a instance of the class containing the dao rows</returns>
-    IAsyncEnumerable<Doctor> FindBySpecialityAsync(string specialty);
-    
+    Task<IEnumerable<Doctor>> FindBySpecialityAsync(string specialty);
+
     /// <summary>
     /// Finds doctor by appointments asynchronous. Returns collection of doctor. To get call GetDoctorByAppointmentsAsync ()
     /// </summary>
     /// <param name="appointments">Enumeration of appointments to find doctor by.</param>
     /// <returns>List of doctor corresponding to specified appointments or empty list if not found ( null is returned</returns>
-    IAsyncEnumerable<Doctor> FindByAppointmentsAsync(IEnumerable<Appointment> appointments);
+    Task<IEnumerable<Doctor>> FindByAppointmentsAsync(IEnumerable<Appointment> appointments);
 
     /// <summary>
     /// Finds doctor schedules by specialty and availability. This is the same as FindBySpecialty but returns schedules that are available for the period specified

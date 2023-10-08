@@ -22,19 +22,19 @@ public class DoctorRepository : IDoctorRepository
         return _doctorAdapter.FindAsync(doctorId);
     }
 
-    public IAsyncEnumerable<Doctor> FindBySpecialityAsync(string specialty)
+    public Task<IEnumerable<Doctor>> FindBySpecialityAsync(string specialty)
     {
         return _doctorAdapter.LoadBySpecialtyAsync(specialty);
     }
 
     public async IAsyncEnumerable<DoctorSchedule> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date)
     {
-        await foreach (var doctor in _doctorAdapter.LoadBySpecialtyAsync(specialty))
+        foreach (var doctor in await _doctorAdapter.LoadBySpecialtyAsync(specialty))
         {
             if (doctor.OfficeHours.All(h => h.Week != date.DayOfWeek))
                 continue;
                                     
-            await foreach (var appointment in _appointmentAdapter.LoadByDoctorAsync(doctor, date)) 
+            foreach (var appointment in await _appointmentAdapter.LoadByDoctorAsync(doctor, date)) 
             {
                  var availableTimes = doctor.OfficeHours
                      .Where(x => x.Week == date.DayOfWeek)
@@ -48,13 +48,12 @@ public class DoctorRepository : IDoctorRepository
         }                          
     }
 
-    public async IAsyncEnumerable<Doctor> FindByAppointmentsAsync(IEnumerable<Appointment> appointments)
+    public async Task<IEnumerable<Doctor>> FindByAppointmentsAsync(IEnumerable<Appointment> appointments)
     {
         var tasks = appointments.Select(_doctorAdapter.FindByAppointmentAsync)
             .OfType<Task<Doctor>>();
 
-        foreach (var task in tasks)
-            yield return await task;
+        return await Task.WhenAll(tasks);
     }
 
     public Task StoreAsync(Doctor doctor)

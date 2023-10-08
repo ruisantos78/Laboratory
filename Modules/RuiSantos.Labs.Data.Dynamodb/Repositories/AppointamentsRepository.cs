@@ -1,5 +1,4 @@
-﻿using Amazon.DynamoDBv2;
-using RuiSantos.Labs.Core.Models;
+﻿using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
 
@@ -7,13 +6,15 @@ namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
 public class AppointamentsRepository : IAppointamentsRepository
 {
-    private readonly AppointmentAdapter _appointmentAdapter;
-    private readonly Lazy<PatientAdapter> _patientAdapter;
+    private readonly IAppointmentAdapter _appointmentAdapter;
+    private readonly IPatientAdapter _patientAdapter;
 
-    public AppointamentsRepository(IAmazonDynamoDB client)
+    internal AppointamentsRepository(
+        IPatientAdapter patientAdapter,
+        IAppointmentAdapter appointmentAdapter)
     {
-        _appointmentAdapter = new AppointmentAdapter(client);
-        _patientAdapter = new Lazy<PatientAdapter>(new PatientAdapter(client));
+        _patientAdapter = patientAdapter;
+        _appointmentAdapter = appointmentAdapter;
     }
 
     public Task<Appointment?> GetAsync(Patient patient, DateTime dateTime)
@@ -26,14 +27,15 @@ public class AppointamentsRepository : IAppointamentsRepository
         return _appointmentAdapter.FindByDoctorAsync(doctor, dateTime);
     }
 
-    public async IAsyncEnumerable<PatientAppointment> GetPatientAppointmentsAsync(Doctor doctor, DateOnly date)
+    public async Task<IEnumerable<PatientAppointment>> GetPatientAppointmentsAsync(Doctor doctor, DateOnly date)
     {
-        var patientAdapter = _patientAdapter.Value;
+        var tasks = await _appointmentAdapter.LoadByDoctorAsync(doctor, date)
+            .ContinueWith(task => task.Result                
+                .Select(_patientAdapter.GetAppointmentAsync)
+                .OfType<Task<PatientAppointment>>()
+            );
 
-        await foreach(var appointment in _appointmentAdapter.LoadByDoctorAsync(doctor, date)) {
-            if (await patientAdapter.GetAppointmentAsync(appointment) is {} patientAppointment)
-                yield return patientAppointment;
-        }
+        return await Task.WhenAll(tasks);
     }
 
     public Task RemoveAsync(Appointment appointment)

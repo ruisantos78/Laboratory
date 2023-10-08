@@ -150,8 +150,7 @@ internal class DoctorService : IDoctorService
             if (await _doctorRepository.FindAsync(doctorId) is not {} doctor)
                 return Array.Empty<PatientAppointment>();
 
-            return await _appointamentsRepository.GetPatientAppointmentsAsync(doctor, date)
-                .ToArrayAsync();
+            return await _appointamentsRepository.GetPatientAppointmentsAsync(doctor, date);
         } 
         catch(Exception ex) 
         {

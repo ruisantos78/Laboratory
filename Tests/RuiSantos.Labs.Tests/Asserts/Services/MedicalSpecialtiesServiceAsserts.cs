@@ -1,36 +1,33 @@
-﻿using NSubstitute;
-using RuiSantos.Labs.Core.Repositories;
-using RuiSantos.Labs.Core.Services;
+﻿using RuiSantos.Labs.Core.Services;
+using RuiSantos.Labs.Tests.Asserts.Repositories;
 
 namespace RuiSantos.Labs.Tests.Asserts.Services;
 
 internal class MedicalSpecialtiesServiceAsserts: LoggerAsserts<MedicalSpecialtiesService>
 {
-    private readonly IMedicalSpecialityRepository _repository = Substitute.For<IMedicalSpecialityRepository>();
+    private readonly MedicalSpecialityRepositoryAsserts _repository = new();
 
-    public IMedicalSpecialtiesService GetService() => new MedicalSpecialtiesService(_repository, Logger);
+    public IMedicalSpecialtiesService GetService() => new MedicalSpecialtiesService(
+        _repository.GetRepository(),
+        Logger);
 
-    public Task ShouldAddAsync(IEnumerable<string> specialties)
+    public Task ShouldAddAsync(IEnumerable<string> specialties, bool received = true)
     {
-        return _repository.Received()
-            .AddAsync(specialties);
+        return _repository.ShouldAddAsync(specialties, received);
     }
 
-    public Task ShouldRemoveAsync(string specialty)
+    public Task ShouldRemoveAsync(string specialty, bool received = true)
     {
-        return _repository.Received()
-            .RemoveAsync(specialty);
+        return _repository.ShouldRemoveAsync(specialty, received);
     }
 
     public void WhenAddAsyncThrows(IEnumerable<string> specialties)
     {
-        _repository.When(x => x.AddAsync(specialties))
-            .Throw<Exception>();
+        _repository.WhenAddAsyncThrows(specialties, new Exception());
     }
 
     public void WhenRemoveAsyncThrows(string specialty)
     {
-        _repository.When(x => x.RemoveAsync(specialty))
-            .Throw<Exception>();
+        _repository.WhenRemoveAsyncThrows(specialty, new Exception());
     }
 }

@@ -1,17 +1,30 @@
 using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
-
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal class PatientAdapter : EntityModelAdapter<PatientEntity, Patient>
+internal interface IPatientAdapter
 {
-    public PatientAdapter(IAmazonDynamoDB client) : base(client) { }
+    Task<Patient?> FindAsync(Guid patientId);
+    Task<Patient?> FindBySocialSecurityNumberAsync(string socialSecurityNumber);
+    Task<PatientAppointment?> GetAppointmentAsync(Appointment appointment);
+    Task StoreAsync(Patient patient);
+}
 
-    protected override Task<PatientEntity> AsEntityAsync(Patient model) => Task.FromResult(new PatientEntity()
+internal class PatientAdapter : IPatientAdapter
+{
+    private readonly IDynamoDBContext _context;
+
+    public PatientAdapter(IAmazonDynamoDB client)
+    {
+        _context = new DynamoDBContext(client);
+    }
+
+    private static PatientEntity GetEntity(Patient model) => new()
     {
         Id = model.Id,
         SocialSecurityNumber = model.SocialSecurityNumber,
@@ -19,9 +32,9 @@ internal class PatientAdapter : EntityModelAdapter<PatientEntity, Patient>
         LastName = model.LastName,
         Email = model.Email,
         ContactNumbers = model.ContactNumbers.ToList()
-    });
+    };
 
-    protected override Task<Patient> AsModelAsync(PatientEntity entity)=> Task.FromResult(new Patient()
+    private static Patient GetModel(PatientEntity entity) => new()
     {
         Id = entity.Id,
         SocialSecurityNumber = entity.SocialSecurityNumber,
@@ -29,70 +42,64 @@ internal class PatientAdapter : EntityModelAdapter<PatientEntity, Patient>
         LastName = entity.LastName,
         Email = entity.Email,
         ContactNumbers = entity.ContactNumbers.ToHashSet()
-    });
+    };
 
-    private async Task<Guid?> GetIdBySocialSecurityNumbeAsync(string socialSecurityNumber)
+    private Task<Guid?> GetIdBySocialSecurityNumbeAsync(string socialSecurityNumber)
     {
-        var query = new QueryOperationConfig {        
+        var query = new QueryOperationConfig
+        {
             IndexName = PatientSocialSecurityNumberIndexName,
-            Filter = new QueryFilter(SourceAttributeName, QueryOperator.Equal, socialSecurityNumber),            
+            Filter = new QueryFilter(SourceAttributeName, QueryOperator.Equal, socialSecurityNumber),
             Limit = 1,
             Select = SelectValues.SpecificAttributes,
-            AttributesToGet = new() { PatientIdAttributeName } 
+            AttributesToGet = new() { PatientIdAttributeName }
         };
 
-        var entities = await Context.FromQueryAsync<PatientEntity>(query)
-            .GetNextSetAsync();
-
-        return entities.FirstOrDefault()?.Id;
+        return _context.FromQueryAsync<PatientEntity>(query)
+            .GetNextSetAsync()
+            .ContinueWith(task => task.Result.FirstOrDefault()?.Id);
     }
 
     public async Task<Patient?> FindAsync(Guid patientId)
     {
-        var entity = await Context.LoadAsync<PatientEntity>(patientId);
-        return await AsModelAsync(entity);
+        return await _context.LoadAsync<PatientEntity>(patientId) is { } entity
+            ? GetModel(entity)
+            : default;
     }
 
-    public async Task<Patient?> FindBySocialSecurityNumberAsync(string socialSecurityNumber)    
+    public async Task<Patient?> FindBySocialSecurityNumberAsync(string socialSecurityNumber)
     {
-        var query = new QueryOperationConfig {        
+        var query = new QueryOperationConfig
+        {
             IndexName = PatientSocialSecurityNumberIndexName,
             Filter = new QueryFilter(SocialSecurityNumberAttributeName, QueryOperator.Equal, socialSecurityNumber),
             Limit = 1,
         };
 
-        var entities = await Context.FromQueryAsync<PatientEntity>(query)
+        var entities = await _context.FromQueryAsync<PatientEntity>(query)
             .GetNextSetAsync();
 
-        return entities.FirstOrDefault() is {} entity 
-            ? await AsModelAsync(entity)
+        return entities.FirstOrDefault() is { } entity
+            ? GetModel(entity)
             : default;
     }
 
     public async Task<PatientAppointment?> GetAppointmentAsync(Appointment appointment)
     {
-        var appointmentEntity = await Context.LoadAsync<AppointmentsEntity>(appointment.Id);
-        if (appointmentEntity?.PatientId is null)
+        if (await _context.LoadAsync<AppointmentsEntity>(appointment.Id) is not { } appointmentEntity)
             return default;
 
-        if (await FindAsync(appointmentEntity.PatientId) is {} patient)            
-            return new() 
-            {
-                Patient = patient,
-                Date = appointmentEntity.AppointmentDateTime
-            };        
-
-        return default;
+        return await FindAsync(appointmentEntity.PatientId) is { } patient
+            ? new PatientAppointment(patient, appointmentEntity.AppointmentDateTime)
+            : default;
     }
 
     public async Task StoreAsync(Patient patient)
     {
-        var entity = await AsEntityAsync(patient);
+        var entity = GetEntity(patient);
+        if (await GetIdBySocialSecurityNumbeAsync(patient.SocialSecurityNumber) is { } patientId)
+            entity.Id = patientId;
 
-        var patientId = await GetIdBySocialSecurityNumbeAsync(patient.SocialSecurityNumber);
-        if (patientId is not null)
-            entity.Id = patientId.Value;
-
-        await Context.SaveAsync(entity);
+        await _context.SaveAsync(entity);
     }
 }

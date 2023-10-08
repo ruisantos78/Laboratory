@@ -1,8 +1,8 @@
 ﻿using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
-
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
@@ -11,31 +11,21 @@ internal interface IAppointmentAdapter
 {
     Task<Appointment?> FindByPatientAsync(Patient patient, DateTime dateTime);
     Task<Appointment?> FindByDoctorAsync(Doctor doctor, DateTime dateTime);
-    IAsyncEnumerable<Appointment> LoadByDoctorAsync(Doctor doctor, DateOnly date);
+    Task<IEnumerable<Appointment>> LoadByDoctorAsync(Doctor doctor, DateOnly date);
     Task RemoveAsync(Appointment appointment);
     Task StoreAsync(Doctor doctor, Patient patient, DateTime dateTime);
 }
 
-internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appointment>, IAppointmentAdapter
+internal class AppointmentAdapter : IAppointmentAdapter
 {
-    public AppointmentAdapter(IAmazonDynamoDB context) : base(context) { }
+    private readonly IDynamoDBContext _context;
 
-    protected override async Task<AppointmentsEntity> AsEntityAsync(Appointment model)
+    public AppointmentAdapter(IAmazonDynamoDB client)
     {
-        var entity = await Context.LoadAsync<AppointmentsEntity>(model.Id);
-        return new()
-        {
-            AppointmentId = model.Id,
-            AppointmentDateTime = model.GetDateTime(),
-            DoctorId = entity?.DoctorId ?? Guid.Empty,
-            PatientId = entity?.PatientId ?? Guid.Empty
-        };
+        _context = new DynamoDBContext(client);
     }
 
-    protected override Task<Appointment> AsModelAsync(AppointmentsEntity entity)
-        => Task.FromResult(AsModel(entity));
-
-    private static Appointment AsModel(AppointmentsEntity entity) => new()
+    private static Appointment GetModel(AppointmentsEntity entity) => new()
     {
         Id = entity.AppointmentId,
         Week = entity.AppointmentDateTime.DayOfWeek,
@@ -45,98 +35,66 @@ internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appoi
 
     public Task<Appointment?> FindByPatientAsync(Patient patient, DateTime dateTime)
     {
-        var dateTimeString = dateTime.ToUniversalTime().ToString("u");
+        var filter = new QueryFilter(PatientIdAttributeName, QueryOperator.Equal, patient.Id);
+        filter.AddCondition(AppointmentDateTimeAttributeName, QueryOperator.Equal, dateTime);
 
         var query = new QueryOperationConfig
         {
             IndexName = PatientAppointmentsIndexName,
             Limit = 1,
-            KeyExpression = new Expression()
-            {
-                ExpressionStatement = "#patientId = :patientId AND #dateTime = :dateTime",
-                ExpressionAttributeNames = {
-                    {"#patientId", PatientIdAttributeName},
-                    {"#dateTime", AppointmentDateTimeAttributeName}
-                },
-                ExpressionAttributeValues = {
-                    {":patientId", patient.Id},
-                    {":dateTime", dateTimeString}
-                }
-            }
+            Filter = filter
         };
 
-        return Context.FromQueryAsync<AppointmentsEntity>(query)
+        return _context.FromQueryAsync<AppointmentsEntity>(query)
             .GetNextSetAsync()
             .ContinueWith(task => task.Result
-                .Select(AsModel)
+                .Select(GetModel)
                 .FirstOrDefault()
             );
     }
 
-    public async Task<Appointment?> FindByDoctorAsync(Doctor doctor, DateTime dateTime)
+    public Task<Appointment?> FindByDoctorAsync(Doctor doctor, DateTime dateTime)
     {
-        var dateTimeString = dateTime.ToUniversalTime().ToString("u");
+        var filter = new QueryFilter(DoctorIdAttributeName, QueryOperator.Equal, doctor.Id);
+        filter.AddCondition(AppointmentDateTimeAttributeName, QueryOperator.Equal, dateTime);
 
         var query = new QueryOperationConfig
         {
             IndexName = DoctorAppointmentsIndexName,
             Limit = 1,
-            KeyExpression = new Expression()
-            {
-                ExpressionStatement = "#doctorId = :doctorId AND #dateTime = :dateTime",
-                ExpressionAttributeNames = {
-                    {"#doctorId", DoctorIdAttributeName},
-                    {"#dateTime", AppointmentDateTimeAttributeName}
-                },
-                ExpressionAttributeValues = {
-                    {":doctorId", doctor.Id},
-                    {":dateTime", dateTimeString}
-                }
-            }
+            Filter = filter
         };
 
-        var result = await Context.FromQueryAsync<AppointmentsEntity>(query)
-            .GetNextSetAsync();
-
-        return result?.Select(AsModel).FirstOrDefault();
+        return _context.FromQueryAsync<AppointmentsEntity>(query)
+            .GetNextSetAsync()
+            .ContinueWith(task => task.Result
+                .Select(GetModel)
+                .FirstOrDefault()
+            );
     }
 
-    public async IAsyncEnumerable<Appointment> LoadByDoctorAsync(Doctor doctor, DateOnly date)
+    public Task<IEnumerable<Appointment>> LoadByDoctorAsync(Doctor doctor, DateOnly date)
     {
-        var startOfDay = date.ToDateTime(TimeOnly.MinValue).ToString("u");
-        var endOfDay = date.ToDateTime(TimeOnly.MaxValue).ToString("u");
+        var startOfDay = date.ToDateTime(TimeOnly.MinValue);
+        var endOfDay = date.ToDateTime(TimeOnly.MaxValue);
+
+        var filter = new QueryFilter(DoctorIdAttributeName, QueryOperator.Equal, doctor.Id);
+        filter.AddCondition(AppointmentDateTimeAttributeName, QueryOperator.Between, startOfDay, endOfDay);
 
         var query = new QueryOperationConfig
         {
             IndexName = DoctorAppointmentsIndexName,
-            KeyExpression = new Expression
-            {
-                ExpressionStatement = "#doctorId = :doctorId AND #dateTime BETWEEN :start AND :end",
-                ExpressionAttributeNames = {
-                    {"#doctorId", DoctorIdAttributeName},
-                    {"#dateTime", AppointmentDateTimeAttributeName}
-                },
-                ExpressionAttributeValues = {
-                    {":doctorId", doctor.Id},
-                    {":start", startOfDay},
-                    {":end", endOfDay}
-                }
-            }
+            Filter = filter
         };
 
-        var result = await Context.FromQueryAsync<AppointmentsEntity>(query)
-            .GetNextSetAsync();
-
-        if (result is null)
-            yield break;
-
-        foreach (var entity in result)
-            yield return await AsModelAsync(entity);
+        return _context.FromQueryAsync<AppointmentsEntity>(query)
+            .GetNextSetAsync()
+            .ContinueWith(task => task.Result.Select(GetModel));
     }
 
     public Task RemoveAsync(Appointment appointment)
     {
-        return Context.DeleteAsync<AppointmentsEntity>(appointment.Id);
+        return _context.DeleteAsync<AppointmentsEntity>(appointment.Id);
     }
 
     public Task StoreAsync(Doctor doctor, Patient patient, DateTime dateTime)
@@ -148,6 +106,6 @@ internal class AppointmentAdapter : EntityModelAdapter<AppointmentsEntity, Appoi
             PatientId = patient.Id
         };
 
-        return Context.SaveAsync(entity);
+        return _context.SaveAsync(entity);
     }
 }

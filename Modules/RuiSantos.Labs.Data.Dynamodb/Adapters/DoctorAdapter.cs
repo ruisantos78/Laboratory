@@ -1,16 +1,14 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using Newtonsoft.Json.Linq;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Core;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
-
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
-internal interface IDoctorAdapter 
+internal interface IDoctorAdapter
 {
     Task<Doctor?> FindAsync(Guid doctorId);
 
@@ -18,30 +16,37 @@ internal interface IDoctorAdapter
 
     Task<Doctor?> FindByLicenseAsync(string license);
 
-    IAsyncEnumerable<Doctor> LoadBySpecialtyAsync(string specialty);
+    Task<IEnumerable<Doctor>> LoadBySpecialtyAsync(string specialty);
 
-    Task<Pagination<Doctor>> LoadByLicenseAsync(int pageSize = DoctorAdapter.DefaultPageSize, string? paginationToken = null);
+    Task<Pagination<Doctor>> LoadByLicenseAsync(int pageSize = DoctorAdapter.DefaultPageSize,
+        string? paginationToken = null);
 
     Task StoreAsync(Doctor doctor);
 }
 
-internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>, IDoctorAdapter
+internal class DoctorAdapter : IDoctorAdapter
 {
     internal const int DefaultPageSize = 25;
 
-    public DoctorAdapter(IAmazonDynamoDB client) : base(client) { }
+    private readonly IDynamoDBContext _context;
 
-    protected override Task<DoctorEntity> AsEntityAsync(Doctor model) => Task.FromResult(new DoctorEntity {
+    public DoctorAdapter(IAmazonDynamoDB client)
+    {
+        _context = new DynamoDBContext(client);
+    }
+
+    private static DoctorEntity GetEntity(Doctor model) => new()
+    {
         Id = model.Id,
         License = model.License,
         FirstName = model.FirstName,
         LastName = model.LastName,
         Email = model.Email,
         ContactNumbers = model.ContactNumbers.ToList(),
-        Availability = model.OfficeHours.ToList()   
-    });
+        Availability = model.OfficeHours.ToList()
+    };
 
-    protected override async Task<Doctor> AsModelAsync(DoctorEntity entity) => new()
+    private async Task<Doctor> GetModelAsync(DoctorEntity entity) => new()
     {
         Id = entity.Id,
         License = entity.License,
@@ -50,18 +55,19 @@ internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>, IDoctor
         Email = entity.Email,
         ContactNumbers = entity.ContactNumbers.ToHashSet(),
         OfficeHours = entity.Availability.ToHashSet(),
-        Specialties = await GetSpecialtiesAsync(entity)        
-    };    
+        Specialties = await GetSpecialtiesAsync(entity)
+    };
 
     private Task<HashSet<string>> GetSpecialtiesAsync(DoctorEntity entity)
     {
-        var query = new QueryOperationConfig {        
+        var query = new QueryOperationConfig
+        {
             Filter = new QueryFilter(DoctorIdAttributeName, QueryOperator.Equal, entity.Id),
             Select = SelectValues.SpecificAttributes,
             AttributesToGet = new() { SpecialtyAttributeName }
         };
 
-        return Context.FromQueryAsync<DoctorSpecialtyEntity>(query)
+        return _context.FromQueryAsync<DoctorSpecialtyEntity>(query)
             .GetRemainingAsync()
             .ContinueWith(task => task.Result
                 .Select(x => x.Specialty)
@@ -69,122 +75,116 @@ internal class DoctorAdapter : EntityModelAdapter<DoctorEntity, Doctor>, IDoctor
             );
     }
 
-    private async Task<Guid?> GetIdByLicenseAsync(string license)
+    private Task<Guid?> GetIdByLicenseAsync(string license)
     {
-        var query = new QueryOperationConfig {        
+        var query = new QueryOperationConfig
+        {
             IndexName = DoctorLicenseIndexName,
-            Filter = new QueryFilter(LicenseAttributeName, QueryOperator.Equal, license),            
+            Filter = new QueryFilter(LicenseAttributeName, QueryOperator.Equal, license),
             Limit = 1,
             Select = SelectValues.SpecificAttributes,
-            AttributesToGet = new() { DoctorIdAttributeName } 
+            AttributesToGet = new() { DoctorIdAttributeName }
         };
 
-        var entities = await Context.FromQueryAsync<DoctorEntity>(query)
-            .GetNextSetAsync();
-
-        return entities.FirstOrDefault()?.Id;
+        return _context.FromQueryAsync<DoctorEntity>(query)
+            .GetNextSetAsync()
+            .ContinueWith(task => task.Result.FirstOrDefault()?.Id);
     }
 
     public async Task<Doctor?> FindAsync(Guid doctorId)
     {
-        var entity = await Context.LoadAsync<DoctorEntity>(doctorId);
-        if (entity is null)
-            return default;
-        
-        return await AsModelAsync(entity);
+        return await _context.LoadAsync<DoctorEntity>(doctorId) is { } entity
+            ? await GetModelAsync(entity)
+            : default;
     }
-     
+
     public async Task<Doctor?> FindByAppointmentAsync(Appointment appointment)
     {
-        var entity = await Context.LoadAsync<AppointmentsEntity>(appointment.Id);
-        return await FindAsync(entity.DoctorId);
+        return await _context.LoadAsync<AppointmentsEntity>(appointment.Id) is { } entity
+            ? await FindAsync(entity.DoctorId)
+            : default;
     }
 
     public async Task<Doctor?> FindByLicenseAsync(string license)
     {
-        var query = new QueryOperationConfig {        
+        var query = new QueryOperationConfig
+        {
             IndexName = DoctorLicenseIndexName,
-            Filter = new QueryFilter(LicenseAttributeName, QueryOperator.Equal, license),            
+            Filter = new QueryFilter(LicenseAttributeName, QueryOperator.Equal, license),
             Limit = 1
         };
 
-        var entities = await Context.FromQueryAsync<DoctorEntity>(query)
+        var entities = await _context.FromQueryAsync<DoctorEntity>(query)
             .GetNextSetAsync();
 
-        return entities.FirstOrDefault() is {} entity 
-            ? await AsModelAsync(entity)
+        return entities.FirstOrDefault() is { } entity
+            ? await GetModelAsync(entity)
             : default;
     }
 
-    public async IAsyncEnumerable<Doctor> LoadBySpecialtyAsync(string specialty)
+    public async Task<IEnumerable<Doctor>> LoadBySpecialtyAsync(string specialty)
     {
-        var query = new QueryOperationConfig {        
+        var query = new QueryOperationConfig
+        {
             IndexName = DoctorSpecialtyIndexName,
-            Filter = new QueryFilter(SpecialtyAttributeName, QueryOperator.Equal, specialty)         
+            Filter = new QueryFilter(SpecialtyAttributeName, QueryOperator.Equal, specialty)
         };
 
-        var result = await Context.FromQueryAsync<DoctorSpecialtyEntity>(query).GetRemainingAsync();
+        var tasks = await _context.FromQueryAsync<DoctorSpecialtyEntity>(query)
+            .GetRemainingAsync()
+            .ContinueWith(task => task.Result
+                .Select(x => FindAsync(x.DoctorId))
+                .OfType<Task<Doctor>>());
 
-        if (result is null)
-            yield break;
-
-        foreach (var entity in result)
-        {
-            if (await FindAsync(entity.DoctorId) is { } doctor)
-                yield return doctor;
-        }            
+        return await Task.WhenAll(tasks);
     }
 
-    public async Task<Pagination<Doctor>> LoadByLicenseAsync(int pageSize = DefaultPageSize, string? paginationToken = null)
+    public async Task<Pagination<Doctor>> LoadByLicenseAsync(int pageSize = DefaultPageSize,
+        string? paginationToken = null)
     {
-        var table = Context.GetTargetTable<DoctorEntity>();
+        var search = _context.GetTargetTable<DoctorEntity>()
+            .Scan(new ScanOperationConfig
+            {
+                IndexName = DoctorLicenseIndexName,
+                Limit = pageSize,
+                PaginationToken = Tokens.Decode(paginationToken)
+            });
 
-        var search = table.Scan(new ScanOperationConfig
-        {
-            IndexName = DoctorLicenseIndexName,
-            Limit = pageSize,
-            PaginationToken = Tokens.Decode(paginationToken)
-        });
-
-        var documents = await search
+        var entities = await search
             .GetNextSetAsync()
-            .ContinueWith(task => task.Result.Select(x => JToken.Parse(x.ToJson())).ToList());
-        
-        if (!documents.Any())
-            return new();
+            .ContinueWith(task => task.Result
+                .Select(x => GetModelAsync(_context.FromDocument<DoctorEntity>(x)))
+                .ToArray());
 
-        var entities = documents.Select(x => x.ToObject<DoctorEntity>()).OfType<DoctorEntity>();
-        
-        var doctors = await Task.WhenAll(entities.Select(AsModelAsync).ToArray());
+        var doctors = await Task.WhenAll(entities);
         return new(doctors, Tokens.Encode(search.PaginationToken));
     }
 
     public async Task StoreAsync(Doctor doctor)
     {
-        var entity = await AsEntityAsync(doctor);
+        var entity = GetEntity(doctor);
 
-        var doctorId = await GetIdByLicenseAsync(doctor.License);
-        if (doctorId is not null)
-            entity.Id = doctorId.Value;
+        if (await GetIdByLicenseAsync(doctor.License) is { } doctorId)
+            entity.Id = doctorId;
 
         var specialtiesWriter = await CreateSpecialtiesWriterAsync(doctor);
-        
-        var writer = Context.CreateBatchWrite<DoctorEntity>();
-        writer.AddPutItem(entity);        
+
+        var writer = _context.CreateBatchWrite<DoctorEntity>();
+        writer.AddPutItem(entity);
 
         await writer.Combine(specialtiesWriter)
-            .ExecuteAsync();        
+            .ExecuteAsync();
     }
 
     private async Task<BatchWrite> CreateSpecialtiesWriterAsync(Doctor doctor)
     {
-        var writer = Context.CreateBatchWrite<DoctorSpecialtyEntity>();
-        
-        var currentSpecialties = await Context.QueryAsync<DoctorSpecialtyEntity>(doctor.Id)
+        var writer = _context.CreateBatchWrite<DoctorSpecialtyEntity>();
+
+        var currentSpecialties = await _context.QueryAsync<DoctorSpecialtyEntity>(doctor.Id)
             .GetRemainingAsync();
 
-        writer.AddDeleteItems(
-            currentSpecialties.FindAll(x => !doctor.Specialties.Contains(x.Specialty))
+        writer.AddDeleteItems(currentSpecialties
+            .Where(x => !doctor.Specialties.Contains(x.Specialty))
         );
 
         writer.AddPutItems(doctor.Specialties

@@ -24,7 +24,7 @@ public interface IMedicalSpecialtiesService
     /// </summary>
     /// <returns>A list of medical specialties.</returns>
     /// <exception cref="ServiceFailException">Thrown when the management fails.</exception>
-    Task<IReadOnlySet<string>> GetMedicalSpecialitiesAsync();
+    Task<IEnumerable<string>> GetMedicalSpecialitiesAsync();
 
     /// <summary>
     /// Removes a medical specialty.
@@ -74,7 +74,7 @@ internal class MedicalSpecialtiesService : IMedicalSpecialtiesService
         }
     }
 
-    public async Task<IReadOnlySet<string>> GetMedicalSpecialitiesAsync()
+    public async Task<IEnumerable<string>> GetMedicalSpecialitiesAsync()
     {
         try
         {

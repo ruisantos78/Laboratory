@@ -22,20 +22,21 @@ internal class DoctorRepositoryAsserts
     public void OnFindBySpecialityAsyncReturns(string specialty, IEnumerable<Doctor> result)
     {
         _doctorAdapter.LoadBySpecialtyAsync(specialty)
-            .Returns(result.ToAsyncEnumerable());
+            .Returns(result);
     }
 
     public void OnFindBySpecialtyWithAvailabilityAsyncReturns(string specialty, DateOnly date,
         IEnumerable<DoctorSchedule> result)
     {
+        var doctorSchedules = result.ToArray();
         _doctorAdapter.LoadBySpecialtyAsync(specialty)
-            .Returns(result.Select(x => x.Doctor).ToAsyncEnumerable());
+            .Returns(doctorSchedules.Select(x => x.Doctor));
 
-        foreach (var item in result)
+        foreach (var item in doctorSchedules)
         {
-            var appointments = item.Schedule.Select(date => new Appointment(date));
+            var appointments = item.Schedule.Select(x => new Appointment(x));
             _appointmentAdapter.LoadByDoctorAsync(item.Doctor, date)
-                .Returns(appointments.ToAsyncEnumerable());
+                .Returns(appointments);
         }
     }
 

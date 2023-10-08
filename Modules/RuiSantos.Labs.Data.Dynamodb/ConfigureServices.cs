@@ -22,6 +22,8 @@ public static class ConfigureServices
 
         services.AddTransient<IDoctorAdapter, DoctorAdapter>();
         services.AddTransient<IAppointmentAdapter, AppointmentAdapter>();
+        services.AddTransient<IMedicalSpecialtyAdapter, MedicalSpecialtyAdapter>();
+        services.AddTransient<IPatientAdapter, PatientAdapter>();
 
         services.AddTransient<IMedicalSpecialityRepository, MedicalSpecialityRepository>();
         services.AddTransient<IPatientRepository, PatientRepository>();

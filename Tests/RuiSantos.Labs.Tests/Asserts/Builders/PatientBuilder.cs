@@ -2,7 +2,7 @@ using RuiSantos.Labs.Core.Models;
 
 namespace RuiSantos.Labs.Tests.Asserts.Builders;
 
-public class PatientBuilder
+internal class PatientBuilder
 {
     private readonly Patient _patient;
 

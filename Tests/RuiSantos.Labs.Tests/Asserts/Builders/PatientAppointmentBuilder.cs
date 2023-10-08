@@ -2,7 +2,7 @@
 
 namespace RuiSantos.Labs.Tests.Asserts.Builders;
 
-public class PatientAppointmentBuilder
+internal class PatientAppointmentBuilder
 {
     private readonly HashSet<PatientAppointment> _appointments = new();
 
