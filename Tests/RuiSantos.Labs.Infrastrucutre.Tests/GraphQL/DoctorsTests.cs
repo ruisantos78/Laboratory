@@ -79,7 +79,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
 
     [Theory(DisplayName = "Get doctors with pagination")]
     [InlineData(2, default)]
-    [InlineData(2, @"{""DoctorId"":{""S"":""8a6151c7-9122-4f1b-a1e7-85e981c17a14""},""License"":{""S"":""DEF003""}}")]
+    [InlineData(2, """{"DoctorId":{"S":"8a6151c7-9122-4f1b-a1e7-85e981c17a14"},"License":{"S":"DEF003"}}""")]
     public async Task GetDoctorsWithPagination(int limit, string? paginationToken)
     {
         // Arrange
