@@ -1,0 +1,21 @@
+pipeline {
+    agent {
+        docker {
+            image 'mcr.microsoft.com/dotnet/sdk:8.0'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
+    stages {
+        stage('Build') {
+            steps {
+                script {
+                    // Restore NuGet packages
+                    sh 'dotnet restore'
+
+                    // Build the .NET app using MSBuild
+                    sh 'dotnet build'
+                }
+            }
+        }
+    }
+}

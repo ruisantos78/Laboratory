@@ -10,13 +10,8 @@ namespace RuiSantos.Labs.Tests.Services.Doctor;
 /// </UserStory>
 public class CreateDoctorAsyncTests
 {
-    public static IEnumerable<object[]> DoctorsMemberData() => new List<object[]>
-    {
-        new object[] { "ABC123", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" } }
-    };
-
     [Theory(DisplayName = "The doctor should be able to create a new record with your personal information.")]
-    [MemberData(nameof(DoctorsMemberData))]
+    [InlineData("ABC123", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     public async Task CreateDoctorAsync_WithSuccess(string license, string email, string firstName, string lastName,
         string[] contactNumbers, string[] specialties)
     {
@@ -40,7 +35,7 @@ public class CreateDoctorAsyncTests
     }
 
     [Theory(DisplayName = "A log should be writen when an unhandled exception occurs.")]
-    [MemberData(nameof(DoctorsMemberData))]
+    [InlineData("ABC123", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     public async Task CreateDoctorAsync_WhenFailsToAdd_ThenThrowsException_AndLogsError(
         string license, string email, string firstName, string lastName,
         string[] contactNumbers, string[] specialties)

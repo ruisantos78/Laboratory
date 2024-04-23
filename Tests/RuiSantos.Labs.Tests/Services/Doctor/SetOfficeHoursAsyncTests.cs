@@ -16,18 +16,17 @@ public class SetOfficeHoursAsyncTests
 
     public static IEnumerable<object[]> OfficeHoursMemberData => new List<object[]>
     {
-        new object[] { DayOfWeek.Monday, MorningHours },
-        new object[] { DayOfWeek.Wednesday, MorningHours },
-        new object[] { DayOfWeek.Friday, MorningHours }
+        new object[] { DayOfWeek.Monday, MorningHours.Select(TimeSpan.Parse) },
+        new object[] { DayOfWeek.Wednesday, MorningHours.Select(TimeSpan.Parse) },
+        new object[] { DayOfWeek.Friday, MorningHours.Select(TimeSpan.Parse) }
     };
 
     [Theory(DisplayName = "The doctor should be able the set with hours they attend by week days")]
     [MemberData(nameof(OfficeHoursMemberData))]
-    public async Task SetOfficeHoursAsync_WithSuccess(DayOfWeek dayOfWeek, string[] hours)
+    public async Task SetOfficeHoursAsync_WithSuccess(DayOfWeek dayOfWeek, IEnumerable<TimeSpan> officeHours)
     {
         // Arrange
         var doctor = new DoctorBuilder().Build();
-        var officeHours = hours.Select(TimeSpan.Parse).ToArray();
 
         var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctor.Id, result: doctor);
@@ -47,11 +46,10 @@ public class SetOfficeHoursAsyncTests
     [Theory(DisplayName = "The doctor should be able to modify their weekly schedule by changing the office hours.")]
     [MemberData(nameof(OfficeHoursMemberData))]
     public async Task SetOfficeHoursAsync_WhenHasOfficeHours_ShouldReplace_WithSuccess(DayOfWeek dayOfWeek,
-        string[] hours)
+        IEnumerable<TimeSpan> officeHours)
     {
         // Arrange
-        var officeHours = hours.Select(TimeSpan.Parse).ToArray();
-        var afternoon = AfternoonHours.Select(TimeSpan.Parse).ToArray();
+        var afternoon = AfternoonHours.Select(TimeSpan.Parse);
 
         var doctor = new DoctorBuilder()
             .WithOfficeHours(DayOfWeek.Monday, AfternoonHours)
@@ -80,11 +78,10 @@ public class SetOfficeHoursAsyncTests
     [Theory(DisplayName = "It should not be possible to establish office hours for a doctor who is not registered.")]
     [MemberData(nameof(OfficeHoursMemberData))]
     public async Task SetOfficeHoursAsync_WhenDoctorDoesNotExist_ThrownValidationFailException(DayOfWeek dayOfWeek,
-        string[] hours)
+        IEnumerable<TimeSpan> officeHours)
     {
         // Arrange
         var doctorId = Guid.NewGuid();
-        var officeHours = hours.Select(TimeSpan.Parse).ToArray();
 
         var asserts = new DoctorsServiceAsserts();
         asserts.OnFindAsyncReturns(doctorId, default);
@@ -106,7 +103,7 @@ public class SetOfficeHoursAsyncTests
     {
         // Arrange    
         var doctorId = Guid.NewGuid();
-        var officeHours = MorningHours.Select(TimeSpan.Parse).ToArray();
+        var officeHours = MorningHours.Select(TimeSpan.Parse);
 
         var asserts = new DoctorsServiceAsserts();
         asserts.WhenFindAsyncThrows(doctorId);

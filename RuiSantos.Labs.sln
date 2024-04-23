@@ -7,19 +7,19 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{A5A84AA0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Services", "Services", "{E29DA8F3-D859-49D5-85C4-7DFE848DDE27}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Data.Dynamodb", "Modules\RuiSantos.Labs.Data.Dynamodb\RuiSantos.Labs.Data.Dynamodb.csproj", "{D4E9A02D-9CFE-451E-8247-8CEC3536E490}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.Data.Dynamodb", "Modules\RuiSantos.Labs.Data.Dynamodb\RuiSantos.Labs.Data.Dynamodb.csproj", "{D4E9A02D-9CFE-451E-8247-8CEC3536E490}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Applications", "Applications", "{DB45FB4E-957C-4A14-8821-35418EEB474D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Api", "Server\RuiSantos.Labs.Api\RuiSantos.Labs.Api.csproj", "{DB6CFD8C-3122-4CAC-B2A1-D9A4182923EB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.Api", "Server\RuiSantos.Labs.Api\RuiSantos.Labs.Api.csproj", "{DB6CFD8C-3122-4CAC-B2A1-D9A4182923EB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Core", "Server\RuiSantos.Labs.Core\RuiSantos.Labs.Core.csproj", "{76D640BD-A6E3-4A17-8FCD-C0BC7354DE57}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.Core", "Server\RuiSantos.Labs.Core\RuiSantos.Labs.Core.csproj", "{76D640BD-A6E3-4A17-8FCD-C0BC7354DE57}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.GraphQL", "Modules\RuiSantos.Labs.GraphQL\RuiSantos.Labs.GraphQL.csproj", "{6A6DB3C4-530B-4AB2-891F-4BAF3777251A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.GraphQL", "Modules\RuiSantos.Labs.GraphQL\RuiSantos.Labs.GraphQL.csproj", "{6A6DB3C4-530B-4AB2-891F-4BAF3777251A}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Tests", "Tests\RuiSantos.Labs.Tests\RuiSantos.Labs.Tests.csproj", "{C31C76FE-6EDE-4D96-945F-1E11C1FA75ED}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.Tests", "Tests\RuiSantos.Labs.Tests\RuiSantos.Labs.Tests.csproj", "{C31C76FE-6EDE-4D96-945F-1E11C1FA75ED}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Client", "Server\RuiSantos.Labs.Client\RuiSantos.Labs.Client.csproj", "{11D06CE5-CD99-4C40-9313-C7AEC09CA82F}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.Client", "Server\RuiSantos.Labs.Client\RuiSantos.Labs.Client.csproj", "{11D06CE5-CD99-4C40-9313-C7AEC09CA82F}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{50EDB1FD-DE27-47E5-BEB1-FAF1DEFE6B98}"
 	ProjectSection(SolutionItems) = preProject
@@ -31,7 +31,16 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configurat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{8DE9189E-1864-4981-BB80-316D44F4E2FD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Infrastrucutre.Tests", "Tests\RuiSantos.Labs.Infrastrucutre.Tests\RuiSantos.Labs.Infrastrucutre.Tests.csproj", "{6BDE6FD6-1DED-43DE-8825-0B161613C186}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.Infrastrucutre.Tests", "Tests\RuiSantos.Labs.Infrastrucutre.Tests\RuiSantos.Labs.Infrastrucutre.Tests.csproj", "{6BDE6FD6-1DED-43DE-8825-0B161613C186}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Files", "Solution Files", "{EBEEDB41-BEBC-4E39-871B-071777543EAC}"
+	ProjectSection(SolutionItems) = preProject
+		docker-compose.yml = docker-compose.yml
+		Dockerfile = Dockerfile
+		JenkinsFile = JenkinsFile
+		Makefile = Makefile
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
