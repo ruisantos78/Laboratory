@@ -1,8 +1,8 @@
 pipeline {
     agent {
-        dockerfile {
-            filename 'Dockerfile'
-            dir '.'
+        docker {
+            image 'mcr.microsoft.com/dotnet/sdk:7.0'
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
         }
     }
     
@@ -10,11 +10,16 @@ pipeline {
         stage('Build') {
             steps {
                 script {
-                    // Restore NuGet packages
                     sh 'dotnet restore'
-
-                    // Build the .NET app using MSBuild
                     sh 'dotnet build'
+                }
+            }
+        }
+
+         stage('Test') {
+            steps {
+                script {
+                    sh 'dotnet test'
                 }
             }
         }
