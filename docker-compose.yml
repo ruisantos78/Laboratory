@@ -2,18 +2,19 @@ version: '3.4'
 
 services:
   ruisantos.labs.localstack:
-    image: "localstack/localstack"
+    image: localstack/localstack
     restart: always
-    ports:
-      - "4566:4566"
     environment:
       - DOCKER_HOST=unix:///var/run/docker.sock
       - DYNAMODB_SHARE_DB=1
       - SERVICES=dynamodb:4569
       - DEFAULT_REGION=us-east-1
+    ports:
+      - "127.0.0.1:4566:4566"            # LocalStack Gateway
+      - "127.0.0.1:4510-4559:4510-4559"  # external services port range  
     volumes:
-      - "/var/run/docker.sock:/var/run/docker.sock"
-      - "/private${TMPDIR}:/tmp/localstack"
+      - "./var/localstack:/var/lib/localstack"
+      - "./var/docker.sock:/var/run/docker.sock"
 
   ruisantos.labs.api:
     image: ${DOCKER_REGISTRY-}ruisantos.labs.api
@@ -26,7 +27,7 @@ services:
       - AWS_ENDPOINT_URL=http://ruisantos.labs.localstack:4566
       - LABS_ALLOWED_ORIGINS=http://localhost:8002
     ports:
-      - 8001:80
+      - "8001:80"
     build:
       context: .
       dockerfile: ./Dockerfile
@@ -36,7 +37,7 @@ services:
     depends_on:
       - ruisantos.labs.api
     ports:
-      - 8002:80
+      - "8002:80"
     build:
       context: ./Server/RuiSantos.Labs.Client
       dockerfile: ./Dockerfile 
