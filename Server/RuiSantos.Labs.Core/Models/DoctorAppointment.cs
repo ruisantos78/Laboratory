@@ -3,7 +3,7 @@ namespace RuiSantos.Labs.Core.Models;
 /// <summary>
 /// Represents a doctor appointment.
 /// </summary>
-public class DoctorAppointment
+public record DoctorAppointment
 {
     /// <summary>
     /// Represents an empty doctor appointment.

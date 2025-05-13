@@ -3,7 +3,7 @@ namespace RuiSantos.Labs.Core.Models;
 /// <summary>
 /// A doctor's schedule
 /// </summary>
-public class DoctorSchedule
+public record DoctorSchedule
 {
     /// <summary>
     /// An empty doctor schedule
@@ -28,6 +28,6 @@ public class DoctorSchedule
     public DoctorSchedule(Doctor doctor, IEnumerable<DateTime> schedule)
     {
         Doctor = doctor;
-        Schedule = schedule.ToArray();
+        Schedule = [.. schedule];
     }
 }

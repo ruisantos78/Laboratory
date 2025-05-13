@@ -8,14 +8,8 @@ namespace RuiSantos.Labs.Api.Controllers;
 [Route("[controller]")]
 [Produces("application/json")]
 [ApiController]
-public class SchedulesController : Controller
+public class SchedulesController(IAppointmentService service) : Controller
 {
-    private readonly IAppointmentService _service;
-
-    public SchedulesController(IAppointmentService service)
-    {
-        _service = service;
-    }
 
     /// <summary>
     /// Get doctor's schedules
@@ -33,7 +27,7 @@ public class SchedulesController : Controller
     {
         try
         {
-            var models = _service.GetAvailabilityAsync(specialty, date);
+            var models = service.GetAvailabilityAsync(specialty, date);
             return await this.SuccessAsync(models, typeof(DoctorAvailabilityContract));
         }
         catch (Exception ex)
@@ -55,7 +49,7 @@ public class SchedulesController : Controller
     {
         try
         {
-            await _service.CreateAppointmentAsync(
+            await service.CreateAppointmentAsync(
                 request.PatientSecuritySocialNumber,
                 request.DoctorId,
                 request.Date);
@@ -83,7 +77,7 @@ public class SchedulesController : Controller
     {
         try
         {
-            await _service.DeleteAppointmentAsync(
+            await service.DeleteAppointmentAsync(
                 request.PatientSecuritySocialNumber,
                 request.DoctorId,
                 request.Date);

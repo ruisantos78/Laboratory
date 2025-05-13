@@ -5,43 +5,37 @@ namespace RuiSantos.Labs.Api.Contracts;
 /// <summary>
 /// Contract for a patient's information
 /// </summary>
-public class PatientContract
+public class PatientContract(Patient model)
 {
+
     /// <summary>
     /// The Social Security Number of the patient
     /// </summary>
-    public string SocialSecurityNumber { get; init; }
+    public string SocialSecurityNumber => model.SocialSecurityNumber;
 
     /// <summary>
     /// The email of the patient
     /// </summary>
-    public string Email { get; init; }
+    public string Email => model.Email;
 
     /// <summary>
     /// The first name of the patient
     /// </summary>
-    public string FirstName { get; init; }
+    public string FirstName => model.FirstName;
 
     /// <summary>
     /// The last name of the patient
     /// </summary>
-    public string LastName { get; init; }
+    public string LastName => model.LastName;
 
     /// <summary>
     /// An array of contact numbers of the patient
     /// </summary>  
-    public IEnumerable<string> ContactNumbers { get; init; }
+    public IEnumerable<string> ContactNumbers => model.ContactNumbers;
 
     public PatientContract() : this(Patient.Empty)
     {
     }
 
-    public PatientContract(Patient model)
-    {
-        SocialSecurityNumber = model.SocialSecurityNumber;
-        Email = model.Email;
-        FirstName = model.FirstName;
-        LastName = model.LastName;
-        ContactNumbers = model.ContactNumbers;
-    }
+    public static implicit operator PatientContract(Patient model) => new(model);
 }

@@ -5,17 +5,22 @@ namespace RuiSantos.Labs.Api.Contracts;
 /// <summary>
 /// Contract for a doctor's appointments with a patient
 /// </summary>
-public class DoctorAppointmentsContract
+/// <remarks>
+/// Constructor for a patient appointment
+/// </remarks>
+/// <param name="model">The patient appointment</param>
+public class DoctorAppointmentsContract(PatientAppointment model)
 {
+
     /// <summary>
     /// The information about the patient
     /// </summary>
-    public PatientContract Patient { get; init; }
+    public PatientContract Patient => model.Patient;
 
     /// <summary>
     /// The appointment date
     /// </summary>
-    public DateTime Date { get; init; }
+    public DateTime Date => model.Date;
 
     /// <summary>
     /// Empty constructor for serialization
@@ -24,13 +29,5 @@ public class DoctorAppointmentsContract
     {
     }
 
-    /// <summary>
-    /// Constructor for a patient appointment
-    /// </summary>
-    /// <param name="patientAppointment">The patient appointment</param>
-    public DoctorAppointmentsContract(PatientAppointment patientAppointment)
-    {
-        Patient = new PatientContract(patientAppointment.Patient);
-        Date = patientAppointment.Date;
-    }
+    public static implicit operator DoctorAppointmentsContract(PatientAppointment model) => new(model);
 }

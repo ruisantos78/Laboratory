@@ -3,7 +3,7 @@
 /// <sumary>
 /// A doctor is a person who is able to perform medical procedures.
 /// </sumary>
-public class Doctor : Person
+public record Doctor : Person
 {
     /// <summary>
     /// An empty doctor.
@@ -32,7 +32,7 @@ public class Doctor : Person
     public Doctor()
     {
         License = string.Empty;
-        Specialties = new HashSet<string>();
-        OfficeHours = new HashSet<OfficeHour>();
+        Specialties = [];
+        OfficeHours = [];
     }
 }

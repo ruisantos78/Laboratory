@@ -1,4 +1,4 @@
-name: .NET 7 API
+name: .NET 9 API
 
 on:
   push:
@@ -21,7 +21,7 @@ jobs:
     - name: Setup .NET
       uses: actions/setup-dotnet@v3
       with:
-        dotnet-version: 7.0.x
+        dotnet-version: 9.0.x
     
     - name: Restore dependencies
       run: dotnet restore $Solution_Name

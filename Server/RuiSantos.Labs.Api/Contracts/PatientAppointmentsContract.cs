@@ -5,25 +5,21 @@ namespace RuiSantos.Labs.Api.Contracts;
 /// <summary>
 /// Contract for a patient's appointment with a doctor
 /// </summary>
-public class PatientAppointmentsContract
+public class PatientAppointmentsContract(DoctorAppointment model)
 {
     /// <summary>
     /// The doctor's information
     /// </summary>
-    public DoctorContract Doctor { get; init; }
+    public DoctorContract Doctor => model.Doctor;
 
     /// <summary>
     /// The date of the appointment
     /// </summary>
-    public DateTime Date { get; init; }
+    public DateTime Date => model.Date;
 
     public PatientAppointmentsContract() : this(DoctorAppointment.Empty)
     {
     }
 
-    public PatientAppointmentsContract(DoctorAppointment doctorAppointment)
-    {
-        Doctor = new DoctorContract(doctorAppointment.Doctor);
-        Date = doctorAppointment.Date;
-    }
+    public static implicit operator PatientAppointmentsContract(DoctorAppointment model) => new(model);
 }

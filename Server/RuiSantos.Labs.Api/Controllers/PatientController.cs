@@ -8,14 +8,8 @@ namespace RuiSantos.Labs.Api.Controllers;
 [Route("[controller]")]
 [Produces("application/json")]
 [ApiController]
-public class PatientController : Controller
+public class PatientController(IPatientService service) : Controller
 {
-    private readonly IPatientService _service;
-
-    public PatientController(IPatientService service)
-    {
-        _service = service;
-    }
 
     /// <summary>
     /// Get a patient's information using their social security number
@@ -32,7 +26,7 @@ public class PatientController : Controller
     {
         try
         {
-            var model = await _service.GetPatientBySocialNumberAsync(socialNumber);
+            var model = await service.GetPatientBySocialNumberAsync(socialNumber);
             return this.Success(model, typeof(PatientContract));
         }
         catch (Exception ex)
@@ -56,7 +50,7 @@ public class PatientController : Controller
     {
         try
         {
-            var models = _service.GetAppointmentsAsync(socialNumber);
+            var models = service.GetAppointmentsAsync(socialNumber);
             return await this.SuccessAsync(models, typeof(PatientAppointmentsContract));
         }
         catch (Exception ex)
@@ -78,7 +72,7 @@ public class PatientController : Controller
     {
         try
         {
-            await _service.CreatePatientAsync(
+            await service.CreatePatientAsync(
                 request.SocialSecurityNumber,
                 request.Email,
                 request.FirstName,

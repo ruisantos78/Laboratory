@@ -3,7 +3,7 @@
 /// <summary>
 /// Represents a patient.
 /// </summary>
-public class Patient : Person
+public record Patient : Person
 {
     /// <summary>
     /// An empty patient.

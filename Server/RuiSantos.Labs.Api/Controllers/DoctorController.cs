@@ -9,16 +9,9 @@ namespace RuiSantos.Labs.Api.Controllers;
 [Route("[controller]")]
 [Produces("application/json")]
 [ApiController]
-public class DoctorController : Controller
+public class DoctorController(IDoctorService service) : Controller
 {
     const int PageSize = 25;
-
-    private readonly IDoctorService _service;
-
-    public DoctorController(IDoctorService service)
-    {
-        _service = service;
-    }
 
     [HttpGet("")]
     [ProducesResponseType(StatusCodes.Status200OK, Type = typeof(DoctorContract[]))]
@@ -28,7 +21,7 @@ public class DoctorController : Controller
     {
         try
         {
-            var model = await _service.GetAllDoctorsAsync(take.GetValueOrDefault(PageSize), from);
+            var model = await service.GetAllDoctorsAsync(take.GetValueOrDefault(PageSize), from);
             return this.Success(model, typeof(DoctorContract[]));
         }
         catch (Exception ex)
@@ -52,7 +45,7 @@ public class DoctorController : Controller
     {
         try
         {
-            var model = await _service.GetDoctorByLicenseAsync(license);
+            var model = await service.GetDoctorByLicenseAsync(license);
             return this.Success(model, typeof(DoctorContract));
         }
         catch (Exception ex)
@@ -77,7 +70,7 @@ public class DoctorController : Controller
     {
         try
         {
-            var models = await _service.GetAppointmentsAsync(
+            var models = await service.GetAppointmentsAsync(
                 doctorId,
                 dateTime);
 
@@ -102,7 +95,7 @@ public class DoctorController : Controller
     {
         try
         {
-            await _service.CreateDoctorAsync(
+            await service.CreateDoctorAsync(
                 request.License,
                 request.Email,
                 request.FirstName,
@@ -139,7 +132,7 @@ public class DoctorController : Controller
             if (!TryParseTimeSpanArray(hours, out var timeSpans))
                 return BadRequest("Invalid timespan format for hours");
 
-            await _service.SetOfficeHoursAsync(
+            await service.SetOfficeHoursAsync(
                 doctorId,
                 week,
                 timeSpans);

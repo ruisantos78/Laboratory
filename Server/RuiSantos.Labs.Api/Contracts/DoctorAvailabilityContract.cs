@@ -5,17 +5,17 @@ namespace RuiSantos.Labs.Api.Contracts;
 /// <summary>
 /// Contract for a doctor's availability on a specific date
 /// </summary>
-public class DoctorAvailabilityContract
+public class DoctorAvailabilityContract(DoctorSchedule model)
 {
     /// <summary>
     /// The doctor's informations
     /// </summary>
-    public DoctorContract Doctor { get; init; }
+    public DoctorContract Doctor => model.Doctor;
 
     /// <summary>
     /// An array with the availability schedule for the doctor on a specific date
     /// </summary>
-    public IEnumerable<DateTime> Schedule { get; init; }
+    public IEnumerable<DateTime> Schedule => model.Schedule;
 
     /// <summary>
     /// Constructor for an empty doctor availability
@@ -24,13 +24,5 @@ public class DoctorAvailabilityContract
     {
     }
 
-    /// <summary>
-    /// Constructor for a doctor availability
-    /// </summary>
-    /// <param name="doctorSchedule">The doctor's availability</param>
-    public DoctorAvailabilityContract(DoctorSchedule doctorSchedule)
-    {
-        Doctor = new DoctorContract(doctorSchedule.Doctor);
-        Schedule = doctorSchedule.Schedule;
-    }
+    public static implicit operator DoctorAvailabilityContract(DoctorSchedule model) => new(model);
 }

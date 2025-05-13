@@ -7,14 +7,8 @@ namespace RuiSantos.Labs.Api.Controllers;
 [Route("[controller]")]
 [Produces("application/json")]
 [ApiController]
-public class SpecialtiesController : Controller
+public class SpecialtiesController(IMedicalSpecialtiesService service) : Controller
 {
-    private readonly IMedicalSpecialtiesService _service;
-
-    public SpecialtiesController(IMedicalSpecialtiesService service)
-    {
-        _service = service;
-    }
 
     /// <summary>
     /// Get all available medical specialties.
@@ -30,7 +24,7 @@ public class SpecialtiesController : Controller
     {
         try
         {
-            var result = await _service.GetMedicalSpecialitiesAsync();
+            var result = await service.GetMedicalSpecialitiesAsync();
             return this.Success(result.OrderBy(s => s));
         }
         catch (Exception ex)
@@ -52,7 +46,7 @@ public class SpecialtiesController : Controller
     {
         try
         {
-            await _service.CreateMedicalSpecialtiesAsync(descriptions);
+            await service.CreateMedicalSpecialtiesAsync(descriptions);
             return this.Success(true);
         }
         catch (Exception ex)
@@ -74,7 +68,7 @@ public class SpecialtiesController : Controller
     {
         try
         {
-            await _service.RemoveMedicalSpecialtiesAsync(description);
+            await service.RemoveMedicalSpecialtiesAsync(description);
             return this.Success();
         }
         catch (Exception ex)

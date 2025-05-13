@@ -7,7 +7,7 @@ namespace RuiSantos.Labs.Core.Models;
 /// <summary>
 /// Represents an office hour.
 /// </summary>
-public class OfficeHour
+public record OfficeHour
 {
     /// <summary>
     /// The day of the week.
@@ -27,7 +27,7 @@ public class OfficeHour
     public OfficeHour()
     {
         Week = DayOfWeek.Monday;
-        Hours = Enumerable.Empty<TimeSpan>();
+        Hours = [];
     }
 
     /// <summary>

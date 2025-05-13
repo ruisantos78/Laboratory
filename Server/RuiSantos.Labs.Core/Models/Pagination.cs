@@ -8,13 +8,13 @@ public readonly struct Pagination<TModel>
 
     public Pagination()
     {
-        Models = Array.Empty<TModel>();
+        Models = [];
         PaginationToken = null;
     }
 
     public Pagination(IEnumerable<TModel> models, string? paginationToken)
     {
-        Models = models.ToList();
+        Models = [.. models];
         PaginationToken = paginationToken;
     }
 }

@@ -3,7 +3,7 @@
 /// <summary>
 /// A person.
 /// </summary>
-public class Person
+public record Person
 {
     /// <summary>
     /// The unique identifier of the persom.
@@ -39,7 +39,7 @@ public class Person
         Email = string.Empty;
         FirstName = string.Empty;
         LastName = string.Empty;
-        ContactNumbers = new HashSet<string>();
+        ContactNumbers = [];
     }
 }
 

@@ -5,7 +5,7 @@ namespace RuiSantos.Labs.Core.Models;
 /// <summary>
 /// Represents an appointment.
 /// </summary>
-public class Appointment
+public record Appointment
 {
     /// <summary>
     /// The unique identifier of the appointment.
