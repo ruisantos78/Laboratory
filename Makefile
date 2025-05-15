@@ -22,20 +22,20 @@ help:
 	@echo ""
 
 start:
-	docker-compose up -d $(AWS_CONTAINER_NAME)
-	docker-compose up -d $(API_CONTAINER_NAME) --build
-	docker-compose up -d $(GUI_CONTAINER_NAME) --build
+	docker compose up -d $(AWS_CONTAINER_NAME)
+	docker compose up -d $(API_CONTAINER_NAME) --build
+	docker compose up -d $(GUI_CONTAINER_NAME) --build
 
 build-server:	
-	docker-compose up -d $(AWS_CONTAINER_NAME)
+	docker compose up -d $(AWS_CONTAINER_NAME)
 	sleep 5
-	docker-compose up -d $(API_CONTAINER_NAME) --build
+	docker compose up -d $(API_CONTAINER_NAME) --build
 
 build-client:
-	docker-compose up -d $(GUI_CONTAINER_NAME) --build
+	docker compose up -d $(GUI_CONTAINER_NAME) --build
 
 kill:
-	docker-compose down
+	docker compose down
 
 update-client:
 	dotnet graphql update -p Server/RuiSantos.Labs.Client
