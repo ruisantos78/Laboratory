@@ -96,7 +96,7 @@ public partial class MedicalSpecialtiesViewModel : ViewModelBase
         InputSpecialty = string.Empty;
     }
 
-    public override async Task Loaded()
+    public override async Task OnInitializedAsync()
     {
         await _loadingIndicatorService.Show();
         try

@@ -23,10 +23,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.Client", "Se
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configuration", "{50EDB1FD-DE27-47E5-BEB1-FAF1DEFE6B98}"
 	ProjectSection(SolutionItems) = preProject
-		docker-compose.yml = docker-compose.yml
 		Dockerfile = Dockerfile
 		Makefile = Makefile
 		README.md = README.md
+		compose.yml = compose.yml
 	EndProjectSection
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{8DE9189E-1864-4981-BB80-316D44F4E2FD}"

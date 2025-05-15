@@ -4,6 +4,7 @@ using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
+using RuiSantos.Labs.Core.Models;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;
 
@@ -41,6 +42,15 @@ partial class DoctorControllerTests
         var doctor = await Context.FindAsync<DoctorEntity>(doctorId);
         var patient = await Context.FindAsync<PatientEntity>(patientId);
 
+        PatientContract expectedPatient = new Patient
+        {
+            SocialSecurityNumber = patient.SocialSecurityNumber,
+            Email = patient.Email,
+            FirstName = patient.FirstName,
+            LastName = patient.LastName,
+            ContactNumbers = [.. patient.ContactNumbers]
+        };
+
         var appointment = await CreateTestAppointmentAsync(doctor.Id, patient.Id, dateTime);
 
         // Act
@@ -53,13 +63,7 @@ partial class DoctorControllerTests
 
         var element = content.First();
         element.Date.Should().Be(dateTime);
-        element.Patient.Should().BeEquivalentTo(new PatientContract {
-            SocialSecurityNumber = patient.SocialSecurityNumber,
-            Email = patient.Email,
-            FirstName = patient.FirstName,
-            LastName = patient.LastName,
-            ContactNumbers = patient.ContactNumbers
-        });
+        element.Patient.Should().BeEquivalentTo(expectedPatient);
 
         // Teardown
         await Context.DeleteAsync(appointment);

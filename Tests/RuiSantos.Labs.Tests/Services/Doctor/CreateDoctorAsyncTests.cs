@@ -57,11 +57,11 @@ public class CreateDoctorAsyncTests
     }
 
     [Theory(DisplayName = "The doctor should not be able to create a record with invalid or missing information.")]
-    [InlineData("License", null, "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
+    [InlineData("License", "", "joe.doe@mail.com", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
     [InlineData("Email", "ABC123", "<invalid email>", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
-    [InlineData("Email", "ABC123", null, "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
-    [InlineData("FirstName", "ABC123", "joe.doe@mail.com", null, "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
-    [InlineData("LastName", "ABC123", "joe.doe@mail.com", "Joe", null, new[] { "555-5555" }, new[] { "Cardiologist" })]
+    [InlineData("Email", "ABC123", "", "Joe", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
+    [InlineData("FirstName", "ABC123", "joe.doe@mail.com", "", "Doe", new[] { "555-5555" }, new[] { "Cardiologist" })]
+    [InlineData("LastName", "ABC123", "joe.doe@mail.com", "Joe", "", new[] { "555-5555" }, new[] { "Cardiologist" })]
     public async Task CreateDoctorAsync_WithInvalidInformation_ThrowsValidationFailException(string propertyName,
         string license, string email, string firstName, string lastName, string[] contactNumbers,
         string[] specialties)

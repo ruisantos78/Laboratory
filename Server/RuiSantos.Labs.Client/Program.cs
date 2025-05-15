@@ -28,7 +28,7 @@ builder.Services
 
 builder.Services
     .AddBlazoredLocalStorage()
-    .AddMvvmNavigation();
+    .AddMvvm();
 
 builder.Services
     .RegisterServices()

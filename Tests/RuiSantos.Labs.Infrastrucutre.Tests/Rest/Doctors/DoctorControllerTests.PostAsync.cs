@@ -3,6 +3,7 @@ using RuiSantos.Labs.Api.Contracts;
 using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
+using RuiSantos.Labs.Core.Models;
 
 namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;
 
@@ -12,14 +13,14 @@ partial class DoctorControllerTests
     public async Task ShouldReturnSuccessMessageWhenDoctorIsCreated()
     {
         // Arrange
-        var request = new DoctorContract
+        DoctorContract request = new Doctor()
         {
             License = "ZZZ123",
             FirstName = "Joe",
             LastName = "Doe",
             Email = "joe.doe@email.net",
-            ContactNumbers = new[] { "1-555-5555" },
-            Specialties = new[] { "Cardiology" }
+            ContactNumbers = [ "1-555-5555" ],
+            Specialties = [ "Cardiology" ]
         };
 
         // Act

@@ -46,8 +46,8 @@ public partial class IndexViewModel : ViewModelBase
         DisableConfirmButton = string.IsNullOrEmpty(value);
     }
 
-    public override Task Loaded()
-    {
+    public override Task OnInitializedAsync()
+    {    
         Profiles = _profilesOperations.GetAllProfiles();
         return Task.CompletedTask;
     }

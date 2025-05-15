@@ -15,7 +15,7 @@ public class GetAppointmentsAsyncTests
     [Theory(DisplayName = "The doctor should be able to query all of his appointments for a given date.")]
     [InlineData(default)]
     [InlineData("2023-01-01")]
-    public async void GetAppointmentsAsync_WithSuccess(string? dateString)
+    public async Task GetAppointmentsAsync_WithSuccess(string? dateString)
     {
         // Arrange
         var dateTime = DateTime.TryParse(dateString, out var dateValue) ? dateValue.Date : DateTime.Today;

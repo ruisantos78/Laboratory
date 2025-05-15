@@ -176,7 +176,7 @@ internal class DoctorAdapter : IDoctorAdapter
             .ExecuteAsync();
     }
 
-    private async Task<BatchWrite> CreateSpecialtiesWriterAsync(Doctor doctor)
+    private async Task<IBatchWrite<DoctorSpecialtyEntity>> CreateSpecialtiesWriterAsync(Doctor doctor)
     {
         var writer = _context.CreateBatchWrite<DoctorSpecialtyEntity>();
 
