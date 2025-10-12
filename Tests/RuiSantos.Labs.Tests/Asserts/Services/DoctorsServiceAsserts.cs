@@ -1,6 +1,9 @@
 using System.Linq.Expressions;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Logging;
 using NSubstitute;
 using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services;
 using RuiSantos.Labs.Tests.Asserts.Repositories;
 
@@ -9,14 +12,22 @@ namespace RuiSantos.Labs.Tests.Asserts.Services;
 internal class DoctorsServiceAsserts : LoggerAsserts<DoctorService>
 {
     private readonly DoctorRepositoryAsserts _doctorRepository = new();
-    private readonly AppointamentsRepositoryAsserts _appointamentsRepository = new();
+    private readonly AppointamentsRepositoryAsserts _appointmentsRepository = new();
+    private readonly IDoctorService _doctorService;
 
-    public IDoctorService GetService() => new DoctorService(
-        _doctorRepository.GetRepository(),
-        _appointamentsRepository.GetRepository(),
-        Logger
-    );
+    public IDoctorService GetService() => _doctorService;
 
+    public DoctorsServiceAsserts()
+    {
+        var provider = new ServiceCollection()
+            .AddLogging(builder => builder.AddXUnit())
+            .AddTransient<IDoctorRepository>(_ => _doctorRepository.GetRepository())
+            .AddTransient<IAppointmentsRepository>(_ => _appointmentsRepository.GetRepository())
+            .BuildServiceProvider();
+        
+        _doctorService = new DoctorService(provider);
+    }
+    
     public Task ShouldAddAsync(Expression<Predicate<Doctor>> expression, bool received = true)
     {
         var doctor = Arg.Is(expression);
@@ -43,7 +54,7 @@ internal class DoctorsServiceAsserts : LoggerAsserts<DoctorService>
     public void OnGetPatientAppointmentsAsyncReturns(Doctor doctor, DateOnly date,
         IEnumerable<PatientAppointment> result)
     {
-        _appointamentsRepository.OnGetPatientAppointmentsAsyncReturns(doctor, date, result);
+        _appointmentsRepository.OnGetPatientAppointmentsAsyncReturns(doctor, date, result);
     }
 
     public void WhenAddAsyncThrows(string licence)
@@ -59,6 +70,6 @@ internal class DoctorsServiceAsserts : LoggerAsserts<DoctorService>
 
     public void WhenGetPatientAppointmentsAsyncThrows(Doctor doctor, DateOnly date)
     {
-        _appointamentsRepository.WhenGetPatientAppointmentsAsyncThrows(doctor, date, new Exception());
+        _appointmentsRepository.WhenGetPatientAppointmentsAsyncThrows(doctor, date, new Exception());
     }
 }

@@ -31,7 +31,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Configuration", "Configurat
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Domain", "Domain", "{8DE9189E-1864-4981-BB80-316D44F4E2FD}"
 EndProject
-Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.Infrastrucutre.Tests", "Tests\RuiSantos.Labs.Infrastrucutre.Tests\RuiSantos.Labs.Infrastrucutre.Tests.csproj", "{6BDE6FD6-1DED-43DE-8825-0B161613C186}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "RuiSantos.Labs.Infrastructure.Tests", "Tests\RuiSantos.Labs.Infrastructure.Tests\RuiSantos.Labs.Infrastructure.Tests.csproj", "{6BDE6FD6-1DED-43DE-8825-0B161613C186}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

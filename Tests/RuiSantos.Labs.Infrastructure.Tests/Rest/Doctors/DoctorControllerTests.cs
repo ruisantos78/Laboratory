@@ -1,7 +1,7 @@
 using Amazon.DynamoDBv2.DataModel;
-using RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
+using RuiSantos.Labs.Infrastructure.Tests.Fixtures;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;
+namespace RuiSantos.Labs.Infrastructure.Tests.Rest.Doctors;
 
 public partial class DoctorControllerTests : IClassFixture<ServiceFixture>
 {

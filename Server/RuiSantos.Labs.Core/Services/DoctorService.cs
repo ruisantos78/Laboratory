@@ -1,168 +1,64 @@
-using Microsoft.Extensions.Logging;
-using RuiSantos.Labs.Core.Extensions;
+using RuiSantos.Labs.Core.Commands.DoctorCommands;
+using RuiSantos.Labs.Core.Factories;
 using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Core.Repositories;
-using RuiSantos.Labs.Core.Resources;
-using RuiSantos.Labs.Core.Services.Exceptions;
-using RuiSantos.Labs.Core.Validators;
 
 namespace RuiSantos.Labs.Core.Services;
 
-/// <summary>
-/// Manages the creation and modification of doctors.
-/// </summary>
-public interface IDoctorService
+internal class DoctorService(IServiceProvider provider) : IDoctorService
 {
-    /// <summary>
-    /// Creates a new doctor.
-    /// </summary>
-    /// <param name="license">The doctor's license number.</param>
-    /// <param name="email">The doctor's email.</param>
-    /// <param name="firstName">The doctor's first name.</param>
-    /// <param name="lastName">The doctor's last name.</param>
-    /// <param name="contactNumbers">The doctor's contact numbers.</param>
-    /// <param name="specialties">The doctor's specialties.</param>
-    /// <exception cref="ValidationFailException">Thrown when the doctor's license number is not unique.</exception>
-    /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
-    Task CreateDoctorAsync(string license, string email, string firstName, string lastName,
-        IEnumerable<string> contactNumbers, IEnumerable<string> specialties);
-
-    /// <summary>
-    /// Get the doctor's appointments on a given date.
-    /// </summary>
-    /// <param name="doctorId">The doctor's identification.</param>
-    /// <param name="dateTime">The date.</param>
-    /// <returns>The doctor's appointments on the given date.</returns>
-    Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime);
-
-
-    Task<Pagination<Doctor>> GetAllDoctorsAsync(int take, string? paginationToken);
-
-    /// <summary>
-    /// Set the office hours for a doctor.
-    /// </summary>
-    /// <param name="doctorId">The doctor's identification.</param>
-    /// <param name="dayOfWeek">The day of the week.</param>
-    /// <param name="hours">The office hours.</param>
-    /// <exception cref="ValidationFailException">Thrown when the doctor's license number is not found.</exception>
-    /// <exception cref="ServiceFailException">Thrown when the operation fails.</exception>
-    Task SetOfficeHoursAsync(Guid doctorId, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours);
-
-    Task<Doctor?> GetDoctorByLicenseAsync(string license);
-}
-
-internal class DoctorService : IDoctorService
-{
-    private readonly IDoctorRepository _doctorRepository;
-    private readonly IAppointamentsRepository _appointamentsRepository;
-    private readonly ILogger _logger;
-
-    public DoctorService(
-        IDoctorRepository doctorRepository,
-        IAppointamentsRepository appointamentsRepository,
-        ILogger<DoctorService> logger)
-    {
-        _doctorRepository = doctorRepository;
-        _appointamentsRepository = appointamentsRepository;
-        _logger = logger;
-    }
-
+    private readonly DoctorCommandFactory _doctorCommandFactory = new(provider);
+    
     public async Task CreateDoctorAsync(string license, string email, string firstName, string lastName,
-        IEnumerable<string> contactNumbers, IEnumerable<string> specialties)
+        IEnumerable<string> contactNumbers, IEnumerable<string> specialties, 
+        CancellationToken cancellationToken = default)
     {
-        try
+        await _doctorCommandFactory.CreateDoctorCommand(new CreateDoctorCommandInput
         {
-            var doctor = new Doctor
-            {
-                License = license,
-                Email = email,
-                FirstName = firstName,
-                LastName = lastName,
-                ContactNumbers = contactNumbers.ToHashSet(),
-                Specialties = specialties.ToHashSet()
-            };
-
-            Validator.ThrowExceptionIfIsNotValid(doctor);
-            await _doctorRepository.StoreAsync(doctor);
-        }
-        catch (ValidationFailException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.Fail(ex);
-            throw new ServiceFailException(MessageResources.DoctorSetFail);
-        }
+            License = license,
+            Email = email,
+            FirstName = firstName,
+            LastName = lastName,
+            ContactNumbers = [.. contactNumbers],
+            Specialties = [.. specialties]
+        }).Execute(cancellationToken);
     }
 
-    public async Task SetOfficeHoursAsync(Guid doctorId, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours)
+    public async Task SetOfficeHoursAsync(Guid doctorId, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours, 
+        CancellationToken cancellationToken = default)
     {
-        try
+        await _doctorCommandFactory.UpdateOfficeHoursCommand(new UpdateOfficeHoursCommandInput
         {
-            if (await _doctorRepository.FindAsync(doctorId) is not { } doctor)
-                throw new ValidationFailException(MessageResources.DoctorLicenseNotFound);
-
-            doctor.OfficeHours.RemoveWhere(hour => hour.Week == dayOfWeek);
-
-            var timeSpans = hours.ToList();
-            if (timeSpans.Any())
-                doctor.OfficeHours.Add(new OfficeHour(dayOfWeek, timeSpans));
-
-            await _doctorRepository.StoreAsync(doctor);
-        }
-        catch (ValidationFailException)
-        {
-            throw;
-        }
-        catch (Exception ex)
-        {
-            _logger.Fail(ex);
-            throw new ServiceFailException(MessageResources.DoctorSetFail);
-        }
+            DoctorId = doctorId,
+            DayOfWeek = dayOfWeek,
+            Hours = [.. hours]
+        }).Execute(cancellationToken);
     }
 
-    public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime)
+    public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime,
+        CancellationToken cancellationToken = default)
     {
-        try
+        return await _doctorCommandFactory.GetDoctorAppointmentsByDateCommand(new GetDoctorAppointmentsByDateCommandInput
         {
-            var date = DateOnly.FromDateTime(dateTime ?? DateTime.Today);
-
-            if (await _doctorRepository.FindAsync(doctorId) is not { } doctor)
-                return Array.Empty<PatientAppointment>();
-
-            return await _appointamentsRepository.GetPatientAppointmentsAsync(doctor, date);
-        }
-        catch (Exception ex)
-        {
-            _logger.Fail(ex);
-            throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
-        }
+            DoctorId = doctorId,
+            Date = DateOnly.FromDateTime(dateTime ?? DateTime.Today)
+        }).Execute(cancellationToken);
     }
 
-    public async Task<Pagination<Doctor>> GetAllDoctorsAsync(int take, string? paginationToken)
+    public async Task<Pagination<Doctor>> GetAllDoctorsAsync(int take, string? paginationToken,
+        CancellationToken cancellationToken = default)
     {
-        try
+        return await _doctorCommandFactory.GetAllDoctorsCommand(new GetAllDoctorsCommandInput()
         {
-            return await _doctorRepository.FindAllAsync(take, paginationToken);
-        }
-        catch (Exception ex)
-        {
-            _logger.Fail(ex);
-            throw new ServiceFailException(MessageResources.DoctorsGetAppointmentsFail);
-        }
+            Take = take,
+            PaginationToken = paginationToken
+        }).Execute(cancellationToken);
     }
 
-    public async Task<Doctor?> GetDoctorByLicenseAsync(string license)
+    public async Task<Doctor?> GetDoctorByLicenseAsync(string license, CancellationToken cancellationToken = default)
     {
-        try
+        return await _doctorCommandFactory.GetDoctorByLicenseCommand(new GetDoctorByLicenseCommandInput
         {
-            return await _doctorRepository.FindByLicenseAsync(license);
-        }
-        catch (Exception ex)
-        {
-            _logger.Fail(ex);
-            throw new ServiceFailException(MessageResources.DoctorsGetFail);
-        }
+            License = license
+        }).Execute(cancellationToken);
     }
 }

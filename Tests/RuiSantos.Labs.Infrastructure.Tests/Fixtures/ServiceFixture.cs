@@ -1,8 +1,8 @@
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RuiSantos.Labs.Infrastrucutre.Tests.Containers;
+using RuiSantos.Labs.Infrastructure.Tests.Containers;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
+namespace RuiSantos.Labs.Infrastructure.Tests.Fixtures;
 
 public sealed class ServiceFixture : IDisposable
 {

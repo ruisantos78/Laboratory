@@ -1,8 +1,7 @@
-﻿using FluentAssertions.Execution;
-using FluentAssertions.Primitives;
+﻿using FluentAssertions.Primitives;
 using Newtonsoft.Json.Linq;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
+namespace RuiSantos.Labs.Infrastructure.Tests.Extensions.FluentAssertions;
 
 public class JTokenAssertions : ReferenceTypeAssertions<JToken?, JTokenAssertions>
 {

@@ -28,7 +28,7 @@ public static class ConfigureServices
         services.AddTransient<IMedicalSpecialityRepository, MedicalSpecialityRepository>();
         services.AddTransient<IPatientRepository, PatientRepository>();
         services.AddTransient<IDoctorRepository, DoctorRepository>();
-        services.AddTransient<IAppointamentsRepository, AppointamentsRepository>();
+        services.AddTransient<IAppointmentsRepository, AppointmentsRepository>();
 
         return services;
     }

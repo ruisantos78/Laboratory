@@ -1,40 +1,34 @@
+using System.Runtime.CompilerServices;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 
-public class DoctorRepository : IDoctorRepository
+public class DoctorRepository(
+    IDoctorAdapter doctorAdapter,
+    IAppointmentAdapter appointmentAdapter)
+    : IDoctorRepository
 {
-    private readonly IDoctorAdapter _doctorAdapter;
-    private readonly IAppointmentAdapter _appointmentAdapter;
-
-    public DoctorRepository(
-        IDoctorAdapter doctorAdapter,
-        IAppointmentAdapter appointmentAdapter)
+    public Task<Doctor?> FindAsync(Guid doctorId, CancellationToken cancellationToken)
     {
-        _doctorAdapter = doctorAdapter;
-        _appointmentAdapter = appointmentAdapter;
+        return doctorAdapter.FindAsync(doctorId, cancellationToken);
     }
 
-    public Task<Doctor?> FindAsync(Guid doctorId)
+    public Task<IEnumerable<Doctor>> FindBySpecialityAsync(string specialty, CancellationToken cancellationToken)
     {
-        return _doctorAdapter.FindAsync(doctorId);
+        return doctorAdapter.LoadBySpecialtyAsync(specialty, cancellationToken);
     }
 
-    public Task<IEnumerable<Doctor>> FindBySpecialityAsync(string specialty)
+    public async IAsyncEnumerable<DoctorSchedule> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date
+        ,[EnumeratorCancellation] CancellationToken cancellationToken)
     {
-        return _doctorAdapter.LoadBySpecialtyAsync(specialty);
-    }
-
-    public async IAsyncEnumerable<DoctorSchedule> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date)
-    {
-        foreach (var doctor in await _doctorAdapter.LoadBySpecialtyAsync(specialty))
+        foreach (var doctor in await doctorAdapter.LoadBySpecialtyAsync(specialty, cancellationToken))
         {
             if (doctor.OfficeHours.All(h => h.Week != date.DayOfWeek))
                 continue;
 
-            foreach (var appointment in await _appointmentAdapter.LoadByDoctorAsync(doctor, date))
+            foreach (var appointment in await appointmentAdapter.LoadByDoctorAsync(doctor, date, cancellationToken))
             {
                 var availableTimes = doctor.OfficeHours
                     .Where(x => x.Week == date.DayOfWeek)
@@ -42,32 +36,32 @@ public class DoctorRepository : IDoctorRepository
                     .Select(x => date.ToDateTime(TimeOnly.FromTimeSpan(x)))
                     .ToList();
 
-                if (availableTimes.Any())
-                    yield return new(doctor, availableTimes);
+                if (availableTimes.Count != 0)
+                    yield return new DoctorSchedule(doctor, availableTimes);
             }
         }
     }
 
-    public async Task<IEnumerable<Doctor>> FindByAppointmentsAsync(IEnumerable<Appointment> appointments)
+    public async Task<IEnumerable<Doctor>> FindByAppointmentsAsync(IEnumerable<Appointment> appointments, CancellationToken cancellationToken)
     {
-        var tasks = appointments.Select(_doctorAdapter.FindByAppointmentAsync)
+        var tasks = appointments.Select(x => doctorAdapter.FindByAppointmentAsync(x, cancellationToken))
             .OfType<Task<Doctor>>();
 
         return await Task.WhenAll(tasks);
     }
 
-    public Task StoreAsync(Doctor doctor)
+    public Task StoreAsync(Doctor doctor, CancellationToken cancellationToken)
     {
-        return _doctorAdapter.StoreAsync(doctor);
+        return doctorAdapter.StoreAsync(doctor, cancellationToken);
     }
 
-    public Task<Pagination<Doctor>> FindAllAsync(int take, string? paginationToken)
+    public Task<Pagination<Doctor>> FindAllAsync(int take, string? paginationToken, CancellationToken cancellationToken)
     {
-        return _doctorAdapter.LoadByLicenseAsync(take, paginationToken);
+        return doctorAdapter.LoadByLicenseAsync(take, paginationToken, cancellationToken);
     }
 
-    public Task<Doctor?> FindByLicenseAsync(string license)
+    public Task<Doctor?> FindByLicenseAsync(string license, CancellationToken cancellationToken)
     {
-        return _doctorAdapter.FindByLicenseAsync(license);
+        return doctorAdapter.FindByLicenseAsync(license, cancellationToken);
     }
 }

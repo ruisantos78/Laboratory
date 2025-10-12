@@ -1,11 +1,11 @@
 using System.Net;
 using Amazon.DynamoDBv2.DataModel;
-using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
-using RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
-using RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
+using RuiSantos.Labs.Infrastructure.Tests.Extensions;
+using RuiSantos.Labs.Infrastructure.Tests.Extensions.FluentAssertions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
+using RuiSantos.Labs.Infrastructure.Tests.Fixtures;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.GraphQL;
+namespace RuiSantos.Labs.Infrastructure.Tests.GraphQL;
 
 public class MedicalSpecialtiesTests : IClassFixture<ServiceFixture>
 {

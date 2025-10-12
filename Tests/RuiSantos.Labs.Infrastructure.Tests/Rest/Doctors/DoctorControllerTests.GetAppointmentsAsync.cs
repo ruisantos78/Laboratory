@@ -1,12 +1,12 @@
 using System.Net;
 using RuiSantos.Labs.Api.Contracts;
-using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
+using RuiSantos.Labs.Infrastructure.Tests.Extensions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 using RuiSantos.Labs.Core.Models;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;
+namespace RuiSantos.Labs.Infrastructure.Tests.Rest.Doctors;
 
 partial class DoctorControllerTests
 {

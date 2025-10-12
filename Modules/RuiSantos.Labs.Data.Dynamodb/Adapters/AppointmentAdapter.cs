@@ -11,7 +11,8 @@ public interface IAppointmentAdapter
 {
     Task<Appointment?> FindByPatientAsync(Patient patient, DateTime dateTime);
     Task<Appointment?> FindByDoctorAsync(Doctor doctor, DateTime dateTime);
-    Task<IEnumerable<Appointment>> LoadByDoctorAsync(Doctor doctor, DateOnly date);
+    Task<IEnumerable<Appointment>> LoadByDoctorAsync(Doctor doctor, DateOnly date, 
+        CancellationToken cancellationToken = default);
     Task RemoveAsync(Appointment appointment);
     Task StoreAsync(Doctor doctor, Patient patient, DateTime dateTime);
 }
@@ -73,7 +74,8 @@ internal class AppointmentAdapter : IAppointmentAdapter
             );
     }
 
-    public Task<IEnumerable<Appointment>> LoadByDoctorAsync(Doctor doctor, DateOnly date)
+    public Task<IEnumerable<Appointment>> LoadByDoctorAsync(Doctor doctor, DateOnly date,
+        CancellationToken cancellationToken)
     {
         var startOfDay = date.ToDateTime(TimeOnly.MinValue);
         var endOfDay = date.ToDateTime(TimeOnly.MaxValue);

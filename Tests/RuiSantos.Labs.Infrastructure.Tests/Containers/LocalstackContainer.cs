@@ -8,7 +8,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using RuiSantos.Labs.Data.Dynamodb.Mediators;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.Containers;
+namespace RuiSantos.Labs.Infrastructure.Tests.Containers;
 
 // ReSharper disable LocalizableElement
 public sealed class LocalstackContainer : IAsyncDisposable

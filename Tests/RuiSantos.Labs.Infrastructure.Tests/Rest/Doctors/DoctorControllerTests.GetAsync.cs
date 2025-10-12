@@ -1,8 +1,8 @@
 using System.Net;
 using RuiSantos.Labs.Api.Contracts;
-using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
+using RuiSantos.Labs.Infrastructure.Tests.Extensions;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.Rest.Doctors;
+namespace RuiSantos.Labs.Infrastructure.Tests.Rest.Doctors;
 
 partial class DoctorControllerTests
 {

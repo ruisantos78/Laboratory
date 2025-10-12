@@ -1,6 +1,6 @@
 using Newtonsoft.Json.Linq;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
+namespace RuiSantos.Labs.Infrastructure.Tests.Extensions.FluentAssertions;
 
 public static class JsonAssertionsExtensions
 {

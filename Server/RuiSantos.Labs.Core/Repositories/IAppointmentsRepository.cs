@@ -5,7 +5,7 @@ namespace RuiSantos.Labs.Core.Repositories;
 /// <summary>
 /// Interface for the appointment repository.
 /// </summary>
-public interface IAppointamentsRepository
+public interface IAppointmentsRepository
 {
     /// <summary>
     /// Asynchronously gets information about appointments. This method is useful for polling for appointments that have been created in the past or for which you would like to know what date and time they were created.
@@ -28,8 +28,10 @@ public interface IAppointamentsRepository
     /// </summary>
     /// <param name="doctor">The doctor for whom to get appointments.</param>
     /// <param name="date">Specifies which date to get appointments for.</param>
+    /// <param name="cancellationToken"></param>
     /// <returns>An enumeration of appointments for the doctor or an empty enumeration if there are no appointments</returns>
-    Task<IEnumerable<PatientAppointment>> GetPatientAppointmentsAsync(Doctor doctor, DateOnly date);
+    Task<IEnumerable<PatientAppointment>> GetPatientAppointmentsAsync(Doctor doctor, DateOnly date,
+        CancellationToken cancellationToken);
 
     /// <summary>
     /// Asynchronously removes an appointment from the user's calendar. This is equivalent to a request to remove an appointment from the user's calendar.

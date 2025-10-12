@@ -11,7 +11,7 @@ internal class AppointamentsRepositoryAsserts
     private readonly IAppointmentAdapter _appointmentAdapter = Substitute.For<IAppointmentAdapter>();
     private readonly IPatientAdapter _patientAdapter = Substitute.For<IPatientAdapter>();
 
-    public IAppointamentsRepository GetRepository() => new AppointamentsRepository(
+    public IAppointmentsRepository GetRepository() => new AppointmentsRepository(
         _patientAdapter,
         _appointmentAdapter
     );

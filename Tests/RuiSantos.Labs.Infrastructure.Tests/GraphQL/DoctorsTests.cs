@@ -1,31 +1,23 @@
 using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using NFluent;
 using RuiSantos.Labs.Data.Dynamodb.Core;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
-using RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
-using RuiSantos.Labs.Infrastrucutre.Tests.Extensions.FluentAssertions;
-using RuiSantos.Labs.Infrastrucutre.Tests.Fixtures;
-
+using RuiSantos.Labs.Infrastructure.Tests.Fixtures;
+using RuiSantos.Labs.Infrastructure.Tests.Extensions;
+using RuiSantos.Labs.Infrastructure.Tests.Extensions.FluentAssertions;
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.GraphQL;
+namespace RuiSantos.Labs.Infrastructure.Tests.GraphQL;
 
-public class DoctorsTests : IClassFixture<ServiceFixture>
+public class DoctorsTests(ServiceFixture service, ITestOutputHelper output) : IClassFixture<ServiceFixture>
 {
-    protected record GetDoctorsResult(string License, string FirstName, string LastName, string Email);
+    private record GetDoctorsResult(string License, string FirstName, string LastName, string Email);
     protected record GetDoctorResult(string License, string FirstName, string LastName, string Email, string[] Contacts, string[] Specialties);
 
-    private readonly HttpClient _client;
-    private readonly IDynamoDBContext _context;
-    private readonly ITestOutputHelper _output;
-
-    public DoctorsTests(ServiceFixture service, ITestOutputHelper output)
-    {
-        _context = service.GetDynamoDbContext();
-        _client = service.GetHttpClient();
-        _output = output;
-    }
+    private readonly HttpClient _client = service.GetHttpClient();
+    private readonly IDynamoDBContext _context = service.GetDynamoDbContext();
 
     [Theory(DisplayName = "Get doctor information by license")]
     [InlineData("XYZ002")]
@@ -70,7 +62,7 @@ public class DoctorsTests : IClassFixture<ServiceFixture>
         response.StatusCode.Should().Be(HttpStatusCode.OK);
 
         // Assert
-        var result = await response.Content.GetTokenAsync(_output);
+        var result = await response.Content.GetTokenAsync(output);
         result["data"].Should().HaveChild("doctor")
             .ToObject<GetDoctorResult>()
             .Should()

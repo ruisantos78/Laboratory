@@ -1,7 +1,7 @@
 ﻿using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 
-namespace RuiSantos.Labs.Infrastrucutre.Tests.Extensions;
+namespace RuiSantos.Labs.Infrastructure.Tests.Extensions;
 
 internal static class HttpExtensions
 {

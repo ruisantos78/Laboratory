@@ -10,30 +10,33 @@ namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
 
 public interface IDoctorAdapter
 {
-    Task<Doctor?> FindAsync(Guid doctorId);
+    Task<Doctor?> FindAsync(Guid doctorId, 
+        CancellationToken cancellationToken = default);
 
-    Task<Doctor?> FindByAppointmentAsync(Appointment appointment);
+    Task<Doctor?> FindByAppointmentAsync(Appointment appointment, 
+        CancellationToken cancellationToken = default);
 
-    Task<Doctor?> FindByLicenseAsync(string license);
+    Task<Doctor?> FindByLicenseAsync(string license, 
+        CancellationToken cancellationToken = default);
 
-    Task<IEnumerable<Doctor>> LoadBySpecialtyAsync(string specialty);
+    Task<IEnumerable<Doctor>> LoadBySpecialtyAsync(string specialty, 
+        CancellationToken cancellationToken = default);
 
     Task<Pagination<Doctor>> LoadByLicenseAsync(int pageSize = DoctorAdapter.DefaultPageSize,
-        string? paginationToken = null);
+        string? paginationToken = null, 
+        CancellationToken cancellationToken = default);
 
-    Task StoreAsync(Doctor doctor);
+    Task StoreAsync(Doctor doctor, 
+        CancellationToken cancellationToken = default);
 }
 
-internal class DoctorAdapter : IDoctorAdapter
+internal class DoctorAdapter(IAmazonDynamoDB client) : IDoctorAdapter
 {
     internal const int DefaultPageSize = 25;
 
-    private readonly IDynamoDBContext _context;
-
-    public DoctorAdapter(IAmazonDynamoDB client)
-    {
-        _context = new DynamoDBContext(client);
-    }
+    private readonly DynamoDBContext _context = new DynamoDBContextBuilder()
+        .WithDynamoDBClient(() => client)
+        .Build(); 
 
     private static DoctorEntity GetEntity(Doctor model) => new()
     {
@@ -64,7 +67,7 @@ internal class DoctorAdapter : IDoctorAdapter
         {
             Filter = new QueryFilter(DoctorIdAttributeName, QueryOperator.Equal, entity.Id),
             Select = SelectValues.SpecificAttributes,
-            AttributesToGet = new() { SpecialtyAttributeName }
+            AttributesToGet = [SpecialtyAttributeName]
         };
 
         return _context.FromQueryAsync<DoctorSpecialtyEntity>(query)
@@ -83,7 +86,7 @@ internal class DoctorAdapter : IDoctorAdapter
             Filter = new QueryFilter(LicenseAttributeName, QueryOperator.Equal, license),
             Limit = 1,
             Select = SelectValues.SpecificAttributes,
-            AttributesToGet = new() { DoctorIdAttributeName }
+            AttributesToGet = [DoctorIdAttributeName]
         };
 
         return _context.FromQueryAsync<DoctorEntity>(query)
@@ -91,21 +94,21 @@ internal class DoctorAdapter : IDoctorAdapter
             .ContinueWith(task => task.Result.FirstOrDefault()?.Id);
     }
 
-    public async Task<Doctor?> FindAsync(Guid doctorId)
+    public async Task<Doctor?> FindAsync(Guid doctorId, CancellationToken cancellationToken)
     {
-        return await _context.LoadAsync<DoctorEntity>(doctorId) is { } entity
+        return await _context.LoadAsync<DoctorEntity>(doctorId, cancellationToken) is { } entity
             ? await GetModelAsync(entity)
-            : default;
+            : null;
     }
 
-    public async Task<Doctor?> FindByAppointmentAsync(Appointment appointment)
+    public async Task<Doctor?> FindByAppointmentAsync(Appointment appointment, CancellationToken cancellationToken)
     {
-        return await _context.LoadAsync<AppointmentsEntity>(appointment.Id) is { } entity
-            ? await FindAsync(entity.DoctorId)
-            : default;
+        return await _context.LoadAsync<AppointmentsEntity>(appointment.Id, cancellationToken) is { } entity
+            ? await FindAsync(entity.DoctorId, cancellationToken)
+            : null;
     }
 
-    public async Task<Doctor?> FindByLicenseAsync(string license)
+    public async Task<Doctor?> FindByLicenseAsync(string license, CancellationToken cancellationToken)
     {
         var query = new QueryOperationConfig
         {
@@ -115,14 +118,14 @@ internal class DoctorAdapter : IDoctorAdapter
         };
 
         var entities = await _context.FromQueryAsync<DoctorEntity>(query)
-            .GetNextSetAsync();
+            .GetNextSetAsync(cancellationToken);
 
         return entities.FirstOrDefault() is { } entity
             ? await GetModelAsync(entity)
-            : default;
+            : null;
     }
 
-    public async Task<IEnumerable<Doctor>> LoadBySpecialtyAsync(string specialty)
+    public async Task<IEnumerable<Doctor>> LoadBySpecialtyAsync(string specialty, CancellationToken cancellationToken)
     {
         var query = new QueryOperationConfig
         {
@@ -131,16 +134,16 @@ internal class DoctorAdapter : IDoctorAdapter
         };
 
         var tasks = await _context.FromQueryAsync<DoctorSpecialtyEntity>(query)
-            .GetRemainingAsync()
+            .GetRemainingAsync(cancellationToken)
             .ContinueWith(task => task.Result
-                .Select(x => FindAsync(x.DoctorId))
-                .OfType<Task<Doctor>>());
+                .Select(x => FindAsync(x.DoctorId, cancellationToken))
+                .OfType<Task<Doctor>>(), cancellationToken);
 
         return await Task.WhenAll(tasks);
     }
 
-    public async Task<Pagination<Doctor>> LoadByLicenseAsync(int pageSize = DefaultPageSize,
-        string? paginationToken = null)
+    public async Task<Pagination<Doctor>> LoadByLicenseAsync(int pageSize = DoctorAdapter.DefaultPageSize,
+        string? paginationToken = null, CancellationToken cancellationToken = default)
     {
         var search = _context.GetTargetTable<DoctorEntity>()
             .Scan(new ScanOperationConfig
@@ -151,37 +154,38 @@ internal class DoctorAdapter : IDoctorAdapter
             });
 
         var entities = await search
-            .GetNextSetAsync()
+            .GetNextSetAsync(cancellationToken)
             .ContinueWith(task => task.Result
                 .Select(x => GetModelAsync(_context.FromDocument<DoctorEntity>(x)))
-                .ToArray());
+                .ToArray(), cancellationToken);
 
         var doctors = await Task.WhenAll(entities);
         return new(doctors, Tokens.Encode(search.PaginationToken));
     }
 
-    public async Task StoreAsync(Doctor doctor)
+    public async Task StoreAsync(Doctor doctor, CancellationToken cancellationToken)
     {
         var entity = GetEntity(doctor);
 
         if (await GetIdByLicenseAsync(doctor.License) is { } doctorId)
             entity.Id = doctorId;
 
-        var specialtiesWriter = await CreateSpecialtiesWriterAsync(doctor);
+        var specialtiesWriter = await CreateSpecialtiesWriterAsync(doctor, cancellationToken);
 
         var writer = _context.CreateBatchWrite<DoctorEntity>();
         writer.AddPutItem(entity);
 
         await writer.Combine(specialtiesWriter)
-            .ExecuteAsync();
+            .ExecuteAsync(cancellationToken);
     }
 
-    private async Task<IBatchWrite<DoctorSpecialtyEntity>> CreateSpecialtiesWriterAsync(Doctor doctor)
+    private async Task<IBatchWrite<DoctorSpecialtyEntity>> CreateSpecialtiesWriterAsync(Doctor doctor,
+        CancellationToken cancellationToken)
     {
         var writer = _context.CreateBatchWrite<DoctorSpecialtyEntity>();
 
         var currentSpecialties = await _context.QueryAsync<DoctorSpecialtyEntity>(doctor.Id)
-            .GetRemainingAsync();
+            .GetRemainingAsync(cancellationToken);
 
         writer.AddDeleteItems(currentSpecialties
             .Where(x => !doctor.Specialties.Contains(x.Specialty))
