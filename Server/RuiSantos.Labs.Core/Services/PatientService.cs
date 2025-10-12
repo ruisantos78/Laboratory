@@ -5,6 +5,7 @@ using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Validators;
+using RuiSantos.Labs.Domain.Extensions.Models;
 
 namespace RuiSantos.Labs.Core.Services;
 

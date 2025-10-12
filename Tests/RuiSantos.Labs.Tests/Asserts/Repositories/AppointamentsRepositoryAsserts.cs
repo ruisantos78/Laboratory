@@ -3,6 +3,7 @@ using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
 using RuiSantos.Labs.Data.Dynamodb.Repositories;
+using RuiSantos.Labs.Domain.Extensions.Models;
 
 namespace RuiSantos.Labs.Tests.Asserts.Repositories;
 

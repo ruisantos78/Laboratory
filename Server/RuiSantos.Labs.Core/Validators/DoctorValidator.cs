@@ -1,5 +1,6 @@
 ﻿using FluentValidation;
 using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Domain.Extensions.Models;
 
 namespace RuiSantos.Labs.Core.Validators;
 
@@ -23,10 +24,10 @@ internal sealed class DoctorValidator : AbstractValidator<Doctor>
         RuleFor(model => model.License)
             .NotEmpty();
 
-        RuleFor(model => model.Specialties)
+        RuleFor(model => model.Specializations)
             .NotEmpty();
 
-        RuleForEach(model => model.Specialties)
+        RuleForEach(model => model.Specializations)
             .NotEmpty();
     }
 }

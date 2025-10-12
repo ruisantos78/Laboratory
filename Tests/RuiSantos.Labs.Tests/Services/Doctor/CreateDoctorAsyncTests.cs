@@ -31,7 +31,7 @@ public class CreateDoctorAsyncTests
             x.FirstName == firstName &&
             x.LastName == lastName &&
             x.ContactNumbers.SequenceEqual(contactNumbers) &&
-            x.Specialties.SequenceEqual(specialties));
+            x.Specializations.SequenceEqual(specialties));
     }
 
     [Xunit.Theory(DisplayName = "A log should be writen when an unhandled exception occurs.")]

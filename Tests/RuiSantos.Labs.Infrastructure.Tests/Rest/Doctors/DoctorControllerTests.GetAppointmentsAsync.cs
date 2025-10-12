@@ -5,6 +5,7 @@ using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Domain.Extensions.Models;
 
 namespace RuiSantos.Labs.Infrastructure.Tests.Rest.Doctors;
 

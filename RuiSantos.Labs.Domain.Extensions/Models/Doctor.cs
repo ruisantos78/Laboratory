@@ -1,4 +1,4 @@
-﻿namespace RuiSantos.Labs.Core.Models;
+﻿namespace RuiSantos.Labs.Domain.Extensions.Models;
 
 /// <sumary>
 /// A doctor is a person who is able to perform medical procedures.
@@ -18,7 +18,7 @@ public record Doctor : Person
     /// <summary>
     /// The specialties of the doctor.
     /// </summary>
-    public HashSet<string> Specialties { get; init; }
+    public HashSet<string> Specializations { get; init; }
 
     /// <summary>
     /// The office hours of the doctor.
@@ -32,7 +32,7 @@ public record Doctor : Person
     public Doctor()
     {
         License = string.Empty;
-        Specialties = [];
+        Specializations = [];
         OfficeHours = [];
     }
 }

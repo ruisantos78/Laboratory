@@ -1,6 +1,4 @@
-using RuiSantos.Labs.Core.Extensions;
-
-namespace RuiSantos.Labs.Core.Models;
+namespace RuiSantos.Labs.Domain.Extensions.Models;
 
 /// <summary>
 /// Represents an appointment.
@@ -64,6 +62,6 @@ public record Appointment
     /// Gets the date and time of the appointment.
     /// </summary>
     /// <returns>The date and time of the appointment.</returns>
-    public DateTime GetDateTime() => Date.WithTime(Time);
+    public DateTime GetDateTime() => Date.ToDateTime(TimeOnly.FromTimeSpan(Time));
 }
 

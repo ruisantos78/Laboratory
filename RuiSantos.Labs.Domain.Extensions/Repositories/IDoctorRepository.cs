@@ -1,6 +1,6 @@
-using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Domain.Extensions.Models;
 
-namespace RuiSantos.Labs.Core.Repositories;
+namespace RuiSantos.Labs.Domain.Extensions.Repositories;
 
 public interface IDoctorRepository
 {
@@ -24,9 +24,9 @@ public interface IDoctorRepository
     /// <summary>
     /// Finds doctor by speciality. Asynchronously invokes the search. Returns a task that represents the asynchronous operation.
     /// </summary>
-    /// <param name="specialty">The name of the speciality. E. g.</param>
+    /// <param name="specialty">The name of the speciality. E.g.</param>
     /// <param name="cancellationToken"></param>
-    /// <returns>A object that represents the asynchronous operation. The task result contains a instance of the class containing the dao rows</returns>
+    /// <returns>An object that represents the asynchronous operation. The task result contains a instance of the class containing the dao rows</returns>
     Task<IEnumerable<Doctor>> FindBySpecialityAsync(string specialty, CancellationToken cancellationToken);
 
     /// <summary>
@@ -46,6 +46,8 @@ public interface IDoctorRepository
     /// <returns>The collection of s that match the criteria ; or an empty collection if no schedule is found with the specified criteria</returns>
     IAsyncEnumerable<DoctorSchedule> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date, CancellationToken cancellationToken);
 
+    Task<Doctor?> FindByLicenseAsync(string license, CancellationToken cancellationToken);
+    
     /// <summary>
     /// Stores the doctor in the database. This is a blocking call. If the store fails to complete an exception will be thrown.
     /// </summary>
@@ -53,6 +55,4 @@ public interface IDoctorRepository
     /// <param name="cancellationToken"></param>
     /// <returns>A representing the asynchronous operation</returns>
     Task StoreAsync(Doctor doctor, CancellationToken cancellationToken);
-
-    Task<Doctor?> FindByLicenseAsync(string license, CancellationToken cancellationToken);
 }

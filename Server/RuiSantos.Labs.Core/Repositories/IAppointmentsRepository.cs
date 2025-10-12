@@ -1,4 +1,5 @@
 ﻿using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Domain.Extensions.Models;
 
 namespace RuiSantos.Labs.Core.Repositories;
 

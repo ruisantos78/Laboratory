@@ -1,6 +1,7 @@
 ﻿using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
+using RuiSantos.Labs.Domain.Extensions.Models;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 

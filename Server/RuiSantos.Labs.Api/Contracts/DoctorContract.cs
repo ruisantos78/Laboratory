@@ -1,4 +1,5 @@
 ﻿using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Domain.Extensions.Models;
 
 namespace RuiSantos.Labs.Api.Contracts;
 
@@ -35,7 +36,7 @@ public class DoctorContract(Doctor model)
     /// <summary>
     /// An array of medical specialties that the doctor is trained in.
     /// </summary>
-    public IReadOnlySet<string> Specialties => model.Specialties;
+    public IReadOnlySet<string> Specialties => model.Specializations;
 
     public DoctorContract() : this(Doctor.Empty)
     {

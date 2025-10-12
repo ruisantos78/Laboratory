@@ -1,4 +1,6 @@
-namespace RuiSantos.Labs.Core.Commands;
+using FluentValidation;
+
+namespace RuiSantos.Labs.Domain.Extensions.Commands;
 
 public interface IAsyncCommand
 {

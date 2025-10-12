@@ -4,6 +4,9 @@ using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
+using RuiSantos.Labs.Domain.Extensions.Commands;
+using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Extensions.Repositories;
 
 namespace RuiSantos.Labs.Core.Commands.DoctorCommands;
 

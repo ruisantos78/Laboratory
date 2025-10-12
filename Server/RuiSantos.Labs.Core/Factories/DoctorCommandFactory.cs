@@ -2,6 +2,8 @@ using Microsoft.Extensions.DependencyInjection;
 using RuiSantos.Labs.Core.Commands;
 using RuiSantos.Labs.Core.Commands.DoctorCommands;
 using RuiSantos.Labs.Core.Models;
+using RuiSantos.Labs.Domain.Extensions.Commands;
+using RuiSantos.Labs.Domain.Extensions.Models;
 
 namespace RuiSantos.Labs.Core.Factories;
 

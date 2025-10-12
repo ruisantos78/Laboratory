@@ -5,6 +5,9 @@ using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
 using RuiSantos.Labs.Core.Validators;
+using RuiSantos.Labs.Domain.Extensions.Commands;
+using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Extensions.Repositories;
 
 namespace RuiSantos.Labs.Core.Commands.DoctorCommands;
 
@@ -42,7 +45,7 @@ internal class CreateDoctorCommand(CreateDoctorCommandInput input
             FirstName = input.FirstName,
             LastName = input.LastName,
             ContactNumbers = input.ContactNumbers.ToHashSet(),
-            Specialties = input.Specialties.ToHashSet()
+            Specializations = input.Specialties.ToHashSet()
         };
     }  
 }

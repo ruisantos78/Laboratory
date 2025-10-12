@@ -1,9 +1,9 @@
 using System.IO.Compression;
 using System.Text;
 
-namespace RuiSantos.Labs.Data.Dynamodb.Core;
+namespace RuiSantos.Labs.Domain.Extensions.Data;
 
-internal static class Tokens
+public static class Tokens
 {
     public static string? Encode(string? value)
     {
@@ -32,5 +32,19 @@ internal static class Tokens
         using var reader = new StreamReader(gzip, Encoding.UTF8);
 
         return reader.ReadToEnd();
+    }
+    
+    public static bool TryDecode(string? value, out string? decoded)
+    {
+        try
+        {
+            decoded = Decode(value);
+            return true;
+        }
+        catch
+        {
+            decoded = null;
+            return false;
+        }
     }
 }

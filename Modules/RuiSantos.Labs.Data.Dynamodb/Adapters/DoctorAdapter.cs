@@ -1,9 +1,11 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using RuiSantos.Labs.Core;
 using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Data.Dynamodb.Core;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
+using RuiSantos.Labs.Domain.Extensions.Data;
+using RuiSantos.Labs.Domain.Extensions.Models;
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Adapters;
@@ -58,7 +60,7 @@ internal class DoctorAdapter(IAmazonDynamoDB client) : IDoctorAdapter
         Email = entity.Email,
         ContactNumbers = entity.ContactNumbers.ToHashSet(),
         OfficeHours = entity.Availability.ToHashSet(),
-        Specialties = await GetSpecialtiesAsync(entity)
+        Specializations = await GetSpecialtiesAsync(entity)
     };
 
     private Task<HashSet<string>> GetSpecialtiesAsync(DoctorEntity entity)
@@ -188,10 +190,10 @@ internal class DoctorAdapter(IAmazonDynamoDB client) : IDoctorAdapter
             .GetRemainingAsync(cancellationToken);
 
         writer.AddDeleteItems(currentSpecialties
-            .Where(x => !doctor.Specialties.Contains(x.Specialty))
+            .Where(x => !doctor.Specializations.Contains(x.Specialty))
         );
 
-        writer.AddPutItems(doctor.Specialties
+        writer.AddPutItems(doctor.Specializations
             .Except(currentSpecialties.Select(x => x.Specialty))
             .Select(specialty => new DoctorSpecialtyEntity
             {

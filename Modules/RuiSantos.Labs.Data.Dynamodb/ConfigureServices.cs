@@ -5,6 +5,7 @@ using Microsoft.Extensions.DependencyInjection;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
 using RuiSantos.Labs.Data.Dynamodb.Repositories;
+using RuiSantos.Labs.Domain.Extensions.Repositories;
 
 namespace RuiSantos.Labs.Data.Dynamodb;
 

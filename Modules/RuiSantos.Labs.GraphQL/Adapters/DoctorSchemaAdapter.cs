@@ -1,5 +1,6 @@
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Services;
+using RuiSantos.Labs.Domain.Extensions.Models;
 using RuiSantos.Labs.GraphQL.Schemas;
 
 namespace RuiSantos.Labs.GraphQL.Adapters;
@@ -28,7 +29,7 @@ internal class DoctorSchemaAdapter : IDoctorSchemaAdapter
         LastName = model.LastName,
         Email = model.Email,
         Contacts = model.ContactNumbers.ToList(),
-        Specialties = model.Specialties.ToList()
+        Specialties = model.Specializations.ToList()
     };
 
     public async Task<DoctorSchema?> FindAsync(string license)

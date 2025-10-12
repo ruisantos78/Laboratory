@@ -2,6 +2,7 @@
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
+using RuiSantos.Labs.Domain.Extensions.Models;
 using RuiSantos.Labs.Tests.Asserts.Builders;
 using RuiSantos.Labs.Tests.Asserts.Services;
 

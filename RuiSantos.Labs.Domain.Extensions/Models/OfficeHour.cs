@@ -1,8 +1,4 @@
-using Newtonsoft.Json;
-using Newtonsoft.Json.Converters;
-using RuiSantos.Labs.Core.Models.Converters;
-
-namespace RuiSantos.Labs.Core.Models;
+namespace RuiSantos.Labs.Domain.Extensions.Models;
 
 /// <summary>
 /// Represents an office hour.
@@ -12,13 +8,11 @@ public record OfficeHour
     /// <summary>
     /// The day of the week.
     /// </summary>
-    [JsonConverter(typeof(StringEnumConverter))]
     public DayOfWeek Week { get; init; }
 
     /// <summary>
     /// Array of working hours.
     /// </summary>
-    [JsonConverter(typeof(TimeSpanConverter))]
     public IEnumerable<TimeSpan> Hours { get; init; }
 
     /// <summary>

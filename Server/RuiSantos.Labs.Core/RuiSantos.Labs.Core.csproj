@@ -29,4 +29,7 @@
       <AutoGen>True</AutoGen>
     </Compile>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\RuiSantos.Labs.Domain.Extensions\RuiSantos.Labs.Domain.Extensions.csproj" />
+  </ItemGroup>
 </Project>

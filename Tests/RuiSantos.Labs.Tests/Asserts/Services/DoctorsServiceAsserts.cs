@@ -4,6 +4,8 @@ using NSubstitute;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services;
+using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Extensions.Repositories;
 using RuiSantos.Labs.Tests.Asserts.Providers;
 using RuiSantos.Labs.Tests.Asserts.Repositories;
 
