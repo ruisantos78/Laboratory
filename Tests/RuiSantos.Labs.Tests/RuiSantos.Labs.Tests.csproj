@@ -11,10 +11,9 @@
   <ItemGroup>
     <PackageReference Include="FluentAssertions" Version="8.7.1" />
     <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.0.0" />
-    <PackageReference Include="Xunit.DependencyInjection.Logging" Version="11.0.0" />
-    <PackageReference Include="Xunit.Logging" Version="1.2.0" />
-    <PackageReference Include="xunit" Version="3.1.5" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="3.1.5">
+
+    <PackageReference Include="xunit" Version="2.9.3"/>
+    <PackageReference Include="xunit.runner.visualstudio" Version="2.9.3">
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
       <PrivateAssets>all</PrivateAssets>
     </PackageReference>

@@ -17,7 +17,7 @@ public sealed class LocalstackContainer : IAsyncDisposable
 
     private static DateTime Now => DateTime.Now;
 
-    private const string RepositoySourceFile = @"Assets/Repository.json";
+    private const string RepositorySourceFile = @"Assets/Repository.json";
 
     private readonly IContainer _container;
 
@@ -67,11 +67,11 @@ public sealed class LocalstackContainer : IAsyncDisposable
 
     private async Task InitializeAsync()
     {
-        using var client = GetDynamoDbClient();
+        var client = GetDynamoDbClient();
 
         Console.WriteLine($"[ruisantos {Now:HH:mm:ss}] Start Create Dynamodb Tables");
-        var context = new DynamoDBContext(client);
-        var repository = await JToken.ReadFromAsync(new JsonTextReader(new StreamReader(RepositoySourceFile)));
+        var context = new DynamoDBContextBuilder().WithDynamoDBClient(() => client).Build();
+        var repository = await JToken.ReadFromAsync(new JsonTextReader(new StreamReader(RepositorySourceFile)));
 
         var mappings = RegisterClassMaps.TableEntities();
         var requests = RegisterClassMaps.CreateTableRequests()

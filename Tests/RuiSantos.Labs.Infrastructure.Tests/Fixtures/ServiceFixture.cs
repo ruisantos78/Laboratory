@@ -25,7 +25,9 @@ public sealed class ServiceFixture : IDisposable
         _application = new WebApplicationFactory<Program>();
     }
 
-    internal IDynamoDBContext GetDynamoDbContext() => new DynamoDBContext(_localstack.GetDynamoDbClient());
+    internal IDynamoDBContext GetDynamoDbContext() => new DynamoDBContextBuilder()
+        .WithDynamoDBClient(() => _localstack.GetDynamoDbClient())
+        .Build();
 
     internal HttpClient GetHttpClient(string root = "/")
     {

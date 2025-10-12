@@ -1,10 +1,10 @@
 using System.Linq.Expressions;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging;
 using NSubstitute;
 using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Services;
+using RuiSantos.Labs.Tests.Asserts.Providers;
 using RuiSantos.Labs.Tests.Asserts.Repositories;
 
 namespace RuiSantos.Labs.Tests.Asserts.Services;
@@ -20,7 +20,7 @@ internal class DoctorsServiceAsserts : LoggerAsserts<DoctorService>
     public DoctorsServiceAsserts()
     {
         var provider = new ServiceCollection()
-            .AddLogging(builder => builder.AddXUnit())
+            .AddLogging(builder => builder.AddSubstitute(Logger))
             .AddTransient<IDoctorRepository>(_ => _doctorRepository.GetRepository())
             .AddTransient<IAppointmentsRepository>(_ => _appointmentsRepository.GetRepository())
             .BuildServiceProvider();
