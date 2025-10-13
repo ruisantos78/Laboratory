@@ -66,7 +66,8 @@ internal class GetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput inpu
     {
         var query = new QueryOperationConfig
         {
-            Filter = new QueryFilter(DoctorSpecializationEntity.SpecializationDoctorIndexName, QueryOperator.Equal, doctor.Id),
+            IndexName = DoctorSpecializationEntity.DoctorSpecializationByDoctorIdIndexName,
+            Filter = new QueryFilter(nameof(DoctorSpecializationEntity.DoctorId), QueryOperator.Equal, doctor.Id),
             Select = SelectValues.SpecificAttributes,
             AttributesToGet = [nameof(DoctorSpecializationEntity.Specialization)]
         };

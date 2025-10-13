@@ -23,7 +23,9 @@ internal class DoctorSpecializationClassMap : ClassMap
 
         request.GlobalSecondaryIndexes =
         [
-            new GlobalSecondaryIndexKeys(DoctorSpecializationEntity.SpecializationDoctorIndexName, nameof(DoctorSpecializationEntity.DoctorId))
+            new GlobalSecondaryIndexKeys(DoctorSpecializationEntity.DoctorSpecializationByDoctorIdIndexName
+                , nameof(DoctorSpecializationEntity.DoctorId)
+                , nameof(DoctorSpecializationEntity.Specialization))
         ];
         
         request.ProvisionedThroughput = new ProvisionedThroughput(5, 5);

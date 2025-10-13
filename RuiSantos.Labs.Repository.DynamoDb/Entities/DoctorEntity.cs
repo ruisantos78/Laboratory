@@ -23,7 +23,8 @@ internal record DoctorEntity
     
     [DynamoDBProperty] public List<string> ContactNumbers { get; set; } = [];
     
-    [DynamoDBProperty] public List<AvailabilityEntity> Availability { get; set; } = [];
+    [DynamoDBProperty(typeof(ListConverter<AvailabilityEntity>))] 
+    public List<AvailabilityEntity> Availability { get; set; } = [];
 }
 
 internal record AvailabilityEntity
