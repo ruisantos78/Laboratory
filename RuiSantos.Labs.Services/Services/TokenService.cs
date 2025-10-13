@@ -1,11 +1,18 @@
 using System.IO.Compression;
 using System.Text;
 
-namespace RuiSantos.Labs.Domain.Data;
+namespace RuiSantos.Labs.Services.Services;
 
-public static class Tokens
+internal interface ITokenService
 {
-    public static string? Encode(string? value)
+    string? Decode(string? value);
+    string? Encode(string? value);
+    bool TryDecode(string? value, out string? decoded);
+}
+
+internal class TokenService : ITokenService
+{
+    public string? Encode(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
             return null;
@@ -20,7 +27,7 @@ public static class Tokens
         return Convert.ToBase64String(stream.ToArray());
     }
 
-    public static string? Decode(string? value)
+    public string? Decode(string? value)
     {
         if (string.IsNullOrWhiteSpace(value))
             return null;
@@ -33,8 +40,8 @@ public static class Tokens
 
         return reader.ReadToEnd();
     }
-    
-    public static bool TryDecode(string? value, out string? decoded)
+
+    public bool TryDecode(string? value, out string? decoded)
     {
         try
         {

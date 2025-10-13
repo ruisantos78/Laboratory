@@ -1,15 +1,16 @@
 using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.Services.Endpoints.Schemas;
+using RuiSantos.Labs.Services.Services;
 
 namespace RuiSantos.Labs.Services.Endpoints.Converters;
 
 internal static class GetDoctorsResponseConverters
 {
-    public static GetDoctorsResponse ToGetDoctorsResponse(this Pagination<Doctor> doctor)
+    public static GetDoctorsResponse ToGetDoctorsResponse(this Pagination<Doctor> doctor, ITokenService tokenService)
     {
         return new GetDoctorsResponse
         {
-            PaginationToken = doctor.PaginationToken,
+            PaginationToken = tokenService.Encode(doctor.PaginationToken),
             Items = [..doctor.Models.Select(Convert)]
         };
     }

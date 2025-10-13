@@ -2,11 +2,11 @@ using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
-using RuiSantos.Labs.Domain.Data;
 using RuiSantos.Labs.Infrastructure.Tests.Fixtures;
 using RuiSantos.Labs.Infrastructure.Tests.Extensions;
 using RuiSantos.Labs.Infrastructure.Tests.Extensions.FluentAssertions;
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
+using RuiSantos.Labs.Core.Repositories;
 
 namespace RuiSantos.Labs.Infrastructure.Tests.GraphQL;
 

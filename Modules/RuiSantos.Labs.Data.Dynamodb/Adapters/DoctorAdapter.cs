@@ -1,8 +1,8 @@
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
+using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
-using RuiSantos.Labs.Domain.Data;
 using RuiSantos.Labs.Domain.Models;
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 

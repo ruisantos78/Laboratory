@@ -4,7 +4,6 @@ using Amazon.DynamoDBv2.DocumentModel;
 using FluentValidation;
 using Microsoft.Extensions.Logging;
 using RuiSantos.Labs.Domain.Commands;
-using RuiSantos.Labs.Domain.Data;
 using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.Repository.DynamoDb.Entities;
 using RuiSantos.Labs.Repository.DynamoDb.Entities.Converters;
@@ -15,36 +14,30 @@ internal class GetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput inpu
     , IAmazonDynamoDB client
     , ILogger<GetDoctorsPaginationCommand> logger
     ): IAsyncCommand<Pagination<Doctor>>
-{
-    private const int DefaultPageSize = 25;
-    
+{    
     private readonly DynamoDBContext _context = new DynamoDBContextBuilder()
         .WithDynamoDBClient(() => client)
         .Build(); 
-    
-    private string? _paginationToken;
-    
+       
     public async Task<Pagination<Doctor>> ExecuteAsync(CancellationToken cancellationToken = default)
     {
         logger.LogInformation("GetDoctorsPaginationCommand.ExecuteAsync");
         try
         {
             await ValidateAndThrowAsync(cancellationToken);
-            
-            var search = _context.GetTargetTable<DoctorEntity>()
-                .Scan(new ScanOperationConfig
-                {
-                    IndexName = DoctorEntity.DoctorLicenceIndexName,
-                    Limit = input.Take ?? DefaultPageSize,
-                    PaginationToken = _paginationToken
-                });
 
-            var entities = await search
-                .GetNextSetAsync(cancellationToken)
+            var search = _context.FromScanAsync<DoctorEntity>(new ScanOperationConfig
+            {
+                IndexName = DoctorEntity.DoctorLicenceIndexName,
+                Limit = input.Take ?? int.MaxValue,
+                PaginationToken = input.PaginationToken
+            });            
+
+            var entities = await search.GetNextSetAsync(cancellationToken)
                 .ContinueWith(ConvertToModelAsync, cancellationToken);
 
             var doctors = await entities.ToListAsync(cancellationToken);
-            return new Pagination<Doctor>(doctors, Tokens.Encode(search.PaginationToken));
+            return new Pagination<Doctor>(doctors, search.PaginationToken);
         }
         catch (Exception ex)
         {
@@ -53,9 +46,9 @@ internal class GetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput inpu
         }
     }
 
-    private async IAsyncEnumerable<Doctor> ConvertToModelAsync(Task<List<Document>> task)
+    private async IAsyncEnumerable<Doctor> ConvertToModelAsync(Task<List<DoctorEntity>> task)
     {
-        foreach (var entity in task.Result.Select(document => _context.FromDocument<DoctorEntity>(document)))
+        foreach (var entity in task.Result)
         {
             var specializations = await GetSpecializationsAsync(entity);
             yield return entity.ToDoctor(specializations);
@@ -86,12 +79,9 @@ internal class GetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput inpu
             .When(x => x.Take.HasValue);
         
         validator.RuleFor(x => x.PaginationToken)
-            .Custom((token, context) => 
-            {
-                if (!Tokens.TryDecode(token, out _paginationToken))
-                    context.AddFailure("Invalid pagination token format");
-            })
-            .When(x => !string.IsNullOrWhiteSpace(x.PaginationToken));
+            .Matches(@"^\{\s*""License""\s*:\s*\{\s*""S""\s*:\s*"".*?""\s*\},\s*""Id""\s*:\s*\{\s*""S""\s*:\s*""[0-9a-fA-F\-]{36}""\s*\}\s*\}$")
+            .When(x => !string.IsNullOrWhiteSpace(x.PaginationToken))
+            .WithMessage("Invalid DynamoDB pagination token format.");
         
         await validator.ValidateAndThrowAsync(input, cancellationToken: cancellationToken);
     }

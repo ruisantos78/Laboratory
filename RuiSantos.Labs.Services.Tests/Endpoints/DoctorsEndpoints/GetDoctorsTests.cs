@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 using NFluent;
 using RuiSantos.Labs.Repository.DynamoDb.Entities;
 using RuiSantos.Labs.Services.Endpoints.Schemas;
+using RuiSantos.Labs.Services.Services;
 using RuiSantos.Labs.Services.Tests.Fixtures;
 using RuiSantos.Labs.Services.Tests.Fixtures.Builders;
 using Xunit.Abstractions;
@@ -28,9 +29,15 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     public async Task DisposeAsync()
     {
         if (_context != null)
-            await CleanupDoctorsWithSpecialtiesAsync(_context);
+        {
+            await Task.WhenAll(
+                _context.DeleteAllAsync<DoctorEntity>(),
+                _context.DeleteAllAsync<DoctorSpecializationEntity>()
+            );
+            
+            _context.Dispose();
+        }
         
-        _context?.Dispose();
         _client?.Dispose();
     }
 
@@ -126,10 +133,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
 
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         Check.That(problem!.Title).IsEqualTo("One or more validation errors occurred.");
-        Check.That(problem.Errors).HasFieldsWithSameValues(new Dictionary<string, string[]>()
-        {
-            { "Take", ["'Take' must be greater than '0'."] }
-        });
+        Check.That(problem.Errors["Take"]).ContainsExactly("'Take' must be greater than '0'.");        
     }
 
     [Fact]
@@ -141,13 +145,28 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.BadRequest);
+
+        var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
+        Check.That(problem!.Title).IsEqualTo("One or more validation errors occurred.");
+        Check.That(problem.Errors["PaginationToken"]).ContainsExactly("Invalid pagination token format.");
+    }
+    
+    [Fact]
+    public async Task GetDoctors_WithInvalidPaginationToken_ShouldReturnBadRequest()
+    {
+        // Arrange
+        var invalidPaginationData = new TokenService().Encode("invalid-data");
+
+        // Act
+        var response = await _client!.GetAsync($"/doctors?from={invalidPaginationData}");
+        await output.HttpResponseAsync(response);
+
+        // Assert
+        Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.BadRequest);
         
         var problem = await response.Content.ReadFromJsonAsync<ValidationProblemDetails>();
         Check.That(problem!.Title).IsEqualTo("One or more validation errors occurred.");
-        Check.That(problem.Errors).HasFieldsWithSameValues(new Dictionary<string, string[]>()
-        {
-            { "PaginationToken", ["Invalid pagination token format"] }
-        });
+        Check.That(problem.Errors["PaginationToken"]).ContainsExactly("Invalid DynamoDB pagination token format.");        
     }
     
     private static async IAsyncEnumerable<GetDoctorsResponseItem> CreateDoctorsWithSpecialitiesAsync(DynamoDBContext context, int count)
@@ -172,13 +191,5 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
                 Specializations = [..specialties.Select(x => x.Specialization)]
             };
         }   
-    }
-
-    private static async Task CleanupDoctorsWithSpecialtiesAsync(DynamoDBContext context)
-    {
-        await Task.WhenAll(
-            context.DeleteAllAsync<DoctorEntity>(),
-            context.DeleteAllAsync<DoctorSpecializationEntity>()
-        );
     }
 }

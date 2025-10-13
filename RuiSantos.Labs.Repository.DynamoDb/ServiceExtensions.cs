@@ -11,7 +11,7 @@ namespace RuiSantos.Labs.Repository.DynamoDb;
 
 public static class ServiceExtensions
 {
-    public static IServiceCollection AddLabsDynamoDb(this IServiceCollection services, IConfiguration configuration)
+    public static IServiceCollection AddLabsDynamoDbReporitories(this IServiceCollection services, IConfiguration configuration)
     {
         var options = configuration.GetAWSOptions();
         options.Credentials = new EnvironmentVariablesAWSCredentials();

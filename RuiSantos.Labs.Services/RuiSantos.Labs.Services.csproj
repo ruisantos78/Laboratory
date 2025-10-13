@@ -9,8 +9,7 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\RuiSantos.Labs.Repository.DynamoDb\RuiSantos.Labs.Repository.DynamoDb.csproj" />
-      <ProjectReference Include="..\Server\RuiSantos.Labs.Core\RuiSantos.Labs.Core.csproj" />
+      <ProjectReference Include="../RuiSantos.Labs.Domain/RuiSantos.Labs.Domain.csproj" />
+      <ProjectReference Include="../RuiSantos.Labs.Repository.DynamoDb/RuiSantos.Labs.Repository.DynamoDb.csproj" />      
     </ItemGroup>
-
 </Project>

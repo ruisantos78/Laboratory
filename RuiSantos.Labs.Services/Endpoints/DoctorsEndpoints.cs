@@ -3,6 +3,7 @@ using RuiSantos.Labs.Services.Commands.Doctors;
 using RuiSantos.Labs.Services.Endpoints.Converters;
 using RuiSantos.Labs.Services.Endpoints.Schemas;
 using RuiSantos.Labs.Services.Extensions;
+using RuiSantos.Labs.Services.Services;
 
 namespace RuiSantos.Labs.Services.Endpoints;
 
@@ -18,6 +19,7 @@ internal static class DoctorsEndpoints
     
     private static async Task<IResult> GetDoctors(int? take, string? from
         , IDoctorsCommandFactory commandFactory
+        , ITokenService tokenService
         , CancellationToken cancellationToken)
     {
         try
@@ -29,10 +31,10 @@ internal static class DoctorsEndpoints
             });
 
             var result = await command.ExecuteAsync(cancellationToken);
-            
-            return result.Models.Count == 0 
-                ? Results.NoContent() 
-                : Results.Ok(result.ToGetDoctorsResponse());
+            if (result.Models.Count == 0)
+                return Results.NoContent();
+
+            return Results.Ok(result.ToGetDoctorsResponse(tokenService));
         }
         catch (Exception ex)
         {
