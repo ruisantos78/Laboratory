@@ -1,6 +1,6 @@
 using Microsoft.Extensions.DependencyInjection;
-using RuiSantos.Labs.Domain.Extensions.Commands;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Commands;
+using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.Repository.DynamoDb.Commands.Doctors;
 
 namespace RuiSantos.Labs.Repository.DynamoDb.Commands;

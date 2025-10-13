@@ -3,7 +3,7 @@ using Amazon.Runtime;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using RuiSantos.Labs.Domain.Extensions.Repositories;
+using RuiSantos.Labs.Domain.Repositories;
 using RuiSantos.Labs.Repository.DynamoDb.Core;
 using RuiSantos.Labs.Repository.DynamoDb.Repositories;
 

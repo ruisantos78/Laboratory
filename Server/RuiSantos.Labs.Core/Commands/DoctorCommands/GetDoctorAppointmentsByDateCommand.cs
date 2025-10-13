@@ -1,12 +1,11 @@
 using Microsoft.Extensions.Logging;
 using RuiSantos.Labs.Core.Extensions;
-using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Core.Resources;
 using RuiSantos.Labs.Core.Services.Exceptions;
-using RuiSantos.Labs.Domain.Extensions.Commands;
-using RuiSantos.Labs.Domain.Extensions.Models;
-using RuiSantos.Labs.Domain.Extensions.Repositories;
+using RuiSantos.Labs.Domain.Commands;
+using RuiSantos.Labs.Domain.Models;
+using RuiSantos.Labs.Domain.Repositories;
 
 namespace RuiSantos.Labs.Core.Commands.DoctorCommands;
 

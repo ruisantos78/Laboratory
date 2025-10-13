@@ -1,7 +1,6 @@
 using RuiSantos.Labs.Core.Commands.DoctorCommands;
 using RuiSantos.Labs.Core.Factories;
-using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 
 namespace RuiSantos.Labs.Core.Services;
 

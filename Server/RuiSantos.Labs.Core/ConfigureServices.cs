@@ -1,5 +1,4 @@
 using Microsoft.Extensions.DependencyInjection;
-using RuiSantos.Labs.Core.Factories;
 using RuiSantos.Labs.Core.Services;
 
 namespace RuiSantos.Labs.Core;

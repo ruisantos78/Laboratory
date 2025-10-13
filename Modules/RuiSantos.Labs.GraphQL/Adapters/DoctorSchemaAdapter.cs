@@ -1,6 +1,5 @@
-using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Services;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.GraphQL.Schemas;
 
 namespace RuiSantos.Labs.GraphQL.Adapters;

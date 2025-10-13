@@ -1,9 +1,8 @@
 using NSubstitute;
-using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Core.Repositories;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
 using RuiSantos.Labs.Data.Dynamodb.Repositories;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 
 namespace RuiSantos.Labs.Tests.Asserts.Repositories;
 

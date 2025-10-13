@@ -1,4 +1,4 @@
-﻿namespace RuiSantos.Labs.Domain.Extensions.Models;
+﻿namespace RuiSantos.Labs.Domain.Models;
 
 /// <sumary>
 /// A doctor is a person who is able to perform medical procedures.

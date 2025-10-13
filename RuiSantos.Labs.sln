@@ -49,7 +49,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{BBE8FC22
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Infrastructure", "Infrastructure", "{3147CBE9-9237-4445-BD4E-2F15648EE684}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Domain.Extensions", "RuiSantos.Labs.Domain.Extensions\RuiSantos.Labs.Domain.Extensions.csproj", "{6CB1B06E-BB98-4322-AFA8-73C0A7ABFE49}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Domain", "RuiSantos.Labs.Domain\RuiSantos.Labs.Domain.csproj", "{6CB1B06E-BB98-4322-AFA8-73C0A7ABFE49}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RuiSantos.Labs.Repository.DynamoDb", "RuiSantos.Labs.Repository.DynamoDb\RuiSantos.Labs.Repository.DynamoDb.csproj", "{462A54E1-486D-4952-BADA-7B5B41AE622F}"
 EndProject

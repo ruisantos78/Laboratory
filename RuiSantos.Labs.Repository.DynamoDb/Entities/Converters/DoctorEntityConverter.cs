@@ -1,4 +1,4 @@
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 
 namespace RuiSantos.Labs.Repository.DynamoDb.Entities.Converters;
 

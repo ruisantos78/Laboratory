@@ -1,7 +1,6 @@
 using Amazon.DynamoDBv2.DataModel;
-using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Entities.Converters;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Entities;

@@ -1,8 +1,8 @@
 using FluentValidation;
-using RuiSantos.Labs.Domain.Extensions.Commands;
-using RuiSantos.Labs.Domain.Extensions.Data;
-using RuiSantos.Labs.Domain.Extensions.Models;
-using RuiSantos.Labs.Domain.Extensions.Repositories;
+using RuiSantos.Labs.Domain.Commands;
+using RuiSantos.Labs.Domain.Data;
+using RuiSantos.Labs.Domain.Models;
+using RuiSantos.Labs.Domain.Repositories;
 
 namespace RuiSantos.Labs.Services.Commands.Doctors;
 

@@ -1,5 +1,4 @@
-﻿using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Domain.Extensions.Models;
+﻿using RuiSantos.Labs.Domain.Models;
 
 namespace RuiSantos.Labs.Tests.Asserts.Builders;
 

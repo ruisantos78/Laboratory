@@ -1,5 +1,5 @@
-using RuiSantos.Labs.Domain.Extensions.Commands;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Commands;
+using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.Services.Commands.Doctors;
 
 namespace RuiSantos.Labs.Services.Commands;

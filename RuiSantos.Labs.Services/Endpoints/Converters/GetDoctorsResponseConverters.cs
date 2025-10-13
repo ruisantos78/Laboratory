@@ -1,4 +1,4 @@
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.Services.Endpoints.Schemas;
 
 namespace RuiSantos.Labs.Services.Endpoints.Converters;

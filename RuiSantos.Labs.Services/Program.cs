@@ -1,4 +1,3 @@
-using RuiSantos.Labs.Core;
 using RuiSantos.Labs.Repository.DynamoDb;
 using RuiSantos.Labs.Services.Commands;
 using RuiSantos.Labs.Services.Endpoints;

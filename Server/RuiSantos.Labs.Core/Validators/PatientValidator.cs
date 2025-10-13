@@ -1,7 +1,6 @@
 ﻿using FluentValidation;
-using RuiSantos.Labs.Core.Models;
 using System.Text.RegularExpressions;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 
 namespace RuiSantos.Labs.Core.Validators;
 

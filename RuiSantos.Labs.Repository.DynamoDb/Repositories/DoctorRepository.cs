@@ -1,5 +1,5 @@
-using RuiSantos.Labs.Domain.Extensions.Models;
-using RuiSantos.Labs.Domain.Extensions.Repositories;
+using RuiSantos.Labs.Domain.Models;
+using RuiSantos.Labs.Domain.Repositories;
 using RuiSantos.Labs.Repository.DynamoDb.Commands;
 using RuiSantos.Labs.Repository.DynamoDb.Commands.Doctors;
 

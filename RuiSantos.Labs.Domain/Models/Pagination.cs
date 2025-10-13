@@ -1,4 +1,4 @@
-﻿namespace RuiSantos.Labs.Domain.Extensions.Models;
+﻿namespace RuiSantos.Labs.Domain.Models;
 
 public readonly struct Pagination<TModel>
 {

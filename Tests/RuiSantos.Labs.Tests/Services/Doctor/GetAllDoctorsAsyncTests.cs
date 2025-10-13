@@ -1,6 +1,5 @@
 using FluentAssertions;
-using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.Tests.Asserts.Builders;
 using RuiSantos.Labs.Tests.Asserts.Services;
 
@@ -20,7 +19,7 @@ public class GetAllDoctorsAsyncTests
         var doctors = Enumerable.Range(1, 10).Select(i => new DoctorBuilder().With(license: $"AAA{i:000}").Build());
         var paginationToken = pageNumber > 0 ? Convert.ToBase64String(Guid.NewGuid().ToByteArray()) : default;
 
-        var expected = new Pagination<Domain.Extensions.Models.Doctor>
+        var expected = new Pagination<Domain.Models.Doctor>
         {
             Models = doctors.Skip(5 * pageNumber).Take(5).ToArray(),
             PaginationToken = pageNumber < 2 ? Convert.ToBase64String(Guid.NewGuid().ToByteArray()) : default

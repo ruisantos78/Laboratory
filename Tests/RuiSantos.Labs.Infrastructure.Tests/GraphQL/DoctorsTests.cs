@@ -1,10 +1,8 @@
 using System.Net;
 using Amazon.DynamoDBv2.DataModel;
 using Amazon.DynamoDBv2.DocumentModel;
-using NFluent;
-using RuiSantos.Labs.Core;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
-using RuiSantos.Labs.Domain.Extensions.Data;
+using RuiSantos.Labs.Domain.Data;
 using RuiSantos.Labs.Infrastructure.Tests.Fixtures;
 using RuiSantos.Labs.Infrastructure.Tests.Extensions;
 using RuiSantos.Labs.Infrastructure.Tests.Extensions.FluentAssertions;

@@ -4,8 +4,7 @@ using RuiSantos.Labs.Infrastructure.Tests.Extensions;
 using RuiSantos.Labs.Data.Dynamodb.Entities;
 
 using static RuiSantos.Labs.Data.Dynamodb.Mappings.MappingConstants;
-using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 
 namespace RuiSantos.Labs.Infrastructure.Tests.Rest.Doctors;
 

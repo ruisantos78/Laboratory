@@ -2,7 +2,6 @@ using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RuiSantos.Labs.Repository.DynamoDb.Core;
 using Testcontainers.LocalStack;
 
 namespace RuiSantos.Labs.Services.Tests.Fixtures;

@@ -1,4 +1,4 @@
-﻿namespace RuiSantos.Labs.Domain.Extensions.Models;
+﻿namespace RuiSantos.Labs.Domain.Models;
 
 /// <summary>
 /// A person.

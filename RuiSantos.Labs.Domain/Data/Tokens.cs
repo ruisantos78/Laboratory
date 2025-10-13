@@ -1,7 +1,7 @@
 using System.IO.Compression;
 using System.Text;
 
-namespace RuiSantos.Labs.Domain.Extensions.Data;
+namespace RuiSantos.Labs.Domain.Data;
 
 public static class Tokens
 {

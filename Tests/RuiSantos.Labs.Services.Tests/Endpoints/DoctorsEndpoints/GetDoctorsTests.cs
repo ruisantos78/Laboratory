@@ -2,7 +2,6 @@ using System.Net.Http.Json;
 using System.Text.Encodings.Web;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.Routing;
 using NFluent;
 using RuiSantos.Labs.Repository.DynamoDb.Entities;
 using RuiSantos.Labs.Services.Endpoints.Schemas;

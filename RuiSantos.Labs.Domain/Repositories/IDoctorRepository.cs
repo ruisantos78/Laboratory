@@ -1,6 +1,6 @@
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Domain.Models;
 
-namespace RuiSantos.Labs.Domain.Extensions.Repositories;
+namespace RuiSantos.Labs.Domain.Repositories;
 
 public interface IDoctorRepository
 {

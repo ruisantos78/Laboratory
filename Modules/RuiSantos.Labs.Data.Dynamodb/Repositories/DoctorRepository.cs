@@ -1,9 +1,7 @@
 using System.Runtime.CompilerServices;
-using RuiSantos.Labs.Core.Repositories;
-using RuiSantos.Labs.Core.Models;
 using RuiSantos.Labs.Data.Dynamodb.Adapters;
-using RuiSantos.Labs.Domain.Extensions.Models;
-using RuiSantos.Labs.Domain.Extensions.Repositories;
+using RuiSantos.Labs.Domain.Models;
+using RuiSantos.Labs.Domain.Repositories;
 
 namespace RuiSantos.Labs.Data.Dynamodb.Repositories;
 

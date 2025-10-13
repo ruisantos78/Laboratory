@@ -30,6 +30,6 @@
     </Compile>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\RuiSantos.Labs.Domain.Extensions\RuiSantos.Labs.Domain.Extensions.csproj" />
+    <ProjectReference Include="..\..\RuiSantos.Labs.Domain\RuiSantos.Labs.Domain.csproj" />
   </ItemGroup>
 </Project>
