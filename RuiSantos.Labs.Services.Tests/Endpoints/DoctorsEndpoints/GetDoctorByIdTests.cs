@@ -28,7 +28,7 @@ public class GetDoctorByIdTests(ServiceFixture fixture, ITestOutputHelper output
             .BuildAsync(Context);
 
         // Act
-        var response = await Client.GetAsync($"/doctor/{doctor.Id}");
+        var response = await Client.GetAsync($"/doctor?id={doctor.Id}");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -50,7 +50,7 @@ public class GetDoctorByIdTests(ServiceFixture fixture, ITestOutputHelper output
         var nonExistentId = Guid.NewGuid();
 
         // Act
-        var response = await Client.GetAsync($"/doctor/{nonExistentId}");
+        var response = await Client.GetAsync($"/doctor?id={nonExistentId}");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -61,7 +61,7 @@ public class GetDoctorByIdTests(ServiceFixture fixture, ITestOutputHelper output
     public async Task GetDoctorById_WithInvalidId_ShouldReturnBadRequest()
     {
         // Act
-        var response = await Client.GetAsync($"/doctor/invalid-guid");
+        var response = await Client.GetAsync($"/doctor?id=invalid-guid");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -73,13 +73,13 @@ public class GetDoctorByIdTests(ServiceFixture fixture, ITestOutputHelper output
     }
     
     [Fact]
-    public async Task GetDoctorById_WithoutId_ShouldReturnMethodNotAllowed()
+    public async Task GetDoctorById_WithoutId_ShouldReturnBadRequest()
     {
         // Act
-        var response = await Client.GetAsync($"/doctor/");
+        var response = await Client.GetAsync($"/doctor");
         await output.HttpResponseAsync(response);
 
         // Assert
-        Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.MethodNotAllowed);
+        Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.BadRequest);
     }
 }

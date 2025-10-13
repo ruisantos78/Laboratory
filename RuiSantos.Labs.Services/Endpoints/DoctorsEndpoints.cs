@@ -12,7 +12,13 @@ internal static partial class DoctorsEndpoints
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);
 
-        routes.MapGet("/doctor/{id}", GetDoctorById)
+        routes.MapGet("/doctor", GetDoctorById)
+            .Produces<GetDoctorResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError);
+
+        routes.MapGet("/doctor/{license}", GetDoctorByLicense)
             .Produces<GetDoctorResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)

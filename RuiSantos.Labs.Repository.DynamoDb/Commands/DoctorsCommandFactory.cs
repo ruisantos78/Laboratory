@@ -9,7 +9,10 @@ internal class DoctorsCommandFactory(IServiceProvider provider)
 {
     public IAsyncCommand<Doctor?> CreateGetDoctorByIdCommand(Guid doctorId)
         => ActivatorUtilities.CreateInstance<GetDoctorByIdCommand>(provider, doctorId);
-        
+    
+    public IAsyncCommand<Doctor?> CreateGetDoctorByLicenseCommand(GetDoctorByLicenseCommandInput input)
+        => ActivatorUtilities.CreateInstance<GetDoctorByLicenseCommand>(provider, input);
+    
     public IAsyncCommand<Pagination<Doctor>> CreateGetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput input)
         => ActivatorUtilities.CreateInstance<GetDoctorsPaginationCommand>(provider, input);
     

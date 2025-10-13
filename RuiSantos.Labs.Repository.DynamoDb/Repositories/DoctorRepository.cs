@@ -15,6 +15,16 @@ internal class DoctorRepository(IServiceProvider provider): IDoctorRepository
         return await command.ExecuteAsync(cancellationToken);
     }
 
+    public async Task<Doctor?> FindByLicenseAsync(string license, CancellationToken cancellationToken)
+    {
+        var command = _doctorsCommandFactory.CreateGetDoctorByLicenseCommand(new GetDoctorByLicenseCommandInput
+        {
+            LicenseNumber = license
+        });
+        
+        return await command.ExecuteAsync(cancellationToken);
+    }
+    
     public async Task<Pagination<Doctor>> FindAllAsync(int take, string? paginationToken, CancellationToken cancellationToken)
     {
         var command = _doctorsCommandFactory.CreateGetDoctorsPaginationCommand(new GetDoctorsPaginationCommandInput
@@ -38,11 +48,6 @@ internal class DoctorRepository(IServiceProvider provider): IDoctorRepository
 
     public IAsyncEnumerable<DoctorSchedule> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date,
         CancellationToken cancellationToken)
-    {
-        throw new NotImplementedException();
-    }
-
-    public Task<Doctor?> FindByLicenseAsync(string license, CancellationToken cancellationToken)
     {
         throw new NotImplementedException();
     }

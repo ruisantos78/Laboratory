@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc;
 using RuiSantos.Labs.Services.Commands;
 using RuiSantos.Labs.Services.Commands.Doctors;
 using RuiSantos.Labs.Services.Extensions;
@@ -30,7 +31,7 @@ partial class DoctorsEndpoints
         }
     }
     
-    private static async Task<IResult> GetDoctorById(string id
+    private static async Task<IResult> GetDoctorById(string? id
         , IDoctorsCommandFactory commandFactory
         , CancellationToken cancellationToken)
     {
@@ -38,7 +39,30 @@ partial class DoctorsEndpoints
         {
             var command = commandFactory.CreateGetDoctorByIdCommand(new GetDoctorByIdCommandInput()
             {
-                DoctorId = id
+                DoctorId = id ?? string.Empty
+            });
+
+            var result = await command.ExecuteAsync(cancellationToken);
+            if (result is null)
+                return Results.NoContent();
+
+            return Results.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return ex.ToHttpResult();
+        }
+    }
+    
+    private static async Task<IResult> GetDoctorByLicense(string license
+        , IDoctorsCommandFactory commandFactory
+        , CancellationToken cancellationToken)
+    {
+        try
+        {
+            var command = commandFactory.CreateGetDoctorByLicenseCommand(new GetDoctorByLicenseCommandInput()
+            {
+                License = license
             });
 
             var result = await command.ExecuteAsync(cancellationToken);
