@@ -28,7 +28,7 @@ internal class GetDoctorsBySpecializationCommand(GetDoctorsBySpecializationComma
         {
             await ValidateAndThrowAsync(cancellationToken);
             
-            return await GetDoctorsAsync(cancellationToken)
+            return await GetDoctorsAsyncEnumerable(cancellationToken)
                 .ToArrayAsync(cancellationToken: cancellationToken);
         }
         catch (Exception ex)
@@ -38,7 +38,7 @@ internal class GetDoctorsBySpecializationCommand(GetDoctorsBySpecializationComma
         }
     }
 
-    private async IAsyncEnumerable<Doctor> GetDoctorsAsync([EnumeratorCancellation] CancellationToken cancellationToken)
+    private async IAsyncEnumerable<Doctor> GetDoctorsAsyncEnumerable([EnumeratorCancellation] CancellationToken cancellationToken)
     {
         await foreach(var doctorEntity in _context.GetDoctorsBySpecializationAsyncEnumerable(input.Specialization, cancellationToken))
         {
