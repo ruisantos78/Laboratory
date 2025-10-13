@@ -1,7 +1,6 @@
 using RuiSantos.Labs.Repository.DynamoDb;
 using RuiSantos.Labs.Services.Commands;
 using RuiSantos.Labs.Services.Endpoints;
-using RuiSantos.Labs.Services.Services;
 
 namespace RuiSantos.Labs.Services;
 
@@ -22,8 +21,6 @@ public abstract class Program
         });
         
         builder.Services.AddLabsDynamoDbReporitories(builder.Configuration);
-
-        builder.Services.AddSingleton<ITokenService, TokenService>(); 
                
         builder.Services.AddTransient<IDoctorsCommandFactory, DoctorsCommandFactory>();
         

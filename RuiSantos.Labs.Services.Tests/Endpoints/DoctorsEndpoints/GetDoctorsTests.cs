@@ -1,11 +1,11 @@
 using System.Net.Http.Json;
+using System.Text;
 using System.Text.Encodings.Web;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
 using NFluent;
 using RuiSantos.Labs.Repository.DynamoDb.Entities;
 using RuiSantos.Labs.Services.Endpoints.Schemas;
-using RuiSantos.Labs.Services.Services;
 using RuiSantos.Labs.Services.Tests.Fixtures;
 using RuiSantos.Labs.Services.Tests.Fixtures.Builders;
 using Xunit.Abstractions;
@@ -57,7 +57,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
         
         var doctors = await response.Content.ReadFromJsonAsync<GetDoctorsResponse>();
         Check.That(doctors).IsNotNull();
-        Check.That(doctors!.PaginationToken).IsNull();
+        Check.That(doctors!.PaginationToken).IsNullOrEmpty();
         Check.That(doctors.Items.Length).IsEqualTo(expected.Length);
         Check.That(doctors.Items).HasFieldsWithSameValues(expected);
     }
@@ -155,7 +155,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     public async Task GetDoctors_WithInvalidPaginationToken_ShouldReturnBadRequest()
     {
         // Arrange
-        var invalidPaginationData = new TokenService().Encode("invalid-data");
+        var invalidPaginationData = Convert.ToBase64String(Encoding.UTF8.GetBytes("invalid-data"));
 
         // Act
         var response = await _client!.GetAsync($"/doctors?from={invalidPaginationData}");
