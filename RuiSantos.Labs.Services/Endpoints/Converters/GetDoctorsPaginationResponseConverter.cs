@@ -4,11 +4,11 @@ using RuiSantos.Labs.Services.Endpoints.Schemas;
 
 namespace RuiSantos.Labs.Services.Endpoints.Converters;
 
-internal static class GetDoctorsResponseConverter
+internal static class GetDoctorsPaginationResponseConverter
 {
-    public static GetDoctorsResponse ToGetDoctorsResponse(this Pagination<Doctor> doctor, Func<string?, string>? encoder = null)
+    public static GetDoctorsPaginationResponse ToGetDoctorsPaginationResponse(this Pagination<Doctor> doctor, Func<string?, string>? encoder = null)
     {
-        return new GetDoctorsResponse
+        return new GetDoctorsPaginationResponse
         {
             PaginationToken = encoder?.Invoke(doctor.PaginationToken) ?? doctor.PaginationToken,
             Items = [..doctor.Models.Select(GetDoctorResponseConverter.ToGetDoctorResponse)]

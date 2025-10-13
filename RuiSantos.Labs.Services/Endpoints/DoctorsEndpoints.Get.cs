@@ -76,4 +76,27 @@ partial class DoctorsEndpoints
             return ex.ToHttpResult();
         }
     }
+    
+    private static async Task<IResult> GetDoctorsBySpecialization(string specialization
+        , IDoctorsCommandFactory commandFactory
+        , CancellationToken cancellationToken)
+    {
+        try
+        {
+            var command = commandFactory.CreateGetDoctorsBySpecializationCommand(new GetDoctorsBySpecializationCommandInput()
+            {
+                Specialization = specialization
+            });
+
+            var result = await command.ExecuteAsync(cancellationToken);
+            if (result.Items.Length == 0)
+                return Results.NoContent();
+
+            return Results.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return ex.ToHttpResult();
+        }
+    }
 }

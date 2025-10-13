@@ -29,7 +29,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output): 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.OK);
         
-        var doctors = await response.Content.ReadFromJsonAsync<GetDoctorsResponse>();
+        var doctors = await response.Content.ReadFromJsonAsync<GetDoctorsPaginationResponse>();
         Check.That(doctors).IsNotNull();
         Check.That(doctors!.PaginationToken).IsNullOrEmpty();
         Check.That(doctors.Items.Length).IsEqualTo(expected.Length);
@@ -50,7 +50,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output): 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.OK);
         
-        var doctors = await response.Content.ReadFromJsonAsync<GetDoctorsResponse>();
+        var doctors = await response.Content.ReadFromJsonAsync<GetDoctorsPaginationResponse>();
         Check.That(doctors).IsNotNull();
         Check.That(doctors!.PaginationToken).IsNotEmpty();
         Check.That(doctors.Items.Length).IsEqualTo(1);
@@ -66,7 +66,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output): 
         var firstResponse = await Client.GetAsync("/doctors?take=1");
         firstResponse.EnsureSuccessStatusCode();
         
-        var firstPage = await firstResponse.Content.ReadFromJsonAsync<GetDoctorsResponse>();
+        var firstPage = await firstResponse.Content.ReadFromJsonAsync<GetDoctorsPaginationResponse>();
         var firstPageToken = UrlEncoder.Default.Encode(firstPage!.PaginationToken!);
         
         // Act
@@ -76,7 +76,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output): 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.OK);
         
-        var doctors = await response.Content.ReadFromJsonAsync<GetDoctorsResponse>();
+        var doctors = await response.Content.ReadFromJsonAsync<GetDoctorsPaginationResponse>();
         Check.That(doctors).IsNotNull();
         Check.That(doctors!.Items.Length).IsEqualTo(1);
         Check.That(doctors.Items[0]).HasFieldsWithSameValues(expected[1]);
@@ -162,7 +162,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output): 
                 LastName = doctor.LastName,
                 Email = doctor.Email,
                 ContactNumbers = [..doctor.ContactNumbers],
-                Specializations = [..specialties.Select(x => x.Specialization)]
+                Specializations = [..specialties.Select(x => x.Description)]
             };
         }   
     }

@@ -10,12 +10,12 @@ namespace RuiSantos.Labs.Services.Commands.Doctors;
 internal class GetDoctorsCommand(GetDoctorsCommandInput input
     , IDoctorRepository doctorRepository
     , ILogger<GetDoctorsCommand> logger
-    ) : IAsyncCommand<GetDoctorsResponse>
+    ) : IAsyncCommand<GetDoctorsPaginationResponse>
 {
     private readonly int _take = input.Take ?? int.MaxValue;
     private string? _paginationToken;
 
-    public async Task<GetDoctorsResponse> ExecuteAsync(CancellationToken cancellationToken = default)
+    public async Task<GetDoctorsPaginationResponse> ExecuteAsync(CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting doctors with input {@Input}", input);
         try
@@ -23,7 +23,7 @@ internal class GetDoctorsCommand(GetDoctorsCommandInput input
             await ValidateAndThrowAsync(cancellationToken);
             
             var pagination = await doctorRepository.FindAllAsync(_take, _paginationToken, cancellationToken);            
-            return pagination.ToGetDoctorsResponse(EncodePaginationToken);
+            return pagination.ToGetDoctorsPaginationResponse(EncodePaginationToken);
         } 
         catch (Exception ex)
         {

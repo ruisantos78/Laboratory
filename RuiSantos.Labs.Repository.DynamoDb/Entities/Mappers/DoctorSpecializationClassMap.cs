@@ -13,7 +13,8 @@ internal class DoctorSpecializationClassMap : ClassMap
         request.AttributeDefinitions =
         [
             new AttributeDefinition(nameof(DoctorSpecializationEntity.DoctorId), ScalarAttributeType.S),
-            new AttributeDefinition(nameof(DoctorSpecializationEntity.Specialization), ScalarAttributeType.S)
+            new AttributeDefinition(nameof(DoctorSpecializationEntity.Specialization), ScalarAttributeType.S),
+            new AttributeDefinition(nameof(DoctorSpecializationEntity.Description), ScalarAttributeType.S)
         ];
 
         request.KeySchema = [

@@ -36,9 +36,14 @@ internal class DoctorRepository(IServiceProvider provider): IDoctorRepository
         return await command.ExecuteAsync(cancellationToken);
     }
 
-    public Task<IEnumerable<Doctor>> FindBySpecialityAsync(string specialty, CancellationToken cancellationToken)
+    public async Task<IEnumerable<Doctor>> FindBySpecializationAsync(string specialization, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var command = _doctorsCommandFactory.CreateGetDoctorsBySpecializationCommand(new GetDoctorsBySpecializationCommandInput
+        {
+            Specialization = specialization
+        });
+        
+        return await command.ExecuteAsync(cancellationToken);
     }
 
     public Task<IEnumerable<Doctor>> FindByAppointmentsAsync(IEnumerable<Appointment> appointments, CancellationToken cancellationToken)

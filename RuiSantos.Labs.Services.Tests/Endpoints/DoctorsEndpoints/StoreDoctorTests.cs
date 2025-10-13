@@ -3,6 +3,7 @@ using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
 using NFluent;
 using RuiSantos.Labs.Repository.DynamoDb.Entities;
+using RuiSantos.Labs.Repository.DynamoDb.Entities.Queries;
 using RuiSantos.Labs.Services.Endpoints.Schemas;
 using RuiSantos.Labs.Services.Tests.Fixtures;
 using Xunit.Abstractions;
@@ -39,11 +40,8 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.NoContent);
 
-        var doctor = await Context
-            .QueryAsync<DoctorEntity>(request.LicenseNumber, new QueryConfig { IndexName = DoctorEntity.DoctorLicenceIndexName })
-            .GetNextSetAsync()
-            .ContinueWith(task => task.Result.FirstOrDefault());
-
+        var doctor = await Context.GetDoctorByLicenseAsync(request.LicenseNumber);
+        
         Check.That(doctor).IsNotNull();
         Check.That(doctor).HasFieldsWithSameValues(new
         {
@@ -54,12 +52,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
             ContactNumbers = request.ContactNumbers
         });
 
-        string[] specializations = [..
-            await Context.QueryAsync<DoctorSpecializationEntity>(doctor!.Id)
-                .GetRemainingAsync()
-                .ContinueWith(task => task.Result.Select(x => x.Specialization))
-        ];
-        
+        var specializations = await Context.GetDoctorSpecializationsAsync(doctor!);
         Check.That(specializations).HasSize(request.Specializations.Length);
         Check.That(specializations).ContainsExactly(request.Specializations);
     }
@@ -96,11 +89,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.NoContent);
 
-        var updatedDoctor = await Context
-            .QueryAsync<DoctorEntity>(request.LicenseNumber, new QueryConfig { IndexName = DoctorEntity.DoctorLicenceIndexName })
-            .GetNextSetAsync()
-            .ContinueWith(task => task.Result.FirstOrDefault());
-
+        var updatedDoctor = await Context.GetDoctorByLicenseAsync(request.LicenseNumber);
         Check.That(updatedDoctor).IsNotNull();
         Check.That(updatedDoctor).HasFieldsWithSameValues(new
         {

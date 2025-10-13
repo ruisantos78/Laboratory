@@ -27,7 +27,8 @@ internal class DoctorSpecializationBuilder
         var entities = _specialties.Select(specialty => new DoctorSpecializationEntity
         {
             DoctorId = _doctorEntity.Id, 
-            Specialization = specialty
+            Specialization = specialty.ToLower(),
+            Description = specialty
         }).ToArray();
         
         var writer = context.CreateBatchWrite<DoctorSpecializationEntity>();

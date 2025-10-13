@@ -7,6 +7,7 @@ using RuiSantos.Labs.Domain.Commands;
 using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.Repository.DynamoDb.Entities;
 using RuiSantos.Labs.Repository.DynamoDb.Entities.Converters;
+using RuiSantos.Labs.Repository.DynamoDb.Entities.Queries;
 
 namespace RuiSantos.Labs.Repository.DynamoDb.Commands.Doctors;
 
@@ -33,7 +34,8 @@ internal class GetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput inpu
                 PaginationToken = input.PaginationToken
             });            
 
-            var entities = await search.GetNextSetAsync(cancellationToken)
+            var entities = await search
+                .GetNextSetAsync(cancellationToken)
                 .ContinueWith(ConvertToModelAsync, cancellationToken);
 
             var doctors = await entities.ToListAsync(cancellationToken);
@@ -48,15 +50,10 @@ internal class GetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput inpu
 
     private async IAsyncEnumerable<Doctor> ConvertToModelAsync(Task<List<DoctorEntity>> task)
     {
-        foreach (var entity in task.Result)
+        foreach (var doctorEntity in task.Result)
         {
-            string[] specializations = [..
-                await _context.QueryAsync<DoctorSpecializationEntity>(entity.Id)
-                    .GetRemainingAsync()
-                    .ContinueWith(t => t.Result.Select(x => x.Specialization))
-            ];
-            
-            yield return entity.ToDoctor(specializations);
+            var specializations = await _context.GetDoctorSpecializationsAsync(doctorEntity);            
+            yield return doctorEntity.ToDoctor(specializations);
         }
     }
     

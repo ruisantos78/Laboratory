@@ -8,6 +8,7 @@ using RuiSantos.Labs.Domain.Commands;
 using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.Repository.DynamoDb.Entities;
 using RuiSantos.Labs.Repository.DynamoDb.Entities.Converters;
+using RuiSantos.Labs.Repository.DynamoDb.Entities.Queries;
 
 namespace RuiSantos.Labs.Repository.DynamoDb.Commands.Doctors;
 
@@ -28,7 +29,7 @@ internal class StoreDoctorCommand(Doctor doctor
             await ValidateAndThrowAsync(cancellationToken);
             
             var entity = doctor.ToDoctorEntity();
-            entity.Id = await GetDoctorIdByLicenseAsync(entity.License);
+            entity.Id = await _context.GetDoctorIdByLicenseAsync(entity.License, cancellationToken);
 
             var doctorWriter = _context.CreateBatchWrite<DoctorEntity>();
             doctorWriter.AddPutItem(entity);
@@ -44,45 +45,32 @@ internal class StoreDoctorCommand(Doctor doctor
             throw;
         }
     }
-    
-    private async Task<Guid> GetDoctorIdByLicenseAsync(string license)
-    {
-        var query = new QueryOperationConfig
-        {
-            IndexName = DoctorEntity.DoctorLicenceIndexName,
-            Filter = new QueryFilter(nameof(DoctorEntity.License), QueryOperator.Equal, license),
-            Limit = 1,
-            Select = SelectValues.SpecificAttributes,
-            AttributesToGet = [nameof(DoctorEntity.Id)]
-        };
 
-        var result = await _context.FromQueryAsync<DoctorEntity>(query)
-            .GetNextSetAsync()
-            .ContinueWith(task => task.Result.FirstOrDefault()?.Id);
-
-        return result ?? doctor.Id;
-    }
-
-    private async Task<IBatchWrite<DoctorSpecializationEntity>> CreateSpecializationsWriterAsync(DoctorEntity entity, CancellationToken cancellationToken)
+    private async Task<IBatchWrite<DoctorSpecializationEntity>> CreateSpecializationsWriterAsync(DoctorEntity doctorEntity, CancellationToken cancellationToken)
     {
         var writer = _context.CreateBatchWrite<DoctorSpecializationEntity>();
-
-        var current = await _context
-            .QueryAsync<DoctorSpecializationEntity>(entity.Id) 
-            .GetRemainingAsync(cancellationToken);
-
-        var excludeItems = current.Where(x => !doctor.Specializations.Contains(x.Specialization)).ToArray();        
-        var includeItems = doctor.Specializations
-            .Except(current.Select(x => x.Specialization))
-            .Select(specialization => new DoctorSpecializationEntity
+        
+        await foreach (var spec in _context.GetDoctorSpecializationAsyncEnumerable(doctorEntity, cancellationToken))
+        {
+            if (doctor.Specializations.Contains(spec.Description))
             {
-                DoctorId = entity.Id,
-                Specialization = specialization
-            })
-            .ToArray();
+                doctor.Specializations.Remove(spec.Description);
+                continue;
+            }
+            
+            writer.AddDeleteItem(spec);
+        }
+        
+        if (doctor.Specializations.Count == 0)
+            return writer;
 
-        writer.AddDeleteItems(excludeItems);
-        writer.AddPutItems(includeItems);
+        writer.AddPutItems(doctor.Specializations.Select(x => new DoctorSpecializationEntity
+        {
+            DoctorId = doctorEntity.Id,
+            Specialization = x.ToLower(),
+            Description = x
+        }));
+        
         return writer;
     }
     

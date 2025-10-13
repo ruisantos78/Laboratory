@@ -6,12 +6,6 @@ internal static partial class DoctorsEndpoints
 {
     public static void MapDoctorsEndpoints(this IEndpointRouteBuilder routes)
     {
-        routes.MapGet("/doctors", GetDoctors)
-            .Produces<GetDoctorsResponse>(StatusCodes.Status200OK)
-            .Produces(StatusCodes.Status204NoContent)
-            .Produces(StatusCodes.Status400BadRequest)
-            .Produces(StatusCodes.Status500InternalServerError);
-
         routes.MapGet("/doctor", GetDoctorById)
             .Produces<GetDoctorResponse>(StatusCodes.Status200OK)
             .Produces(StatusCodes.Status204NoContent)
@@ -28,5 +22,17 @@ internal static partial class DoctorsEndpoints
             .Produces(StatusCodes.Status204NoContent)
             .Produces(StatusCodes.Status400BadRequest)
             .Produces(StatusCodes.Status500InternalServerError);   
+        
+        routes.MapGet("/doctors", GetDoctors)
+            .Produces<GetDoctorsPaginationResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError);
+        
+        routes.MapGet("/doctors/specialization/{specialization}", GetDoctorsBySpecialization)
+            .Produces<GetDoctorsCollectionResponse>(StatusCodes.Status200OK)
+            .Produces(StatusCodes.Status204NoContent)
+            .Produces(StatusCodes.Status400BadRequest)
+            .Produces(StatusCodes.Status500InternalServerError);
     }    
 }

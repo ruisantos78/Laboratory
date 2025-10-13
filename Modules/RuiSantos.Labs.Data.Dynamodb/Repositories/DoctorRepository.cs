@@ -15,9 +15,9 @@ public class DoctorRepository(
         return doctorAdapter.FindAsync(doctorId, cancellationToken);
     }
 
-    public Task<IEnumerable<Doctor>> FindBySpecialityAsync(string specialty, CancellationToken cancellationToken)
+    public Task<IEnumerable<Doctor>> FindBySpecializationAsync(string specialization, CancellationToken cancellationToken)
     {
-        return doctorAdapter.LoadBySpecialtyAsync(specialty, cancellationToken);
+        return doctorAdapter.LoadBySpecialtyAsync(specialization, cancellationToken);
     }
 
     public async IAsyncEnumerable<DoctorSchedule> FindBySpecialtyWithAvailabilityAsync(string specialty, DateOnly date

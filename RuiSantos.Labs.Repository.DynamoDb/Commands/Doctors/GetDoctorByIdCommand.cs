@@ -5,6 +5,7 @@ using RuiSantos.Labs.Domain.Commands;
 using RuiSantos.Labs.Domain.Models;
 using RuiSantos.Labs.Repository.DynamoDb.Entities;
 using RuiSantos.Labs.Repository.DynamoDb.Entities.Converters;
+using RuiSantos.Labs.Repository.DynamoDb.Entities.Queries;
 
 namespace RuiSantos.Labs.Repository.DynamoDb.Commands.Doctors;
 
@@ -25,13 +26,8 @@ internal class GetDoctorByIdCommand(Guid doctorId
             var doctorEntity = await _context.LoadAsync<DoctorEntity>(doctorId, cancellationToken);
             if (doctorEntity is null)
                 return null;
-
-            string[] specializations = [..
-                await _context.QueryAsync<DoctorSpecializationEntity>(doctorEntity.Id)
-                .GetRemainingAsync(cancellationToken)
-                .ContinueWith(t => t.Result.Select(x => x.Specialization), cancellationToken)
-            ];
-
+            
+            var specializations = await _context.GetDoctorSpecializationsAsync(doctorEntity, cancellationToken);
             return doctorEntity.ToDoctor(specializations);
         }
         catch (Exception ex)

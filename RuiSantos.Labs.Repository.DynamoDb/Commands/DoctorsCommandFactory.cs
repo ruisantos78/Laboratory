@@ -16,6 +16,9 @@ internal class DoctorsCommandFactory(IServiceProvider provider)
     public IAsyncCommand<Pagination<Doctor>> CreateGetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput input)
         => ActivatorUtilities.CreateInstance<GetDoctorsPaginationCommand>(provider, input);
     
+    public IAsyncCommand<IReadOnlyList<Doctor>> CreateGetDoctorsBySpecializationCommand(GetDoctorsBySpecializationCommandInput input)
+        => ActivatorUtilities.CreateInstance<GetDoctorsBySpecializationCommand>(provider, input);
+    
     public IAsyncCommand CreateStoreDoctorCommand(Doctor doctor)
         => ActivatorUtilities.CreateInstance<StoreDoctorCommand>(provider, doctor);
 }

@@ -24,10 +24,10 @@ public interface IDoctorRepository
     /// <summary>
     /// Finds doctor by speciality. Asynchronously invokes the search. Returns a task that represents the asynchronous operation.
     /// </summary>
-    /// <param name="specialty">The name of the speciality. E.g.</param>
+    /// <param name="specialization">The name of the speciality. E.g.</param>
     /// <param name="cancellationToken"></param>
     /// <returns>An object that represents the asynchronous operation. The task result contains a instance of the class containing the dao rows</returns>
-    Task<IEnumerable<Doctor>> FindBySpecialityAsync(string specialty, CancellationToken cancellationToken);
+    Task<IEnumerable<Doctor>> FindBySpecializationAsync(string specialization, CancellationToken cancellationToken);
 
     /// <summary>
     /// Finds doctor by appointments asynchronous. Returns collection of doctor. To get call GetDoctorByAppointmentsAsync ()
