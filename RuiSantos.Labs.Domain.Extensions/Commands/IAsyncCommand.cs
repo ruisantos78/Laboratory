@@ -4,10 +4,10 @@ namespace RuiSantos.Labs.Domain.Extensions.Commands;
 
 public interface IAsyncCommand
 {
-    Task Execute(CancellationToken cancellationToken = default);
+    Task ExecuteAsync(CancellationToken cancellationToken = default);
 }
 
 public interface IAsyncCommand<TResult>
 {
-    Task<TResult> Execute(CancellationToken cancellationToken = default);
+    Task<TResult> ExecuteAsync(CancellationToken cancellationToken = default);
 }

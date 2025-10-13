@@ -1,7 +1,5 @@
 using Amazon.DynamoDBv2.DataModel;
-using RuiSantos.Labs.Core.Models;
-using RuiSantos.Labs.Data.Dynamodb.Entities;
-using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Repository.DynamoDb.Entities;
 
 namespace RuiSantos.Labs.Services.Tests.Fixtures.Builders;
 
@@ -15,14 +13,7 @@ internal class DoctorBuilder
         LastName = "Doe",
         ContactNumbers = ["555-0001"],
         Email = "joe.doe@test.com",
-        Availability =
-        [
-            new OfficeHour()
-            {
-                Week = DayOfWeek.Monday,
-                Hours = [TimeSpan.FromHours(9), TimeSpan.FromHours(10), TimeSpan.FromHours(11)]
-            }
-        ]
+        Availability = []
     };
     
     public DoctorBuilder WithLicense(string license)
@@ -55,9 +46,19 @@ internal class DoctorBuilder
         return this;
     }
     
-    public  DoctorBuilder WithAvailability(params OfficeHour[] availability)
+    public DoctorBuilder WithAvailability(DayOfWeek dayOfWeek, params TimeSpan[] hours)
     {
-        _entity.Availability = [..availability];
+        if (_entity.Availability.Find(x => x.DayOfWeek == dayOfWeek) is { } entry)
+        {
+            entry.Hours = [..hours];
+            return this;
+        }
+        
+        _entity.Availability.Add(new AvailabilityEntity()
+        {
+            DayOfWeek = dayOfWeek,
+            Hours = [..hours]
+        });
         return this;
     }
     

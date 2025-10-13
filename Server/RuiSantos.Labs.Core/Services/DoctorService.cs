@@ -21,7 +21,7 @@ internal class DoctorService(IServiceProvider provider) : IDoctorService
             LastName = lastName,
             ContactNumbers = [.. contactNumbers],
             Specialties = [.. specialties]
-        }).Execute(cancellationToken);
+        }).ExecuteAsync(cancellationToken);
     }
 
     public async Task SetOfficeHoursAsync(Guid doctorId, DayOfWeek dayOfWeek, IEnumerable<TimeSpan> hours, 
@@ -32,7 +32,7 @@ internal class DoctorService(IServiceProvider provider) : IDoctorService
             DoctorId = doctorId,
             DayOfWeek = dayOfWeek,
             Hours = [.. hours]
-        }).Execute(cancellationToken);
+        }).ExecuteAsync(cancellationToken);
     }
 
     public async Task<IEnumerable<PatientAppointment>> GetAppointmentsAsync(Guid doctorId, DateTime? dateTime,
@@ -42,7 +42,7 @@ internal class DoctorService(IServiceProvider provider) : IDoctorService
         {
             DoctorId = doctorId,
             Date = DateOnly.FromDateTime(dateTime ?? DateTime.Today)
-        }).Execute(cancellationToken);
+        }).ExecuteAsync(cancellationToken);
     }
 
     public async Task<Pagination<Doctor>> GetAllDoctorsAsync(int take, string? paginationToken,
@@ -52,7 +52,7 @@ internal class DoctorService(IServiceProvider provider) : IDoctorService
         {
             Take = take,
             PaginationToken = paginationToken
-        }).Execute(cancellationToken);
+        }).ExecuteAsync(cancellationToken);
     }
 
     public async Task<Doctor?> GetDoctorByLicenseAsync(string license, CancellationToken cancellationToken = default)
@@ -60,6 +60,6 @@ internal class DoctorService(IServiceProvider provider) : IDoctorService
         return await _doctorCommandFactory.GetDoctorByLicenseCommand(new GetDoctorByLicenseCommandInput
         {
             License = license
-        }).Execute(cancellationToken);
+        }).ExecuteAsync(cancellationToken);
     }
 }

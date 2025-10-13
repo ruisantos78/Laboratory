@@ -11,7 +11,7 @@ internal class GetDoctorsCommand(GetDoctorsCommandInput input
     , ILogger<GetDoctorsCommand> logger
     ) : IAsyncCommand<Pagination<Doctor>>
 {
-    public async Task<Pagination<Doctor>> Execute(CancellationToken cancellationToken = default)
+    public async Task<Pagination<Doctor>> ExecuteAsync(CancellationToken cancellationToken = default)
     {
         logger.LogInformation("Getting doctors with input {@Input}", input);
         try

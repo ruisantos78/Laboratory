@@ -16,7 +16,7 @@ internal class CreateDoctorCommand(CreateDoctorCommandInput input
     , ILogger<CreateDoctorCommand> logger
     ): IAsyncCommand
 {
-    public async Task Execute(CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(CancellationToken cancellationToken = default)
     {
         try
         {

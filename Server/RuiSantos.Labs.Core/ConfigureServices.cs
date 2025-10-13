@@ -11,8 +11,8 @@ public static class ConfigureServices
 {
     public static IServiceCollection AddLabsServices(this IServiceCollection services)
     {
-        services.AddTransient<IMedicalSpecialtiesService, MedicalSpecialtiesService>();
         services.AddTransient<IDoctorService, DoctorService>();
+        services.AddTransient<IMedicalSpecialtiesService, MedicalSpecialtiesService>();
         services.AddTransient<IPatientService, PatientService>();
         services.AddTransient<IAppointmentService, AppointmentService>();
 

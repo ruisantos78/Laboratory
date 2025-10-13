@@ -1,11 +1,9 @@
 using Amazon;
 using Amazon.DynamoDBv2;
 using Amazon.DynamoDBv2.DataModel;
-using Amazon.DynamoDBv2.Model;
 using Microsoft.AspNetCore.Mvc.Testing;
-using RuiSantos.Labs.Data.Dynamodb.Mediators;
+using RuiSantos.Labs.Repository.DynamoDb.Core;
 using Testcontainers.LocalStack;
-using Xunit.Abstractions;
 
 namespace RuiSantos.Labs.Services.Tests.Fixtures;
 
@@ -14,8 +12,6 @@ public class ServiceCollectionFixture : ICollectionFixture<ServiceFixture>;
 
 public class ServiceFixture: IAsyncLifetime
 {
-    private static Lazy<CreateTableRequest[]> CreateTableRequests => new(() => [..RegisterClassMaps.CreateTableRequests()]); 
-    
     private WebApplicationFactory<Program>? _webApplicationFactory;
     private LocalStackContainer? _localStackContainer;
     private IAmazonDynamoDB? _amazonDynamoDb;
@@ -37,6 +33,7 @@ public class ServiceFixture: IAsyncLifetime
     
     private void InitializeWebApplicationFactory()
     {
+        Environment.SetEnvironmentVariable("ASPNETCORE_ENVIRONMENT", "Development");
         Environment.SetEnvironmentVariable("AWS_ACCESS_KEY_ID", "docker");
         Environment.SetEnvironmentVariable("AWS_SECRET_ACCESS_KEY", "docker");
         Environment.SetEnvironmentVariable("AWS_DEFAULT_REGION", "us-east-1");
@@ -61,8 +58,6 @@ public class ServiceFixture: IAsyncLifetime
             Profile = new Profile("default", "us-east-1"),
             ServiceURL = _localStackContainer.GetConnectionString()
         });
-        
-        await Task.WhenAll(CreateTableRequests.Value.Select(request => _amazonDynamoDb.CreateTableAsync(request)));
     }
     
     public HttpClient CreateHttpClient()

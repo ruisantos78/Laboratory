@@ -2,7 +2,7 @@ using System.Net.Http.Json;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
 using NFluent;
-using RuiSantos.Labs.Data.Dynamodb.Entities;
+using RuiSantos.Labs.Repository.DynamoDb.Entities;
 using RuiSantos.Labs.Services.Endpoints.Schemas;
 using RuiSantos.Labs.Services.Tests.Fixtures;
 using RuiSantos.Labs.Services.Tests.Fixtures.Builders;
@@ -16,11 +16,12 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     private DynamoDBContext? _context;
     private HttpClient? _client;
 
-    public async Task InitializeAsync()
+    public Task InitializeAsync()
     {
         _context = fixture.CreateDynamoDbContext();
         _client = fixture.CreateHttpClient();
-        await CleanupDoctorsWithSpecialtiesAsync(_context);
+        
+        return Task.CompletedTask;
     }
 
     public async Task DisposeAsync()
@@ -149,7 +150,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     private static async IAsyncEnumerable<GetDoctorsResponseItem> CreateDoctorsWithSpecialitiesAsync(DynamoDBContext context, int count)
     {
         var doctorBuilder = new DoctorBuilder();
-        var doctorSpecialtyBuilder = new DoctorSpecialtyBuilder();
+        var doctorSpecialtyBuilder = new DoctorSpecializationBuilder();
         for (var i = 0; i < count; i++)
         {
             var doctor = await doctorBuilder.WithLicense($"AAA-{i:0000}")
@@ -165,7 +166,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
                 FirstName = doctor.FirstName,
                 LastName = doctor.LastName,
                 Email = doctor.Email,
-                Specializations = [..specialties.Select(x => x.Specialty)]
+                Specializations = [..specialties.Select(x => x.Specialization)]
             };
         }   
     }
@@ -174,7 +175,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     {
         await Task.WhenAll(
             context.DeleteAllAsync<DoctorEntity>(),
-            context.DeleteAllAsync<DoctorSpecialtyEntity>()
+            context.DeleteAllAsync<DoctorSpecializationEntity>()
         );
     }
 }

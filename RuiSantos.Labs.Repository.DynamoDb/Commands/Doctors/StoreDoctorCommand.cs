@@ -1,0 +1,88 @@
+using Amazon.DynamoDBv2;
+using Amazon.DynamoDBv2.DataModel;
+using Amazon.DynamoDBv2.DocumentModel;
+using FluentValidation;
+using Microsoft.Extensions.Logging;
+using RuiSantos.Labs.Domain.Extensions.Commands;
+using RuiSantos.Labs.Domain.Extensions.Models;
+using RuiSantos.Labs.Repository.DynamoDb.Entities;
+using RuiSantos.Labs.Repository.DynamoDb.Entities.Converters;
+using RuiSantos.Labs.Repository.DynamoDb.Entities.Validators;
+
+namespace RuiSantos.Labs.Repository.DynamoDb.Commands.Doctors;
+
+internal class StoreDoctorCommand(Doctor doctor
+    , IAmazonDynamoDB client
+    , ILogger<StoreDoctorCommand> logger
+    ): IAsyncCommand
+{
+    private readonly DoctorEntityValidator _validator = new();
+    
+    private readonly DynamoDBContext _context = new DynamoDBContextBuilder()
+        .WithDynamoDBClient(() => client)
+        .Build(); 
+    
+    public async Task ExecuteAsync(CancellationToken cancellationToken = default)
+    {
+        logger.LogInformation("Storing doctor {DoctorId}", doctor.Id);
+        try
+        {
+            var entity = doctor.ToDoctorEntity();
+            await _validator.ValidateAndThrowAsync(entity, cancellationToken);
+            
+            if (await GetDoctorIdByLicenseAsync(entity.License) is { } doctorId)
+                entity.Id = doctorId;
+
+            var specializationWriter = await CreateSpecializationWriterAsync(cancellationToken);
+
+            var writer = _context.CreateBatchWrite<DoctorEntity>();
+            writer.AddPutItem(entity);
+
+            await writer
+                .Combine(specializationWriter)
+                .ExecuteAsync(cancellationToken);
+        }
+        catch (Exception ex)
+        {
+            logger.LogError(ex, "Error storing doctor {DoctorId}", doctor.Id);
+            throw;
+        }
+    }
+    
+    private Task<Guid?> GetDoctorIdByLicenseAsync(string license)
+    {
+        var query = new QueryOperationConfig
+        {
+            IndexName = DoctorEntity.DoctorLicenceIndexName,
+            Filter = new QueryFilter(nameof(DoctorEntity.License), QueryOperator.Equal, license),
+            Limit = 1,
+            Select = SelectValues.SpecificAttributes,
+            AttributesToGet = [nameof(DoctorEntity.License)]
+        };
+
+        return _context.FromQueryAsync<DoctorEntity>(query)
+            .GetNextSetAsync()
+            .ContinueWith(task => task.Result.FirstOrDefault()?.Id);
+    }
+    
+    private async Task<IBatchWrite<DoctorSpecializationEntity>> CreateSpecializationWriterAsync(CancellationToken cancellationToken)
+    {
+        var writer = _context.CreateBatchWrite<DoctorSpecializationEntity>();
+
+        var current = await _context.QueryAsync<DoctorSpecializationEntity>(doctor.Id)
+            .GetRemainingAsync(cancellationToken);
+
+        writer.AddDeleteItems(current.Where(x => !doctor.Specializations.Contains(x.Specialization)));
+
+        writer.AddPutItems(doctor.Specializations
+            .Except(current.Select(x => x.Specialization))
+            .Select(specialization => new DoctorSpecializationEntity
+            {
+                DoctorId = doctor.Id,
+                Specialization = specialization
+            })
+        );
+
+        return writer;
+    }
+}

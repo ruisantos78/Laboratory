@@ -1,36 +1,36 @@
 using Amazon.DynamoDBv2.DataModel;
-using RuiSantos.Labs.Data.Dynamodb.Entities;
+using RuiSantos.Labs.Repository.DynamoDb.Entities;
 
 namespace RuiSantos.Labs.Services.Tests.Fixtures.Builders;
 
-internal class DoctorSpecialtyBuilder
+internal class DoctorSpecializationBuilder
 {
     private DoctorEntity? _doctorEntity;
     private string[] _specialties = ["Cardiologist", "Dermatologist", "Gastroenterologist"];
     
-    public DoctorSpecialtyBuilder WithDoctor(DoctorEntity doctorEntity)
+    public DoctorSpecializationBuilder WithDoctor(DoctorEntity doctorEntity)
     {
         _doctorEntity = doctorEntity;
         return this;
     }
     
-    public DoctorSpecialtyBuilder WithSpecialties(string[] specialties)
+    public DoctorSpecializationBuilder WithSpecialties(string[] specialties)
     {
         _specialties = specialties;
         return this;
     }
     
-    public async Task<DoctorSpecialtyEntity[]> BuildAsync(DynamoDBContext context)
+    public async Task<DoctorSpecializationEntity[]> BuildAsync(DynamoDBContext context)
     {
         _doctorEntity ??= await new DoctorBuilder().BuildAsync(context);
 
-        var entities = _specialties.Select(specialty => new DoctorSpecialtyEntity
+        var entities = _specialties.Select(specialty => new DoctorSpecializationEntity
         {
             DoctorId = _doctorEntity.Id, 
-            Specialty = specialty
+            Specialization = specialty
         }).ToArray();
         
-        var writer = context.CreateBatchWrite<DoctorSpecialtyEntity>();
+        var writer = context.CreateBatchWrite<DoctorSpecializationEntity>();
         writer.AddPutItems(entities);
         await writer.ExecuteAsync();
 

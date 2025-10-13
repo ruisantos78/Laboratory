@@ -15,7 +15,7 @@ internal class GetDoctorByLicenseCommand(GetDoctorByLicenseCommandInput input
     , ILogger<GetDoctorByLicenseCommand> logger)
     : IAsyncCommand<Doctor?>
 {
-    public async Task<Doctor?> Execute(CancellationToken cancellationToken = default)
+    public async Task<Doctor?> ExecuteAsync(CancellationToken cancellationToken = default)
     {
         try
         {

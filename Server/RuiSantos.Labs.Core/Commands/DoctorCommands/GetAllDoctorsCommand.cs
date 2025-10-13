@@ -13,7 +13,7 @@ internal class GetAllDoctorsCommand(GetAllDoctorsCommandInput input
     , ILogger<GetAllDoctorsCommand> logger
     ): IAsyncCommand<Pagination<Doctor>>
 {
-    public async Task<Pagination<Doctor>> Execute(CancellationToken cancellationToken = default)
+    public async Task<Pagination<Doctor>> ExecuteAsync(CancellationToken cancellationToken = default)
     {
         try
         {

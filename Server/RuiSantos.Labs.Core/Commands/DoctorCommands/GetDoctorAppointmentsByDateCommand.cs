@@ -16,7 +16,7 @@ internal class GetDoctorAppointmentsByDateCommand(GetDoctorAppointmentsByDateCom
     , ILogger<GetDoctorAppointmentsByDateCommand> logger
     ): IAsyncCommand<PatientAppointment[]>
 {
-    public async Task<PatientAppointment[]> Execute(CancellationToken cancellationToken = default)
+    public async Task<PatientAppointment[]> ExecuteAsync(CancellationToken cancellationToken = default)
     {
         try
         {

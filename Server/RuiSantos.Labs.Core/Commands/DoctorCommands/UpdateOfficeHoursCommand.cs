@@ -15,7 +15,7 @@ internal class UpdateOfficeHoursCommand(UpdateOfficeHoursCommandInput input
     , ILogger<UpdateOfficeHoursCommand> logger
     ): IAsyncCommand
 {
-    public async Task Execute(CancellationToken cancellationToken = default)
+    public async Task ExecuteAsync(CancellationToken cancellationToken = default)
     {
         try
         {

@@ -28,7 +28,7 @@ internal static class DoctorsEndpoints
                 PaginationToken = from
             });
 
-            var result = await command.Execute(cancellationToken);
+            var result = await command.ExecuteAsync(cancellationToken);
             
             return result.Models.Count == 0 
                 ? Results.NoContent() 
