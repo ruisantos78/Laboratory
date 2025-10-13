@@ -29,4 +29,27 @@ partial class DoctorsEndpoints
             return ex.ToHttpResult();
         }
     }
+    
+    private static async Task<IResult> GetDoctorById(string id
+        , IDoctorsCommandFactory commandFactory
+        , CancellationToken cancellationToken)
+    {
+        try
+        {
+            var command = commandFactory.CreateGetDoctorByIdCommand(new GetDoctorByIdCommandInput()
+            {
+                DoctorId = id
+            });
+
+            var result = await command.ExecuteAsync(cancellationToken);
+            if (result is null)
+                return Results.NoContent();
+
+            return Results.Ok(result);
+        }
+        catch (Exception ex)
+        {
+            return ex.ToHttpResult();
+        }
+    }
 }

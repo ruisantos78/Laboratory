@@ -15,7 +15,7 @@ internal static class StoreDoctorRequestConverter
             LastName = request.LastName ?? string.Empty,
             ContactNumbers = [.. request.ContactNumbers ?? []],
             Specializations = [.. request.Specializations ?? []],
-            OfficeHours = [.. request.Avaliability?.Select(ToOfficeHour) ?? []]
+            OfficeHours = [.. request.Availability?.Select(ToOfficeHour) ?? []]
         };
     }
 

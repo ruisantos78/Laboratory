@@ -7,13 +7,15 @@ namespace RuiSantos.Labs.Repository.DynamoDb.Entities;
 internal record DoctorSpecializationEntity
 {
     public const string DoctorSpecializationTableName = "doctors_specializations";
-    public const string DoctorSpecializationByDoctorIdIndexName = "doctors_specializations_doctor_id_index";
+    public const string DoctorSpecializationIndexName = "doctors_specializations_index";
     
-    [DynamoDBHashKey( AttributeName = nameof(Specialization))]
-    [DynamoDBGlobalSecondaryIndexRangeKey(DoctorSpecializationByDoctorIdIndexName, AttributeName = nameof(Specialization))]
+    [DynamoDBHashKey(AttributeName = nameof(DoctorId), Converter = typeof(GuidConverter))]
+    [DynamoDBGlobalSecondaryIndexRangeKey(DoctorSpecializationIndexName, AttributeName = nameof(DoctorId))]
+    public Guid DoctorId { get; set; }
+    
+    [DynamoDBRangeKey( AttributeName = nameof(Specialization))]
+    [DynamoDBGlobalSecondaryIndexHashKey(DoctorSpecializationIndexName, AttributeName = nameof(Specialization))]
     public required string Specialization { get; set; }
     
-    [DynamoDBRangeKey(AttributeName = nameof(DoctorId), Converter = typeof(GuidConverter))]
-    [DynamoDBGlobalSecondaryIndexHashKey(DoctorSpecializationByDoctorIdIndexName, AttributeName = nameof(DoctorId))]
-    public Guid DoctorId { get; set; }
+    
 }

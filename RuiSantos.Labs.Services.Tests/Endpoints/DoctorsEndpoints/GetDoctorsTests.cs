@@ -13,43 +13,17 @@ using Xunit.Abstractions;
 namespace RuiSantos.Labs.Services.Tests.Endpoints.DoctorsEndpoints;
 
 [Collection(nameof(ServiceFixture))]
-public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) : IAsyncLifetime
+public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output): EndpointTest(fixture)
 {
-    private DynamoDBContext? _context;
-    private HttpClient? _client;
-
-    public Task InitializeAsync()
-    {
-        _context = fixture.CreateDynamoDbContext();
-        _client = fixture.CreateHttpClient();
-        
-        return Task.CompletedTask;
-    }
-
-    public async Task DisposeAsync()
-    {
-        if (_context != null)
-        {
-            await Task.WhenAll(
-                _context.DeleteAllAsync<DoctorEntity>(),
-                _context.DeleteAllAsync<DoctorSpecializationEntity>()
-            );
-            
-            _context.Dispose();
-        }
-        
-        _client?.Dispose();
-    }
-
     [Fact]
     public async Task GetDoctors_WithNoParameters_ShouldReturnAllDoctors()
     {
         // Arrange
-        var expected = await CreateDoctorsWithSpecialitiesAsync(_context!, 3)
+        var expected = await CreateDoctorsWithSpecialitiesAsync(Context, 3)
             .ToArrayAsync();
         
         // Act
-        var response = await _client!.GetAsync("/doctors");
+        var response = await Client.GetAsync("/doctors");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -66,11 +40,11 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     public async Task GetDoctors_WithTakeParameter_ShouldReturnLimitedResults()
     {
         // Arrange
-        var expected = await CreateDoctorsWithSpecialitiesAsync(_context!, 3)
+        var expected = await CreateDoctorsWithSpecialitiesAsync(Context, 3)
             .ToArrayAsync();
         
         // Act
-        var response = await _client!.GetAsync("/doctors?take=1");
+        var response = await Client.GetAsync("/doctors?take=1");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -87,16 +61,16 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     public async Task GetDoctors_WithFromParameter_ShouldReturnNextPage()
     {
         // Arrange
-        var expected = await CreateDoctorsWithSpecialitiesAsync(_context!, 3).ToArrayAsync();
+        var expected = await CreateDoctorsWithSpecialitiesAsync(Context, 3).ToArrayAsync();
         
-        var firstResponse = await _client!.GetAsync("/doctors?take=1");
+        var firstResponse = await Client.GetAsync("/doctors?take=1");
         firstResponse.EnsureSuccessStatusCode();
         
         var firstPage = await firstResponse.Content.ReadFromJsonAsync<GetDoctorsResponse>();
         var firstPageToken = UrlEncoder.Default.Encode(firstPage!.PaginationToken!);
         
         // Act
-        var response = await _client.GetAsync($"/doctors?take=1&from={firstPageToken}");
+        var response = await Client.GetAsync($"/doctors?take=1&from={firstPageToken}");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -112,7 +86,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     public async Task GetDoctors_WithNoData_ShouldReturnNoContent()
     {
         // Act
-        var response = await _client!.GetAsync("/doctors");
+        var response = await Client.GetAsync("/doctors");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -125,7 +99,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     public async Task GetDoctors_WithInvalidTakeParameter_ShouldReturnBadRequest(int take)
     {
         // Act
-        var response = await _client!.GetAsync($"/doctors?take={take}");
+        var response = await Client.GetAsync($"/doctors?take={take}");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -140,7 +114,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
     public async Task GetDoctors_WithInvalidFromParameter_ShouldReturnBadRequest()
     {
         // Act
-        var response = await _client!.GetAsync("/doctors?from=invalid-token");
+        var response = await Client.GetAsync("/doctors?from=invalid-token");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -158,7 +132,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
         var invalidPaginationData = Convert.ToBase64String(Encoding.UTF8.GetBytes("invalid-data"));
 
         // Act
-        var response = await _client!.GetAsync($"/doctors?from={invalidPaginationData}");
+        var response = await Client.GetAsync($"/doctors?from={invalidPaginationData}");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -169,7 +143,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
         Check.That(problem.Errors["PaginationToken"]).ContainsExactly("Invalid DynamoDB pagination token format.");        
     }
     
-    private static async IAsyncEnumerable<GetDoctorsResponseItem> CreateDoctorsWithSpecialitiesAsync(DynamoDBContext context, int count)
+    private static async IAsyncEnumerable<GetDoctorResponse> CreateDoctorsWithSpecialitiesAsync(DynamoDBContext context, int count)
     {
         var doctorBuilder = new DoctorBuilder();
         var doctorSpecialtyBuilder = new DoctorSpecializationBuilder();
@@ -181,7 +155,7 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
             var specialties = await doctorSpecialtyBuilder.WithDoctor(doctor)
                 .BuildAsync(context);
             
-            yield return new GetDoctorsResponseItem()
+            yield return new GetDoctorResponse()
             {
                 LicenseNumber = doctor.License,
                 FirstName = doctor.FirstName,

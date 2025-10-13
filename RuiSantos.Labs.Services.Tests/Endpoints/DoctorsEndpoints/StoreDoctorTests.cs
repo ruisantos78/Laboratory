@@ -10,34 +10,8 @@ using Xunit.Abstractions;
 namespace RuiSantos.Labs.Services.Tests.Endpoints.DoctorsEndpoints;
 
 [Collection(nameof(ServiceFixture))]
-public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) : IAsyncLifetime
+public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) : EndpointTest(fixture)
 {
-    private DynamoDBContext? _context;
-    private HttpClient? _client;
-
-    public Task InitializeAsync()
-    {
-        _context = fixture.CreateDynamoDbContext();
-        _client = fixture.CreateHttpClient();
-        
-        return Task.CompletedTask;
-    }
-
-    public async Task DisposeAsync()
-    {
-        if (_context != null)
-        {
-            await Task.WhenAll(
-                _context.DeleteAllAsync<DoctorEntity>(),
-                _context.DeleteAllAsync<DoctorSpecializationEntity>()
-            );
-
-            _context.Dispose();
-        }
-
-        _client?.Dispose();
-    }
-
     [Fact]
     public async Task StoreDoctor_WithValidRequest_ShouldCreateData()
     {
@@ -50,7 +24,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
             Email = "joe.doe@email.com",
             ContactNumbers = ["555-1234"],
             Specializations = ["Cardiology"],
-            Avaliability = [
+            Availability = [
                 new StoreDoctorRequestScheduleItem {
                     DayOfWeek = DayOfWeek.Tuesday,
                     TimeSlots = [TimeSpan.FromHours(9), TimeSpan.FromHours(10), TimeSpan.FromHours(11)]
@@ -59,13 +33,13 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         };
 
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", request);
+        var response = await Client.PostAsJsonAsync("/doctor", request);
         await output.HttpResponseAsync(response);
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.NoContent);
 
-        var doctor = await _context!
+        var doctor = await Context
             .QueryAsync<DoctorEntity>(request.LicenseNumber, new QueryConfig { IndexName = DoctorEntity.DoctorLicenceIndexName })
             .GetNextSetAsync()
             .ContinueWith(task => task.Result.FirstOrDefault());
@@ -80,12 +54,14 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
             ContactNumbers = request.ContactNumbers
         });
 
-        var specializations = await _context!
-            .QueryAsync<DoctorSpecializationEntity>(doctor!.Id, new QueryConfig { IndexName = DoctorSpecializationEntity.DoctorSpecializationByDoctorIdIndexName })
-            .GetRemainingAsync();
-
+        string[] specializations = [..
+            await Context.QueryAsync<DoctorSpecializationEntity>(doctor!.Id)
+                .GetRemainingAsync()
+                .ContinueWith(task => task.Result.Select(x => x.Specialization))
+        ];
+        
         Check.That(specializations).HasSize(request.Specializations.Length);
-        Check.That(specializations.Select(x => x.Specialization)).ContainsExactly(request.Specializations);
+        Check.That(specializations).ContainsExactly(request.Specializations);
     }
 
     [Fact]
@@ -101,7 +77,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
             Email = "existing@email.com",
             ContactNumbers = ["555-0000"]
         };
-        await _context!.SaveAsync(existingDoctor);
+        await Context.SaveAsync(existingDoctor);
 
         var request = new StoreDoctorRequest
         {
@@ -114,13 +90,13 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         };
 
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", request);
+        var response = await Client.PostAsJsonAsync("/doctor", request);
         await output.HttpResponseAsync(response);
 
         // Assert
         Check.That(response.StatusCode).IsEqualTo(System.Net.HttpStatusCode.NoContent);
 
-        var updatedDoctor = await _context!
+        var updatedDoctor = await Context
             .QueryAsync<DoctorEntity>(request.LicenseNumber, new QueryConfig { IndexName = DoctorEntity.DoctorLicenceIndexName })
             .GetNextSetAsync()
             .ContinueWith(task => task.Result.FirstOrDefault());
@@ -156,7 +132,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         };
 
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", request);
+        var response = await Client.PostAsJsonAsync("/doctor", request);
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -182,7 +158,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         };
 
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", request);
+        var response = await Client.PostAsJsonAsync("/doctor", request);
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -208,7 +184,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         };
 
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", request);
+        var response = await Client.PostAsJsonAsync("/doctor", request);
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -234,7 +210,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         };
 
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", request);
+        var response = await Client.PostAsJsonAsync("/doctor", request);
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -260,7 +236,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         };
 
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", request);
+        var response = await Client.PostAsJsonAsync("/doctor", request);
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -286,7 +262,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         };
 
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", request);
+        var response = await Client.PostAsJsonAsync("/doctor", request);
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -312,7 +288,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
         };
 
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", request);
+        var response = await Client.PostAsJsonAsync("/doctor", request);
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -327,7 +303,7 @@ public class StoreDoctorTests(ServiceFixture fixture, ITestOutputHelper output) 
     public async Task StoreDoctor_WithNullRequest_ShouldReturnBadRequest()
     {
         // Act
-        var response = await _client!.PostAsJsonAsync("/doctor", (StoreDoctorRequest?)null);
+        var response = await Client.PostAsJsonAsync("/doctor", (StoreDoctorRequest?)null);
         await output.HttpResponseAsync(response);
 
         // Assert

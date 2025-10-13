@@ -67,13 +67,9 @@ internal class StoreDoctorCommand(Doctor doctor
     {
         var writer = _context.CreateBatchWrite<DoctorSpecializationEntity>();
 
-        var current = await _context.FromQueryAsync<DoctorSpecializationEntity>(new QueryOperationConfig
-        {
-            IndexName = DoctorSpecializationEntity.DoctorSpecializationByDoctorIdIndexName,
-            Filter = new QueryFilter(nameof(DoctorSpecializationEntity.DoctorId), QueryOperator.Equal, entity.Id),
-            Select = SelectValues.SpecificAttributes,
-            AttributesToGet = [nameof(DoctorSpecializationEntity.Specialization)]
-        }).GetRemainingAsync(cancellationToken);            
+        var current = await _context
+            .QueryAsync<DoctorSpecializationEntity>(entity.Id) 
+            .GetRemainingAsync(cancellationToken);
 
         var excludeItems = current.Where(x => !doctor.Specializations.Contains(x.Specialization)).ToArray();        
         var includeItems = doctor.Specializations

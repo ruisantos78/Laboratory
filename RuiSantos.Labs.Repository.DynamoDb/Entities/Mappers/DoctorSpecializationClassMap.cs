@@ -12,20 +12,20 @@ internal class DoctorSpecializationClassMap : ClassMap
 
         request.AttributeDefinitions =
         [
-            new AttributeDefinition(nameof(DoctorSpecializationEntity.Specialization), ScalarAttributeType.S),
-            new AttributeDefinition(nameof(DoctorSpecializationEntity.DoctorId), ScalarAttributeType.S)
+            new AttributeDefinition(nameof(DoctorSpecializationEntity.DoctorId), ScalarAttributeType.S),
+            new AttributeDefinition(nameof(DoctorSpecializationEntity.Specialization), ScalarAttributeType.S)
         ];
 
         request.KeySchema = [
-            new KeySchemaElement(nameof(DoctorSpecializationEntity.Specialization), KeyType.HASH),
-            new KeySchemaElement(nameof(DoctorSpecializationEntity.DoctorId), KeyType.RANGE)
+            new KeySchemaElement(nameof(DoctorSpecializationEntity.DoctorId), KeyType.HASH),
+            new KeySchemaElement(nameof(DoctorSpecializationEntity.Specialization), KeyType.RANGE)
         ];
 
         request.GlobalSecondaryIndexes =
         [
-            new GlobalSecondaryIndexKeys(DoctorSpecializationEntity.DoctorSpecializationByDoctorIdIndexName
-                , nameof(DoctorSpecializationEntity.DoctorId)
-                , nameof(DoctorSpecializationEntity.Specialization))
+            new GlobalSecondaryIndexKeys(DoctorSpecializationEntity.DoctorSpecializationIndexName
+                , nameof(DoctorSpecializationEntity.Specialization)
+                , nameof(DoctorSpecializationEntity.DoctorId))
         ];
         
         request.ProvisionedThroughput = new ProvisionedThroughput(5, 5);

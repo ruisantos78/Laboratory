@@ -12,7 +12,7 @@ internal class GetDoctorsCommand(GetDoctorsCommandInput input
     , ILogger<GetDoctorsCommand> logger
     ) : IAsyncCommand<GetDoctorsResponse>
 {
-    private int _take = input.Take ?? int.MaxValue;
+    private readonly int _take = input.Take ?? int.MaxValue;
     private string? _paginationToken;
 
     public async Task<GetDoctorsResponse> ExecuteAsync(CancellationToken cancellationToken = default)
@@ -71,7 +71,7 @@ internal class GetDoctorsCommand(GetDoctorsCommandInput input
     }
 }
 
-internal class GetDoctorsCommandInput
+internal record GetDoctorsCommandInput
 {
     public int? Take { get; init; }
     public string? PaginationToken { get; init; }

@@ -14,7 +14,7 @@ internal class DoctorSpecializationBuilder
         return this;
     }
     
-    public DoctorSpecializationBuilder WithSpecialties(string[] specialties)
+    public DoctorSpecializationBuilder WithSpecializations(params string[] specialties)
     {
         _specialties = specialties;
         return this;

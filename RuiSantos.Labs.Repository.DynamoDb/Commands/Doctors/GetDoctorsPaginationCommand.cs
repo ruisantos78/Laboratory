@@ -50,24 +50,14 @@ internal class GetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput inpu
     {
         foreach (var entity in task.Result)
         {
-            var specializations = await GetSpecializationsAsync(entity);
+            string[] specializations = [..
+                await _context.QueryAsync<DoctorSpecializationEntity>(entity.Id)
+                    .GetRemainingAsync()
+                    .ContinueWith(t => t.Result.Select(x => x.Specialization))
+            ];
+            
             yield return entity.ToDoctor(specializations);
         }
-    }
-    
-    private async Task<string[]> GetSpecializationsAsync(DoctorEntity doctor)
-    {
-        var query = new QueryOperationConfig
-        {
-            IndexName = DoctorSpecializationEntity.DoctorSpecializationByDoctorIdIndexName,
-            Filter = new QueryFilter(nameof(DoctorSpecializationEntity.DoctorId), QueryOperator.Equal, doctor.Id),
-            Select = SelectValues.SpecificAttributes,
-            AttributesToGet = [nameof(DoctorSpecializationEntity.Specialization)]
-        };
-
-        return await _context.FromQueryAsync<DoctorSpecializationEntity>(query)
-            .GetRemainingAsync()
-            .ContinueWith(task => task.Result.Select(x => x.Specialization).ToArray());
     }
     
     private async Task ValidateAndThrowAsync(CancellationToken cancellationToken)
@@ -87,8 +77,8 @@ internal class GetDoctorsPaginationCommand(GetDoctorsPaginationCommandInput inpu
     }
 }
 
-internal class GetDoctorsPaginationCommandInput
+internal struct GetDoctorsPaginationCommandInput
 {
-    public int? Take { get; set; }
-    public string? PaginationToken { get; set; }
+    public int? Take { get; init; }
+    public string? PaginationToken { get; init; }
 }

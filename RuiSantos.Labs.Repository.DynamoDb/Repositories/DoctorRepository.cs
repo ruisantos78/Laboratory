@@ -9,9 +9,10 @@ internal class DoctorRepository(IServiceProvider provider): IDoctorRepository
 {
     private readonly DoctorsCommandFactory _doctorsCommandFactory = new(provider);
     
-    public Task<Doctor?> FindAsync(Guid id, CancellationToken cancellationToken)
+    public async Task<Doctor?> FindAsync(Guid id, CancellationToken cancellationToken)
     {
-        throw new NotImplementedException();
+        var command = _doctorsCommandFactory.CreateGetDoctorByIdCommand(id);
+        return await command.ExecuteAsync(cancellationToken);
     }
 
     public async Task<Pagination<Doctor>> FindAllAsync(int take, string? paginationToken, CancellationToken cancellationToken)

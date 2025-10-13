@@ -10,7 +10,7 @@ public class StoreDoctorRequest
     public string? LastName { get; init; }
     public string[]? ContactNumbers { get; init; }
     public string[]? Specializations { get; init; }
-    public StoreDoctorRequestScheduleItem[]? Avaliability { get; init; }
+    public StoreDoctorRequestScheduleItem[]? Availability { get; init; }
 }
 
 public class StoreDoctorRequestScheduleItem
