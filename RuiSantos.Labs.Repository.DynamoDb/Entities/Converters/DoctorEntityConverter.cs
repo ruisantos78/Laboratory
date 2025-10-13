@@ -9,6 +9,7 @@ internal static class DoctorEntityConverter
         return new Doctor
         {
             Id = entity.Id,
+            License = entity.License,
             FirstName = entity.FirstName,
             LastName = entity.LastName,
             Email = entity.Email,
@@ -32,6 +33,7 @@ internal static class DoctorEntityConverter
         return new DoctorEntity
         {
             Id = model.Id,
+            License = model.License,
             FirstName = model.FirstName,
             LastName = model.LastName,
             Email = model.Email,

@@ -1,6 +1,8 @@
 using System.Net.Http.Json;
+using System.Text.Encodings.Web;
 using Amazon.DynamoDBv2.DataModel;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.Routing;
 using NFluent;
 using RuiSantos.Labs.Repository.DynamoDb.Entities;
 using RuiSantos.Labs.Services.Endpoints.Schemas;
@@ -83,10 +85,12 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
         
         var firstResponse = await _client!.GetAsync("/doctors?take=1");
         firstResponse.EnsureSuccessStatusCode();
+        
         var firstPage = await firstResponse.Content.ReadFromJsonAsync<GetDoctorsResponse>();
+        var firstPageToken = UrlEncoder.Default.Encode(firstPage!.PaginationToken!);
         
         // Act
-        var response = await _client.GetAsync($"/doctors?take=1&from={firstPage?.PaginationToken}");
+        var response = await _client.GetAsync($"/doctors?take=1&from={firstPageToken}");
         await output.HttpResponseAsync(response);
 
         // Assert
@@ -162,10 +166,10 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output) :
             yield return new GetDoctorsResponseItem()
             {
                 LicenseNumber = doctor.License,
-                ContactNumbers = [..doctor.ContactNumbers],
                 FirstName = doctor.FirstName,
                 LastName = doctor.LastName,
                 Email = doctor.Email,
+                ContactNumbers = [..doctor.ContactNumbers],
                 Specializations = [..specialties.Select(x => x.Specialization)]
             };
         }   
