@@ -6,14 +6,16 @@ internal static class DynamoDbContextExtensions
 {
     public static async Task DeleteAllAsync<T>(this DynamoDBContext context) where T : class
     {
-        var search = context.ScanAsync<T>(new List<ScanCondition>());
-        var items = await search.GetRemainingAsync();
-    
-        if (items.Count != 0)
+        var batchWrite = context.CreateBatchWrite<T>();
+        
+        var search = context.ScanAsync<T>([]);
+        while (!search.IsDone)
         {
-            var batchWrite = context.CreateBatchWrite<T>();
-            batchWrite.AddDeleteItems(items);
-            await batchWrite.ExecuteAsync();
+            var items = await search.GetNextSetAsync();
+            if (items.Count != 0)
+                batchWrite.AddDeleteItems(items);
         }
+        
+        await batchWrite.ExecuteAsync();
     }
 }

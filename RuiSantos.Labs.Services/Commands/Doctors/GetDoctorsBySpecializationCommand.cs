@@ -17,7 +17,6 @@ internal class GetDoctorsBySpecializationCommand(GetDoctorsBySpecializationComma
         try
         {
             await ValidateAndThrowAsync(cancellationToken);
-            
             var doctors = await repository.FindBySpecializationAsync(input.Specialization, cancellationToken);
             return doctors.ToGetDoctorsCollectionResponse();
         }

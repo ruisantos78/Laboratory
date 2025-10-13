@@ -17,7 +17,6 @@ internal class StoreDoctorCommand(StoreDoctorRequest request
         try
         {
             await ValidateAndThrowAsync(cancellationToken);
-
             var doctor = request.ToDoctor();
             await doctorRepository.StoreAsync(doctor, cancellationToken);
         }

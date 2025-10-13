@@ -21,7 +21,6 @@ internal class GetDoctorsCommand(GetDoctorsCommandInput input
         try
         {
             await ValidateAndThrowAsync(cancellationToken);
-            
             var pagination = await doctorRepository.FindAllAsync(_take, _paginationToken, cancellationToken);            
             return pagination.ToGetDoctorsPaginationResponse(EncodePaginationToken);
         } 
@@ -48,15 +47,15 @@ internal class GetDoctorsCommand(GetDoctorsCommandInput input
         await validator.ValidateAndThrowAsync(input, cancellationToken: cancellationToken);
     }
 
-    static string EncodePaginationToken(string? token)
+    private static string EncodePaginationToken(string? token)
     {
         if (string.IsNullOrWhiteSpace(token))
             return string.Empty;
 
         return Convert.ToBase64String(Encoding.UTF8.GetBytes(token));
-    }        
-        
-    static bool TryDecodePaginationToken(string? token, out string decodedToken)
+    }
+
+    private static bool TryDecodePaginationToken(string? token, out string decodedToken)
     {
         try
         {

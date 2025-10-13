@@ -145,14 +145,14 @@ public class GetDoctorsTests(ServiceFixture fixture, ITestOutputHelper output): 
     
     private static async IAsyncEnumerable<GetDoctorResponse> CreateDoctorsWithSpecialitiesAsync(DynamoDBContext context, int count)
     {
-        var doctorBuilder = new DoctorBuilder();
-        var doctorSpecialtyBuilder = new DoctorSpecializationBuilder();
+        var doctorBuilder = new DoctorEntityBuilder();
+    
         for (var i = 0; i < count; i++)
         {
             var doctor = await doctorBuilder.WithLicense($"AAA-{i:0000}")
                 .BuildAsync(context);
 
-            var specialties = await doctorSpecialtyBuilder.WithDoctor(doctor)
+            var specialties = await new DoctorSpecializationEntityBuilder(doctor)
                 .BuildAsync(context);
             
             yield return new GetDoctorResponse()

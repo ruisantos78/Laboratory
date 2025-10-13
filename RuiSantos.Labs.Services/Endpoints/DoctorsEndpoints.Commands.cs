@@ -4,7 +4,7 @@ using RuiSantos.Labs.Services.Extensions;
 
 namespace RuiSantos.Labs.Services.Endpoints;
 
-partial class DoctorsEndpoints
+internal partial class DoctorsEndpoints
 {
     private static async Task<IResult> StoreDoctor(StoreDoctorRequest request    
         , IDoctorsCommandFactory commandFactory

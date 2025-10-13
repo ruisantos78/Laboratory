@@ -3,30 +3,21 @@ using RuiSantos.Labs.Repository.DynamoDb.Entities;
 
 namespace RuiSantos.Labs.Services.Tests.Fixtures.Builders;
 
-internal class DoctorSpecializationBuilder
+internal class DoctorSpecializationEntityBuilder(DoctorEntity doctorEntity)
 {
-    private DoctorEntity? _doctorEntity;
-    private string[] _specialties = ["Cardiologist", "Dermatologist", "Gastroenterologist"];
+    private HashSet<string> _specialties = ["Cardiologist", "Dermatologist", "Gastroenterologist"];
     
-    public DoctorSpecializationBuilder WithDoctor(DoctorEntity doctorEntity)
+    public DoctorSpecializationEntityBuilder WithSpecializations(params string[] specialties)
     {
-        _doctorEntity = doctorEntity;
-        return this;
-    }
-    
-    public DoctorSpecializationBuilder WithSpecializations(params string[] specialties)
-    {
-        _specialties = specialties;
+        _specialties = specialties.ToHashSet();
         return this;
     }
     
     public async Task<DoctorSpecializationEntity[]> BuildAsync(DynamoDBContext context)
     {
-        _doctorEntity ??= await new DoctorBuilder().BuildAsync(context);
-
         var entities = _specialties.Select(specialty => new DoctorSpecializationEntity
         {
-            DoctorId = _doctorEntity.Id, 
+            DoctorId = doctorEntity.Id, 
             Specialization = specialty.ToLower(),
             Description = specialty
         }).ToArray();

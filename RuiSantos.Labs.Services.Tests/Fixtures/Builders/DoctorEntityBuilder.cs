@@ -3,7 +3,7 @@ using RuiSantos.Labs.Repository.DynamoDb.Entities;
 
 namespace RuiSantos.Labs.Services.Tests.Fixtures.Builders;
 
-internal class DoctorBuilder
+internal class DoctorEntityBuilder
 {
     private readonly DoctorEntity _entity = new()
     {
@@ -16,37 +16,37 @@ internal class DoctorBuilder
         Availability = []
     };
     
-    public DoctorBuilder WithLicense(string license)
+    public DoctorEntityBuilder WithLicense(string license)
     {
         _entity.License = license;
         return this;
     }
     
-    public  DoctorBuilder WithFirstName(string firstName)
+    public  DoctorEntityBuilder WithFirstName(string firstName)
     {
         _entity.FirstName = firstName;
         return this;
     }
     
-    public  DoctorBuilder WithLastName(string lastName)
+    public  DoctorEntityBuilder WithLastName(string lastName)
     {
         _entity.LastName = lastName;
         return this;
     }
     
-    public  DoctorBuilder WithContactNumbers(params string[] contactNumbers)
+    public  DoctorEntityBuilder WithContactNumbers(params string[] contactNumbers)
     {
         _entity.ContactNumbers = [..contactNumbers];
         return this;
     }
     
-    public  DoctorBuilder WithEmail(string email)
+    public  DoctorEntityBuilder WithEmail(string email)
     {
         _entity.Email = email;
         return this;
     }
     
-    public DoctorBuilder WithAvailability(DayOfWeek dayOfWeek, params TimeSpan[] hours)
+    public DoctorEntityBuilder WithAvailability(DayOfWeek dayOfWeek, params TimeSpan[] hours)
     {
         if (_entity.Availability.Find(x => x.DayOfWeek == dayOfWeek) is { } entry)
         {

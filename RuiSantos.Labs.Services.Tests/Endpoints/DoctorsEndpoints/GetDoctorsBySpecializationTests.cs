@@ -15,25 +15,23 @@ public class GetDoctorsBySpecializationTests(ServiceFixture fixture, ITestOutput
     public async Task GetDoctorsBySpecialization_WithValidSpecialization_ShouldReturnDoctors()
     {
         // Arrange
-        var doctor1 = await new DoctorBuilder()
+        var doctor1 = await new DoctorEntityBuilder()
             .WithLicense("TEST-001")
             .WithFirstName("John")
             .WithLastName("Smith")
             .BuildAsync(Context);
 
-        var doctor2 = await new DoctorBuilder()
+        var doctor2 = await new DoctorEntityBuilder()
             .WithLicense("TEST-002")
             .WithFirstName("Jane")
             .WithLastName("Doe")
             .BuildAsync(Context);
 
-        await new DoctorSpecializationBuilder()
-            .WithDoctor(doctor1)
+        await new DoctorSpecializationEntityBuilder(doctor1)
             .WithSpecializations("Cardiology")
             .BuildAsync(Context);
 
-        await new DoctorSpecializationBuilder()
-            .WithDoctor(doctor2)
+        await new DoctorSpecializationEntityBuilder(doctor2)
             .WithSpecializations("Cardiology")
             .BuildAsync(Context);
 
@@ -77,25 +75,23 @@ public class GetDoctorsBySpecializationTests(ServiceFixture fixture, ITestOutput
     public async Task GetDoctorsBySpecialization_WithMixedSpecializations_ShouldReturnOnlyMatchingDoctors()
     {
         // Arrange
-        var cardiologist = await new DoctorBuilder()
+        var cardiologist = await new DoctorEntityBuilder()
             .WithLicense("CARD-001")
             .WithFirstName("Heart")
             .WithLastName("Doctor")
             .BuildAsync(Context);
 
-        var neurologist = await new DoctorBuilder()
+        var neurologist = await new DoctorEntityBuilder()
             .WithLicense("NEURO-001")
             .WithFirstName("Brain")
             .WithLastName("Doctor")
             .BuildAsync(Context);
 
-        await new DoctorSpecializationBuilder()
-            .WithDoctor(cardiologist)
+        await new DoctorSpecializationEntityBuilder(cardiologist)
             .WithSpecializations("Cardiology")
             .BuildAsync(Context);
 
-        await new DoctorSpecializationBuilder()
-            .WithDoctor(neurologist)
+        await new DoctorSpecializationEntityBuilder(neurologist)
             .WithSpecializations("Neurology")
             .BuildAsync(Context);
 

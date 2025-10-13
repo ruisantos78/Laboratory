@@ -15,15 +15,14 @@ public class GetDoctorByLicenseTests(ServiceFixture fixture, ITestOutputHelper o
     public async Task GetDoctorByLicense_WithValidLicense_ShouldReturnDoctor()
     {
         // Arrange
-        var doctor = await new DoctorBuilder()
+        var doctor = await new DoctorEntityBuilder()
             .WithLicense("TEST-001")
             .WithFirstName("John")
             .WithLastName("Smith")
             .WithEmail("john.smith@test.com")
             .BuildAsync(Context);
 
-        await new DoctorSpecializationBuilder()
-            .WithDoctor(doctor)
+        await new DoctorSpecializationEntityBuilder(doctor)
             .WithSpecializations("Cardiology")
             .BuildAsync(Context);
 
