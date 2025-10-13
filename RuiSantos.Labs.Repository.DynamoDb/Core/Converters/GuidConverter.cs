@@ -16,11 +16,11 @@ internal class GuidConverter : IPropertyConverter
     public object FromEntry(DynamoDBEntry entry)
     {
         if (entry is not Primitive primitive)
-            return default(Guid);
+            return Guid.Empty;
 
         var value = primitive.AsString();
         if (!Guid.TryParse(value, out var guid))
-            return default(Guid);
+            return Guid.Empty;
 
         return guid;
     }

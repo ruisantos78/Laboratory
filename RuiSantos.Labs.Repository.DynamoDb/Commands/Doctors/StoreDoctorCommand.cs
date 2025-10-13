@@ -33,13 +33,12 @@ internal class StoreDoctorCommand(Doctor doctor
             if (await GetDoctorIdByLicenseAsync(entity.License) is { } doctorId)
                 entity.Id = doctorId;
 
-            var specializationWriter = await CreateSpecializationWriterAsync(cancellationToken);
-
-            var writer = _context.CreateBatchWrite<DoctorEntity>();
-            writer.AddPutItem(entity);
-
-            await writer
-                .Combine(specializationWriter)
+            var doctorWriter = _context.CreateBatchWrite<DoctorEntity>();
+            doctorWriter.AddPutItem(entity);
+            
+            var specsWriter = await CreateSpecializationsWriterAsync(entity, cancellationToken);
+            
+            await doctorWriter.Combine(specsWriter) 
                 .ExecuteAsync(cancellationToken);
         }
         catch (Exception ex)
@@ -65,20 +64,26 @@ internal class StoreDoctorCommand(Doctor doctor
             .ContinueWith(task => task.Result.FirstOrDefault()?.Id);
     }
     
-    private async Task<IBatchWrite<DoctorSpecializationEntity>> CreateSpecializationWriterAsync(CancellationToken cancellationToken)
+    private async Task<IBatchWrite<DoctorSpecializationEntity>> CreateSpecializationsWriterAsync(DoctorEntity entity, CancellationToken cancellationToken)
     {
         var writer = _context.CreateBatchWrite<DoctorSpecializationEntity>();
 
-        var current = await _context.QueryAsync<DoctorSpecializationEntity>(doctor.Id)
-            .GetRemainingAsync(cancellationToken);
+        var query = new QueryOperationConfig
+        {
+            IndexName = DoctorSpecializationEntity.DoctorSpecializationByDoctorIdIndexName,
+            Filter = new QueryFilter(nameof(DoctorSpecializationEntity.DoctorId), QueryOperator.Equal, entity.Id)
+        };
 
+        var current = await _context.FromQueryAsync<DoctorSpecializationEntity>(query)
+            .GetRemainingAsync(cancellationToken);
+        
         writer.AddDeleteItems(current.Where(x => !doctor.Specializations.Contains(x.Specialization)));
 
         writer.AddPutItems(doctor.Specializations
             .Except(current.Select(x => x.Specialization))
             .Select(specialization => new DoctorSpecializationEntity
             {
-                DoctorId = doctor.Id,
+                DoctorId = entity.Id,
                 Specialization = specialization
             })
         );

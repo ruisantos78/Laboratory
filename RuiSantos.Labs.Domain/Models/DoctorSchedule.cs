@@ -8,7 +8,7 @@ public record DoctorSchedule
     /// <summary>
     /// An empty doctor schedule
     /// </summary>
-    public static readonly DoctorSchedule Empty = new(Doctor.Empty, Array.Empty<DateTime>());
+    public static readonly DoctorSchedule Empty = new(Doctor.Empty, []);
 
     /// <summary>
     /// The doctor
